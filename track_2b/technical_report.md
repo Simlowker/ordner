@@ -12,7 +12,7 @@
 
 Ordner keeps a person's administrative dossier on their own machine: it reads the papers they receive, works out which of 18 Swiss procedures apply (tax return, health insurance, debt collection, pension, unemployment, moving, …), computes deadlines from official rules, says what is missing and why, and prepares letters, document requests and payments for the person to validate. Apertus 1.5 8B (bf16, MLX) is its only general-purpose language model; with small support models loaded on demand it runs on one 36 GB Apple Silicon Mac, offline. We measure two claims.
 
-**Proof 1: reading documents without silent errors.** eCH-0196 bank tax statements store their XML in PDF417 barcodes: a free, exact answer key. Apertus extracts eight fields from the readable page (LoRA); a probe on its hidden states, the d1-3B judge and deterministic checks flag values to re-check. On 1,200 frozen test pages (two of three layouts unseen in training, four degradation levels), field exact match is {{acc_regex_test}} for OCR + rules, {{acc_base_test}} for zero-shot Apertus, {{acc_lora_test}} with LoRA ({{acc_lora_unseen}} on unseen layouts; H1 {{h1_verdict}}). Re-reading the most doubtful {{triage90_combined}} of fields catches 90 % of zero-shot errors (AUROC {{auroc_combined}}, within-field {{wf_combined}}; H2 {{h2_verdict}}; probe alone {{auroc_probeA}}, H3 {{h3_verdict}}).
+**Proof 1: reading documents without silent errors.** eCH-0196 bank tax statements store their XML in PDF417 barcodes: a free, exact answer key. Apertus extracts eight fields from the readable page (LoRA); a probe on its hidden states, the d1-3B judge and deterministic checks flag values to re-check. On 1,200 frozen test pages (two of three layouts unseen in training, four degradation levels), field exact match is 66.9 % for OCR + rules, 92.1 % for zero-shot Apertus, 98.0 % with LoRA (96.9 % on unseen layouts; H1 supported). Re-reading the most doubtful 30.5 % of fields catches 90 % of zero-shot errors (AUROC 0.922, within-field 0.911; H2 not supported; probe alone 0.840, H3 supported).
 
 **Proof 2: tools and architecture make an 8B model useful as a coordinator.** On 43 dev scenarios grounded in quoted official texts, Apertus passes 14.0 % with generic tools and 27.9-30.2 % with process tools (two identical runs), below the rules engine alone (46.5 %). Rules first, then Apertus on the same dossier passes 53.5 %: the rules supply proven deadlines and steps, Apertus asks what rules cannot see (5 of 7 expected questions, against 0). That gain over rules alone (3 scenarios) is within run-to-run noise. No configuration executed an external effect. Test: {{t_hybrid_pass}} (hybrid, exploratory) vs {{t_rules_pass}} (rules alone).
 
@@ -117,26 +117,26 @@ Ordner is deployable **b) air-gapped** (primary) and **a) on-premise** (e.g. a d
 
 | Setup    | System                          | Field accuracy                                                    | Page fully correct | Seen layout (A)       | Unseen layouts (B, C) |
 | -------- | ------------------------------- | ----------------------------------------------------------------- | ------------------ | --------------------- | --------------------- |
-| Baseline | OCR + rules/regex (no LLM)      | {{acc_regex_test}} [{{acc_regex_test_lo}}, {{acc_regex_test_hi}}] | {{page_ok_regex}}  | {{acc_regex_layoutA}} | {{acc_regex_unseen}}  |
-| Baseline | OCR + Apertus 1.5 8B, zero-shot | {{acc_base_test}} [{{acc_base_test_lo}}, {{acc_base_test_hi}}]    | {{page_ok_base}}   | {{acc_base_layoutA}}  | {{acc_base_unseen}}   |
-| **Ours** | OCR + Apertus 1.5 8B + LoRA     | {{acc_lora_test}} [{{acc_lora_test_lo}}, {{acc_lora_test_hi}}]    | {{page_ok_lora}}   | {{acc_lora_layoutA}}  | {{acc_lora_unseen}}   |
+| Baseline | OCR + rules/regex (no LLM)      | 66.9 [65.8, 68.0] | 37.9  | 99.0 | 45.5  |
+| Baseline | OCR + Apertus 1.5 8B, zero-shot | 92.1 [91.4, 92.8]    | 54.5   | 94.2  | 90.8   |
+| **Ours** | OCR + Apertus 1.5 8B + LoRA     | 98.0 [97.7, 98.3]    | 88.3   | 99.7  | 96.9   |
 
-**H1 ({{h1_verdict}}).** LoRA minus zero-shot: {{h1_diff}} [{{h1_ci_lo}}, {{h1_ci_hi}}] over {{h1_n_paired}} paired fields.
+**H1 (supported).** LoRA minus zero-shot: +5.9 [+5.2, +6.6] over 9600 paired fields.
 
-**Table 2. Doubt signals on zero-shot Apertus (test, {{n_wrong_base}} wrong of {{n_items_base}} fields): AUROC for "field is wrong", within-field AUROC, share of fields to re-read to catch 90 % of errors (80 % and 95 %: `data/results/table.md`).**
+**Table 2. Doubt signals on zero-shot Apertus (test, 754 wrong of 9'600 fields): AUROC for "field is wrong", within-field AUROC, share of fields to re-read to catch 90 % of errors (80 % and 95 %: `data/results/table.md`).**
 
 | Setup | Signal | AUROC [95 % CI] | Within field | 90 % |
 | --- | --- | --- | --- | --- |
-| Baseline | Field prior P(wrong \| field) | {{auroc_fieldprior}} [{{auroc_fieldprior_lo}}, {{auroc_fieldprior_hi}}] | 0.5 by construction | {{triage90_fieldprior}} |
-| Baseline | Min token probability | {{auroc_minprob}} [{{auroc_minprob_lo}}, {{auroc_minprob_hi}}] | {{wf_minprob}} | {{triage90_minprob}} |
-| Baseline | Mean token entropy | {{auroc_entropy}} [{{auroc_entropy_lo}}, {{auroc_entropy_hi}}] | {{wf_entropy}} | {{triage90_entropy}} |
-| Baseline | d1-3B validation | {{auroc_d1}} [{{auroc_d1_lo}}, {{auroc_d1_hi}}] | {{wf_d1}} | {{triage90_d1}} |
-| Baseline | Deterministic checks | {{auroc_rules}} [{{auroc_rules_lo}}, {{auroc_rules_hi}}] | {{wf_rules}} | {{triage90_rules}} |
-| Ours (part) | Probe, position A (layer {{probe_a_layer}}) | {{auroc_probeA}} [{{auroc_probeA_lo}}, {{auroc_probeA_hi}}] | {{wf_probeA}} | {{triage90_probeA}} |
-| Ours (part) | Probe, position B (layer {{probe_b_layer}}) | {{auroc_probeB}} [{{auroc_probeB_lo}}, {{auroc_probeB_hi}}] | {{wf_probeB}} | {{triage90_probeB}} |
-| **Ours** | **Combined: probe A + d1 + checks + token statistics** | {{auroc_combined}} [{{auroc_combined_lo}}, {{auroc_combined_hi}}] | {{wf_combined}} | {{triage90_combined}} |
+| Baseline | Field prior P(wrong \| field) | 0.621 [0.602, 0.638] | 0.5 by construction | 70.6 |
+| Baseline | Min token probability | 0.917 [0.905, 0.928] | 0.872 | 27.4 |
+| Baseline | Mean token entropy | 0.924 [0.913, 0.934] | 0.887 | 27.8 |
+| Baseline | d1-3B validation | 0.897 [0.877, 0.915] | 0.815 | 35.6 |
+| Baseline | Deterministic checks | 0.815 [0.791, 0.838] | 0.814 | 73.0 |
+| Ours (part) | Probe, position A (layer 12) | 0.840 [0.814, 0.863] | 0.858 | 57.1 |
+| Ours (part) | Probe, position B (layer 20) | 0.889 [0.871, 0.906] | 0.904 | 37.9 |
+| **Ours** | **Combined: probe A + d1 + checks + token statistics** | 0.922 [0.904, 0.938] | 0.911 | 30.5 |
 
-**H2 ({{h2_verdict}}).** Combined minus best single signal ({{h2_best_single}}): {{h2_diff}} [{{h2_ci_lo}}, {{h2_ci_hi}}]. **H3 ({{h3_verdict}}).** Probe A: AUROC {{auroc_probeA}}, lower bound {{auroc_probeA_lo}}; position B minus A: {{posb_minus_a_diff}} [{{posb_minus_a_lo}}, {{posb_minus_a_hi}}]. For the LoRA system, the pre-registered doubt calibration on dev is not estimable: it makes 2 errors on the 480 dev fields (`combined_lora` in `results.json`), and {{n_wrong_lora}} on test.
+**H2 (not supported).** Combined minus best single signal (first-token entropy): -0.024 [-0.048, -0.001]. **H3 (supported).** Probe A: AUROC 0.840, lower bound 0.814; position B minus A: +0.049 [+0.020, +0.079]. For the LoRA system, the pre-registered doubt calibration on dev is not estimable: it makes 2 errors on the 480 dev fields (`combined_lora` in `results.json`), and 190 on test.
 
 ![Figure 2](docs/triage_curves.png)
 _Figure 2. Triage curves on zero-shot outputs: share of errors caught vs share of fields re-read, per doubt signal._
@@ -178,7 +178,7 @@ The rules engine and the hybrid trigger no trap (12 traps); no configuration exe
 
 **Knowledge search.** The right card's source is in the top 3 for 80.6 % / 77.8 % of development / held-out questions with EmbeddingGemma 2, 52.8 % / 38.9 % with BM25 and 61.1 % / 50.0 % with RRF fusion (`data/retrieval/`). The gain is cross-lingual: BM25 reaches 94.1 % on same-language development questions (embedding 100 %) but 5 % on held-out cross-lingual ones (embedding 70 %, fusion 15 %). We rank with the embedding alone; BM25 is the fallback without weights.
 
-**Cost (Apple M4 Max 36 GB).** End to end, a page costs {{cost_total_lora_mean}} s on average (p95 {{cost_total_lora_p95}} s): OCR {{cost_ocr_mean}} s, LoRA extraction {{cost_lora_mean}} s, hidden-state pass {{cost_hidden_mean}} s (avoidable by capturing states during generation), d1-3B {{cost_d1_mean}} s; peak memory 3.1 GB for OCR and 14.1 GB for d1-3B in fp32. The `make run` replay takes {{runtime_seconds}} s on CPU.
+**Cost (Apple M4 Max 36 GB).** End to end, a page costs 24.5 s on average (p95 85.3 s): OCR 14.9 s, LoRA extraction 6.4 s, hidden-state pass 1.9 s (avoidable by capturing states during generation), d1-3B 0.8 s; peak memory 3.1 GB for OCR and 14.1 GB for d1-3B in fp32. The `make run` replay takes 1 s on CPU.
 
 ## 6. Limitations
 
