@@ -1,0 +1,180 @@
+"""python -m ordner.rules.selfcheck  (asserts on reference cases; no network, no files written)"""
+import re
+from datetime import date
+
+from ordner.core.schema import Deadline, DeadlineRule, Fact, ProcedureCard, Subject
+from ordner.procedures.catalog import _condition as catalog_syntax
+
+from . import DEADLINE_RULE_IDS, applicable, compute_deadline, easter, holidays, reminders, to_ics
+
+VD = Subject("s_vd", "person", "Léa Test", canton="VD", roles=["student"], attrs={"birth_year": 2006})
+
+
+def due(rule_id, params=None, subject=VD, **context):
+    return compute_deadline(DeadlineRule(rule_id, params or {}), subject, context)
+
+
+def check_calendar():
+    assert [easter(y).isoformat() for y in (2025, 2026, 2027)] == ["2025-04-20", "2026-04-05", "2027-03-28"]
+    vd, ge, ti = holidays(2026, "VD"), holidays(2026, "GE"), holidays(2026, "TI")
+    assert vd[date(2026, 9, 21)] == "Lundi du Jeûne fédéral"
+    assert any(n == "Jeûne genevois" and d.isoformat() == "2026-09-10" for d, n in ge.items())
+    assert "Vendredi saint" not in ti.values() and "Fête-Dieu" in ti.values()
+    assert list(holidays(2026).values()) == ["Fête nationale"]
+
+
+def check_debt_collection():
+    # 10 days LP ending in the 15-31 July holidays → 3rd working day after 31.07 (1.8 = Saturday + national day)
+    r = due("debt_collection", notified_on="2026-07-10")
+    assert r["due"] == "2026-08-05" and {"lp_56", "lp_63", "lp_74"} <= set(r["computed_from"]["legal_basis"]), r
+    # holidays do not suspend the deadline: an end after 31.07 stays where it is
+    assert due("debt_collection", notified_on="2026-07-24")["due"] == "2026-08-03"
+    # end in the Christmas holidays; the 3rd working day depends on the canton (6 January is a holiday in TI)
+    assert due("debt_collection", notified_on="2026-12-10")["due"] == "2027-01-06"
+    assert due("debt_collection", subject=Subject("s_ti", "person", "T", canton="TI"), notified_on="2026-12-10")["due"] == "2027-01-07"
+    # end on Sunday 12.07, CPC 142 al. 3 moves it to Monday 13.07 (féries start on 15.07, so no LP 63 extension)
+    assert due("debt_collection", notified_on="2026-07-02")["due"] == "2026-07-13"
+    # end on Sunday 29.03.2026, inside the Easter holidays (29.03-12.04) → 3rd working day after 12.04 (VD): 15.04
+    assert due("debt_collection", notified_on="2026-03-19")["due"] == "2026-04-15"
+
+
+def check_days_after_notification():
+    # 30 days (tax assessment) ending on Sunday 01.11.2026 → Monday 02.11
+    r = due("days_after_notification", {"days": 30}, notified_on="2026-10-02")
+    assert r["due"] == "2026-11-02" and "dimanche" in " ".join(r["computed_from"]["steps"]), r
+    # ending on the Lundi du Jeûne: holiday in VD, working day in ZH
+    assert due("days_after_notification", {"days": 10}, notified_on="2026-09-11")["due"] == "2026-09-22"
+    zh = Subject("s_zh", "person", "Z", canton="ZH")
+    assert due("days_after_notification", {"days": 10}, subject=zh, notified_on="2026-09-11")["due"] == "2026-09-21"
+    # business days: 5 working days after Wednesday 30.07.2025, skipping Friday 1 August and the weekend → 07.08
+    assert due("days_after_notification", {"days": 5, "count": "business"}, notified_on="2025-07-30")["due"] == "2025-08-07"
+    # unknown canton → computed with federal holidays only and flagged as the earliest (safe) date
+    r = due("days_after_notification", {"days": 10}, subject=Subject("s_x", "person", "X"), notified_on="2026-09-11")
+    assert r["due"] == "2026-09-21" and "prudente" in r["computed_from"]["warnings"][0]
+
+
+def check_fixed_dates():
+    lamal = due("reception_by", {"month": 11, "day": 30, "sources": [0]}, period="2026")
+    assert lamal["due"] == "2026-11-30" and lamal["send_by"] == "2026-11-23", lamal
+    assert "RÉCEPTION" in lamal["computed_from"]["warnings"][-1] and lamal["computed_from"]["card_sources"] == [0]
+    ofsp = due("reception_by", {"month": 11, "day": 30, "send_by": {"month": 11, "day": 15}}, period="2026")
+    assert ofsp["send_by"] == "2026-11-13"  # 15.11.2026 is a Sunday → post on Friday
+    table = {"table": {"VD": {"month": 3, "day": 15, "year_offset": 1, "sources": [1], "extensions": [
+        {"until": "06-30", "fee_chf": 0, "how": "tolérance sans demande"},
+        {"until": "09-30", "fee_chf": 0, "how": "e-Délai", "request_by": "06-30"}]},
+        "ZH": {"month": 3, "day": 31, "year_offset": 1}}}
+    vd = due("cantonal_table", table, period="2025")
+    assert vd["due"] == "2026-03-15" and "dimanche" in vd["computed_from"]["warnings"][0], vd
+    assert vd["extensions"][1] == {"until": "2026-09-30", "fee_chf": 0, "how": "e-Délai", "request_by": "2026-06-30"}
+    assert vd["computed_from"]["card_sources"] == [1]
+    assert due("cantonal_table", table, period="2025", extension=1)["due"] == "2026-09-30"
+    assert due("cantonal_table", table, period="2025", canton="ZH")["due"] == "2026-03-31"
+    assert due("year_end", period="2026")["due"] == "2026-12-31"
+    assert due("fixed_date", {"month": 3, "day": 31, "year_offset": 1}, period="2025")["due"] == "2026-03-31"
+
+
+def check_missing_info():
+    for r, key in [(due("debt_collection"), "notified_on"),
+                   (due("fixed_date", {"month": 3, "day": 15}), "period"),
+                   (due("cantonal_table", {"table": {"VD": {"month": 3, "day": 15}}}, subject=Subject("s", "person", "N"), period="2025"), "subject.canton"),
+                   (due("cantonal_table", {"table": {"VD": {"month": 3, "day": 15}}}, period="2025", canton="TI"), "table.TI"),
+                   (due("cantonal_table", {"table": {"VD": {"month": 3, "day": 15}}}, period="2025", extension=4), "extension")]:
+        assert r["status"] == "missing_info" and r["missing"] == [key] and r["why"], r
+    try:
+        due("no_such_rule")
+        raise AssertionError("unknown rule accepted")
+    except ValueError:
+        pass
+
+
+def card(applicability, jurisdiction="CH", **kw):
+    return ProcedureCard(id="pension.avs.non_active", name={"fr": "AVS"}, domain="pension", nature="obligation",
+                         jurisdiction=jurisdiction, applicability=applicability, qualification="draft", **kw)
+
+
+def check_applicability():
+    # AHV non-active: contributions from 1 January after the 20th birthday (LAVS art. 3 al. 1bis) ⇔ age at 31.12 ≥ 21
+    avs = card({"all": [{"not": {"role": "salaried"}}, {"attr": "age_at_year_end", "gte": 21}]})
+    assert catalog_syntax(avs.applicability, "applicability") == []  # same syntax as W2a's validator
+    r = applicable(avs, VD, [], on="2026-10-14")
+    assert r["status"] == "not_applicable" and r["missing"] == [] and "âge au 31.12.2026 (2026 − 2006) = 20" in " ".join(r["why"]), r
+    assert applicable(avs, VD, [], on="2027-01-01")["status"] == "applicable"
+    born_2005 = Subject("s5", "person", "B", canton="VD", roles=["student"], attrs={"birth_year": 2005})
+    assert applicable(avs, born_2005, [], on="2026-10-14")["status"] == "applicable"
+    no_year = Subject("s6", "person", "C", canton="VD", roles=["student"])
+    r = applicable(avs, no_year, [], on="2026-10-14")
+    assert r["status"] == "missing_info" and r["missing"] == ["subject.birth_year"], r
+    # salaried short-circuits to not_applicable even with the birth year unknown
+    worker = Subject("s7", "person", "D", roles=["salaried"])
+    assert applicable(avs, worker, [])["status"] == "not_applicable"
+    # empty roles = unknown, not "no role"
+    assert applicable(avs, Subject("s8", "person", "E", attrs={"birth_year": 2000}), [])["missing"] == ["subject.roles"]
+    # exact age needs the birth date when the year alone is ambiguous
+    adult = card({"attr": "age", "gte": 18})
+    r = applicable(adult, Subject("s9", "person", "F", roles=["x"], attrs={"birth_year": 2008}), [], on="2026-06-01")
+    assert r["status"] == "missing_info" and r["missing"] == ["subject.birth_date"], r
+    assert applicable(adult, Subject("s9", "person", "F", attrs={"birth_date": "2008-05-31"}), [], on="2026-06-01")["status"] == "applicable"
+    assert applicable(adult, Subject("s9", "person", "F", attrs={"birth_year": 2000}), [], on="2026-06-01")["status"] == "applicable"
+    # jurisdiction: a VD card does not apply to a ZH subject, and needs the canton
+    vd_card = card({"role": "student"}, jurisdiction="VD")
+    assert applicable(vd_card, Subject("z", "person", "Z", canton="ZH", roles=["student"]), [])["status"] == "not_applicable"
+    assert applicable(vd_card, Subject("z", "person", "Z", roles=["student"]), [])["missing"] == ["subject.canton"]
+    # facts: confirmed decides, proposed only asks for confirmation (or counts in preview mode), others' facts ignored
+    claim = card({"fact": "tax.assessment.notified_on", "exists": True})
+    proposed = Fact("f1", "s_vd", "tax.assessment.notified_on", "2026-10-02", status="proposed")
+    r = applicable(claim, VD, [proposed])
+    assert r["status"] == "missing_info" and r["missing"] == ["tax.assessment.notified_on"] and "à confirmer" in r["why"][0], r
+    assert applicable(claim, VD, [proposed], accept_proposed=True)["status"] == "applicable"
+    confirmed = Fact("f2", "s_vd", "tax.assessment.notified_on", "2026-10-02", status="confirmed")
+    assert applicable(claim, VD, [proposed, confirmed])["status"] == "applicable"
+    assert applicable(claim, VD, [Fact("f3", "other", "tax.assessment.notified_on", "x", status="confirmed")])["status"] == "not_applicable"
+    income = card({"fact": "income.net", "lte": 46800})
+    assert applicable(income, VD, [])["missing"] == ["income.net"]
+    assert applicable(income, VD, [Fact("f4", "s_vd", "income.net", 30000, status="confirmed")])["status"] == "applicable"
+    assert applicable(income, VD, [Fact("f5", "s_vd", "income.net", 50000, status="rejected")])["status"] == "missing_info"
+    # any: one true branch decides even if the other is unknown
+    either = card({"any": [{"attr": "canton", "in": ["VD", "GE"]}, {"fact": "x.y", "eq": 1}]})
+    assert applicable(either, VD, [])["status"] == "applicable"
+    # card validity: an expired card yields missing_info, never a silent yes
+    old = card({}, valid_to="2025-12-31")
+    assert applicable(old, VD, [], on="2026-10-14")["missing"] == ["card.validity"]
+
+
+def check_reminders_and_ics():
+    assert reminders("2026-11-30") == ["2026-10-31", "2026-11-23", "2026-11-29"]
+    assert reminders("2026-11-30", today="2026-11-24") == ["2026-11-29"]
+    assert reminders("2026-08-05", policy="short") == ["2026-08-02", "2026-08-04"]
+    lp = due("debt_collection", notified_on="2026-07-10", label="Opposition au commandement de payer, poursuite n° 123; office VD")
+    dls = [Deadline("dl_1", "case_1", lp["due"], "debt_collection", lp["computed_from"], reminders(lp["due"], "short")),
+           Deadline("dl_2", "case_2", "2026-11-30", "reception_by", {})]
+    ics = to_ics(dls, VD)
+    assert ics.endswith("\r\n") and "\n" not in ics.replace("\r\n", "")
+    lines = ics.split("\r\n")[:-1]
+    assert all(len(line.encode()) <= 75 for line in lines)
+    unfolded = re.sub(r"\r\n ", "", ics).split("\r\n")[:-1]
+    stack = []
+    for line in unfolded:
+        if line.startswith("BEGIN:"):
+            stack.append(line[6:])
+        elif line.startswith("END:"):
+            assert stack.pop() == line[4:]
+    assert not stack and unfolded[0] == "BEGIN:VCALENDAR" and "VERSION:2.0" in unfolded and any(l.startswith("PRODID:") for l in unfolded)
+    assert unfolded.count("BEGIN:VEVENT") == 2 and unfolded.count("BEGIN:VALARM") == 2 + 3
+    assert "DTSTART;VALUE=DATE:20260805" in unfolded and "DTEND;VALUE=DATE:20260806" in unfolded
+    assert "TRIGGER;VALUE=DATE-TIME:20260804T080000Z" in unfolded
+    assert any(l.startswith("SUMMARY:Opposition au commandement de payer\\, poursuite n° 123\\; office VD") for l in unfolded)
+    assert all(re.fullmatch(r"DTSTAMP:\d{8}T\d{6}Z", l) for l in unfolded if l.startswith("DTSTAMP"))
+
+
+def main():
+    assert DEADLINE_RULE_IDS == ["fixed_date", "days_after_notification", "debt_collection", "reception_by", "cantonal_table", "year_end"]
+    checks = [check_calendar, check_debt_collection, check_days_after_notification, check_fixed_dates, check_missing_info,
+              check_applicability, check_reminders_and_ics]
+    for check in checks:
+        check()
+        print(f"ok  {check.__name__}")
+    print(f"ordner.rules selfcheck: {len(checks)} groups passed")
+
+
+if __name__ == "__main__":
+    main()
