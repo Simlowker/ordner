@@ -1,0 +1,124 @@
+# DeepSeek Harness overlay for Ordner's conversation (web profile, 0.2.1-alpha.2), applied before the generated expert
+# presets (ordner.harness.experts.presets_yaml). Same model, persona and fail-closed rows as ordner.patch.yml, without
+# the host MCP row: each expert preset mounts its own Ordner MCP server. Environment set by ordner.harness.web:
+# ORDNER_PROXY_URL, ORDNER_PY, ORDNER_SRC, ORDNER_SYSTEM, ORDNER_HOME, ORDNER_SYSTEM_<ID>, ORDNER_MCP_ARGS_<ID>.
+
+# Model: Apertus behind ordner.harness.proxy (tool-call translation, turn control, fail-closed tool check).
+- id: llm-pi-ai
+  config:
+    providers:
+      ordner-local:
+        displayName: Ordner (Apertus via ordner.harness.proxy)
+        api: openai-completions
+        baseURL: !!js process.env.ORDNER_PROXY_URL
+        apiKeyEnv: ORDNER_LOCAL_KEY # pi-ai wants a key even for a keyless local server
+        compat:
+          supportsDeveloperRole: false
+          supportsStore: false
+          supportsReasoningEffort: false
+        models:
+          - id: apertus
+            name: Apertus 1.5 8B
+            contextWindow: 65536
+            maxTokens: 768
+            reasoningEfforts: false
+
+- id: agent-default-model
+  config:
+    provider: ordner-local
+    model: apertus
+
+# Persona: the coordinator's system prompt and nothing else (no harness identity, no runtime-context snapshot).
+# (dsh-persona with complete: true cannot be mounted at the root: "deployment:persona-prefix is already registered".)
+# The working directory stays as a *required* runtime-context user message; the proxy drops it (see proxy.py).
+- id: system-prompt
+  config:
+    includeHarnessIdentity: false
+    includeRuntimeContext: false
+    personaPrefix: !!js process.env.ORDNER_SYSTEM
+
+# Fail closed: no built-in tool (shell, files, web, subagents, workflows, skills, todo, goal, plan, resources...).
+# The proxy also refuses any request whose tool list is not Ordner's, and no hook plugin is mounted (a crashing
+# Claude-Code-style hook is recorded as "pass", i.e. fails open).
+- id: tool-bash
+  disabled: true
+- id: tool-pwsh
+  disabled: true
+- id: tool-jobs
+  disabled: true
+- id: tool-fs
+  disabled: true
+- id: tool-fs-search
+  disabled: true
+- id: tool-skill
+  disabled: true
+- id: tool-goal
+  disabled: true
+- id: tool-todo
+  disabled: true
+- id: tool-web
+  disabled: true
+- id: tool-subagent
+  disabled: true
+- id: tool-subagent-fork
+  disabled: true
+- id: tool-subagent-control
+  disabled: true
+- id: tool-subagent-list-agents
+  disabled: true
+- id: tool-workflow
+  disabled: true
+- id: tool-working-directory
+  disabled: true
+- id: tool-plugin-manager
+  disabled: true
+- id: plan-mode
+  disabled: true
+- id: mcp-resources
+  disabled: true
+
+# Same model input as the coordinator: no extra LLM call, no injected reminders, no rewriting of earlier tool results,
+# no workspace instructions (AGENTS.md); no network providers.
+- id: session-title-llm
+  disabled: true
+- id: repeat-tool-reminder
+  disabled: true
+- id: tool-result-pruner
+  disabled: true
+- id: agent-instructions
+  disabled: true
+- id: web
+  disabled: true
+- id: web-search-deepseek
+  disabled: true
+- id: web-fetch-http
+  disabled: true
+
+# Web profile: the shipped presets carry every built-in tool (shell, files, web, subagents...). Three are turned off;
+# preset-standard is replaced by the coordinator in the generated presets.
+- id: preset-ptc
+  disabled: true
+- id: preset-minimal
+  disabled: true
+- id: preset-cordis
+  disabled: true
+
+# Ordner's UI: Swiss clear (light), French, documents in the Ordner home; no browser shell, no LibreOffice kit (MPL-2.0),
+# no document preview.
+- id: ui-theme
+  config:
+    preference: light
+- id: locale
+  config:
+    preference: fr
+- id: workspace-controller
+  config:
+    documentsDirectory: !!js process.env.ORDNER_HOME
+- id: ui-sidebar-terminal
+  disabled: true
+- id: terminal-controller
+  disabled: true
+- id: office-to-pdf
+  disabled: true
+- id: ui-sidebar-documentpreview
+  disabled: true

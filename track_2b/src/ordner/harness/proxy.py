@@ -16,13 +16,18 @@ It also makes the harness request what the coordinator would send:
 - turn control, read from the history (the harness has no step budget nor a tool that ends the turn): after an
   ask_user, after MAX_DUPLICATES refused duplicates, or once max_steps model calls were made, it answers a final
   marker text without calling the model (runtime.result rebuilds the coordinator's answer from the log);
-- fail closed: a request carrying a tool outside `allowed` is refused (HTTP 400), the model is never asked.
-Every exchange is logged in `server.log` (normalized messages and tools, backend reply, stop reason).
+- fail closed: a request carrying a tool outside `allowed` is refused (HTTP 400), the model is never asked;
+- experts (web UI, `experts=True`): the marker on the system prompt (ordner.harness.experts) gives the request's
+  allowlist (the expert's tools) and, on an MLX backend (ORDNER_BACKEND=mlx, default), its LoRA adapter sent as the
+  `adapters` body field; no marker, an unknown expert or no adapter directory -> base model (`adapter: none`).
+Every exchange is kept in `Proxy.log` (normalized messages and tools, backend reply, stop reason; expert and adapter in
+experts mode) and summarized as a JSON line in `log_file` when given.
 
     python -m ordner.harness.proxy --upstream http://127.0.0.1:8080/v1 [--port 18765] [--max-steps 12] [--raw]
 """
 import argparse
 import json
+import os
 import threading
 import time
 from http.server import BaseHTTPRequestHandler, HTTPServer
@@ -30,6 +35,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 from ordner.agent.coordinator import MAX_DUPLICATES
 from ordner.agent.llm import TOOLS_PREFIX, parse_tool_calls
 
+from . import experts as E
 from .mcp_server import ERROR_KEY, NAME_KEY
 
 PREFIX = "mcp__ordner__"
@@ -112,6 +118,17 @@ def to_calls(reply, prefix, step, names):
     return out
 
 
+def route(messages, adapters_ok):
+    """Expert of a request from the marker on the system message; its tools (model-side names) and, MLX only, its
+    LoRA adapter."""
+    sys_text = next((m.get("content") or "" for m in messages if m.get("role") == "system"), "")
+    eid = E.marker(sys_text)
+    if eid is None:
+        return {"expert": None, "allowed": None, "adapter": None}
+    allowed = [t.replace(".", "_") for t in E.EXPERTS[eid].tools] + ["ask_user", "prepare_action"]
+    return {"expert": eid, "allowed": allowed, "adapter": E.adapter_path(eid) if adapters_ok else None}
+
+
 class Handler(BaseHTTPRequestHandler):
     server: "Proxy"
 
@@ -134,28 +151,34 @@ class Handler(BaseHTTPRequestHandler):
         msgs, tools = to_model(req, p.prefix, p.order, p.keep_context)
         names = [t["function"]["name"] for t in tools]
         entry = {"t": time.time(), "messages": msgs, "tools": tools, "stop": None, "reply": None, "sent": None}
-        foreign = sorted(set(names) - set(p.allowed)) if p.allowed is not None else []
+        allowed, extra = p.allowed, None
+        if p.experts:
+            r = route(msgs, p.adapters_ok)
+            entry.update(expert=r["expert"], adapter=r["adapter"] or "none")
+            allowed = r["allowed"] if r["allowed"] is not None else allowed
+            extra = {"adapters": r["adapter"]} if r["adapter"] else None
+        foreign = sorted(set(names) - set(allowed)) if allowed is not None else []
         if foreign:
             entry["refused"] = foreign
-            p.log.append(entry)
+            p.record(entry)
             return self._json(400, {"error": {"message": f"ordner proxy: tools outside Ordner's set refused: {foreign}"}})
         entry["stop"] = stop_reason(msgs, p.max_steps)
         if entry["stop"]:   # the harness rejects an empty completion (EMPTY_RESPONSE, then retries): a marker
             content, calls = f"[ordner: turn ended, {entry['stop']}]", []
         else:
             try:
-                with p.lock:
-                    reply = p.llm.chat(msgs, tools)
+                with p.lock:   # extra only when set: any chat(messages, tools) backend keeps working
+                    reply = p.llm.chat(msgs, tools, extra=extra) if extra else p.llm.chat(msgs, tools)
             except Exception as e:   # backend down or refusing: a visible error for the harness, never a fake answer
                 entry["error"] = f"{type(e).__name__}: {e}"
-                p.log.append(entry)
+                p.record(entry)
                 return self._json(502, {"error": {"message": f"ordner proxy: backend error: {entry['error']}"}})
             entry["reply"] = reply
             step = sum(m["role"] == "assistant" for m in msgs)
             content, calls = (reply["raw"], []) if p.raw else (reply["content"], to_calls(reply, p.prefix, step, names))
         entry["sent"] = {"content": content, "tool_calls": calls}
         entry["text_calls"] = bool(content and (TOOLS_PREFIX in content or parse_tool_calls(content, set(names))[1]))
-        p.log.append(entry)
+        p.record(entry)
         self._answer(req, content, calls)
 
     def _answer(self, req, content, calls):
@@ -192,11 +215,25 @@ class Proxy(HTTPServer):
     """Single-threaded on purpose: runtime.run serves it from the caller's thread (handle_request), so an in-process
     backend (MLXLocal: MLX streams are per thread) runs where it was loaded. `with Proxy(...)` serves from a thread."""
 
-    def __init__(self, llm, port=0, max_steps=12, order=None, allowed=None, prefix=PREFIX, raw=False, keep_context=False):
+    def __init__(self, llm, port=0, max_steps=12, order=None, allowed=None, prefix=PREFIX, raw=False, keep_context=False,
+                 experts=False, log_file=None):
         super().__init__(("127.0.0.1", port), Handler)
         self.llm, self.max_steps, self.order, self.allowed, self.prefix = llm, max_steps, order, allowed, prefix
-        self.raw, self.keep_context = raw, keep_context
+        self.raw, self.keep_context, self.experts, self.log_file = raw, keep_context, experts, log_file
+        self.adapters_ok = os.environ.get("ORDNER_BACKEND", "mlx") == "mlx"   # `adapters` is an mlx_lm.server field
         self.log, self.lock, self.timeout = [], threading.Lock(), 0.2
+
+    def record(self, entry):
+        self.log.append(entry)
+        if self.log_file:
+            sent = entry.get("sent") or {}
+            line = {"t": round(entry["t"], 3), "expert": entry.get("expert"), "adapter": entry.get("adapter"),
+                    "tools": [t["function"]["name"] for t in entry["tools"]], "refused": entry.get("refused"),
+                    "stop": entry["stop"], "error": entry.get("error"),
+                    "calls": [c["function"]["name"] for c in sent.get("tool_calls") or []],
+                    "status": 400 if entry.get("refused") else 502 if entry.get("error") else 200}
+            with open(self.log_file, "a", encoding="utf-8") as f:
+                f.write(json.dumps(line, ensure_ascii=False) + "\n")
 
     @property
     def url(self):

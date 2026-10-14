@@ -5,12 +5,18 @@
 2. End to end on 5 dev scenarios, coordinator vs harness with the same scripted model: identical model inputs at
    every step (messages modulo call ids, tools), identical scores, no silent failure, system prompt = coordinator's.
 3. Without translation (the spike setup) the same model gives silent failures and runs no tool.
-Part 2-3 are skipped when the harness build is missing (work/vendor/deepseek-harness, docs/harness_spike.md).
+4. Experts (web UI): definitions and generated presets, routing by marker (tools, adapter; plan Review Focus 1, 2, 3,
+   5: foreign tool refused or answered unknown_tool, no marker -> base model, no adapter/MLX -> no `adapters` field,
+   backend down -> 502 within the client timeout), web overlay rows and its composition (`dsh --dump-config`).
+Part 2-3 and the composition are skipped when the harness build is missing (work/vendor/deepseek-harness).
 """
 import json
 import re
+import threading
+import time
 import urllib.error
 import urllib.request
+from http.server import BaseHTTPRequestHandler, HTTPServer
 
 from ordner.agent.coordinator import SYSTEM
 from ordner.agent.llm import TOOLS_PREFIX, TOOLS_SUFFIX, parse_tool_calls
@@ -164,7 +170,199 @@ def end_to_end():
     print(f"no translation (spike setup): silent_failures={x['silent_failures']}, executed={x['executed']}: detected")
 
 
+def check_experts():
+    from ordner.tools.registry import SPECS
+
+    from . import experts as E
+    names = {s.name for s in SPECS}
+    assert set(E.EXPERTS) == {"coordinateur", "impots", "lamal", "poursuites", "logement"}
+    for e in E.EXPERTS.values():
+        assert e.tools and set(e.tools) <= names, (e.id, set(e.tools) - names)
+        sp = E.system_prompt(e.id)
+        assert sp.splitlines()[0] == f"[ordner-expert: {e.id}]" and "{{" not in sp   # persona templates are strict
+        assert E.marker(sp) == e.id
+    assert E.marker("no marker here") is None and E.marker("[ordner-expert: nobody]\nx") is None
+    y = E.presets_yaml()
+    for e in E.EXPERTS.values():
+        row = "preset-standard" if e.id == "coordinateur" else f"preset-{e.id}"
+        assert f"- id: {row}\n" in y and f"ORDNER_SYSTEM_{e.id.upper()}" in y and f"ORDNER_MCP_ARGS_{e.id.upper()}" in y
+    env = E.env_for("/x/ordner.db", "subj", "2026-02-20", "/s")
+    outs = set()
+    for e in E.EXPERTS.values():   # Review Focus 4: one MCP process and one state file per expert
+        args = json.loads(env[f"ORDNER_MCP_ARGS_{e.id.upper()}"])
+        assert args[args.index("--tools") + 1].split(",") == list(e.tools) and "--today" in args
+        outs.add(args[args.index("--out") + 1])
+        assert env[f"ORDNER_SYSTEM_{e.id.upper()}"] == E.system_prompt(e.id)
+    assert outs == {f"/s/state-{i}.json" for i in E.EXPERTS}
+    print(f"experts: {len(E.EXPERTS)} presets, tools from the registry, markers, one state file each: ok")
+
+
+def check_web_patch():
+    import os
+    import subprocess
+    import tempfile
+    from pathlib import Path
+
+    from . import experts as E
+    from . import runtime as H
+    from . import web as W
+    text = W.PATCH.read_text(encoding="utf-8")
+    assert "dsh-mcp-client" not in text, "web profile: MCP is mounted per expert preset, not at the host"
+    for row in ("preset-ptc", "preset-minimal", "preset-cordis", "web", "ui-sidebar-terminal", "terminal-controller",
+                "office-to-pdf", "ui-sidebar-documentpreview"):
+        assert f"- id: {row}\n  disabled: true" in text, row
+    assert "preference: light" in text and "preference: fr" in text
+    if not H.available():
+        return print("web patch: composition SKIPPED (no harness build)")
+    with tempfile.TemporaryDirectory() as tmp:
+        presets = Path(tmp) / "experts.patch.yml"
+        presets.write_text(E.presets_yaml(), encoding="utf-8")
+        p = subprocess.run(["node", str(W.BIN), "--profile", "web", "--patch", str(W.PATCH), "--patch", str(presets),
+                            "--dump-config"], capture_output=True, text=True, timeout=120,
+                           env={**os.environ, "DSH_HOME": tmp})
+    assert p.returncode == 0, p.stderr[-2000:]
+    tree = p.stdout
+    for e in E.EXPERTS.values():
+        assert f"ORDNER_MCP_ARGS_{e.id.upper()}" in tree, e.id
+    print("web patch: rows off, light/fr, composes with the 5 expert presets (dsh --dump-config exit 0): ok")
+
+
+def check_routing():
+    import socket
+    import tempfile
+    from pathlib import Path
+    from unittest import mock
+
+    from ordner.agent.llm import OpenAICompat
+
+    from . import experts as E
+    from .proxy import route
+    api = lambda e: {t.replace(".", "_") for t in E.EXPERTS[e].tools} | {"ask_user", "prepare_action"}  # noqa: E731
+    sp = E.system_prompt("lamal")
+    r = route([{"role": "system", "content": sp}], adapters_ok=True)
+    assert r["expert"] == "lamal" and set(r["allowed"]) == api("lamal")
+    # Review Focus 2: no marker or an unknown expert -> base model, no adapter, the proxy's own allowlist
+    for text in ("plain", "[ordner-expert: nobody]\n" + SYSTEM):
+        assert route([{"role": "system", "content": text}], adapters_ok=True) == {"expert": None, "allowed": None,
+                                                                                    "adapter": None}
+    # Review Focus 3: adapter only if its directory exists and the backend is MLX
+    with tempfile.TemporaryDirectory() as tmp, mock.patch.object(E, "ADAPTERS", Path(tmp)):
+        assert route([{"role": "system", "content": sp}], adapters_ok=True)["adapter"] is None   # not trained
+        d = Path(tmp) / E.EXPERTS["lamal"].adapter
+        d.mkdir()
+        (d / "adapters.safetensors").write_bytes(b"")
+        assert route([{"role": "system", "content": sp}], adapters_ok=True)["adapter"] == str(d)
+        assert route([{"role": "system", "content": sp}], adapters_ok=False)["adapter"] is None   # non-MLX backend
+
+        tool = lambda n: {"type": "function", "function": {"name": PREFIX + n, "description": "", "parameters": {}}}  # noqa: E731
+        def req(expert, names, system=None):
+            return json.dumps({"messages": [{"role": "system", "content": system or E.system_prompt(expert)},
+                                            {"role": "user", "content": "Où en est mon dossier ?"}],
+                               "tools": [tool(n) for n in names]}).encode()
+
+        def post(p, body):
+            try:
+                with urllib.request.urlopen(urllib.request.Request(p.url + "/chat/completions", body), timeout=10) as f:
+                    return 200, json.load(f)
+            except urllib.error.HTTPError as e:
+                return e.code, json.load(e)
+        up = Upstream()
+        allowed = sorted({n for e in E.EXPERTS for n in api(e)})
+        with up, Proxy(OpenAICompat(up.url), allowed=allowed, experts=True) as p:
+            code, _ = post(p, req("lamal", sorted(api("lamal"))))
+            assert code == 200 and up.bodies[-1]["adapters"] == str(d) and p.log[-1]["adapter"] == str(d)
+            code, _ = post(p, req("impots", sorted(api("impots"))))   # impots has no adapter in tmp
+            assert code == 200 and "adapters" not in up.bodies[-1] and p.log[-1]["adapter"] == "none"
+            p.adapters_ok = False   # a jury's own endpoint (vLLM, ...): never an `adapters` field
+            code, _ = post(p, req("lamal", sorted(api("lamal"))))
+            assert code == 200 and "adapters" not in up.bodies[-1] and p.log[-1]["adapter"] == "none"
+            p.adapters_ok = True
+            code, _ = post(p, req("lamal", ["case_load"], system="plain"))   # Review Focus 2 through the proxy
+            assert code == 200 and p.log[-1]["expert"] is None and p.log[-1]["adapter"] == "none"
+            assert "adapters" not in up.bodies[-1]
+            # Review Focus 1: a request listing a tool of another expert is refused before the model ...
+            n = len(up.bodies)
+            code, _ = post(p, req("impots", sorted(api("impots") | {"lamal_revoir_franchise"})))
+            assert code == 400 and p.log[-1]["refused"] == ["lamal_revoir_franchise"] and len(up.bodies) == n
+            # ... and a call the model writes to it goes through the carrier, answered "unknown tool" by the
+            # expert's MCP server (Ordner's usual error path); the session goes on.
+            up.reply = calls(("lamal_revoir_franchise", {"deductible": 2500}))
+            code, out = post(p, req("impots", sorted(api("impots"))))
+            (c,) = out["choices"][0]["message"]["tool_calls"]
+            assert code == 200 and c["function"]["name"] == PREFIX + CARRIER
+            assert json.loads(c["function"]["arguments"])[NAME_KEY] == "lamal_revoir_franchise"
+        assert "unknown tool lamal_revoir_franchise" in mcp_answer("impots", c)
+        # Review Focus 5: backend down or silent -> HTTP 502 with the error, bounded by the client timeout
+        dead = socket.socket()
+        dead.bind(("127.0.0.1", 0))
+        dead.listen()   # accepts in the backlog, never answers
+        port = dead.getsockname()[1]
+        with Proxy(OpenAICompat(f"http://127.0.0.1:{port}/v1", timeout=1), experts=True) as p:
+            t = time.time()
+            code, err = post(p, req("lamal", sorted(api("lamal"))))
+            assert code == 502 and "backend error" in err["error"]["message"] and time.time() - t < 5
+        dead.close()
+        with Proxy(OpenAICompat(f"http://127.0.0.1:{port}/v1", timeout=1), experts=True) as p:   # nothing listens
+            code, err = post(p, req("lamal", sorted(api("lamal"))))
+            assert code == 502 and p.log[-1]["error"]
+    print("routing: marker -> tools + adapter; none without marker/adapter/MLX; foreign tool refused or answered "
+          "unknown_tool; backend down -> 502: ok")
+
+
+class Upstream(HTTPServer):
+    """Fake OpenAI-compatible backend recording request bodies."""
+
+    def __init__(self):
+        class H(BaseHTTPRequestHandler):
+            def do_POST(h):
+                self.bodies.append(json.loads(h.rfile.read(int(h.headers["Content-Length"]))))
+                data = json.dumps({"choices": [{"message": {"role": "assistant", "content": self.reply}}]}).encode()
+                h.send_response(200)
+                h.send_header("Content-Length", str(len(data)))
+                h.end_headers()
+                h.wfile.write(data)
+
+            def log_message(h, *a):
+                pass
+        super().__init__(("127.0.0.1", 0), H)
+        self.bodies, self.reply = [], "Réponse."
+
+    @property
+    def url(self):
+        return f"http://127.0.0.1:{self.server_address[1]}/v1"
+
+    def __enter__(self):
+        threading.Thread(target=self.serve_forever, daemon=True).start()
+        return self
+
+    def __exit__(self, *exc):
+        self.shutdown()
+        self.server_close()
+
+
+def mcp_answer(expert_id, call):
+    """What the expert's own MCP server (its --tools subset) answers to a proxied call."""
+    import argparse
+    import tempfile
+    from pathlib import Path
+
+    from ordner.case import demo_seed
+    from ordner.case.store import Store
+
+    from . import experts as E
+    from .mcp_server import Server
+    with tempfile.TemporaryDirectory() as tmp:
+        db = Path(tmp) / "ordner.db"
+        sid = demo_seed.seed(Store(db))
+        args = json.loads(E.env_for(db, sid, None, tmp)[f"ORDNER_MCP_ARGS_{expert_id.upper()}"])[2:]
+        a = argparse.Namespace(today=None, **{k[2:]: v for k, v in zip(args[::2], args[1::2])})
+        return Server(a).call(call["function"]["name"][len(PREFIX):], json.loads(call["function"]["arguments"]))
+
+
 if __name__ == "__main__":
     units()
+    check_experts()
+    check_routing()
+    check_web_patch()
     end_to_end()
     print("harness selfcheck: OK")

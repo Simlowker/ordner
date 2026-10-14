@@ -104,11 +104,13 @@ class OpenAICompat:
         self.url, self.model, self.api_key = base_url.rstrip("/") + "/chat/completions", model, api_key
         self.max_tokens, self.timeout = max_tokens, timeout
 
-    def chat(self, messages, tools=None):
+    def chat(self, messages, tools=None, extra=None):
+        """extra: more body fields, e.g. {"adapters": <LoRA dir>} for mlx_lm.server."""
         body = {"model": self.model, "messages": messages, "temperature": 0, "max_tokens": self.max_tokens,
                 "chat_template_kwargs": {"enable_thinking": False}}
         if tools:
             body["tools"] = tools
+        body.update(extra or {})
         headers = {"Content-Type": "application/json"}
         if self.api_key:
             headers["Authorization"] = f"Bearer {self.api_key}"
@@ -142,7 +144,7 @@ class MLXLocal:
         return self.tok.apply_chat_template(messages, tools=tools or None, tokenize=False, enable_thinking=False,
                                             add_generation_prompt=not cont, continue_assistant_message=cont)
 
-    def chat(self, messages, tools=None):
+    def chat(self, messages, tools=None, extra=None):   # extra: server body fields, nothing to do in process
         from mlx_lm import stream_generate
         ids = self.tok.encode(self.prompt(messages, tools), add_special_tokens=False)
         out = [r.token for r in stream_generate(self.model, self.tok, ids, max_tokens=self.max_tokens)]
@@ -168,7 +170,7 @@ class MockLLM:
     def __init__(self, steps):
         self.steps, self.calls = list(steps), []
 
-    def chat(self, messages, tools=None):
+    def chat(self, messages, tools=None, extra=None):
         self.calls.append(messages)
         step = self.steps.pop(0) if self.steps else "done"
         raw = step(messages) if callable(step) else step

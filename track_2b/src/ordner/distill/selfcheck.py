@@ -127,6 +127,16 @@ def main(argv=None):
         s = r["score"] or {}
         print(f"live {name} ({t['model']}) on {v['id']}: {r['n_calls']} calls, {r['latency_s']} s, usage {r['usage']}, "
               f"pass {s.get('pass')}, filter {F.reasons({'teacher': name, **r}) or 'kept'}")
+    # by_expert: one domain -> its expert; cross-domain or unknown -> coordinator only
+    from types import SimpleNamespace as NS
+    from .by_expert import expert_of, procedures
+    ex = {"coordinateur": NS(id="coordinateur", cards=("*",)), "impots": NS(id="impots", cards=("tax.", "pension.pillar3a.")),
+          "lamal": NS(id="lamal", cards=("health_insurance.",))}
+    tax = {"expected": {"applicable": ["tax.return.VD"], "deadlines": [{"procedure": "tax.return.VD", "due": "2026-03-15"}]}}
+    mixed = {"expected": {"applicable": ["tax.return.VD", "health_insurance.premium_reduction.VD"]}}
+    only_no = {"expected": {"applicable": [], "not_applicable": ["health_insurance.change_insurer_or_deductible"]}}
+    assert expert_of(procedures(tax), ex) == "impots" and expert_of(procedures(mixed), ex) is None
+    assert expert_of(procedures(only_no), ex) == "lamal" and expert_of(set(), ex) is None
     print("distill selfcheck OK")
 
 
