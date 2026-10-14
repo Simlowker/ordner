@@ -1,0 +1,216 @@
+{
+  "id": "health_insurance.change_insurer_or_deductible",
+  "name": {
+    "fr": "Changer de caisse-maladie, de franchise ou de modèle (assurance de base)",
+    "de": "Krankenkasse, Franchise oder Modell wechseln (Grundversicherung)",
+    "it": "Cambiare cassa malati, franchigia o modello (assicurazione di base)"
+  },
+  "domain": "health_insurance",
+  "nature": "option",
+  "jurisdiction": "CH",
+  "applicability": {
+    "all": [
+      {"attr": "kind", "eq": "person"},
+      {"fact": "health_insurance.basic.insurer", "exists": true}
+    ]
+  },
+  "required_facts": [
+    "health_insurance.basic.insurer",
+    "health_insurance.basic.deductible",
+    "health_insurance.basic.model",
+    "health_insurance.premium.next_year",
+    "health_insurance.arrears.outstanding"
+  ],
+  "required_documents": [
+    "health_insurance_premium_letter",
+    "health_insurance_policy"
+  ],
+  "deadline": {
+    "id": "reception_by",
+    "params": {
+      "month": 11,
+      "day": 30,
+      "year_offset": 0,
+      "applies_to": ["change_insurer", "lower_deductible", "leave_restricted_model"],
+      "variants": [
+        {"case": "higher_deductible", "id": "fixed_date", "month": 12, "day": 31, "year_offset": 0, "sources": [5, 7]}
+      ],
+      "sources": [0, 1, 4, 8, 10]
+    }
+  },
+  "steps": [
+    {
+      "id": "compare_offers",
+      "who": "ordner",
+      "label": {
+        "fr": "Comparer primes, franchises et modèles de l'année suivante (données ouvertes OFSP / priminfo)",
+        "de": "Prämien, Franchisen und Modelle des Folgejahres vergleichen (offene BAG-Daten / priminfo)",
+        "it": "Confrontare premi, franchigie e modelli dell'anno successivo (dati aperti UFSP / priminfo)"
+      }
+    },
+    {
+      "id": "check_arrears",
+      "who": "ordner",
+      "sources": [2, 6],
+      "label": {
+        "fr": "Vérifier l'absence d'arriérés (primes, participations, intérêts moratoires, frais de poursuite) : ils bloquent le changement s'ils ne sont pas payés au 31.12",
+        "de": "Prüfen, ob Ausstände bestehen (Prämien, Kostenbeteiligungen, Verzugszinsen, Betreibungskosten): unbezahlt per 31.12 blockieren sie den Wechsel",
+        "it": "Verificare l'assenza di arretrati (premi, partecipazioni, interessi di mora, spese d'esecuzione): se non pagati entro il 31.12 bloccano il cambiamento"
+      }
+    },
+    {
+      "id": "choose",
+      "who": "user",
+      "label": {
+        "fr": "Choisir la caisse, la franchise et le modèle",
+        "de": "Krankenkasse, Franchise und Modell wählen",
+        "it": "Scegliere la cassa, la franchigia e il modello"
+      }
+    },
+    {
+      "id": "new_insurer_application",
+      "who": "ordner",
+      "action": "letter",
+      "sources": [3],
+      "label": {
+        "fr": "Préparer la demande d'affiliation à la nouvelle caisse (franchise et date de début précisées)",
+        "de": "Beitrittsgesuch bei der neuen Krankenkasse vorbereiten (mit Franchise und Beginndatum)",
+        "it": "Preparare la domanda di affiliazione alla nuova cassa (con franchigia e data d'inizio)"
+      }
+    },
+    {
+      "id": "termination_letter",
+      "who": "ordner",
+      "action": "letter",
+      "sources": [0, 4, 8],
+      "label": {
+        "fr": "Préparer la lettre de résiliation de l'assurance de base : elle doit parvenir à la caisse au plus tard le 30.11",
+        "de": "Kündigungsschreiben der Grundversicherung vorbereiten: muss spätestens am 30.11. bei der Kasse eintreffen",
+        "it": "Preparare la lettera di disdetta dell'assicurazione di base: deve pervenire alla cassa entro il 30.11"
+      }
+    },
+    {
+      "id": "deductible_or_model_letter",
+      "who": "ordner",
+      "action": "letter",
+      "sources": [1, 5, 7, 10],
+      "label": {
+        "fr": "Préparer la lettre de changement : franchise plus basse ou sortie d'un modèle à choix limité au 30.11 ; franchise plus élevée au 31.12",
+        "de": "Änderungsschreiben vorbereiten: tiefere Franchise oder Austritt aus einem Modell mit eingeschränkter Wahl bis 30.11.; höhere Franchise bis 31.12.",
+        "it": "Preparare la lettera di modifica: franchigia più bassa o uscita da un modello a scelta limitata entro il 30.11; franchigia più alta entro il 31.12"
+      }
+    },
+    {
+      "id": "send",
+      "who": "user",
+      "sources": [11],
+      "label": {
+        "fr": "Signer et envoyer par recommandé ou « Courrier A Plus », idéalement avant le 15.11",
+        "de": "Unterschreiben und eingeschrieben oder mit «A-Post Plus» senden, idealerweise vor dem 15.11.",
+        "it": "Firmare e inviare per raccomandata o «Posta A Plus», idealmente entro il 15.11"
+      }
+    },
+    {
+      "id": "verify_confirmations",
+      "who": "ordner",
+      "sources": [9],
+      "label": {
+        "fr": "Contrôler la confirmation de la nouvelle caisse puis celle de l'ancienne (fin d'affiliation sans interruption)",
+        "de": "Bestätigung der neuen und danach der alten Kasse prüfen (lückenloser Versicherungsschutz)",
+        "it": "Controllare la conferma della nuova cassa e poi quella della vecchia (copertura senza interruzione)"
+      }
+    }
+  ],
+  "outputs": [
+    "new_insurer_confirmation",
+    "former_insurer_end_confirmation"
+  ],
+  "sources": [
+    {
+      "title": "OFSP, fiche d'information « Changement de caisse-maladie : ce qu'un assuré doit savoir », 29.09.2026",
+      "url": "https://www.bag.admin.ch/dam/fr/sd-web/92VbSMPCd--v/PG27-FB-Versichererwechsel_FR.pdf",
+      "quote": "La résiliation doit donc parvenir à la caisse-maladie au plus tard le 30 novembre 2026.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "OFSP, fiche d'information « Changement de caisse-maladie », 29.09.2026 (franchise plus basse)",
+      "url": "https://www.bag.admin.ch/dam/fr/sd-web/92VbSMPCd--v/PG27-FB-Versichererwechsel_FR.pdf",
+      "quote": "S'il opte pour une franchise plus basse, il doit le communiquer par écrit à la caisse-maladie choisie jusqu'au 30 novembre 2026.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "OFSP, fiche d'information « Changement de caisse-maladie », 29.09.2026 (arriérés)",
+      "url": "https://www.bag.admin.ch/dam/fr/sd-web/92VbSMPCd--v/PG27-FB-Versichererwechsel_FR.pdf",
+      "quote": "celui-ci ne peut pas quitter sa caisse-maladie actuelle s'il lui doit encore des primes, des participations aux coûts, des intérêts moratoires, qui ont fait l'objet d'un rappel jusqu'au 30 novembre 2026, ou des frais de poursuite, et qu'il ne s'en est pas acquitté au 31 décembre 2026.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "OFSP, fiche d'information « Changement de caisse-maladie », 29.09.2026 (affiliation)",
+      "url": "https://www.bag.admin.ch/dam/fr/sd-web/92VbSMPCd--v/PG27-FB-Versichererwechsel_FR.pdf",
+      "quote": "Parallèlement, les assurés doivent s'affilier à une nouvelle caisse.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "LAMal (RS 832.10), art. 7, al. 2 — Fedlex, version du 01.07.2026",
+      "url": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/1995/1328_1328_1328/20260701/fr/html/fedlex-data-admin-ch-eli-cc-1995-1328_1328_1328-20260701-fr-html-1.html",
+      "quote": "Lors de la communication de la nouvelle prime, il peut changer d'assureur pour la fin du mois qui précède le début de la validité de la nouvelle prime, moyennant un préavis d'un mois.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "OFSP, fiche d'information « Changement de caisse-maladie », 29.09.2026 (franchise plus élevée)",
+      "url": "https://www.bag.admin.ch/dam/fr/sd-web/92VbSMPCd--v/PG27-FB-Versichererwechsel_FR.pdf",
+      "quote": "S'il opte pour une franchise plus élevée, il le communique, toujours par écrit, jusqu'au 31 décembre 2026.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "LAMal (RS 832.10), art. 64a, al. 6 — Fedlex, version du 01.07.2026",
+      "url": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/1995/1328_1328_1328/20260701/fr/html/fedlex-data-admin-ch-eli-cc-1995-1328_1328_1328-20260701-fr-html-1.html",
+      "quote": "En dérogation à l'art. 7, l'assuré en retard de paiement ne peut pas changer d'assureur tant que ses arriérés de primes, de participations aux coûts, d'intérêts moratoires et de frais de poursuite ne sont pas payés intégralement.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "OAMal (RS 832.102), art. 94, al. 1 — Fedlex, version du 01.08.2026",
+      "url": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/1995/3867_3867_3867/20260801/fr/html/fedlex-data-admin-ch-eli-cc-1995-3867_3867_3867-20260801-fr-html.html",
+      "quote": "L'assuré ne peut choisir une franchise plus élevée que pour le début d'une année civile.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "OAMal (RS 832.102), art. 94, al. 2 — Fedlex, version du 01.08.2026",
+      "url": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/1995/3867_3867_3867/20260801/fr/html/fedlex-data-admin-ch-eli-cc-1995-3867_3867_3867-20260801-fr-html.html",
+      "quote": "Le passage à une franchise moins élevée ou à une assurance avec bonus ou le changement d'assureur sont possibles pour la fin d'une année civile et moyennant préavis donné dans les délais fixés à l'art. 7, al. 1 et 2, LAMal.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "LAMal (RS 832.10), art. 7, al. 5 — Fedlex, version du 01.07.2026",
+      "url": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/1995/1328_1328_1328/20260701/fr/html/fedlex-data-admin-ch-eli-cc-1995-1328_1328_1328-20260701-fr-html-1.html",
+      "quote": "L'affiliation auprès de l'ancien assureur ne prend fin que lorsque le nouvel assureur lui a communiqué qu'il assure l'intéressé sans interruption de la protection d'assurance.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "OFSP, fiche d'information « Changement de caisse-maladie », 29.09.2026 (sortie d'un modèle à choix limité)",
+      "url": "https://www.bag.admin.ch/dam/fr/sd-web/92VbSMPCd--v/PG27-FB-Versichererwechsel_FR.pdf",
+      "quote": "Ce changement doit être communiqué par écrit à la caisse-maladie jusqu'au 30 novembre 2026.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "OFSP, fiche d'information « Changement de caisse-maladie », 29.09.2026 (envoi conseillé)",
+      "url": "https://www.bag.admin.ch/dam/fr/sd-web/92VbSMPCd--v/PG27-FB-Versichererwechsel_FR.pdf",
+      "quote": "Il est conseillé de faire parvenir la résiliation par écrit jusqu'au 15 novembre 2026 par lettre recommandée ou par « Courrier A Plus ».",
+      "verified": true,
+      "accessed": "2026-10-14"
+    }
+  ],
+  "qualification": "qualified",
+  "notes": "Période = année civile qui précède l'année des nouvelles primes (cycle 2026 -> 2027 dans la fiche OFSP). Les dates 30.11 / 31.12 de la fiche OFSP sont celles du cycle 2026 ; la règle durable est l'art. 7 al. 2 LAMal (préavis d'un mois avant le 1.1, primes annoncées au moins deux mois avant). 'variants' décrit le cas de la franchise plus élevée (OFSP : communication écrite jusqu'au 31.12 ; la fiche ne dit pas explicitement 'réception') — à interpréter par ordner.rules. Non encodé : changement pour la fin du semestre (art. 7 al. 1 LAMal, préavis de 3 mois ; restreint par l'art. 94 al. 2 OAMal pour les franchises à option), changement lié à un déménagement ou un emploi (art. 7 al. 3), assurances complémentaires (délais selon les CGA, hors de cette fiche). Arriérés pour des enfants : ils bloquent le changement de l'enfant (art. 64a al. 6 LAMal)."
+}

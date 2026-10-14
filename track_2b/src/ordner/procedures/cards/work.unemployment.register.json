@@ -1,0 +1,194 @@
+{
+  "id": "work.unemployment.register",
+  "name": {
+    "fr": "S'inscrire au chômage (ORP) puis faire valoir l'indemnité auprès d'une caisse",
+    "de": "Sich beim RAV zur Arbeitsvermittlung anmelden und Arbeitslosenentschädigung bei einer Kasse geltend machen",
+    "it": "Iscriversi presso l'URC e far valere l'indennità di disoccupazione presso una cassa"
+  },
+  "domain": "work",
+  "nature": "right",
+  "jurisdiction": "CH",
+  "applicability": {
+    "any": [
+      {
+        "role": "job_seeker"
+      },
+      {
+        "fact": "work.employment.end_date",
+        "exists": true
+      }
+    ]
+  },
+  "required_facts": [
+    "person.ahv_number",
+    "work.employment.end_date",
+    "work.unemployment.first_claimed_day",
+    "work.unemployment.fund"
+  ],
+  "required_documents": [
+    "employer_certificate_unemployment",
+    "job_search_proofs",
+    "identity_document"
+  ],
+  "deadline": null,
+  "steps": [
+    {
+      "id": "register_orp",
+      "who": "user",
+      "action": "form_entry",
+      "sources": [
+        0,
+        1,
+        2,
+        9
+      ],
+      "label": {
+        "fr": "S'inscrire à l'ORP (en ligne sur Job-Room ou en personne, numéro AVS requis) au plus tard le premier jour pour lequel on demande l'indemnité",
+        "de": "Sich beim RAV anmelden (online über Job-Room oder persönlich, AHV-Nummer nötig) spätestens am ersten Tag, für den Entschädigung beansprucht wird",
+        "it": "Iscriversi all'URC (online su Job-Room o di persona, numero AVS necessario) al più tardi il primo giorno per cui si chiede l'indennità"
+      }
+    },
+    {
+      "id": "first_interview",
+      "who": "user",
+      "sources": [
+        3
+      ],
+      "label": {
+        "fr": "Préparer le premier entretien ORP (convocation dans les 15 jours suivant l'inscription) avec preuves de recherches d'emploi",
+        "de": "Erstgespräch beim RAV vorbereiten (Einladung innert 15 Tagen nach der Anmeldung), mit Nachweis der Arbeitsbemühungen",
+        "it": "Preparare il primo colloquio all'URC (convocazione entro 15 giorni dall'iscrizione) con le prove delle ricerche di lavoro"
+      }
+    },
+    {
+      "id": "choose_fund",
+      "who": "user",
+      "sources": [
+        4,
+        5
+      ],
+      "label": {
+        "fr": "Choisir librement une caisse de chômage (pas de changement pendant le délai-cadre)",
+        "de": "Arbeitslosenkasse frei wählen (kein Wechsel während der Rahmenfrist)",
+        "it": "Scegliere liberamente una cassa di disoccupazione (nessun cambiamento durante il termine quadro)"
+      }
+    },
+    {
+      "id": "employer_certificate",
+      "who": "ordner",
+      "action": "document_request",
+      "sources": [
+        7
+      ],
+      "label": {
+        "fr": "Demander l'attestation de travail à l'ancien employeur (à remettre dans la semaine si elle est demandée après le départ)",
+        "de": "Arbeitgeberbescheinigung beim früheren Arbeitgeber verlangen (innert einer Woche, wenn nach dem Austritt verlangt)",
+        "it": "Chiedere l'attestato di lavoro al vecchio datore di lavoro (da consegnare entro una settimana se richiesto dopo la partenza)"
+      }
+    },
+    {
+      "id": "claim_benefits",
+      "who": "user",
+      "action": "form_entry",
+      "sources": [
+        6
+      ],
+      "label": {
+        "fr": "Remettre à la caisse la demande d'indemnité et les attestations de l'employeur des deux dernières années",
+        "de": "Der Kasse den Antrag auf Arbeitslosenentschädigung und die Arbeitgeberbescheinigungen der letzten zwei Jahre einreichen",
+        "it": "Consegnare alla cassa la domanda d'indennità e gli attestati del datore di lavoro degli ultimi due anni"
+      }
+    },
+    {
+      "id": "control_periods",
+      "who": "ordner",
+      "action": "reminder",
+      "sources": [
+        8
+      ],
+      "label": {
+        "fr": "Suivre chaque période de contrôle : le droit s'éteint s'il n'est pas exercé dans les 3 mois qui suivent la fin de la période",
+        "de": "Jede Kontrollperiode verfolgen: Der Anspruch erlischt, wenn er nicht innert 3 Monaten nach Ende der Periode geltend gemacht wird",
+        "it": "Seguire ogni periodo di controllo: il diritto si estingue se non è fatto valere entro 3 mesi dalla fine del periodo"
+      }
+    }
+  ],
+  "outputs": [
+    "orp_registration_confirmation",
+    "unemployment_fund_payment"
+  ],
+  "sources": [
+    {
+      "title": "SECO, travail.swiss « Inscription et enregistrement »",
+      "url": "https://www.arbeit.swiss/fr/demandeurs-demploi/inscription-et-enregistrement",
+      "quote": "Vous devez vous inscrire au plus tard le premier jour pour lequel vous demandez des prestations de l'assurance-chômage.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "LACI (RS 837.0), art. 17, al. 2 — Fedlex, version du 01.01.2026",
+      "url": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/1982/2184_2184_2184/20260101/fr/html/fedlex-data-admin-ch-eli-cc-1982-2184_2184_2184-20260101-fr-html-1.html",
+      "quote": "En vue de son placement, l'assuré est tenu de s'inscrire personnellement aussitôt que possible, mais au plus tard le premier jour pour lequel il prétend à l'indemnité de chômage",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "SECO, travail.swiss « Inscription et enregistrement » — numéro AVS",
+      "url": "https://www.arbeit.swiss/fr/demandeurs-demploi/inscription-et-enregistrement",
+      "quote": "Pour vous inscrire au service public de l'emploi auprès de l'ORP, vous avez besoin de votre numéro AVS",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "SECO, travail.swiss « Inscription et enregistrement » — premier entretien",
+      "url": "https://www.arbeit.swiss/fr/demandeurs-demploi/inscription-et-enregistrement",
+      "quote": "Dans les 15 jours suivant votre inscription au service public de l'emploi, l'ORP compétent vous invite à un premier entretien.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "LACI (RS 837.0), art. 20, al. 1 — Fedlex, version du 01.01.2026",
+      "url": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/1982/2184_2184_2184/20260101/fr/html/fedlex-data-admin-ch-eli-cc-1982-2184_2184_2184-20260101-fr-html-1.html",
+      "quote": "Le chômeur exerce son droit à l'indemnité auprès d'une caisse qu'il choisit librement.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "LACI (RS 837.0), art. 20, al. 1, 2e phrase — Fedlex, version du 01.01.2026",
+      "url": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/1982/2184_2184_2184/20260101/fr/html/fedlex-data-admin-ch-eli-cc-1982-2184_2184_2184-20260101-fr-html-1.html",
+      "quote": "Dans les limites du délai-cadre applicable à la période d'indemnisation (art. 9, al. 2), un changement de caisse n'est pas autorisé.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "SECO, travail.swiss « Inscription et enregistrement » — pièces pour la caisse",
+      "url": "https://www.arbeit.swiss/fr/demandeurs-demploi/inscription-et-enregistrement",
+      "quote": "attestations de l'employeur des deux dernières années",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "LACI (RS 837.0), art. 20, al. 2 — Fedlex, version du 01.01.2026",
+      "url": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/1982/2184_2184_2184/20260101/fr/html/fedlex-data-admin-ch-eli-cc-1982-2184_2184_2184-20260101-fr-html-1.html",
+      "quote": "Lorsque l'assuré ne se trouve au chômage qu'ultérieurement, l'employeur est tenu de la lui remettre, sur sa demande, dans le délai d'une semaine.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "LACI (RS 837.0), art. 20, al. 3 — Fedlex, version du 01.01.2026",
+      "url": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/1982/2184_2184_2184/20260101/fr/html/fedlex-data-admin-ch-eli-cc-1982-2184_2184_2184-20260101-fr-html-1.html",
+      "quote": "Le droit s'éteint s'il n'est pas exercé dans les trois mois suivant la fin de la période de contrôle à laquelle il se rapporte.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "SECO, travail.swiss « Inscription et enregistrement » — canal en personne",
+      "url": "https://www.arbeit.swiss/fr/demandeurs-demploi/inscription-et-enregistrement",
+      "quote": "en vous rendant en personne à l'ORP compétent",
+      "verified": true,
+      "accessed": "2026-10-14"
+    }
+  ],
+  "qualification": "qualified",
+  "notes": "Échéance d'inscription relative au « premier jour pour lequel on demande l'indemnité » (choix de la personne) : aucun DeadlineRule existant ne l'exprime, d'où deadline=null ; la règle est portée par l'étape register_orp (au plus tard ce jour-là, aussitôt que possible). L'ORP et la caisse sont deux interlocuteurs distincts. Non encodé : conditions du droit (période de cotisation, aptitude au placement), suspensions pour chômage fautif, formulaires mensuels (« Indications de la personne assurée », preuves de recherches) et leurs délais de remise, délai-cadre de deux ans."
+}

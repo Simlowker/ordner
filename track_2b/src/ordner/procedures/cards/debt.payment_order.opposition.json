@@ -1,0 +1,175 @@
+{
+  "id": "debt.payment_order.opposition",
+  "name": {
+    "fr": "Former opposition à un commandement de payer",
+    "de": "Rechtsvorschlag gegen einen Zahlungsbefehl erheben",
+    "it": "Fare opposizione a un precetto esecutivo"
+  },
+  "domain": "debt",
+  "nature": "right",
+  "jurisdiction": "CH",
+  "applicability": {
+    "fact": "debt.payment_order.notified_on",
+    "exists": true
+  },
+  "required_facts": [
+    "debt.payment_order.notified_on",
+    "debt.payment_order.office",
+    "debt.payment_order.number",
+    "debt.payment_order.creditor",
+    "debt.payment_order.amount",
+    "debt.claim.contested_amount"
+  ],
+  "required_documents": [
+    "payment_order"
+  ],
+  "deadline": {
+    "id": "days_after_notification",
+    "params": {
+      "days": 10,
+      "count": "calendar",
+      "lp_holidays": true,
+      "sources": [0, 1, 2, 3, 4, 5, 9]
+    }
+  },
+  "steps": [
+    {
+      "id": "record_notification",
+      "who": "ordner",
+      "sources": [0],
+      "label": {
+        "fr": "Établir la date de notification du commandement de payer (jour de la remise, pas la date d'un e-mail ou d'un scan)",
+        "de": "Zustelldatum des Zahlungsbefehls festhalten (Tag der Übergabe, nicht Datum einer E-Mail oder eines Scans)",
+        "it": "Stabilire la data di notificazione del precetto esecutivo (giorno della consegna, non la data di un'e-mail o di una scansione)"
+      }
+    },
+    {
+      "id": "compute_deadline",
+      "who": "ordner",
+      "sources": [0, 1, 2, 3, 4, 5, 9],
+      "label": {
+        "fr": "Calculer l'échéance : 10 jours dès le lendemain ; samedi, dimanche ou férié reporte au jour ouvrable suivant ; fin pendant les féries de poursuite reporte au 3e jour utile",
+        "de": "Frist berechnen: 10 Tage ab dem Folgetag; Samstag, Sonntag oder Feiertag verschiebt auf den nächsten Werktag; Fristende in den Betreibungsferien verschiebt auf den 3. Werktag",
+        "it": "Calcolare la scadenza: 10 giorni dal giorno successivo; sabato, domenica o festivo sposta al giorno feriale seguente; fine durante le ferie esecutive sposta al 3° giorno utile"
+      }
+    },
+    {
+      "id": "decide",
+      "who": "user",
+      "label": {
+        "fr": "Décider : former opposition, payer, ou demander conseil à un service de conseil en dettes",
+        "de": "Entscheiden: Rechtsvorschlag erheben, bezahlen oder eine Schuldenberatung beiziehen",
+        "it": "Decidere: fare opposizione, pagare o chiedere consiglio a un servizio di consulenza sui debiti"
+      }
+    },
+    {
+      "id": "declare_opposition",
+      "who": "user",
+      "action": "letter",
+      "sources": [0, 6],
+      "label": {
+        "fr": "Déclarer l'opposition verbalement ou par écrit à l'office des poursuites (ou à la personne qui remet le commandement) ; aucun motif n'est nécessaire",
+        "de": "Rechtsvorschlag mündlich oder schriftlich beim Betreibungsamt (oder bei der überbringenden Person) erklären; eine Begründung ist nicht nötig",
+        "it": "Dichiarare l'opposizione oralmente o per scritto all'ufficio d'esecuzione (o a chi consegna il precetto); non occorre motivarla"
+      }
+    },
+    {
+      "id": "partial_opposition",
+      "who": "ordner",
+      "sources": [7],
+      "label": {
+        "fr": "Opposition partielle : indiquer exactement le montant contesté, sinon toute la dette est réputée contestée",
+        "de": "Teilweiser Rechtsvorschlag: bestrittenen Betrag genau angeben, sonst gilt die ganze Forderung als bestritten",
+        "it": "Opposizione parziale: indicare esattamente l'importo contestato, altrimenti l'intero debito è considerato contestato"
+      }
+    },
+    {
+      "id": "request_receipt",
+      "who": "user",
+      "action": "document_request",
+      "sources": [8],
+      "label": {
+        "fr": "Demander gratuitement l'acte (la confirmation) de l'opposition et le conserver",
+        "de": "Kostenlose Bescheinigung des Rechtsvorschlags verlangen und aufbewahren",
+        "it": "Chiedere gratuitamente l'attestazione dell'opposizione e conservarla"
+      }
+    }
+  ],
+  "outputs": [
+    "opposition_receipt"
+  ],
+  "sources": [
+    {
+      "title": "LP (RS 281.1), art. 74, al. 1 — Fedlex, version du 01.01.2026",
+      "url": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/11/529_488_529/20260101/fr/html/fedlex-data-admin-ch-eli-cc-11-529_488_529-20260101-fr-html-3.html",
+      "quote": "Le débiteur poursuivi qui entend former opposition doit, verbalement ou par écrit, en faire la déclaration immédiate à celui qui lui remet le commandement de payer ou à l'office dans les dix jours à compter de la notification du commandement de payer",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "LP (RS 281.1), art. 56, ch. 2 (féries) — Fedlex, version du 01.01.2026",
+      "url": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/11/529_488_529/20260101/fr/html/fedlex-data-admin-ch-eli-cc-11-529_488_529-20260101-fr-html-3.html",
+      "quote": "pendant les féries, à savoir sept jours avant et sept jours après les fêtes de Pâques et de Noël, ainsi que du 15 juillet au 31 juillet",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "LP (RS 281.1), art. 63 — Fedlex, version du 01.01.2026",
+      "url": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/11/529_488_529/20260101/fr/html/fedlex-data-admin-ch-eli-cc-11-529_488_529-20260101-fr-html-3.html",
+      "quote": "Les délais ne cessent pas de courir pendant la durée des féries et des suspensions des poursuites. Toutefois, si la fin d'un délai à la disposition du débiteur, du créancier ou d'un tiers coïncide avec un jour des féries ou de la suspension, le délai est prolongé jusqu'au troisième jour utile.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "LP (RS 281.1), art. 31 — Fedlex, version du 01.01.2026",
+      "url": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/11/529_488_529/20260101/fr/html/fedlex-data-admin-ch-eli-cc-11-529_488_529-20260101-fr-html-3.html",
+      "quote": "Sauf disposition contraire de la présente loi, les règles du code de procédure civile du 19 décembre 2008 (CPC)",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "CPC (RS 272), art. 142, al. 1 — Fedlex, version du 01.07.2026",
+      "url": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/2010/262/20260701/fr/html/fedlex-data-admin-ch-eli-cc-2010-262-20260701-fr-html-1.html",
+      "quote": "Les délais déclenchés par la communication ou la survenance d'un événement courent dès le lendemain de celles-ci.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "CPC (RS 272), art. 142, al. 3 — Fedlex, version du 01.07.2026",
+      "url": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/2010/262/20260701/fr/html/fedlex-data-admin-ch-eli-cc-2010-262-20260701-fr-html-1.html",
+      "quote": "Si le dernier jour est un samedi, un dimanche ou un jour férié reconnu par le droit fédéral ou le droit cantonal du siège du tribunal, le délai expire le premier jour ouvrable qui suit.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "LP (RS 281.1), art. 75, al. 1 — Fedlex, version du 01.01.2026",
+      "url": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/11/529_488_529/20260101/fr/html/fedlex-data-admin-ch-eli-cc-11-529_488_529-20260101-fr-html-3.html",
+      "quote": "Il n'est pas nécessaire de motiver l'opposition.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "LP (RS 281.1), art. 74, al. 2 — Fedlex, version du 01.01.2026",
+      "url": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/11/529_488_529/20260101/fr/html/fedlex-data-admin-ch-eli-cc-11-529_488_529-20260101-fr-html-3.html",
+      "quote": "Le débiteur poursuivi qui ne conteste qu'une partie de la dette doit indiquer exactement le montant contesté, faute de quoi la dette entière est réputée contestée.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "LP (RS 281.1), art. 74, al. 3 — Fedlex, version du 01.01.2026",
+      "url": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/11/529_488_529/20260101/fr/html/fedlex-data-admin-ch-eli-cc-11-529_488_529-20260101-fr-html-3.html",
+      "quote": "À la demande du débiteur, il lui est gratuitement donné acte de l'opposition.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "LP (RS 281.1), art. 63, 3e phrase — Fedlex, version du 01.01.2026",
+      "url": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/11/529_488_529/20260101/fr/html/fedlex-data-admin-ch-eli-cc-11-529_488_529-20260101-fr-html-3.html",
+      "quote": "Pour le calcul du délai de trois jours, le samedi, le dimanche et les jours légalement fériés ne sont pas comptés.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    }
+  ],
+  "qualification": "qualified",
+  "notes": "Le calcul ordner.rules doit appliquer : départ le lendemain de la notification (CPC 142 al. 1, via LP 31), report du week-end ou d'un jour férié (CPC 142 al. 3 ; jours fériés cantonaux à fournir), et si la fin tombe dans les féries (LP 56 ch. 2 : Pâques et Noël +/- 7 jours, 15-31 juillet), prolongation au 3e jour utile (LP 63). Non encodé : notification irrégulière pendant les féries ou les temps prohibés (LP 56 ch. 1 et 2 interdit les actes de poursuite ; effet sur le point de départ = jurisprudence, non vérifiée ici) ; poursuite pour effets de change (pas de féries, LP 56 ch. 2) ; suspension (LP 57 à 62). Ordner ne dépose rien : la personne déclare l'opposition elle-même."
+}

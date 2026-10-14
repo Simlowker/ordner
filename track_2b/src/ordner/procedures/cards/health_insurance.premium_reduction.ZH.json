@@ -1,0 +1,162 @@
+{
+  "id": "health_insurance.premium_reduction.ZH",
+  "name": {
+    "fr": "Demander la réduction individuelle de primes (Zurich)",
+    "de": "Individuelle Prämienverbilligung beantragen (Zürich)",
+    "it": "Chiedere la riduzione individuale dei premi (Zurigo)"
+  },
+  "domain": "health_insurance",
+  "nature": "right",
+  "jurisdiction": "ZH",
+  "applicability": {
+    "all": [
+      {
+        "attr": "canton",
+        "eq": "ZH"
+      },
+      {
+        "attr": "kind",
+        "eq": "person"
+      }
+    ]
+  },
+  "required_facts": [
+    "tax.assessment.net_income",
+    "tax.assessment.net_wealth",
+    "household.members",
+    "person.in_education"
+  ],
+  "required_documents": [
+    "sva_ipv_application_form",
+    "tax_assessment_decision"
+  ],
+  "deadline": {
+    "id": "fixed_date",
+    "params": {
+      "month": 3,
+      "day": 31,
+      "year_offset": 1,
+      "sources": [
+        0
+      ]
+    }
+  },
+  "steps": [
+    {
+      "id": "receive_form",
+      "who": "ordner",
+      "sources": [
+        1,
+        2,
+        3
+      ],
+      "label": {
+        "fr": "Repérer le formulaire de la SVA Zurich (envoyé au printemps pour l'année suivante) : la réduction n'est versée que sur demande",
+        "de": "Formular der SVA Zürich erkennen (im Frühling für das nächste Jahr verschickt): IPV gibt es nur auf Antrag",
+        "it": "Individuare il modulo della SVA Zurigo (inviato in primavera per l'anno successivo): la riduzione è versata solo su domanda"
+      }
+    },
+    {
+      "id": "pre_assess",
+      "who": "ordner",
+      "sources": [
+        5,
+        6
+      ],
+      "label": {
+        "fr": "Pré-évaluer le droit (revenu et fortune ; jeunes adultes en formation : revenus des parents pris en compte)",
+        "de": "Anspruch vorprüfen (Einkommen und Vermögen; junge Erwachsene in Ausbildung: Einkommen der Eltern zählt mit)",
+        "it": "Valutare in anticipo il diritto (reddito e sostanza; giovani adulti in formazione: si considera anche il reddito dei genitori)"
+      }
+    },
+    {
+      "id": "file_application",
+      "who": "user",
+      "action": "form_entry",
+      "sources": [
+        0
+      ],
+      "label": {
+        "fr": "Remplir et envoyer la demande à la SVA au plus tard le 31 mars de l'année suivante",
+        "de": "Antrag ausfüllen und spätestens am 31. März des Folgejahres an die SVA senden",
+        "it": "Compilare e inviare la domanda alla SVA al più tardi il 31 marzo dell'anno successivo"
+      }
+    },
+    {
+      "id": "track_settlement",
+      "who": "ordner",
+      "sources": [
+        4,
+        7
+      ],
+      "label": {
+        "fr": "Suivre le calcul provisoire (80 % versés d'abord) puis définitif (écart régularisé via l'assureur)",
+        "de": "Vorläufige Berechnung (zuerst 80 % ausbezahlt) und definitive Berechnung verfolgen (Differenz über die Krankenkasse ausgeglichen)",
+        "it": "Seguire il calcolo provvisorio (prima versato l'80 %) e poi definitivo (differenza conguagliata tramite l'assicuratore)"
+      }
+    }
+  ],
+  "outputs": [
+    "sva_ipv_decision"
+  ],
+  "sources": [
+    {
+      "title": "Kanton Zürich, « Prämienverbilligung in Leichter Sprache » (zh.ch, Gesundheitsdirektion)",
+      "url": "https://www.zh.ch/de-ls/gesundheit/praemienverbilligung_krankenversicherung.html",
+      "quote": "Sie müssen den Antrag bis spätestens 31. März vom nächsten Jahr schicken.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "Kanton Zürich, « Prämienverbilligung Krankenversicherung » (zh.ch)",
+      "url": "https://www.zh.ch/de/gesundheit/praemienverbilligung_krankenversicherung.html",
+      "quote": "Die IPV bekommt nur, wer sie beantragt.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "Kanton Zürich, « Prämienverbilligung Krankenversicherung » (zh.ch) — formulaire",
+      "url": "https://www.zh.ch/de/gesundheit/praemienverbilligung_krankenversicherung.html",
+      "quote": "Jeweils im Frühling schickt sie ein Formular für das nächste Jahr.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "Kanton Zürich, « Prämienverbilligung Krankenversicherung » (zh.ch) — SVA",
+      "url": "https://www.zh.ch/de/gesundheit/praemienverbilligung_krankenversicherung.html",
+      "quote": "Zuständig für die Durchführung der IPV ist im Kanton Zürich die SVA Zürich.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "Kanton Zürich, « Prämienverbilligung Krankenversicherung » (zh.ch) — calcul définitif",
+      "url": "https://www.zh.ch/de/gesundheit/praemienverbilligung_krankenversicherung.html",
+      "quote": "Wenn sich der vorläufige und der definitive Betrag unterscheiden, wird das über den Krankenversicherer ausgeglichen.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "LAMal (RS 832.10), art. 65, al. 1bis — Fedlex, version du 01.07.2026",
+      "url": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/1995/1328_1328_1328/20260701/fr/html/fedlex-data-admin-ch-eli-cc-1995-1328_1328_1328-20260701-fr-html-1.html",
+      "quote": "Pour les bas et moyens revenus, les cantons réduisent de 80 % au moins les primes des enfants et de 50 % au moins celles des jeunes adultes en formation.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "Kanton Zürich, « Prämienverbilligung Krankenversicherung » (zh.ch) — jeunes adultes",
+      "url": "https://www.zh.ch/de/gesundheit/praemienverbilligung_krankenversicherung.html",
+      "quote": "Bei jungen Erwachsenen in Ausbildung wird auch das Einkommen und Vermögen der Eltern berücksichtigt.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "Kanton Zürich, « Prämienverbilligung Krankenversicherung » (zh.ch) — 80 % provisoire",
+      "url": "https://www.zh.ch/de/gesundheit/praemienverbilligung_krankenversicherung.html",
+      "quote": "Damit der Unterschied nicht so gross ist, bekommen die Unterstützten zuerst nur 80 Prozent der vorläufigen Prämienverbilligung.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    }
+  ],
+  "qualification": "qualified",
+  "notes": "Période = année de la réduction (IPV 2026 : demande jusqu'au 31.03.2027). Base légale cantonale (EG KVG, LS 832.01) non citée article par article : la règle du 31.03 vient de la page officielle de la Gesundheitsdirektion. Limites de revenu et pourcentages d'Eigenanteil non encodés (fiche SVA « IPV 2026 Einkommensgrenzen » introuvable à l'URL connue le 14.10.2026). 'Envoyer' (schicken) : la page ne précise pas si la date de réception ou d'envoi compte."
+}

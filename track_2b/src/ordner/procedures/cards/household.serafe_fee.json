@@ -1,0 +1,157 @@
+{
+  "id": "household.serafe_fee",
+  "name": {
+    "fr": "Redevance radio-télévision des ménages (Serafe)",
+    "de": "Haushaltabgabe für Radio und Fernsehen (Serafe)",
+    "it": "Canone radiotelevisivo per le economie domestiche (Serafe)"
+  },
+  "domain": "housing",
+  "nature": "obligation",
+  "jurisdiction": "CH",
+  "applicability": {
+    "attr": "kind",
+    "in": ["person", "household"]
+  },
+  "required_facts": [
+    "household.members",
+    "household.serafe.invoice_amount",
+    "household.serafe.invoice_due_date",
+    "social.supplementary_benefits.receives"
+  ],
+  "required_documents": [
+    "serafe_invoice"
+  ],
+  "deadline": null,
+  "steps": [
+    {
+      "id": "check_amount",
+      "who": "ordner",
+      "sources": [0, 1, 2],
+      "label": {
+        "fr": "Contrôler la facture : 335 CHF par an et par ménage privé en 2026 ; 312 CHF du 1.1.2027 au 31.12.2028",
+        "de": "Rechnung prüfen: CHF 335 pro Jahr und Privathaushalt im Jahr 2026; CHF 312 vom 1.1.2027 bis 31.12.2028",
+        "it": "Controllare la fattura: 335 CHF all'anno per economia domestica privata nel 2026; 312 CHF dall'1.1.2027 al 31.12.2028"
+      }
+    },
+    {
+      "id": "check_household",
+      "who": "ordner",
+      "sources": [3, 4],
+      "label": {
+        "fr": "Vérifier la composition du ménage retenue (celle du registre des habitants) ; les adultes du ménage répondent solidairement",
+        "de": "Massgebende Haushaltszusammensetzung prüfen (gemäss Einwohnerregister); die Erwachsenen haften solidarisch",
+        "it": "Verificare la composizione dell'economia domestica considerata (registro abitanti); gli adulti rispondono solidalmente"
+      }
+    },
+    {
+      "id": "exemption_request",
+      "who": "user",
+      "action": "letter",
+      "sources": [5, 6, 9],
+      "label": {
+        "fr": "Si un membre du ménage touche des prestations complémentaires AVS/AI : demander l'exonération (rétroactive, au plus 5 ans avant la demande)",
+        "de": "Bezieht ein Haushaltsmitglied Ergänzungsleistungen zur AHV/IV: Befreiung beantragen (rückwirkend, höchstens 5 Jahre vor dem Gesuch)",
+        "it": "Se un membro dell'economia domestica riceve prestazioni complementari AVS/AI: chiedere l'esenzione (retroattiva, al massimo 5 anni prima della domanda)"
+      }
+    },
+    {
+      "id": "quarterly_option",
+      "who": "user",
+      "sources": [7],
+      "label": {
+        "fr": "Option : demander une facturation trimestrielle",
+        "de": "Option: vierteljährliche Rechnungsstellung verlangen",
+        "it": "Opzione: chiedere la fatturazione trimestrale"
+      }
+    },
+    {
+      "id": "pay",
+      "who": "user",
+      "action": "payment",
+      "sources": [8],
+      "label": {
+        "fr": "Payer la facture de l'organe de perception à l'échéance indiquée (Ordner ne paie jamais)",
+        "de": "Rechnung der Erhebungsstelle bis zum angegebenen Fälligkeitsdatum bezahlen (Ordner zahlt nie)",
+        "it": "Pagare la fattura dell'organo di riscossione entro la scadenza indicata (Ordner non paga mai)"
+      }
+    }
+  ],
+  "outputs": [
+    "payment_proof",
+    "exemption_decision"
+  ],
+  "sources": [
+    {
+      "title": "ORTV (RS 784.401), art. 57 — Fedlex, version du 01.06.2025 (en vigueur en 2026)",
+      "url": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/2007/151/20250601/fr/html/fedlex-data-admin-ch-eli-cc-2007-151-20250601-fr-html-8.html",
+      "quote": "pour un ménage privé, à: 335.–",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "OFCOM, « Redevance des ménages privés » (bakom.admin.ch, publié le 17.03.2021)",
+      "url": "https://www.bakom.admin.ch/fr/redevance-des-menages-prives",
+      "quote": "Chaque ménage privé paie une redevance annuelle de 335 francs.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "ORTV (RS 784.401), art. 57 — Fedlex, version du 01.01.2027",
+      "url": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/2007/151/20270101/fr/html/fedlex-data-admin-ch-eli-cc-2007-151-20270101-fr-html-9.html",
+      "quote": "du 1.1.2027 au 31.12.2028 312.–",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "LRTV (RS 784.40), art. 69, al. 2 — Fedlex, version du 01.10.2024",
+      "url": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/2007/150/20241001/fr/html/fedlex-data-admin-ch-eli-cc-2007-150-20241001-fr-html-8.html",
+      "quote": "La formation du ménage, telle qu'elle est enregistrée dans le registre des habitants cantonal ou communal, est déterminante pour la perception de la redevance.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "LRTV (RS 784.40), art. 69a, al. 3 — Fedlex, version du 01.10.2024",
+      "url": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/2007/150/20241001/fr/html/fedlex-data-admin-ch-eli-cc-2007-150-20241001-fr-html-8.html",
+      "quote": "Est solidairement responsable du paiement de la redevance du ménage toute personne adulte répondant à l'un des critères suivants",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "LRTV (RS 784.40), art. 69b, al. 1, let. a — Fedlex, version du 01.10.2024",
+      "url": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/2007/150/20241001/fr/html/fedlex-data-admin-ch-eli-cc-2007-150-20241001-fr-html-8.html",
+      "quote": "à leur demande, les personnes qui touchent des prestations annuelles au sens de l'art. 3, al. 1, let. a, de la loi du 6 octobre 2006 sur les prestations complémentaires",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "LRTV (RS 784.40), art. 69b, al. 2 — Fedlex, version du 01.10.2024",
+      "url": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/2007/150/20241001/fr/html/fedlex-data-admin-ch-eli-cc-2007-150-20241001-fr-html-8.html",
+      "quote": "Lorsqu'un membre d'un ménage privé répond aux conditions d'exonération définies à l'al. 1, l'assujettissement est supprimé pour tous les membres du ménage concerné.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "ORTV (RS 784.401), art. 58, al. 2 — Fedlex, version du 01.06.2025",
+      "url": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/2007/151/20250601/fr/html/fedlex-data-admin-ch-eli-cc-2007-151-20250601-fr-html-8.html",
+      "quote": "Toute personne assujettie peut demander, pour le ménage auquel elle appartient, une facturation trimestrielle.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "OFCOM, « Redevance des ménages privés » (bakom.admin.ch) — organe de perception",
+      "url": "https://www.bakom.admin.ch/fr/redevance-des-menages-prives",
+      "quote": "Depuis le 1er janvier 2019, Serafe est chargée de percevoir la redevance de radio-télévision auprès des ménages privés.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "LRTV (RS 784.40), art. 69b, al. 1, let. a (rétroactivité) — Fedlex, version du 01.10.2024",
+      "url": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/2007/150/20241001/fr/html/fedlex-data-admin-ch-eli-cc-2007-150-20241001-fr-html-8.html",
+      "quote": "l'exonération est accordée rétroactivement à la date du premier versement des prestations complémentaires, mais au plus cinq ans avant la réception de la demande par l'organe de perception",
+      "verified": true,
+      "accessed": "2026-10-14"
+    }
+  ],
+  "qualification": "qualified",
+  "notes": "Domaine 'housing' faute d'un domaine 'household' dans catalog.DOMAINS (vision : « Logement loué et ménage »). Échéance = date imprimée sur la facture (QR) : pas de date légale fixe, deadline=null ; la période d'assujettissement d'un an a un début échelonné propre au ménage (ORTV art. 58 al. 1). Organe de perception : Serafe selon la page OFCOM (publiée le 17.03.2021) ; mandat 2026 non revérifié sur une source plus récente. Montant 2027-2028 (312 CHF) tiré de la version Fedlex consolidée au 01.01.2027. Non encodé : ménages collectifs (670 CHF en 2026, ORTV art. 57 let. b), exonérations diplomatiques (LRTV art. 69b al. 1 let. b), prescription."
+}

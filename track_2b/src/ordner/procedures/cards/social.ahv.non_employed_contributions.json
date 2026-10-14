@@ -1,0 +1,157 @@
+{
+  "id": "social.ahv.non_employed_contributions",
+  "name": {
+    "fr": "Cotisations AVS/AI/APG des personnes sans activité lucrative (dont étudiants)",
+    "de": "AHV/IV/EO-Beiträge für Nichterwerbstätige (inkl. Studierende)",
+    "it": "Contributi AVS/AI/IPG delle persone senza attività lucrativa (compresi gli studenti)"
+  },
+  "domain": "social",
+  "nature": "obligation",
+  "jurisdiction": "CH",
+  "applicability": {
+    "all": [
+      {"attr": "kind", "eq": "person"},
+      {"any": [{"role": "student"}, {"role": "non_employed"}]},
+      {"attr": "birth_year", "exists": true}
+    ]
+  },
+  "required_facts": [
+    "person.birth_date",
+    "person.marital_status",
+    "social.ahv.contributions_from_employment",
+    "social.ahv.spouse_contributions",
+    "wealth.total",
+    "pension.annual_income"
+  ],
+  "required_documents": [
+    "ahv_contribution_decision",
+    "salary_certificate"
+  ],
+  "deadline": null,
+  "steps": [
+    {
+      "id": "obligation_start",
+      "who": "ordner",
+      "sources": [0, 1],
+      "label": {
+        "fr": "Établir le début de l'obligation : 1er janvier qui suit le 20e anniversaire",
+        "de": "Beginn der Beitragspflicht bestimmen: 1. Januar nach dem 20. Geburtstag",
+        "it": "Stabilire l'inizio dell'obbligo: 1° gennaio successivo al 20° compleanno"
+      }
+    },
+    {
+      "id": "spouse_exception",
+      "who": "ordner",
+      "sources": [4],
+      "label": {
+        "fr": "Vérifier l'exception du conjoint actif qui verse au moins le double de la cotisation minimale",
+        "de": "Ausnahme prüfen: erwerbstätiger Ehegatte bezahlt mindestens den doppelten Mindestbeitrag",
+        "it": "Verificare l'eccezione del coniuge attivo che versa almeno il doppio del contributo minimo"
+      }
+    },
+    {
+      "id": "compare_minimum",
+      "who": "ordner",
+      "sources": [2, 3, 7],
+      "label": {
+        "fr": "Comparer les cotisations d'un éventuel emploi au minimum annuel (530 CHF en 2026, 541 CHF dès 2027) ; étudiants : cotisation minimale jusqu'à 25 ans",
+        "de": "Beiträge aus einer allfälligen Erwerbstätigkeit mit dem jährlichen Mindestbeitrag vergleichen (CHF 530 im Jahr 2026, CHF 541 ab 2027); Studierende: Mindestbeitrag bis 25",
+        "it": "Confrontare i contributi di un eventuale impiego con il minimo annuo (530 CHF nel 2026, 541 CHF dal 2027); studenti: contributo minimo fino a 25 anni"
+      }
+    },
+    {
+      "id": "announce",
+      "who": "user",
+      "action": "letter",
+      "sources": [5, 6],
+      "label": {
+        "fr": "S'annoncer à la caisse de compensation du canton de domicile",
+        "de": "Sich bei der Ausgleichskasse des Wohnsitzkantons anmelden",
+        "it": "Annunciarsi alla cassa di compensazione del cantone di domicilio"
+      }
+    },
+    {
+      "id": "pay",
+      "who": "user",
+      "action": "payment",
+      "sources": [8],
+      "label": {
+        "fr": "Payer les cotisations fixées par la caisse (plus frais d'administration, au maximum 5 %)",
+        "de": "Die von der Kasse festgesetzten Beiträge bezahlen (zuzüglich Verwaltungskosten, höchstens 5 %)",
+        "it": "Pagare i contributi fissati dalla cassa (più spese amministrative, al massimo 5 %)"
+      }
+    }
+  ],
+  "outputs": [
+    "ahv_affiliation_confirmation",
+    "ahv_contribution_decision",
+    "payment_proof"
+  ],
+  "sources": [
+    {
+      "title": "LAVS (RS 831.10), art. 3, al. 1bis — Fedlex, version du 01.01.2026",
+      "url": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/63/837_843_843/20260101/fr/html/fedlex-data-admin-ch-eli-cc-63-837_843_843-20260101-fr-html-1.html",
+      "quote": "Les personnes sans activité lucrative sont tenues de payer des cotisations à compter du 1er janvier de l'année qui suit la date à laquelle elles ont 20 ans révolus.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "Centre d'information AVS/AI, mémento 2.03 « Cotisations des personnes sans activité lucrative », état au 1er janvier 2026",
+      "url": "https://www.ahv-iv.ch/p/2.03.f",
+      "quote": "Vous devez payer les cotisations à l'AVS, à l'AI et aux APG dès le 1er janvier qui suit votre 20e anniversaire.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "Centre d'information AVS/AI, mémento 2.03, état au 1er janvier 2026 — cotisation minimale",
+      "url": "https://www.ahv-iv.ch/p/2.03.f",
+      "quote": "La cotisation minimale se monte à 530 francs par année",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "LAVS (RS 831.10), art. 10, al. 2, let. a — Fedlex, version du 01.01.2026",
+      "url": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/63/837_843_843/20260101/fr/html/fedlex-data-admin-ch-eli-cc-63-837_843_843-20260101-fr-html-1.html",
+      "quote": "les étudiants sans activité lucrative, jusqu'au 31 décembre de l'année où ils atteignent l'âge de 25 ans",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "Centre d'information AVS/AI, mémento 2.03, état au 1er janvier 2026 — conjoint actif",
+      "url": "https://www.ahv-iv.ch/p/2.03.f",
+      "quote": "Vous n'avez pas à payer de cotisations si votre conjoint exerce une activité lucrative, est considéré comme actif au sens de l'AVS (voir « En bref ») et verse au moins le double de la cotisation minimale (soit 1 060 francs par année).",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "Centre d'information AVS/AI, mémento 2.03, état au 1er janvier 2026 — annonce",
+      "url": "https://www.ahv-iv.ch/p/2.03.f",
+      "quote": "vous devez vous annoncer à la caisse de compensation de votre canton de domicile",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "Centre d'information AVS/AI, mémento 2.03, état au 1er janvier 2026 — responsabilité",
+      "url": "https://www.ahv-iv.ch/p/2.03.f",
+      "quote": "Il vous appartient de veiller au respect de votre obligation de cotiser.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "OFAS, communiqué du 02.10.2026 « La rente minimale AVS/AI augmentera de 20 francs »",
+      "url": "https://www.bsv.admin.ch/fr/newnsb/BqB41FVYi5FB",
+      "quote": "Le montant annuel de la cotisation minimale AVS/AI/APG pour les indépendants et les personnes sans activité lucrative passera de 530 à 541 francs",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "Centre d'information AVS/AI, mémento 2.03, état au 1er janvier 2026 — frais d'administration",
+      "url": "https://www.ahv-iv.ch/p/2.03.f",
+      "quote": "Les caisses de compensation prélèvent, en plus des cotisations, une contribution aux frais d'administration équivalant au maximum à 5 % des cotisations.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    }
+  ],
+  "qualification": "qualified",
+  "notes": "Applicabilité approximative : la condition « année de cotisation >= année de naissance + 21 » ne s'exprime pas dans le langage de conditions actuel (pas d'arithmétique sur la période) ; l'étape obligation_start la porte. Pas de délai légal d'annonce trouvé : deadline=null. Barème selon fortune / rentes x 20 non encodé. Personnes partiellement actives : calcul comparatif de la caisse (mémento 2.03, « En bref ») non encodé. Montant 2026 = 530 CHF (AVS/AI/APG) ; LAVS art. 10 et l'O du 28.08.2024 citent 435 CHF pour la seule part AVS, ne pas confondre."
+}

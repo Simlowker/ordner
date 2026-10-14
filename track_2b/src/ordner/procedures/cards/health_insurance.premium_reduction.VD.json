@@ -1,0 +1,140 @@
+{
+  "id": "health_insurance.premium_reduction.VD",
+  "name": {
+    "fr": "Demander un subside à l'assurance-maladie (Vaud)",
+    "de": "Prämienverbilligung der Krankenversicherung beantragen (Waadt)",
+    "it": "Chiedere un sussidio per l'assicurazione malattie (Vaud)"
+  },
+  "domain": "health_insurance",
+  "nature": "right",
+  "jurisdiction": "VD",
+  "applicability": {
+    "all": [
+      {"attr": "canton", "eq": "VD"},
+      {"attr": "kind", "eq": "person"}
+    ]
+  },
+  "required_facts": [
+    "tax.assessment.net_income",
+    "tax.assessment.net_wealth",
+    "household.members",
+    "health_insurance.basic.premium",
+    "person.in_education"
+  ],
+  "required_documents": [
+    "tax_assessment_decision",
+    "identity_document",
+    "health_insurance_policy",
+    "study_certificate"
+  ],
+  "deadline": null,
+  "steps": [
+    {
+      "id": "pre_assess",
+      "who": "ordner",
+      "sources": [2, 4, 5],
+      "label": {
+        "fr": "Pré-évaluer le droit à partir de la dernière décision de taxation (objectif : charge des primes limitée à 10 % du revenu déterminant)",
+        "de": "Anspruch anhand der letzten Steuerveranlagung vorprüfen (Ziel: Prämienlast höchstens 10 % des massgebenden Einkommens)",
+        "it": "Valutare in anticipo il diritto in base all'ultima decisione di tassazione (obiettivo: onere dei premi limitato al 10 % del reddito determinante)"
+      }
+    },
+    {
+      "id": "gather_documents",
+      "who": "ordner",
+      "action": "document_request",
+      "sources": [6],
+      "label": {
+        "fr": "Réunir les pièces : décision de taxation, pièce d'identité, polices d'assurance du ménage, attestation d'études si majeur aux études",
+        "de": "Unterlagen sammeln: Steuerveranlagung, Ausweis, Policen des Haushalts, Studienbestätigung bei volljährigen Studierenden",
+        "it": "Raccogliere i documenti: decisione di tassazione, documento d'identità, polizze dell'economia domestica, attestato di studio se maggiorenne in formazione"
+      }
+    },
+    {
+      "id": "file_request",
+      "who": "user",
+      "action": "form_entry",
+      "sources": [0, 1],
+      "label": {
+        "fr": "Déposer la demande en ligne ou auprès de l'agence d'assurances sociales (le droit naît le 1er jour du 2e mois qui suit le dépôt : ne pas attendre)",
+        "de": "Gesuch online oder bei der Sozialversicherungsagentur einreichen (Anspruch ab dem 1. Tag des 2. Monats nach Einreichung: nicht zuwarten)",
+        "it": "Presentare la domanda online o presso l'agenzia delle assicurazioni sociali (il diritto nasce il 1° giorno del 2° mese dopo il deposito: non attendere)"
+      }
+    },
+    {
+      "id": "check_decision",
+      "who": "ordner",
+      "label": {
+        "fr": "Contrôler la décision de l'OVAM (montant versé à l'assureur, solde de prime à payer)",
+        "de": "Verfügung des OVAM prüfen (an die Kasse bezahlter Betrag, verbleibende Prämie)",
+        "it": "Controllare la decisione dell'OVAM (importo versato all'assicuratore, saldo del premio da pagare)"
+      }
+    },
+    {
+      "id": "report_changes",
+      "who": "user",
+      "sources": [3],
+      "label": {
+        "fr": "Annoncer toute variation des revenus de 20 % ou plus (en ligne ou à l'agence d'assurances sociales)",
+        "de": "Einkommensänderungen von 20 % oder mehr melden (online oder bei der Sozialversicherungsagentur)",
+        "it": "Annunciare ogni variazione del reddito del 20 % o più (online o presso l'agenzia delle assicurazioni sociali)"
+      }
+    }
+  ],
+  "outputs": [
+    "ovam_subsidy_decision"
+  ],
+  "sources": [
+    {
+      "title": "État de Vaud, « Subside à l'assurance-maladie » (vd.ch)",
+      "url": "https://www.vd.ch/sante-soins-et-handicap/assurance-maladie/subside-a-lassurance-maladie",
+      "quote": "Le droit à une réduction de prime prend naissance le premier jour du deuxième mois qui suit celui du dépôt de la demande",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "État de Vaud, « Subside à l'assurance-maladie » (vd.ch) — dépôt",
+      "url": "https://www.vd.ch/sante-soins-et-handicap/assurance-maladie/subside-a-lassurance-maladie",
+      "quote": "Vous pouvez déposer votre demande en ligne ou auprès de l'agence d'assurances sociales de votre région de domicile.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "État de Vaud, « Subside à l'assurance-maladie » (vd.ch) — évaluation",
+      "url": "https://www.vd.ch/sante-soins-et-handicap/assurance-maladie/subside-a-lassurance-maladie",
+      "quote": "Vous pouvez évaluer en ligne votre droit à un subside et son montant potentiel. Pour cela munissez-vous de votre dernière décision de taxation.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "État de Vaud, « Subside à l'assurance-maladie » (vd.ch) — changement de situation",
+      "url": "https://www.vd.ch/sante-soins-et-handicap/assurance-maladie/subside-a-lassurance-maladie",
+      "quote": "Si vos revenus ont baissé ou augmenté de 20% ou plus, vous devez annoncer votre changement de situation",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "État de Vaud, « Conditions d'octroi et renouvellement du droit aux subsides » (vd.ch/ovam-conditions)",
+      "url": "https://www.vd.ch/ovam-conditions",
+      "quote": "L'objectif du subside est de limiter la charge relative aux primes d'assurances-maladie à 10% de votre revenu déterminant",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "LAMal (RS 832.10), art. 65, al. 1bis — Fedlex, version du 01.07.2026",
+      "url": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/1995/1328_1328_1328/20260701/fr/html/fedlex-data-admin-ch-eli-cc-1995-1328_1328_1328-20260701-fr-html-1.html",
+      "quote": "Pour les bas et moyens revenus, les cantons réduisent de 80 % au moins les primes des enfants et de 50 % au moins celles des jeunes adultes en formation.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "État de Vaud, « Subside à l'assurance-maladie » (vd.ch) — pièces",
+      "url": "https://www.vd.ch/sante-soins-et-handicap/assurance-maladie/subside-a-lassurance-maladie",
+      "quote": "Si vous êtes majeurs et aux études, une attestation d'études",
+      "verified": true,
+      "accessed": "2026-10-14"
+    }
+  ],
+  "qualification": "qualified",
+  "notes": "Pas de délai de dépôt : le droit commence le 1er jour du 2e mois qui suit le dépôt (sauf RI, PC AVS/AI, rente-pont), d'où deadline=null et une incitation à déposer tôt. Barème exact (formule, primes de référence, RDU/LHPS) non encodé : seul le principe des 10 % est cité. Subsides 2026 calculés sur la taxation définitive entrée en force au 17.10.2025 (vd.ch/ovam-conditions). Délai de traitement annoncé comme allongé par l'OVAM ; pas de chiffre officiel vérifié (6 à 9 mois selon un texte parlementaire, non vérifié)."
+}

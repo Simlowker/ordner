@@ -1,0 +1,166 @@
+{
+  "id": "housing.moving.announce",
+  "name": {
+    "fr": "Annoncer un déménagement (départ et arrivée) au contrôle des habitants",
+    "de": "Umzug bei der Einwohnerkontrolle melden (Wegzug und Zuzug)",
+    "it": "Annunciare un trasloco (partenza e arrivo) al controllo abitanti"
+  },
+  "domain": "housing",
+  "nature": "obligation",
+  "jurisdiction": "CH",
+  "applicability": {
+    "fact": "housing.moving.date",
+    "exists": true
+  },
+  "required_facts": [
+    "housing.moving.date",
+    "housing.address.previous",
+    "housing.address.new",
+    "housing.commune.new",
+    "household.members",
+    "person.nationality"
+  ],
+  "required_documents": [
+    "lease_contract",
+    "identity_document",
+    "health_insurance_certificate"
+  ],
+  "deadline": {
+    "id": "days_after_notification",
+    "params": {
+      "days": 14,
+      "count": "calendar",
+      "from_fact": "housing.moving.date",
+      "sources": [0],
+      "cantonal": {
+        "VD": {"days": 8, "sources": [1, 2]},
+        "FR": {"days": 14, "sources": [3]}
+      }
+    }
+  },
+  "steps": [
+    {
+      "id": "announce_departure",
+      "who": "user",
+      "sources": [4, 5],
+      "label": {
+        "fr": "Annoncer le départ à l'ancienne commune, avec la date et la destination (VD et FR : sans délai)",
+        "de": "Wegzug bei der bisherigen Gemeinde mit Datum und Ziel melden (VD und FR: unverzüglich)",
+        "it": "Annunciare la partenza al vecchio comune, con data e destinazione (VD e FR: senza indugio)"
+      }
+    },
+    {
+      "id": "gather_documents",
+      "who": "ordner",
+      "action": "document_request",
+      "sources": [8],
+      "label": {
+        "fr": "Préparer les pièces demandées par la nouvelle commune (FR par ex. : acte d'origine, carte AVS, attestation d'assurance-maladie, bail)",
+        "de": "Von der neuen Gemeinde verlangte Unterlagen bereitstellen (FR z. B.: Heimatschein, AHV-Ausweis, Krankenversicherungsnachweis, Mietvertrag)",
+        "it": "Preparare i documenti richiesti dal nuovo comune (FR p. es.: atto d'origine, certificato AVS, attestato d'assicurazione malattie, contratto di locazione)"
+      }
+    },
+    {
+      "id": "announce_arrival",
+      "who": "user",
+      "action": "form_entry",
+      "sources": [0, 1, 2, 3],
+      "label": {
+        "fr": "Annoncer l'arrivée à la nouvelle commune : droit fédéral 14 jours au plus ; VD 8 jours ; FR 14 jours",
+        "de": "Zuzug bei der neuen Gemeinde melden: Bundesrecht höchstens 14 Tage; VD 8 Tage; FR 14 Tage",
+        "it": "Annunciare l'arrivo al nuovo comune: diritto federale al massimo 14 giorni; VD 8 giorni; FR 14 giorni"
+      }
+    },
+    {
+      "id": "internal_move",
+      "who": "user",
+      "sources": [6, 7],
+      "label": {
+        "fr": "Déménagement dans la même commune : VD 8 jours ; FR 30 jours",
+        "de": "Umzug innerhalb der Gemeinde: VD 8 Tage; FR 30 Tage",
+        "it": "Trasloco all'interno dello stesso comune: VD 8 giorni; FR 30 giorni"
+      }
+    },
+    {
+      "id": "dependent_dossiers",
+      "who": "ordner",
+      "action": "reminder",
+      "label": {
+        "fr": "Proposer la mise à jour des dossiers liés à l'adresse (assureur maladie, employeur, impôts, banque, Serafe) — à valider par la personne",
+        "de": "Aktualisierung der adressabhängigen Dossiers vorschlagen (Krankenkasse, Arbeitgeber, Steuern, Bank, Serafe) — von der Person zu bestätigen",
+        "it": "Proporre l'aggiornamento delle pratiche legate all'indirizzo (cassa malati, datore di lavoro, imposte, banca, Serafe) — da convalidare dalla persona"
+      }
+    }
+  ],
+  "outputs": [
+    "arrival_confirmation",
+    "residence_certificate"
+  ],
+  "sources": [
+    {
+      "title": "LHR (RS 431.02), art. 11, let. a — Fedlex, version du 01.01.2022",
+      "url": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/2006/619/20220101/fr/html/fedlex-data-admin-ch-eli-cc-2006-619-20220101-fr-html-10.html",
+      "quote": "toute personne physique qui déménage s'annonce au service du contrôle des habitants dans les 14 jours qui suivent l'événement",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "VD, Loi sur le contrôle des habitants (LCH, BLV 142.01), art. 3, al. 3 — texte via LexFind",
+      "url": "https://www.lexfind.ch/tolv/117414/fr",
+      "quote": "Lorsqu'un séjour de plus de trois mois est d'emblée prévisible, l'annonce aura lieu dans les huit jours qui suivent l'arrivée.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "État de Vaud, exposé des motifs de l'avant-projet de loi sur le service des habitants (LSH), consultation août 2026",
+      "url": "https://www.vd.ch/fileadmin/user_upload/accueil/fichiers_pdf/2026_ao%C3%BBt_actus/Consultation_AP_LSH/Expos%C3%A9_des_motifs_-_Avant-projet_de_loi_sur_le_service_des_habitants__LSH_.pdf",
+      "quote": "le délai des annonces a été fixé à quatorze jours et non plus à huit jours",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "État de Fribourg, « Changement d'adresse et déménagement » (fr.ch, modifié le 22.04.2024)",
+      "url": "https://www.fr.ch/vie-quotidienne/demarches-et-documents/changement-dadresse-et-demenagement",
+      "quote": "La personne qui s'établit dans une commune fribourgeoise doit annoncer son arrivée dans les quatorze jours qui suivent au Contrôle des habitants de la commune.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "État de Fribourg, « Changement d'adresse et déménagement » (fr.ch) — départ",
+      "url": "https://www.fr.ch/vie-quotidienne/demarches-et-documents/changement-dadresse-et-demenagement",
+      "quote": "La personne qui quitte la commune doit annoncer son départ au Contrôle des habitants sans délai et indiquer sa destination.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "VD, LCH (BLV 142.01), art. 6 — texte via LexFind",
+      "url": "https://www.lexfind.ch/tolv/117414/fr",
+      "quote": "est tenu d'annoncer sans délai son départ, la date et sa destination",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "VD, LCH (BLV 142.01), art. 5 — texte via LexFind",
+      "url": "https://www.lexfind.ch/tolv/117414/fr",
+      "quote": "Tout déménagement, y compris au sein d'un même bâtiment, tout changement d'état civil, d'adresse ou d'adresse postale y compris le numéro d'acheminement doit être signalé dans les huit jours.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "État de Fribourg, « Changement d'adresse et déménagement » (fr.ch) — changement interne",
+      "url": "https://www.fr.ch/vie-quotidienne/demarches-et-documents/changement-dadresse-et-demenagement",
+      "quote": "Tout changement d'adresse et/ou de logement à l'intérieur de la commune d'une personne établie ou en séjour, suisse ou de nationalité étrangère, doit être communiqué dans les trente jours au Contrôle des habitants de sa commune.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "État de Fribourg, « Changement d'adresse et déménagement » (fr.ch) — pièces",
+      "url": "https://www.fr.ch/vie-quotidienne/demarches-et-documents/changement-dadresse-et-demenagement",
+      "quote": "Attestation d'affiliation à une caisse-maladie",
+      "verified": true,
+      "accessed": "2026-10-14"
+    }
+  ],
+  "qualification": "qualified",
+  "notes": "Délai fédéral = maximum imposé aux cantons (LHR art. 11) ; les cantons peuvent être plus stricts : VD 8 jours (LCH art. 3 al. 3 et art. 5, confirmé comme droit actuel par l'exposé des motifs LSH d'août 2026 ; l'avant-projet LSH en consultation passerait à 14 jours), FR 14 jours à l'arrivée, 30 jours pour un changement interne. Encodage : 'from_fact' (date du déménagement) et 'cantonal' (surcharge par canton) sont des paramètres proposés à ordner.rules, qui ne compte aujourd'hui que depuis une notification. Texte LCH lu via LexFind (copie du recueil vaudois ; le site BLV officiel est une application JavaScript non lisible par verify.py). VD : annonce d'arrivée exigée lorsqu'un séjour de plus de trois mois est prévisible. Ressortissants étrangers : règles migratoires en plus (non couvertes). Autres cantons : délai fédéral par défaut, à qualifier canton par canton. L'étape dependent_dossiers est une suggestion d'Ordner, pas une règle légale."
+}

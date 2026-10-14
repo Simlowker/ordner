@@ -1,0 +1,168 @@
+{
+  "id": "business.self_employed.start",
+  "name": {
+    "fr": "Démarrer une activité indépendante (entreprise individuelle)",
+    "de": "Selbständige Erwerbstätigkeit aufnehmen (Einzelunternehmen)",
+    "it": "Avviare un'attività indipendente (ditta individuale)"
+  },
+  "domain": "business",
+  "nature": "obligation",
+  "jurisdiction": "CH",
+  "applicability": {
+    "role": "self_employed"
+  },
+  "required_facts": [
+    "business.start_date",
+    "business.trade_name",
+    "business.turnover.previous_year",
+    "business.turnover.expected_annual",
+    "business.has_employees"
+  ],
+  "required_documents": [
+    "ahv_self_employed_status_decision"
+  ],
+  "deadline": null,
+  "steps": [
+    {
+      "id": "ahv_affiliation",
+      "who": "user",
+      "action": "form_entry",
+      "sources": [0, 1],
+      "label": {
+        "fr": "S'inscrire à la caisse cantonale de compensation AVS ; la caisse décide au cas par cas du statut d'indépendant",
+        "de": "Sich bei der kantonalen AHV-Ausgleichskasse anmelden; die Kasse entscheidet im Einzelfall über den Selbständigenstatus",
+        "it": "Iscriversi alla cassa cantonale di compensazione AVS; la cassa decide caso per caso sullo statuto di indipendente"
+      }
+    },
+    {
+      "id": "ahv_advance_payments",
+      "who": "ordner",
+      "action": "reminder",
+      "sources": [2, 3],
+      "label": {
+        "fr": "Suivre les acomptes de cotisations, facturés trimestriellement (minimum 530 CHF par an en 2026)",
+        "de": "Akontobeiträge verfolgen, vierteljährlich in Rechnung gestellt (Mindestbeitrag CHF 530 pro Jahr im Jahr 2026)",
+        "it": "Seguire gli acconti dei contributi, fatturati trimestralmente (minimo 530 CHF all'anno nel 2026)"
+      }
+    },
+    {
+      "id": "commercial_register",
+      "who": "ordner",
+      "sources": [4, 5],
+      "label": {
+        "fr": "Registre du commerce : inscription obligatoire dès 100 000 CHF de chiffre d'affaires sur l'exercice précédent (professions libérales non commerciales exceptées) ; sinon facultative",
+        "de": "Handelsregister: Eintragungspflicht ab CHF 100 000 Umsatz im vorangegangenen Geschäftsjahr (freie Berufe ohne kaufmännische Form ausgenommen); sonst freiwillig",
+        "it": "Registro di commercio: iscrizione obbligatoria da 100 000 CHF di cifra d'affari nell'esercizio precedente (professioni liberali non commerciali escluse); altrimenti facoltativa"
+      }
+    },
+    {
+      "id": "vat_check",
+      "who": "ordner",
+      "sources": [6, 7],
+      "label": {
+        "fr": "TVA : libéré si le chiffre d'affaires annuel est inférieur à 100 000 CHF ; au-delà, remplir le questionnaire d'inscription de l'AFC",
+        "de": "MWST: befreit bei einem Jahresumsatz unter CHF 100 000; darüber den Anmeldefragebogen der ESTV ausfüllen",
+        "it": "IVA: esente se la cifra d'affari annua è inferiore a 100 000 CHF; oltre, compilare il questionario d'iscrizione dell'AFC"
+      }
+    },
+    {
+      "id": "own_coverage",
+      "who": "ordner",
+      "sources": [8],
+      "label": {
+        "fr": "Signaler que l'indépendant n'est assuré ni contre le chômage ni contre les accidents : examiner la couverture",
+        "de": "Darauf hinweisen, dass Selbständige weder gegen Arbeitslosigkeit noch gegen Unfall versichert sind: Deckung prüfen",
+        "it": "Segnalare che l'indipendente non è assicurato né contro la disoccupazione né contro gli infortuni: verificare la copertura"
+      }
+    },
+    {
+      "id": "employees",
+      "who": "ordner",
+      "sources": [9],
+      "label": {
+        "fr": "Si du personnel est engagé : inscription comme employeur à la caisse AVS, contrats LPP et LAA",
+        "de": "Bei Personal: Anmeldung als Arbeitgeber bei der AHV-Ausgleichskasse, Verträge BVG und UVG",
+        "it": "Se si assume personale: iscrizione come datore di lavoro alla cassa AVS, contratti LPP e LAINF"
+      }
+    }
+  ],
+  "outputs": [
+    "ahv_self_employed_status_decision",
+    "commercial_register_entry",
+    "vat_registration_or_exemption"
+  ],
+  "sources": [
+    {
+      "title": "SECO, Portail PME, « Check-list : création d'une entreprise individuelle »",
+      "url": "https://www.kmu.admin.ch/fr/check-list-creation-dune-entreprise-individuelle",
+      "quote": "Inscription à la Caisse cantonale de compensation AVS",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "Centre d'information AVS/AI, mémento 2.02 « Cotisations des indépendants », état au 1er janvier 2026",
+      "url": "https://www.ahv-iv.ch/p/2.02.f",
+      "quote": "Les caisses de compensation déterminent au cas par cas et en fonction de la rémunération de l'activité si l'assuré exerce une activité indépendante au regard de l'AVS.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "Centre d'information AVS/AI, mémento 2.02, état au 1er janvier 2026 — acomptes",
+      "url": "https://www.ahv-iv.ch/p/2.02.f",
+      "quote": "Les acomptes de cotisation sont facturés trimestriellement.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "Centre d'information AVS/AI, mémento 2.02, état au 1er janvier 2026 — minimum",
+      "url": "https://www.ahv-iv.ch/p/2.02.f",
+      "quote": "Pour un revenu annuel inférieur à 10 100 francs, vous verserez un montant minimal de 530 francs.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "CO (RS 220), art. 931, al. 1 — Fedlex, version du 01.10.2026",
+      "url": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/27/317_321_377/20261001/fr/html/fedlex-data-admin-ch-eli-cc-27-317_321_377-20261001-fr-html-3.html",
+      "quote": "Toute personne physique qui exploite une entreprise et qui, au cours du précédent exercice, a réalisé un chiffre d'affaires d'au moins 100 000 francs doit requérir l'inscription de son entreprise individuelle au registre du commerce au lieu de l'établissement.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "CO (RS 220), art. 931, al. 1, 2e phrase et al. 3 — Fedlex, version du 01.10.2026",
+      "url": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/27/317_321_377/20261001/fr/html/fedlex-data-admin-ch-eli-cc-27-317_321_377-20261001-fr-html-3.html",
+      "quote": "Sont libérés de cette obligation les membres des professions libérales et les agriculteurs lorsqu'ils n'exploitent pas une entreprise en la forme commerciale.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "LTVA (RS 641.20), art. 10, al. 2, let. a — Fedlex, version du 31.03.2025",
+      "url": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/2009/615/20250331/fr/html/fedlex-data-admin-ch-eli-cc-2009-615-20250331-fr-html-4.html",
+      "quote": "réalise en l'espace d'un an, sur le territoire suisse et à l'étranger, un chiffre d'affaires total inférieur à 100 000 francs à partir de prestations qui ne sont pas exclues du champ de l'impôt",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "AFC, « Assujettissement à la TVA » (estv.admin.ch)",
+      "url": "https://www.estv.admin.ch/fr/assujettissement-a-la-tva",
+      "quote": "pour les entreprises qui ne sont pas mentionnées ci-dessus : un chiffre d'affaires d'au moins 100 000 francs provenant de prestations réalisées sur le territoire suisse et à l'étranger qui ne sont pas exclues du champ de l'impôt",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "Centre d'information AVS/AI, mémento 2.02, état au 1er janvier 2026 — couvertures",
+      "url": "https://www.ahv-iv.ch/p/2.02.f",
+      "quote": "vous n'êtes assuré/e ni contre le chômage ni contre les accidents",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "SECO, Portail PME, « Check-list : création d'une entreprise individuelle » — personnel",
+      "url": "https://www.kmu.admin.ch/fr/check-list-creation-dune-entreprise-individuelle",
+      "quote": "Si vous avez du personnel: inscription auprès de la Caisse cantonale de compensation AVS et conclusion des contrats pour les assurances obligatoires de prévoyance professionnelle LPP et d'assurance accident LAA",
+      "verified": true,
+      "accessed": "2026-10-14"
+    }
+  ],
+  "qualification": "qualified",
+  "notes": "Fiche d'orientation : les obligations dépendent de faits à confirmer (chiffre d'affaires, personnel, forme commerciale). Non encodé : délais (aucun délai d'inscription AVS, RC ou TVA vérifié ; l'AFC parle seulement d'une « recommandation vivement » de remplir le questionnaire dès le seuil atteint), assujettissement volontaire à la TVA, autorisations sectorielles, comptabilité (CO art. 957), impôts de l'indépendant. Cotisations définitives fixées après la taxation fiscale (mémento 2.02) non détaillées. Les cotisations de l'activité salariée parallèle éventuelle sont un autre sujet."
+}
