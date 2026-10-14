@@ -190,7 +190,7 @@ def check_card_params():
     assert compute_deadline(moving, VD, {"facts": move("confirmed"), "kind": "internal"})["computed_from"]["card_sources"][1:3] == [1, 2]  # kind source first, then VD cantonal sources
     zh = compute_deadline(moving, Subject("s_vd", "person", "Z", canton="ZH"), {"facts": move("confirmed"), "kind": "internal"})
     assert zh["due"] == "2026-10-15" and "sans règle propre" in zh["computed_from"]["warnings"][0], zh
-    assert compute_deadline(moving, Subject("s_vd", "person", "N"), {"facts": move("confirmed")})["missing"] == ["subject.canton"]
+    assert compute_deadline(moving, Subject("s_vd", "person", "N"), {"facts": move("confirmed"), "kind": "internal"})["missing"] == ["subject.canton"]
     #    with an event kind (FR: 14 days arrival, 30 days internal move, departure "sans délai")
     fr_rule = DeadlineRule("days_after_notification", {
         "days": 14, "from_fact": "housing.moving.date",
