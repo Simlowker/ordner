@@ -1,0 +1,23 @@
+# mlx_lm.lora config, paths relative to ~/ordner/track_2b (see train.sh)
+model: ../models/apertus-v1.5-8b-text
+train: true
+fine_tune_type: lora
+data: work/lora_data
+mask_prompt: true
+num_layers: -1
+lora_parameters:
+  rank: 16
+  scale: 2.0  # alpha / rank = 32 / 16 (mlx-lm multiplies the LoRA branch by scale)
+  dropout: 0.0
+batch_size: 2
+iters: 420  # 2 epochs x 420 train pages / 2
+learning_rate: 1.0e-4
+optimizer: adam
+grad_checkpoint: true
+max_seq_length: 2048
+steps_per_report: 10
+steps_per_eval: 50
+val_batches: -1
+save_every: 50
+adapter_path: work/adapters/lora-v1
+seed: 7

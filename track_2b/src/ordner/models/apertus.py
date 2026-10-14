@@ -34,6 +34,12 @@ def unload():
 
 
 def build_prompt_ids(ocr_text, lang_hint=None):
+    # enable_thinking=False (also the template default) renders "Deliberation: disabled" in the developer block.
+    return _tok.apply_chat_template(messages(ocr_text, lang_hint), add_generation_prompt=True, enable_thinking=False,
+                                    tokenize=True, return_dict=False)
+
+
+def messages(ocr_text, lang_hint=None):
     fields = "\n".join(f"- {k}: {d}" for k, d in FIELDS.items())
     lang = f"The document is written in {lang_hint}.\n" if lang_hint else ""
     user = (
@@ -47,10 +53,7 @@ def build_prompt_ids(ocr_text, lang_hint=None):
         f"{lang}\n"
         f'OCR text:\n"""\n{ocr_text}\n"""'
     )
-    messages = [{"role": "system", "content": SYSTEM}, {"role": "user", "content": user}]
-    # enable_thinking=False (also the template default) renders "Deliberation: disabled" in the developer block.
-    return _tok.apply_chat_template(messages, add_generation_prompt=True, enable_thinking=False,
-                                    tokenize=True, return_dict=False)
+    return [{"role": "system", "content": SYSTEM}, {"role": "user", "content": user}]
 
 
 def _num(v):
