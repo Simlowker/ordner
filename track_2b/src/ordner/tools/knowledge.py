@@ -1,8 +1,9 @@
 """knowledge.search over the official corpus and the verified quotes of the procedure cards: EmbeddingGemma 2
-(explain/retrieve.py) in live mode, BM25 in replay mode or when the model is unavailable. RRF fusion of the two was
+(explain/retrieve.py) in live mode or with ORDNER_EMBED=1; BM25 only as the fallback (replay without the model, Docker). RRF fusion of the two was
 dropped: BM25 matches same-language distractors and diluted the cross-lingual gain (data/retrieval/results*.json). With a dossier in ctx: the subject's canton and language filter the
 passages (unless given), and the cards of the subject's open cases (or `card_id`) rank first."""
 import math
+import os
 import re
 import unicodedata
 from collections import Counter
@@ -92,7 +93,7 @@ def search(args, ctx):
     warnings, prov = [], {"corpus": f"{path.relative_to(ROOT)} + procedure card sources", "method": "bm25"}
     lex = [x * PREFER if ps[i].get("card_id") in preferred else x for i, x in enumerate(bm25(query))]
     ranks = [{i: r for r, i in enumerate(sorted((i for i, s in enumerate(lex) if s > 0), key=lambda i: -lex[i]))}]
-    if mode(ctx) == "live":
+    if mode(ctx) == "live" or os.environ.get("ORDNER_EMBED") == "1":  # ORDNER_EMBED=1: also in replay (scenario evals)
         try:
             from ordner.explain import retrieve  # relative paths: run from track_2b/
 
