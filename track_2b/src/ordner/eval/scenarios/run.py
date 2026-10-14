@@ -1,4 +1,4 @@
-"""python -m ordner.eval.scenarios.run --agent {rules_only,coordinator,mock} --split {dev,test,all}
+"""python -m ordner.eval.scenarios.run --agent {rules_only,coordinator,mock} --split {dev,test,all} [--toolset {base,process,both}]
 
 Runs every scenario on a fresh temporary dossier (ordner.case Store), phase by phase (a fresh agent instance per
 phase = resumption after interruption), then scores. Writes data/results/scenarios_<agent>.json and .md.
@@ -255,6 +255,8 @@ def main(argv=None):
     ap.add_argument("--llm-url", default=os.environ.get("LLM_BASE_URL", "http://127.0.0.1:8080/v1"))
     ap.add_argument("--llm-model", default=os.environ.get("LLM_NAME", "default"))
     ap.add_argument("--max-steps", type=int, default=12)
+    ap.add_argument("--toolset", choices=["base", "process", "both"], default="base",
+                    help="coordinator tools (H6): generic base tools, process tools, or both")
     a = ap.parse_args(argv)
     scenarios = load(a.split)
     if a.only:
@@ -267,8 +269,9 @@ def main(argv=None):
         from ordner.agent import llm as L
         model = {"openai": lambda: L.OpenAICompat(a.llm_url, a.llm_model), "mlx": lambda: L.MLXLocal(),
                  "mock": lambda: L.MockLLM([])}[a.llm]()
-        make = lambda: A.coordinator(resolve, model, a.max_steps)  # noqa: E731
-    name = a.agent + ("_mockllm" if a.agent == "coordinator" and a.llm == "mock" else "")  # never overwrite a real run
+        make = lambda: A.coordinator(resolve, model, a.max_steps, a.toolset)  # noqa: E731
+    name = a.agent + (f"_{a.toolset}" if a.agent == "coordinator" and a.toolset != "base" else "")
+    name += "_mockllm" if a.agent == "coordinator" and a.llm == "mock" else ""  # never overwrite a real run
     report = evaluate(scenarios, make, name, a.split)
     print(json.dumps(report["metrics"], indent=1))
     if report["unresolved_procedures"]:

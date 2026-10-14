@@ -14,6 +14,7 @@ from ordner.core.schema import Action, new_id
 
 from .base import ROOT
 from .document import jsonl
+from . import processes
 from .registry import SPECS, call, openai_tools
 
 PDF = "work/pdf/s0000-A.pdf"
@@ -46,7 +47,7 @@ def refused(name, args, ctx, needle):
 
 def check_registry():
     names = [s.name for s in SPECS]
-    assert len(names) == len(set(names)) == 11, names
+    assert len(names) == len(set(names)) == 11 + len(processes.NAMES), names  # + process tools (H6)
     for t in openai_tools():
         assert re.fullmatch(r"[a-zA-Z0-9_-]{1,64}", t["function"]["name"]) and t["function"]["parameters"]["type"] == "object"
     assert not any(s.side_effect for s in SPECS), "no tool may execute an external effect"

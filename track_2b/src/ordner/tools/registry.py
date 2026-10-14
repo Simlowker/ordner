@@ -9,10 +9,10 @@ from dataclasses import asdict, is_dataclass
 
 from ordner.core.schema import now
 
-from . import case, decision, document, expert, knowledge, rules
+from . import case, decision, document, expert, knowledge, processes, rules
 from .base import ToolError, mode
 
-_TOOLS = {spec.name: (spec, fn) for family in (document, knowledge, decision, expert, rules, case)
+_TOOLS = {spec.name: (spec, fn) for family in (document, knowledge, decision, expert, rules, case, processes)
           for spec, fn in family.TOOLS}
 SPECS = [spec for spec, _ in _TOOLS.values()]
 _ALIASES = {name.replace(".", "_"): name for name in _TOOLS}  # OpenAI function names allow no dots

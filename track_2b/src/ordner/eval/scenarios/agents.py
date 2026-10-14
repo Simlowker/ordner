@@ -126,10 +126,13 @@ def rules_only(resolve):
 
 
 class _DatedRegistry:
-    """Same API as ordner.tools.registry, with the scenario's date and replay mode in every tool context."""
+    """Same API as ordner.tools.registry, with the scenario's date and replay mode in every tool context. `toolset`
+    (H6): base | process | both, see ordner.tools.processes.in_toolset; only the selected tools are shown to the model."""
 
-    def __init__(self, reg, today):
-        self.reg, self.today, self.SPECS = reg, today, reg.SPECS
+    def __init__(self, reg, today, toolset="base"):
+        from ordner.tools.processes import in_toolset
+        self.reg, self.today = reg, today
+        self.SPECS = [s for s in reg.SPECS if in_toolset(s.name, toolset)]
 
     def call(self, name, args, ctx):
         ctx.setdefault("today", self.today)
@@ -137,13 +140,13 @@ class _DatedRegistry:
         return self.reg.call(name, args, ctx)
 
 
-def coordinator(resolve, llm, max_steps=12):
+def coordinator(resolve, llm, max_steps=12, toolset="base"):
     """ordner.agent.coordinator.run on the seeded dossier; outcome taken from its questions, prepared actions, tool
     calls and the rules/deadline results it obtained."""
     from ordner.agent import coordinator as C
 
     def agent(s, store, sid, phase, goal, today):
-        reg = _DatedRegistry(C._registry(), today)
+        reg = _DatedRegistry(C._registry(), today, toolset)
         r = C.run(f"[{today}] {goal}", sid, llm, store, max_steps=max_steps, registry=reg)
         out = empty()
         out["questions"] = [{"missing": q.get("missing") or "", "question": q.get("question", "")} for q in r["questions"]]
@@ -164,6 +167,11 @@ def coordinator(resolve, llm, max_steps=12):
                 due = (res.get("deadline") or {}).get("due") if isinstance(res.get("deadline"), dict) else res.get("due")
                 if card and due:
                     out["deadlines"].append({"procedure": card, "due": due})
+                if isinstance(res.get("deadlines"), list):   # process tools: several deadlines, each with its card
+                    out["deadlines"] += [{"procedure": d["card_id"], "due": d["due"]} for d in res["deadlines"]
+                                         if isinstance(d, dict) and d.get("card_id") and d.get("due")]
+                if isinstance(res.get("applicable"), list):
+                    out["applicable"] += [c for c in res["applicable"] if isinstance(c, str)]
         out["tool_specs"] = {s_.name.replace(".", "_"): s_.input_schema for s_ in reg.SPECS}
         out["tool_specs"].update({t["function"]["name"]: t["function"]["parameters"] for t in C.AGENT_TOOLS})
         return out
