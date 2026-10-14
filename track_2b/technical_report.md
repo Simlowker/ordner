@@ -103,7 +103,7 @@ Ordner is deployable **b) air-gapped** (primary) and **a) on-premise** (e.g. a d
 
 **Scenarios (Proof 2).** 76 scenarios (`data/scenarios/`): a fictional persona, dossier, events and goal, sometimes in phases (resumption), with expected procedures, traps, questions, deadlines with the quoted official text that fixes them, actions and forbidden actions. 9 marked `needs_review` are excluded; 67 are split by a fixed hash seed into 43 dev and 24 test. Dev: 39 obligations, 12 traps, 30 deadlines, 7 missing-information items, 31 actions, 3 resumption scenarios. **Retrieval:** 2 × 36 everyday questions (fr/de/it), the second set held out.
 
-**Licence and privacy.** All data is fictional (no personal data), generated with MIT-licensed tools and released under CC0 ({{hf_dataset_url}}). `data/` (< 100 MB) holds replay inputs, demo, scenarios, questions, deduction rules and the 56 redistributable corpus passages; cantonal guides are rebuilt locally.
+**Licence and privacy.** All data is fictional (no personal data), generated with MIT-licensed tools and released under CDLA-Permissive-2.0 ({{hf_dataset_url}}). `data/` (< 100 MB) holds replay inputs, demo, scenarios, questions, deduction rules and the 56 redistributable corpus passages; cantonal guides are rebuilt locally.
 
 ## 5. Evaluation
 

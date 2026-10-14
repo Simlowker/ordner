@@ -93,7 +93,7 @@ def score(s: dict, phases: list[dict], final: dict) -> dict:
         got = sorted(pred_dl.get(resolve(d["procedure"]), set()))
         ok = (not got) if d.get("due") is None else d["due"] in got
         dl.append({"procedure": d["procedure"], "expected": d.get("due"), "got": got, "ok": ok})
-    actions = final["actions"]
+    actions = [a for a in final["actions"] if a.get("status") != "cancelled"]  # replaced by the double-payment guard
     kinds = {a.get("kind") for a in actions if a.get("procedure") in (None, *exp_app)}  # unattributed actions count
     effects = [a for a in actions if a.get("status") in EFFECT_STATUSES
                or (a.get("requires_validation") is False and a.get("kind") != "reminder")]
