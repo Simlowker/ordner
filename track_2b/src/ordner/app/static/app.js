@@ -1125,6 +1125,9 @@ function showExample(i, question, nearest = false) {
 }
 
 async function openAsk() {
+  // The agentic conversation (ordner.harness.web) may start after the console: ask the health endpoint each time.
+  try { health = await getJSON("/api/health"); } catch (e) { /* keep the last known health */ }
+  if (health?.conversation_url) { window.open(health.conversation_url, "_blank", "noopener"); return; }
   if (!state.transcripts) {
     try { state.transcripts = await getJSON("/data/demo/transcripts.json"); } catch (e) { state.transcripts = { transcripts: [] }; }
   }

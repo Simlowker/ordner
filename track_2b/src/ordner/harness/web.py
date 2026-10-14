@@ -7,10 +7,13 @@ ordner.harness.proxy in a thread (expert routing: tool subset and LoRA adapter f
 prompt) and runs `dsh --profile web` with web.patch.yml + the generated presets. --llm openai reads LLM_BASE_URL,
 LLM_NAME, LLM_API_KEY; ORDNER_BACKEND=mlx (default) asks the server for the expert's adapter per request. Each expert
 has one MCP process shared by all its sessions: one conversation per expert, restart to start from scratch.
-Model requests are logged as JSON lines in $ORDNER_HOME/harness/proxy.log.
+Model requests are logged as JSON lines in $ORDNER_HOME/harness/proxy.log. The conversation URL (with its token) is
+written to $ORDNER_HOME/harness/url.txt while dsh runs, for the cockpit's "Demander à Ordner" button.
 """
 import argparse
 import os
+import re
+import signal
 import subprocess
 import sys
 from pathlib import Path
@@ -26,6 +29,7 @@ from .runtime import HARNESS, ROOT
 
 HERE = Path(__file__).resolve().parent
 PATCH = HERE / "web.patch.yml"
+URL = re.compile(r"https?://\S+[?&]token=\S+")   # the line dsh prints once it serves ("dsh web: <url>")
 BIN = Path(getattr(RT, "BIN", None) or os.environ.get("ORDNER_HARNESS_BIN", HARNESS / "apps/cli/lib/bin.js"))
 
 
@@ -73,8 +77,20 @@ def main(argv=None):
            "--port", str(a.port), "--host", a.host, *passthrough]
     print(f"[ordner] conversation: http://127.0.0.1:{a.port}/  (model: {a.llm} via {proxy.url}, dossier {store.path})\n"
           f"[ordner] Une conversation par expert ; relancer pour repartir de zéro.", flush=True)
-    with proxy:
-        return subprocess.call(cmd, cwd=state / "workspace", env=env)
+    url_file = state / "url.txt"   # read by the cockpit's /api/health ("Demander à Ordner" opens it)
+    url_file.unlink(missing_ok=True)
+    signal.signal(signal.SIGTERM, lambda *_: sys.exit(143))   # `kill` / docker stop: run the cleanup below
+    with proxy, subprocess.Popen(cmd, cwd=state / "workspace", env=env, stdout=subprocess.PIPE,
+                                 stderr=subprocess.STDOUT, encoding="utf-8", errors="replace") as p:
+        try:
+            for line in p.stdout:
+                print(line, end="", flush=True)
+                if not url_file.exists() and (m := URL.search(line)):
+                    url_file.write_text(m.group(0), encoding="utf-8")
+            return p.wait()
+        finally:
+            url_file.unlink(missing_ok=True)
+            p.terminate()
 
 
 if __name__ == "__main__":

@@ -122,3 +122,41 @@
   disabled: true
 - id: ui-sidebar-documentpreview
   disabled: true
+
+# Citizen product: no plugin manager ("Extensions"), no scheduled tasks, no "open in" Finder/IDE menu, no file browser,
+# no access-mode chip ("Écriture dans le dossier"; no Ordner tool touches files), no DeepSeek account, provider or
+# session-log upload, no plugin pages in Réglages; compact statistics (no token count under each answer; the composer
+# dock is hidden by the forked ui-theme, harness_fork/README.md). Each row was checked by booting the UI and answering.
+- id: ui-plugin-manager
+  disabled: true
+- id: ui-schedule
+  disabled: true
+- id: ui-open-in-app
+  disabled: true
+- id: ui-sidebar-files
+  disabled: true
+- id: ui-settings-account
+  disabled: true
+- id: ui-settings-plugin-inventory
+  disabled: true
+- id: ui-settings-plugins
+  disabled: true
+- id: ui-settings-session-log
+  disabled: true
+- id: ui-permission
+  disabled: true
+- id: open-in-app
+  disabled: true
+- id: schedule
+  disabled: true
+- id: account-controller
+  disabled: true
+- id: deepseek-account
+  disabled: true
+- id: llm-deepseek
+  disabled: true
+- id: llm-deepseek-account
+  disabled: true
+- id: ui-chat
+  config:
+    performanceUsage: compact

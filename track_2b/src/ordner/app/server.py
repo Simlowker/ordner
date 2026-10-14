@@ -6,7 +6,8 @@ GET  /                      console (static/index.html)
 GET  /static/<file>         console assets
 GET  /data/demo/<file>      demo pages + demo.json (precomputed pipeline outputs)
 GET  /data/results/<file>   outputs of `python -m ordner.eval.run` (results.json, table.md, figures)
-GET  /api/health            liveness, model endpoint (LLM_*), importable workstream modules, agent live or demo, today
+GET  /api/health            liveness, model endpoint (LLM_*), importable workstream modules, agent live or demo, today,
+                            conversation_url (harness conversation, when ordner.harness.web runs)
                             (ORDNER_TODAY=YYYY-MM-DD simulates the date for the demo)
 POST /api/deductions        {profile} -> triggered deduction rules (data/rules/deductions_<year>.json)
 
@@ -61,7 +62,18 @@ def health():
     llm, reason = cockpit.llm_client()
     return {"ok": True, "llm_name": os.environ.get("LLM_NAME") or None, "llm_configured": bool(os.environ.get("LLM_BASE_URL")),
             "modules": cockpit.modules(), "agent_live": llm is not None, "agent_reason": reason,
-            "today": cockpit.today_().isoformat(), "simulated": bool(cockpit.SIMULATED)}
+            "today": cockpit.today_().isoformat(), "simulated": bool(cockpit.SIMULATED),
+            "conversation_url": conversation_url()}
+
+
+def conversation_url():
+    """URL of the harness conversation (ordner.harness.web writes it while dsh runs, same ORDNER_HOME), else None."""
+    f = Path(os.environ.get("ORDNER_HOME", "~/.ordner")).expanduser() / "harness" / "url.txt"
+    try:
+        url = f.read_text(encoding="utf-8").strip()
+    except OSError:
+        return None
+    return url if url.startswith(("http://", "https://")) else None
 
 
 def ask(body):

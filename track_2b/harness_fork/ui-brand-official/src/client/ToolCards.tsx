@@ -1,17 +1,25 @@
-// Ordner tool card for prepare_action (new file; harness MIT notice in ../../../LICENSE). Registered under
-// `tool.call.toolview`, key mcp__ordner__prepare_action (ui-tool README, "Registering a business tool view"); reading
-// of the call/result blocks follows ui-skill's SkillRow. Display only: the tool text the model sees is unchanged.
-import type { CSSProperties } from 'react'
+// Ordner tool views (new file; harness MIT notice in ../../../LICENSE), registered under `tool.call.toolview` (ui-tool
+// README, "Registering a business tool view"); reading of the call/result blocks follows ui-skill's SkillRow.
+// - PrepareActionCard, key mcp__ordner__prepare_action: what was prepared, nothing sent, link to the cockpit.
+// - OrdnerToolRow, every other Ordner tool: a plain-language title, the raw wire name, input and result on expand.
+// Display only: the tool text the model sees is unchanged.
+import { useState, type CSSProperties } from 'react'
+import { DisclosureRow, IconInspectOutlineRegular, IconSparkleRegular } from '@deepseek-ai/dsh-client-ui-primitives'
 
 /** Cockpit page of the prepared action (the cockpit is the only place where an action is validated). */
 const COCKPIT = 'http://127.0.0.1:8000/'
 
-/** The slice of ToolCallViewProps this card reads (ui-tool contract/slots.ts). */
+/** Wire prefix of the Ordner MCP tools (ordner.harness.proxy PREFIX). */
+export const PREFIX = 'mcp__ordner__'
+
+/** The slice of ToolCallViewProps these views read (ui-tool contract/slots.ts). */
 type Block = {
   argsRaw?: string
   kind?: string
   content?: { type: string, text?: string }[]
   call?: { argsRaw?: string }
+  isError?: boolean
+  error?: { code?: string }
 }
 type Props = { phase: 'preparing' | 'start' | 'result', block: Block, t: (key: string) => string }
 
@@ -86,27 +94,167 @@ export function PrepareActionCard(props: Props) {
   )
 }
 
-/** The `ordner` namespace, per language (en is the required fallback). */
+/** Pretty JSON when the text is JSON, else the text as is. */
+function pretty(text: string): string {
+  try {
+    return JSON.stringify(JSON.parse(text), null, 2)
+  } catch {
+    return text
+  }
+}
+
+const firstLine = (s: string): string => s.split('\n', 1)[0] ?? ''
+
+/**
+ * The row's view model: tool short name (a call carried by ask_user keeps its own name, see the proxy's CARRIER),
+ * state, first string argument other than an id as summary, and the raw input and result for the expanded details.
+ * @param props - phase, block and wire name of the keyed toolview.
+ * @returns the fields shown.
+ */
+export function rowModel({ phase, block, toolName }: Pick<Props, 'phase' | 'block'> & { toolName: string }) {
+  const settled = phase === 'result'
+  const argsRaw = (settled ? block.call?.argsRaw : block.argsRaw) ?? ''
+  const args = obj(argsRaw)
+  const output = settled ? (block.content ?? []).map(c => c.type === 'text' ? c.text ?? '' : JSON.stringify(c)).join('\n') : ''
+  // Ids (subject_id, case_id...) mean nothing to the person: they stay in the expanded input.
+  const summary = Object.entries(args).find(([k, v]) => !k.endsWith('_id') && !k.startsWith('__') && str(v) !== undefined)?.[1] as string | undefined
+  return {
+    name: str(args.__ordner_name__) ?? toolName.replace(PREFIX, ''),
+    state: !settled ? 'running' : block.error?.code === 'interrupted' ? 'stopped' : block.isError === true ? 'error' : 'ok',
+    summary: summary !== undefined ? firstLine(summary) : '',
+    argsRaw,
+    output,
+  }
+}
+
+const IO_CARD: CSSProperties = {
+  margin: '4px 0 4px 4px', border: '0.5px solid var(--dsw-alias-border-l1)', borderRadius: 'var(--dsw-radius-lg)',
+  background: 'var(--dsw-alias-markdown-code-block)', font: 'var(--dsw-font-markdown-code-block-small)', overflow: 'hidden',
+}
+const IO_SECTION: CSSProperties = {
+  display: 'grid', gridTemplateColumns: 'max-content 1fr', columnGap: 14, alignItems: 'baseline', padding: '10px 16px',
+  maxHeight: 180, overflowY: 'auto', borderTop: '0.5px solid var(--dsw-alias-border-l2)',
+}
+const IO_LABEL: CSSProperties = { color: 'var(--dsw-alias-label-caption)' }
+const IO_TEXT: CSSProperties = {
+  minWidth: 0, whiteSpace: 'pre-wrap', wordBreak: 'break-word', color: 'var(--dsw-alias-label-secondary)',
+}
+const SEP: CSSProperties = {
+  flex: 'none', width: 2, height: 2, borderRadius: 1, margin: '0 8px', background: 'var(--dsw-alias-label-caption)',
+}
+const SUMMARY: CSSProperties = {
+  flex: '1 1 auto', minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+  fontSize: 'var(--dsh-content-font-size-secondary, 13px)',
+}
+const INSPECT: CSSProperties = {
+  display: 'inline-flex', alignSelf: 'flex-start', alignItems: 'center', gap: 4, margin: '2px 0 2px 4px', padding: '2px 6px',
+  border: 0, borderRadius: 6, background: 'transparent', color: 'var(--dsw-alias-label-tertiary)', font: 'inherit',
+  fontSize: 12, cursor: 'pointer',
+}
+
+/**
+ * One Ordner tool call as a process row: plain-language title and first argument; on expand, the wire tool name,
+ * the input and the result as recorded (transparency: nothing hidden, only labelled).
+ * @param props - keyed toolview payload plus the `ordner` locale seat.
+ * @returns the row.
+ */
+export function OrdnerToolRow(props: Props & { toolName: string, inspect?: (() => void) | undefined }) {
+  const { t, toolName, inspect } = props
+  const m = rowModel(props)
+  const [open, setOpen] = useState(false)
+  const key = `tool.${m.name}`
+  const title = t(key) !== key ? t(key) : m.name
+  const expandable = props.phase !== 'preparing'
+  const summary = m.state === 'error' && m.output !== '' ? firstLine(m.output) : m.summary
+  const color = m.state === 'error' ? 'var(--dsw-alias-state-error-primary)'
+    : m.state === 'stopped' ? 'var(--dsw-alias-state-warn-label)' : undefined
+  const section = (label: string, text: string) => (
+    <div style={IO_SECTION}><span style={IO_LABEL}>{label}</span><span style={IO_TEXT}>{text}</span></div>
+  )
+  return (
+    <div data-tool={toolName} data-state={m.state}>
+      <DisclosureRow
+        icon={<IconSparkleRegular size={14} />}
+        title={title}
+        running={m.state === 'running'}
+        open={open && expandable}
+        expandable={expandable}
+        expandOnRowClick
+        keepContentWhenOpen
+        onToggle={() => { setOpen(v => !v) }}
+        collapsedContent={summary !== '' ? <><span style={SEP} aria-hidden /><span style={{ ...SUMMARY, color }}>{summary}</span></> : null}
+      >
+        <div style={IO_CARD}>
+          <div style={{ ...IO_SECTION, borderTop: 0 }}><span style={IO_LABEL}>{t('row.tool')}</span><code style={IO_TEXT}>{toolName}</code></div>
+          {section(t('row.input'), pretty(m.argsRaw))}
+          {m.output !== '' ? section(t('row.output'), pretty(m.output)) : null}
+        </div>
+        {inspect !== undefined ? (
+          <button type="button" style={INSPECT} onClick={inspect}><IconInspectOutlineRegular />{t('row.inspect')}</button>
+        ) : null}
+      </DisclosureRow>
+    </div>
+  )
+}
+
+/** The `ordner` namespace, per language (en is the required fallback). `tool.<name>` keys also list the tools that get
+ * an OrdnerToolRow (index.ts). */
 export const CARD_DICTS: Record<string, Record<string, string>> = {
   en: {
+    'tool.case_load': 'Reading the dossier', 'tool.knowledge_search': 'Searching the official sources',
+    'tool.rules_evaluate': 'Checking the rules', 'tool.case_record': 'Note to the dossier',
+    'tool.piece_recevoir': 'Document received', 'tool.document_read': 'Reading a document',
+    'tool.document_decode': 'Reading the barcode', 'tool.expert_run': 'Tax statement extraction',
+    'tool.impots_preparer_declaration': 'Preparing the tax return',
+    'tool.lamal_revoir_franchise': 'Deductible and health insurer',
+    'tool.poursuite_repondre': 'Responding to the debt collection',
+    'tool.demenagement_annoncer': 'Moving notification', 'tool.ask_user': 'Question for you', 'row.tool': 'Tool',
+    'row.input': 'Input', 'row.output': 'Result', 'row.inspect': 'Show in the trajectory',
     'kind.form_entry': 'form entry', 'kind.letter': 'letter', 'kind.email_draft': 'email draft', 'kind.payment': 'payment',
     'kind.reminder': 'reminder', 'kind.document_request': 'document request',
     'action.title': 'Prepared action', 'action.refused': 'Action not prepared', 'action.preparing': 'Preparing the action…',
     'action.notSent': 'Prepared, nothing is sent.', 'action.open': 'Open in Ordner',
   },
   fr: {
+    'tool.case_load': 'Lecture du dossier', 'tool.knowledge_search': 'Recherche dans les sources officielles',
+    'tool.rules_evaluate': 'Vérification des règles', 'tool.case_record': 'Note au dossier',
+    'tool.piece_recevoir': 'Pièce reçue', 'tool.document_read': 'Lecture d’un document',
+    'tool.document_decode': 'Lecture du code-barres', 'tool.expert_run': 'Extraction du relevé fiscal',
+    'tool.impots_preparer_declaration': 'Préparation de la déclaration',
+    'tool.lamal_revoir_franchise': 'Franchise et caisse maladie',
+    'tool.poursuite_repondre': 'Réponse à la poursuite', 'tool.demenagement_annoncer': 'Annonce de déménagement',
+    'tool.ask_user': 'Question à vous', 'row.tool': 'Outil', 'row.input': 'Entrée', 'row.output': 'Résultat',
+    'row.inspect': 'Voir dans la trajectoire',
     'kind.form_entry': 'saisie de formulaire', 'kind.letter': 'lettre', 'kind.email_draft': 'brouillon de courriel',
     'kind.payment': 'paiement', 'kind.reminder': 'rappel', 'kind.document_request': 'demande de document',
     'action.title': 'Action préparée', 'action.refused': 'Action non préparée', 'action.preparing': 'Préparation de l’action…',
     'action.notSent': 'Préparée, rien n’est envoyé.', 'action.open': 'Ouvrir dans Ordner',
   },
   de: {
+    'tool.case_load': 'Dossier lesen', 'tool.knowledge_search': 'Suche in den amtlichen Quellen',
+    'tool.rules_evaluate': 'Prüfung der Regeln', 'tool.case_record': 'Notiz im Dossier',
+    'tool.piece_recevoir': 'Unterlage erhalten', 'tool.document_read': 'Dokument lesen',
+    'tool.document_decode': 'Barcode lesen', 'tool.expert_run': 'Auslesen des Steuerausweises',
+    'tool.impots_preparer_declaration': 'Vorbereitung der Steuererklärung',
+    'tool.lamal_revoir_franchise': 'Franchise und Krankenkasse',
+    'tool.poursuite_repondre': 'Antwort auf die Betreibung', 'tool.demenagement_annoncer': 'Umzugsmeldung',
+    'tool.ask_user': 'Frage an Sie', 'row.tool': 'Werkzeug', 'row.input': 'Eingabe', 'row.output': 'Ergebnis',
+    'row.inspect': 'In der Trajektorie zeigen',
     'kind.form_entry': 'Formulareintrag', 'kind.letter': 'Brief', 'kind.email_draft': 'E-Mail-Entwurf', 'kind.payment': 'Zahlung',
     'kind.reminder': 'Erinnerung', 'kind.document_request': 'Dokumentenanfrage',
     'action.title': 'Vorbereitete Aktion', 'action.refused': 'Aktion nicht vorbereitet', 'action.preparing': 'Aktion wird vorbereitet…',
     'action.notSent': 'Vorbereitet, nichts wird gesendet.', 'action.open': 'In Ordner öffnen',
   },
   it: {
+    'tool.case_load': 'Lettura del dossier', 'tool.knowledge_search': 'Ricerca nelle fonti ufficiali',
+    'tool.rules_evaluate': 'Verifica delle regole', 'tool.case_record': 'Nota nel dossier',
+    'tool.piece_recevoir': 'Documento ricevuto', 'tool.document_read': 'Lettura di un documento',
+    'tool.document_decode': 'Lettura del codice a barre', 'tool.expert_run': 'Estrazione dell’estratto fiscale',
+    'tool.impots_preparer_declaration': 'Preparazione della dichiarazione',
+    'tool.lamal_revoir_franchise': 'Franchigia e cassa malati', 'tool.poursuite_repondre': 'Risposta all’esecuzione',
+    'tool.demenagement_annoncer': 'Notifica di trasloco', 'tool.ask_user': 'Domanda per lei',
+    'row.tool': 'Strumento', 'row.input': 'Input', 'row.output': 'Risultato',
+    'row.inspect': 'Mostra nella traiettoria',
     'kind.form_entry': 'compilazione di modulo', 'kind.letter': 'lettera', 'kind.email_draft': 'bozza di e-mail',
     'kind.payment': 'pagamento', 'kind.reminder': 'promemoria', 'kind.document_request': 'richiesta di documento',
     'action.title': 'Azione preparata', 'action.refused': 'Azione non preparata', 'action.preparing': 'Preparazione dell’azione…',

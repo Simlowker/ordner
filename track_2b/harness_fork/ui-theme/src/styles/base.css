@@ -1,5 +1,6 @@
 /* Forked from deepseek-harness@d743267 packages/client/ui-theme/src/styles/base.css (MIT, Copyright (c) 2026 DeepSeek).
- * Ordner: the brand font is the system stack (no Montserrat); the running whale is hidden (end of file). */
+ * Ordner: the brand font is the system stack (no Montserrat); the running whale, the composer statistics and the
+ * navy "Prototype" badge are restyled or hidden, the empty right sidebar has no toggle (end of file). */
 /* Base variables referenced by the token sheets and component CSS but defined
  * upstream (deepsuite theme/global.css) — supplied here so the composite
  * --dsw-font-* variables resolve and motion rides the upstream curve. Code
@@ -43,5 +44,24 @@ body {
 /* Ordner: no whale in the running indicator (ui-chat RunningStatus: div[data-chat-running] > content > icon + text).
  * ponytail: structural selector instead of forking ui-chat; re-check it on a harness upgrade. */
 [data-chat-running] > span:last-child > span[aria-hidden='true']:first-child {
+  display: none;
+}
+
+/* Ordner: no token statistics under the composer (ui-chat stats pills and the ui-conversation context meter share
+ * InputBar's div[data-composer-dock]; no plugin row turns them off). Same ponytail as above. */
+div[data-composer-dock] {
+  display: none;
+}
+
+/* Ordner: the welcome screen's "Prototype" badge in Swiss red on white (upstream: navy on the accent tint). */
+span[class*='_previewBadge'] {
+  border-color: var(--dsw-static-deepseek-200);
+  background: transparent;
+  color: var(--dsw-static-deepseek-600);
+}
+
+/* Ordner: no right-sidebar toggle (its tabs, files and browser, are disabled in web.patch.yml; ui-chat needs the row). */
+button[data-sidebar-right-expand],
+button[data-sidebar-right-toggle] {
   display: none;
 }
