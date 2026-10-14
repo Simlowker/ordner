@@ -18,7 +18,7 @@ from sklearn.model_selection import GroupKFold, cross_val_predict, cross_val_sco
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
 
-from .metrics import FIELDS, auroc, read_jsonl, triage_share
+from .metrics import FIELDS, NUMERIC_FIELDS, auroc, norm_number, read_jsonl, triage_share
 from .probe import probe_model
 
 SYSTEMS = ["regex", "apertus-base", "apertus-lora"]
@@ -30,12 +30,13 @@ SINGLE = {"min token prob": ("lp_min", -1), "mean token prob": ("lp_mean", -1), 
 COMBO_COLS = ["lp_min", "lp_mean", "ent_mean", "ent_first", "d1_p_yes", "rule_false", "rule_none"]
 CS = (0.01, 0.1, 1.0, 10.0)
 CATCH = (0.8, 0.9, 0.95)
+CHF_THRESHOLD = 100
 
 
 def load(data):
     items = read_jsonl(data / "items.jsonl")
     col = {k: np.array([it[k] for it in items], dtype=object) for k in
-           ("system", "split", "stmt_id", "page_id", "field", "layout", "degradation", "language")}
+           ("system", "split", "stmt_id", "page_id", "field", "layout", "degradation", "language", "pred", "gold")}
     col["degradation"] = col["degradation"].astype(int)
     col["correct"] = np.array([bool(it["correct"]) for it in items])
     col["error"] = np.array([bool(it.get("error")) for it in items])
@@ -77,8 +78,13 @@ class Boot:
             return (self.W @ s) / (self.W @ d)
 
     def auroc(self, clusters, y, score):
-        """Resampled AUROC (Mann-Whitney, ties = 1/2) for all B resamples. Weights depend only on the cluster, so
-        AUROC_b = w_b' A w_b / ((w_b . n_pos)(w_b . n_neg)) with A[k, l] = concordant (pos in k, neg in l) pairs."""
+        num, den = self.auroc_parts(clusters, y, score)
+        with np.errstate(invalid="ignore", divide="ignore"):
+            return num / den
+
+    def auroc_parts(self, clusters, y, score):
+        """Resampled AUROC (Mann-Whitney, ties = 1/2) for all B resamples, as (concordant pairs, pairs). Weights
+        depend only on the cluster: num_b = w_b' A w_b with A[k, l] = concordant (pos in k, neg in l) pairs."""
         cl, k, y = self.idx(clusters), len(self.keys), np.asarray(y, bool)
         _, g = np.unique(score, return_inverse=True)
         P, N = np.zeros((k, g.max() + 1)), np.zeros((k, g.max() + 1))
@@ -86,8 +92,17 @@ class Boot:
         np.add.at(N, (cl[~y], g[~y]), 1)
         A = P @ (np.cumsum(N, axis=1) - 0.5 * N).T
         W = self.W.astype(np.float64)
-        with np.errstate(invalid="ignore", divide="ignore"):
-            return ((W @ A) * W).sum(1) / ((W @ P.sum(1)) * (W @ N.sum(1)))
+        return ((W @ A) * W).sum(1), (W @ P.sum(1)) * (W @ N.sum(1))
+
+    def median(self, clusters, values, chunk=2000):
+        """Resampled (weighted, lower) median."""
+        order = np.argsort(values, kind="stable")
+        v, cl = np.asarray(values)[order], self.idx(clusters)[order]
+        out = []
+        for b in range(0, len(self.W), chunk):
+            c = np.cumsum(self.W[b:b + chunk][:, cl], axis=1)
+            out.append(v[(c >= c[:, -1:] / 2).argmax(1)])
+        return np.concatenate(out)
 
 
 def ci(vals):
@@ -102,6 +117,22 @@ def doubt_score(col, name, mask):
         return None, 0
     n_missing = int(np.isnan(v).sum())
     return np.where(np.isnan(v), np.nanmax(v) + 1, v), n_missing  # missing value = maximal doubt
+
+
+def field_prior(col, fit):
+    """P(wrong | field) on the fit rows, as a score for every item (constant within a field)."""
+    rate = {f: float(np.mean(~col["correct"][fit & (col["field"] == f)])) for f in FIELDS if (fit & (col["field"] == f)).any()}
+    return np.array([rate.get(f, np.nan) for f in col["field"]])
+
+
+def chf_error(col, mask):
+    """Per page: sum over the 4 amounts of |pred - gold| in CHF (missing or unparseable pred = whole gold amount)."""
+    err, stmt = {}, {}
+    for i in np.flatnonzero(mask & np.isin(col["field"], NUMERIC_FIELDS)):
+        g, p = norm_number(col["gold"][i]), norm_number(col["pred"][i])
+        err[col["page_id"][i]] = err.get(col["page_id"][i], 0.0) + float(abs(g) if p is None else abs(p - g))
+        stmt[col["page_id"][i]] = col["stmt_id"][i]
+    return np.array(list(err.values())), np.array([stmt[k] for k in err])
 
 
 def combo_model(C):
@@ -184,6 +215,14 @@ def evaluate(data, n_boot=10_000):
         pok = np.array([v[1] for v in pages.values()], float)
         res["accuracy"][s] = {"acc": float(ok.mean()), "ci": ci(boot.ratio(cl, ok)), "n_items": int(m.sum()),
                               "n_pages": len(pages), "page_all_ok": float(pok.mean()), "page_all_ok_ci": ci(boot.ratio(pc, pok))}
+        e, es = chf_error(col, m)
+        big = e > CHF_THRESHOLD
+        xs = np.logspace(-2, 6, 81)
+        res.setdefault("chf", {})[s] = {
+            "n_pages": len(e), "median": float(np.median(e)), "median_ci": ci(boot.median(es, e)),
+            "mean": float(e.mean()), "mean_ci": ci(boot.ratio(es, e)), "share_any": float(np.mean(e > 0)),
+            f"share_gt_{CHF_THRESHOLD}": float(big.mean()), f"share_gt_{CHF_THRESHOLD}_ci": ci(boot.ratio(es, big)),
+            "survival": [[float(x), float(np.mean(e > x))] for x in xs]}
         br = {}
         for by in ("degradation", "layout", "field", "language"):
             br[by] = {}
@@ -215,35 +254,45 @@ def evaluate(data, n_boot=10_000):
         res["h1"] = {"diff": float(d.mean()), "ci": [lo, hi], "n_items_paired": len(common),
                      "share_resamples_le_0": float(np.mean(vals[~np.isnan(vals)] <= 0)), "supported": bool(lo > 0)}
 
-    # Doubt signals
+    # Doubt signals. Field prior = P(wrong | field) on the rows each system's doubt model is fit on.
     res["doubt"], res["curves"] = {}, {}
-    fit_base = (col["system"] == "apertus-base") & np.isin(col["split"], ["train", "dev"])
+    trdev = np.isin(col["split"], ["train", "dev"])
+    fit_rows = {s: (col["system"] == s) & (col["split"] == "dev" if s == "apertus-lora" else trdev) for s in systems}
+    extra = {s: {"field prior": field_prior(col, fit_rows[s])} for s in systems}
+    res["n_no_span"] = {s: {sp: int(((col["system"] == s) & (col["split"] == sp) & np.isnan(col["lp_min"])
+                                     & ~col["error"]).sum()) for sp in ("train", "dev", "test")}
+                        for s in systems if not np.isnan(col["lp_min"][col["system"] == s]).all()}
+
+    def combine(s, fit, tst, use_probe):
+        names = COMBO_COLS + ["field prior"] + (["probe A"] if use_probe and "probe A" in extra[s] else [])
+        X = np.column_stack([col[c] for c in COMBO_COLS] + [extra[s][n] for n in names[len(COMBO_COLS):]])
+        y = ~col["correct"][fit]
+        if not fit.any() or not tst.any() or y.min() == y.max():
+            return None, None
+        model, C, cvs = fit_select(X[fit], y, col["stmt_id"][fit], combo_model)
+        sc = np.full(len(X), np.nan)
+        sc[tst] = model.predict_proba(X[tst])[:, 1]
+        missing = {part: {n: int(np.isnan(X[rows, j]).sum()) for j, n in enumerate(names)}
+                   for part, rows in (("fit", fit), ("test", tst))}
+        return sc, {"system": s, "C": C, "cv_auc": cvs, "features": names, "n_missing_imputed": missing,
+                    "missing": "median imputation + missing-indicator features"}
+
     test_base = test & (col["system"] == "apertus-base")
-    extra = {}
     if test_base.any():
         for pos in ("A", "B"):
-            sc, info = probe_scores(col, probes, pos, fit_base, test_base)
+            sc, info = probe_scores(col, probes, pos, fit_rows["apertus-base"], test_base)
             if info:
-                extra[f"probe {pos}"] = sc
+                extra["apertus-base"][f"probe {pos}"] = sc
                 res.setdefault("probe", {})[pos] = info
-        X = np.column_stack([col[c] for c in COMBO_COLS] + ([extra["probe A"]] if "probe A" in extra else []))
-        y_fit = ~col["correct"][fit_base]
-        if fit_base.any() and 0 < y_fit.sum() < len(y_fit):
-            model, C, cvs = fit_select(X[fit_base], y_fit, col["stmt_id"][fit_base], combo_model)
-            extra["combined"] = np.full(len(X), np.nan)
-            extra["combined"][test_base] = model.predict_proba(X[test_base])[:, 1]
-            res["combined"] = {"system": "apertus-base", "fit_on": "train+dev", "C": C, "cv_auc": cvs,
-                               "features": COMBO_COLS + (["probe A (out-of-fold)"] if "probe A" in extra else [])}
-    fit_lora = (col["system"] == "apertus-lora") & (col["split"] == "dev")
-    test_lora = test & (col["system"] == "apertus-lora")
-    extra_lora = {}
-    y_dev = ~col["correct"][fit_lora]
-    if test_lora.any() and fit_lora.sum() and 0 < y_dev.sum() < len(y_dev):
-        X = np.column_stack([col[c] for c in COMBO_COLS])
-        model, C, cvs = fit_select(X[fit_lora], y_dev, col["stmt_id"][fit_lora], combo_model)
-        extra_lora["combined (no probe)"] = np.full(len(X), np.nan)
-        extra_lora["combined (no probe)"][test_lora] = model.predict_proba(X[test_lora])[:, 1]
-        res["combined_lora"] = {"system": "apertus-lora", "fit_on": "dev", "C": C, "cv_auc": cvs, "features": COMBO_COLS}
+        sc, info = combine("apertus-base", fit_rows["apertus-base"], test_base, True)
+        if info:
+            extra["apertus-base"]["combined"] = sc
+            res["combined"] = {**info, "fit_on": "train+dev (probe A out-of-fold)"}
+    if "apertus-lora" in systems:
+        sc, info = combine("apertus-lora", fit_rows["apertus-lora"], test & (col["system"] == "apertus-lora"), False)
+        if info:
+            extra["apertus-lora"]["combined (no probe)"] = sc
+            res["combined_lora"] = {**info, "fit_on": "dev"}
 
     boot_auc = {}
     for s in systems:
@@ -254,13 +303,13 @@ def evaluate(data, n_boot=10_000):
         if y.min() == y.max():
             res["doubt"][s] = {"note": "single class on test"}
             continue
-        cl = col["stmt_id"][m]
+        cl, fld = col["stmt_id"][m], col["field"][m]
         scores = {}
         for name in SINGLE:
             sc, n_missing = doubt_score(col, name, m)
             if sc is not None:
                 scores[name] = (sc, n_missing)
-        for name, sc in {**(extra if s == "apertus-base" else {}), **(extra_lora if s == "apertus-lora" else {})}.items():
+        for name, sc in extra.get(s, {}).items():
             v = sc[m]
             if not np.isnan(v).all():
                 scores[name] = (np.where(np.isnan(v), np.nanmax(v) + 1, v), int(np.isnan(v).sum()))
@@ -268,8 +317,22 @@ def evaluate(data, n_boot=10_000):
         for name, (sc, n_missing) in scores.items():
             vals = boot.auroc(cl, y, sc)
             boot_auc[(s, name)] = vals
+            # within-field AUROC: only pairs (wrong, right) of the same field, i.e. pair-weighted mean of per-field AUROCs
+            per_field, num, den, pnum, pden = {}, 0, 0, 0.0, 0.0
+            for f in FIELDS:
+                mf = fld == f
+                if not mf.any() or y[mf].min() == y[mf].max():
+                    continue
+                nb, db = boot.auroc_parts(cl[mf], y[mf], sc[mf])
+                a, pairs = auroc(y[mf], sc[mf]), float(y[mf].sum() * (~y[mf]).sum())
+                with np.errstate(invalid="ignore", divide="ignore"):  # resamples without a wrong item -> NaN, dropped
+                    per_field[f] = {"auroc": a, "ci": ci(nb / db), "n": int(mf.sum()), "wrong": int(y[mf].sum())}
+                num, den, pnum, pden = num + nb, den + db, pnum + a * pairs, pden + pairs
+            with np.errstate(invalid="ignore", divide="ignore"):
+                within = {"auroc": pnum / pden, "ci": ci(num / den)} if pden else None
             res["doubt"][s][name] = {"auroc": auroc(y, sc), "ci": ci(vals), "n_missing": n_missing,
-                                     "triage": {str(c): triage_share(y, sc, c) for c in CATCH}}
+                                     "triage": {str(c): triage_share(y, sc, c) for c in CATCH}, "per_field": per_field,
+                                     "within_field": within}
             if s == "apertus-base":
                 res["curves"][name] = curve(y, sc)
         res["doubt"][s]["_n"] = {"items": int(m.sum()), "wrong": int(y.sum())}
@@ -308,15 +371,16 @@ def table(res):
     if acc:
         unseen = sorted({lay for br in res["breakdown"].values() for lay in br["layout"] if lay != "A"})
         cell = lambda d, k: fmt_ci(d[k]) if k in d else "-"  # noqa: E731
+        group_cols = [("seen", "Seen layout (A)")] + ([("unseen", f"Unseen layouts ({', '.join(unseen)})")] if unseen else [])
         out += ["## Extraction: field-level exact match", "",
-                f"| System | Field accuracy | Page fully correct | Seen layout (A) | Unseen layouts ({', '.join(unseen)}) | "
+                "| System | Field accuracy | Page fully correct | " + "".join(f"{t} | " for _, t in group_cols)
                 + "".join(f"Layout {lay} | " for lay in unseen) + "Items |",
-                "|---|---|---|---|---|" + "---|" * len(unseen) + "---|"]
+                "|---|---|---|" + "---|" * (len(group_cols) + len(unseen)) + "---|"]
         for s, a in acc.items():
             br = res["breakdown"][s]
             out.append(f"| {NAMES.get(s, s)} | {fmt_ci(a)} | {a['page_all_ok']:.3f} [{a['page_all_ok_ci'][0]:.3f}, "
-                       f"{a['page_all_ok_ci'][1]:.3f}] | {cell(br['layout_group'], 'seen')} | "
-                       f"{cell(br['layout_group'], 'unseen')} | " + "".join(f"{cell(br['layout'], lay)} | " for lay in unseen)
+                       f"{a['page_all_ok_ci'][1]:.3f}] | " + "".join(f"{cell(br['layout_group'], g)} | " for g, _ in group_cols)
+                       + "".join(f"{cell(br['layout'], lay)} | " for lay in unseen)
                        + f"{a['n_items']} |")
         out += ["", "Pages whose extraction failed (`error`, all fields counted wrong), test split: "
                 + ", ".join(f"{NAMES.get(s, s)} {n['test']}" for s, n in res.get("n_error_pages", {}).items()), ""]
@@ -329,13 +393,27 @@ def table(res):
             continue
         n = sig["_n"]
         out += [f"## Doubt signals, {NAMES.get(s, s)}: AUROC for \"field is wrong\" ({n['wrong']} wrong / {n['items']})",
-                "", "| Signal | AUROC [95 % CI] | Review to catch 80 % | 90 % | 95 % |", "|---|---|---|---|---|"]
+                "", "| Signal | AUROC [95 % CI] | Within-field AUROC [95 % CI] | Review to catch 80 % | 90 % | 95 % |",
+                "|---|---|---|---|---|---|"]
         for name, d in sig.items():
             if name.startswith("_"):
                 continue
             t = d["triage"]
-            out.append(f"| {name} | {fmt_ci(d, 'auroc')} | {t['0.8']:.3f} | {t['0.9']:.3f} | {t['0.95']:.3f} |")
+            wf = fmt_ci(d["within_field"], "auroc") if d.get("within_field") else "-"
+            out.append(f"| {name} | {fmt_ci(d, 'auroc')} | {wf} | {t['0.8']:.3f} | {t['0.9']:.3f} | {t['0.95']:.3f} |")
+        fields = [f for f in FIELDS if any(f in d.get("per_field", {}) for k, d in sig.items() if not k.startswith("_"))]
+        out += ["", "AUROC per field (point estimates; CIs in results.json):", "",
+                "| Signal | " + " | ".join(fields) + " |", "|---|" + "---|" * len(fields)]
+        for name, d in sig.items():
+            if not name.startswith("_"):
+                pf = d.get("per_field", {})
+                out.append(f"| {name} | " + " | ".join(f"{pf[f]['auroc']:.3f}" if f in pf else "-" for f in fields) + " |")
         out.append("")
+    if res.get("n_no_span"):
+        out.append("Items without a value span (no log-probs, no activations; maximal doubt for single signals, "
+                   "median imputation + missing indicator in the combined score): "
+                   + ", ".join(f"{NAMES.get(s, s)} test {n['test']} / train+dev {n['train'] + n['dev']}"
+                               for s, n in res["n_no_span"].items()))
     if res.get("h2"):
         h = res["h2"]
         out.append(f"**H2** combined − best single ({h['best_single']}): {h['diff']:+.3f} "
@@ -347,6 +425,15 @@ def table(res):
     if res.get("position_b_vs_a"):
         h = res["position_b_vs_a"]
         out.append(f"Position B − A (probe AUROC): {h['diff']:+.3f} [{h['ci'][0]:+.3f}, {h['ci'][1]:+.3f}]")
+    if res.get("chf"):
+        k = f"share_gt_{CHF_THRESHOLD}"
+        out += ["", "## Consequence: CHF mis-reported per page (sum of |pred − gold| over the 4 amounts; missing = whole "
+                "amount)", "", f"| System | Median CHF [95 % CI] | Mean CHF [95 % CI] | Pages with error > {CHF_THRESHOLD} CHF "
+                "[95 % CI] | Pages with any error |", "|---|---|---|---|---|"]
+        for s, c in res["chf"].items():
+            out.append(f"| {NAMES.get(s, s)} | {c['median']:.2f} [{c['median_ci'][0]:.2f}, {c['median_ci'][1]:.2f}] | "
+                       f"{c['mean']:.2f} [{c['mean_ci'][0]:.2f}, {c['mean_ci'][1]:.2f}] | {c[k]:.3f} [{c[k + '_ci'][0]:.3f}, "
+                       f"{c[k + '_ci'][1]:.3f}] | {c['share_any']:.3f} |")
     if res.get("costs"):
         c = res["costs"]
         out += ["", f"## Cost per page, {c['hardware']} ({c['unit']})", "", "| Stage | Pages | Mean | Median | p95 |",

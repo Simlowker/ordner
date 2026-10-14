@@ -15,7 +15,7 @@ SYSTEM_COLOR = {"regex": SERIES[0], "apertus-base": SERIES[1], "apertus-lora": S
 NAMES = {"regex": "OCR + regex", "apertus-base": "Apertus zero-shot", "apertus-lora": "Apertus + LoRA"}
 FIELD_ORDER = ["totalTaxValue", "totalGrossRevenueA", "totalGrossRevenueB", "totalWithHoldingTaxClaim", "institution",
                "canton", "taxPeriod", "client_last_name"]
-CURVE_SIGNALS = ["min token prob", "mean entropy", "d1 validation", "rules", "probe A", "combined"]
+CURVE_SIGNALS = ["field prior", "min token prob", "mean entropy", "d1 validation", "rules", "probe A", "combined"]
 
 
 def _style(ax):
@@ -152,12 +152,33 @@ def triage_curves(res, out):
     plt.close(fig)
 
 
+def chf_error(res, out):
+    chf = res.get("chf", {})
+    if not chf:
+        return
+    fig, (ax,) = _fig(5.2, 3.6)
+    for s, c in chf.items():
+        x, y = zip(*c["survival"])
+        ax.plot(x, y, color=SYSTEM_COLOR.get(s, INK2), linewidth=2, label=NAMES.get(s, s))
+    ax.axvline(100, color=GRID, linewidth=1)
+    ax.set_xscale("log")
+    ax.set_ylim(0, 1.0)
+    ax.set_xlabel("CHF mis-reported per page (sum over the 4 amounts)")
+    ax.set_ylabel("Share of pages with a larger error")
+    ax.set_title("Consequence of extraction errors (test)", fontsize=10)
+    ax.legend(frameon=False, fontsize=8, labelcolor=INK)
+    fig.tight_layout()
+    fig.savefig(out / "chf_error.png", dpi=160, facecolor=SURFACE)
+    plt.close(fig)
+
+
 def plot(res, out):
     out = Path(out)
     accuracy_by_degradation(res, out)
     accuracy_by_layout(res, out)
     accuracy_by_field(res, out)
     triage_curves(res, out)
+    chf_error(res, out)
 
 
 if __name__ == "__main__":

@@ -99,7 +99,8 @@ def check_regex():
 def make_fixtures(root, n_stmt=600, hidden=64, seed=0):
     """Synthetic docs/pages/extract/d1/acts with the real split design (test: layouts A, B at levels 0-3, C at 0 and 2).
     Planted doubt signals: ent_mean (strong), lp_mean and ent_first (pure noise), probe position A at layer 16
-    (strong), position B (noise). Every 97th apertus-base page is a failed extraction (`error`, empty fields)."""
+    (strong), position B (noise). Every 97th apertus-base page is a failed extraction (`error`, empty fields); on every
+    50th page its canton has no value span (no doubt features, no activations); its withholding claim errs more often."""
     rng = np.random.default_rng(seed)
     root = Path(root)
     shutil.rmtree(root, ignore_errors=True)
@@ -138,7 +139,8 @@ def make_fixtures(root, n_stmt=600, hidden=64, seed=0):
             g = gold[p["doc_id"]]
             fields, doubt, acts = {}, {}, {}
             for f in FIELDS:
-                wrong = rng.random() < e0 + e_lvl * p["degradation"] + (e_b if p["layout"] != "A" else 0)
+                field_effect = 0.15 if system == "apertus-base" and f == "totalWithHoldingTaxClaim" else 0
+                wrong = rng.random() < e0 + e_lvl * p["degradation"] + (e_b if p["layout"] != "A" else 0) + field_effect
                 truth[(system, p["page_id"], f)] = wrong
                 v = g[f]
                 if f in NUMERIC_FIELDS:
@@ -157,6 +159,8 @@ def make_fixtures(root, n_stmt=600, hidden=64, seed=0):
             row = {"page_id": p["page_id"], "model": system, "fields": fields, "raw": None,
                    "doubt": None if system == "regex" else doubt, "seconds": 1.0,
                    **({"seconds_hidden": 0.25} if system == "apertus-base" else {})}
+            if system == "apertus-base" and n % 50 == 1:
+                del doubt["canton"], acts["canton_A"], acts["canton_B"]
             if system == "apertus-base" and n % 97 == 0:
                 row.update(fields={}, doubt=None, error="generation failed")
                 truth.update({(system, p["page_id"], f): True for f in FIELDS})
@@ -227,7 +231,20 @@ def main():
         assert set(res["breakdown"][s]["layout"]) == {"A", "B", "C"}
     assert set(res["breakdown"]["apertus-base"]["layout_degradation"]) >= {"C0", "C2"}
     assert not {"C1", "C3"} & set(res["breakdown"]["apertus-base"]["layout_degradation"])
-    assert (data / "results" / "accuracy_by_layout.png").exists()
+    assert (data / "results" / "accuracy_by_layout.png").exists() and (data / "results" / "chf_error.png").exists()
+
+    # field prior: informative across fields, exactly 0.5 within a field; planted signal stays ~1 within fields
+    assert d["field prior"]["ci"][0] > 0.5 and d["field prior"]["within_field"]["auroc"] == 0.5, d["field prior"]
+    assert d["mean entropy"]["within_field"]["auroc"] > 0.95 and len(d["mean entropy"]["per_field"]) == 8
+    assert res["h2"]["best_single"] != "field prior" and "field prior" in res["combined"]["features"]
+    no_span = sum(p["split"] == "test" for n, p in enumerate(pages) if n % 50 == 1 and n % 97)
+    assert res["n_no_span"]["apertus-base"]["test"] == no_span > 0, res["n_no_span"]
+    assert res["combined"]["n_missing_imputed"]["test"]["probe A"] >= no_span
+    # CHF: wrong amounts are off by 1 CHF; failed pages lose whole amounts (> 100 CHF)
+    test_pages = [p for p in pages if p["split"] == "test"]
+    assert res["chf"]["apertus-base"]["share_gt_100"] == failed_test / len(test_pages), res["chf"]["apertus-base"]
+    lora_err = [sum(truth[("apertus-lora", p["page_id"], f)] for f in NUMERIC_FIELDS) for p in test_pages]
+    assert res["chf"]["apertus-lora"]["share_gt_100"] == 0 and res["chf"]["apertus-lora"]["mean"] == np.mean(lora_err)
     assert runtime < 120, runtime
     print(f"eval selfcheck ok (run.py {runtime:.1f} s on {len(items)} items, {res['bootstrap']['resamples']} resamples)")
 
