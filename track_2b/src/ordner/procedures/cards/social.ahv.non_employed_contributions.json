@@ -10,9 +10,24 @@
   "jurisdiction": "CH",
   "applicability": {
     "all": [
-      {"attr": "kind", "eq": "person"},
-      {"any": [{"role": "student"}, {"role": "non_employed"}]},
-      {"attr": "birth_year", "exists": true}
+      {
+        "attr": "kind",
+        "eq": "person"
+      },
+      {
+        "any": [
+          {
+            "role": "student"
+          },
+          {
+            "role": "non_employed"
+          }
+        ]
+      },
+      {
+        "attr": "age_at_year_end",
+        "gte": 21
+      }
     ]
   },
   "required_facts": [
@@ -32,7 +47,10 @@
     {
       "id": "obligation_start",
       "who": "ordner",
-      "sources": [0, 1],
+      "sources": [
+        0,
+        1
+      ],
       "label": {
         "fr": "Établir le début de l'obligation : 1er janvier qui suit le 20e anniversaire",
         "de": "Beginn der Beitragspflicht bestimmen: 1. Januar nach dem 20. Geburtstag",
@@ -42,7 +60,9 @@
     {
       "id": "spouse_exception",
       "who": "ordner",
-      "sources": [4],
+      "sources": [
+        4
+      ],
       "label": {
         "fr": "Vérifier l'exception du conjoint actif qui verse au moins le double de la cotisation minimale",
         "de": "Ausnahme prüfen: erwerbstätiger Ehegatte bezahlt mindestens den doppelten Mindestbeitrag",
@@ -52,7 +72,11 @@
     {
       "id": "compare_minimum",
       "who": "ordner",
-      "sources": [2, 3, 7],
+      "sources": [
+        2,
+        3,
+        7
+      ],
       "label": {
         "fr": "Comparer les cotisations d'un éventuel emploi au minimum annuel (530 CHF en 2026, 541 CHF dès 2027) ; étudiants : cotisation minimale jusqu'à 25 ans",
         "de": "Beiträge aus einer allfälligen Erwerbstätigkeit mit dem jährlichen Mindestbeitrag vergleichen (CHF 530 im Jahr 2026, CHF 541 ab 2027); Studierende: Mindestbeitrag bis 25",
@@ -63,7 +87,10 @@
       "id": "announce",
       "who": "user",
       "action": "letter",
-      "sources": [5, 6],
+      "sources": [
+        5,
+        6
+      ],
       "label": {
         "fr": "S'annoncer à la caisse de compensation du canton de domicile",
         "de": "Sich bei der Ausgleichskasse des Wohnsitzkantons anmelden",
@@ -74,7 +101,9 @@
       "id": "pay",
       "who": "user",
       "action": "payment",
-      "sources": [8],
+      "sources": [
+        8
+      ],
       "label": {
         "fr": "Payer les cotisations fixées par la caisse (plus frais d'administration, au maximum 5 %)",
         "de": "Die von der Kasse festgesetzten Beiträge bezahlen (zuzüglich Verwaltungskosten, höchstens 5 %)",
@@ -153,5 +182,5 @@
     }
   ],
   "qualification": "qualified",
-  "notes": "Applicabilité approximative : la condition « année de cotisation >= année de naissance + 21 » ne s'exprime pas dans le langage de conditions actuel (pas d'arithmétique sur la période) ; l'étape obligation_start la porte. Pas de délai légal d'annonce trouvé : deadline=null. Barème selon fortune / rentes x 20 non encodé. Personnes partiellement actives : calcul comparatif de la caisse (mémento 2.03, « En bref ») non encodé. Montant 2026 = 530 CHF (AVS/AI/APG) ; LAVS art. 10 et l'O du 28.08.2024 citent 435 CHF pour la seule part AVS, ne pas confondre."
+  "notes": "Applicabilité évaluée par période (année de cotisation Y) : age_at_year_end >= 21 équivaut à Y >= année de naissance + 21, soit dès le 1er janvier qui suit le 20e anniversaire. Pas de délai légal d'annonce trouvé : deadline=null. Barème selon fortune / rentes x 20 non encodé. Personnes partiellement actives : calcul comparatif de la caisse (mémento 2.03, « En bref ») non encodé. Montant 2026 = 530 CHF (AVS/AI/APG) ; LAVS art. 10 et l'O du 28.08.2024 citent 435 CHF pour la seule part AVS, ne pas confondre."
 }
