@@ -21,11 +21,12 @@ from ordner.tools.registry import SPECS
 
 from . import experts as E
 from .proxy import Proxy
+from . import runtime as RT
 from .runtime import HARNESS, ROOT
 
 HERE = Path(__file__).resolve().parent
 PATCH = HERE / "web.patch.yml"
-BIN = Path(os.environ.get("ORDNER_HARNESS_BIN", HARNESS / "apps/cli/lib/bin.js"))
+BIN = Path(getattr(RT, "BIN", None) or os.environ.get("ORDNER_HARNESS_BIN", HARNESS / "apps/cli/lib/bin.js"))
 
 
 class DemoLLM:
@@ -41,10 +42,11 @@ class DemoLLM:
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--port", type=int, default=8790)
+    ap.add_argument("--host", default="127.0.0.1", help="0.0.0.0 inside Docker so the port mapping reaches dsh")
     ap.add_argument("--llm", choices=("mock", "openai"), default="openai" if os.environ.get("LLM_BASE_URL") else "mock")
     ap.add_argument("--home", default=os.environ.get("ORDNER_HOME", "~/.ordner"))
     ap.add_argument("--max-steps", type=int, default=12)
-    a = ap.parse_args(argv)
+    a, passthrough = ap.parse_known_args(argv)  # extra dsh flags (Docker: --trusted-host, --public-url)
     if not BIN.is_file():
         sys.exit(f"DeepSeek Harness not found at {BIN} (set ORDNER_HARNESS_BIN)")
     home = Path(a.home).expanduser().resolve()
@@ -68,7 +70,7 @@ def main(argv=None):
            "DSH_TELEMETRY_DISABLED": "1",
            **E.env_for(store.path, subject, os.environ.get("ORDNER_TODAY"), state)}
     cmd = ["node", str(BIN), "--profile", "web", "--patch", str(PATCH), "--patch", str(presets), "--no-open",
-           "--port", str(a.port), "--host", "127.0.0.1"]
+           "--port", str(a.port), "--host", a.host, *passthrough]
     print(f"[ordner] conversation: http://127.0.0.1:{a.port}/  (model: {a.llm} via {proxy.url}, dossier {store.path})\n"
           f"[ordner] Une conversation par expert ; relancer pour repartir de zéro.", flush=True)
     with proxy:
