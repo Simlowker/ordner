@@ -163,7 +163,8 @@ def coordinator(resolve, llm, max_steps=12, toolset="base", system=None):
 
     def agent(s, store, sid, phase, goal, today):
         reg = _DatedRegistry(C._registry(), today, toolset)
-        r = C.run(f"[{today}] {goal}", sid, llm, store, max_steps=max_steps, registry=reg, system=system)
+        kw = {"system": system} if system else {}   # the harness runtime substitutes C.run and has no expert prompt
+        r = C.run(f"[{today}] {goal}", sid, llm, store, max_steps=max_steps, registry=reg, **kw)
         out = empty()
         out["questions"] = [{"missing": q.get("missing") or "", "question": q.get("question", "")} for q in r["questions"]]
         out["actions"] = [{"procedure": None, **a} for a in r["actions"]]
