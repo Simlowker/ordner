@@ -18,7 +18,8 @@
     "housing.address.new",
     "housing.commune.new",
     "household.members",
-    "person.nationality"
+    "person.nationality",
+    "move.planned.canton_to"
   ],
   "required_documents": [
     "lease_contract",
@@ -31,10 +32,59 @@
       "days": 14,
       "count": "calendar",
       "from_fact": "housing.moving.date",
-      "sources": [0],
+      "sources": [
+        0
+      ],
+      "kinds": {
+        "arrival": {
+          "canton_of": "destination"
+        },
+        "departure": {
+          "canton_of": "origin"
+        }
+      },
       "cantonal": {
-        "VD": {"days": 8, "sources": [1, 2]},
-        "FR": {"days": 14, "sources": [3]}
+        "VD": {
+          "days": 8,
+          "sources": [
+            1,
+            2
+          ],
+          "kinds": {
+            "internal": {
+              "days": 8,
+              "sources": [
+                6
+              ]
+            },
+            "departure": {
+              "days": 0,
+              "sources": [
+                5
+              ]
+            }
+          }
+        },
+        "FR": {
+          "days": 14,
+          "sources": [
+            3
+          ],
+          "kinds": {
+            "internal": {
+              "days": 30,
+              "sources": [
+                7
+              ]
+            },
+            "departure": {
+              "days": 0,
+              "sources": [
+                4
+              ]
+            }
+          }
+        }
       }
     }
   },
@@ -42,7 +92,10 @@
     {
       "id": "announce_departure",
       "who": "user",
-      "sources": [4, 5],
+      "sources": [
+        4,
+        5
+      ],
       "label": {
         "fr": "Annoncer le départ à l'ancienne commune, avec la date et la destination (VD et FR : sans délai)",
         "de": "Wegzug bei der bisherigen Gemeinde mit Datum und Ziel melden (VD und FR: unverzüglich)",
@@ -53,7 +106,9 @@
       "id": "gather_documents",
       "who": "ordner",
       "action": "document_request",
-      "sources": [8],
+      "sources": [
+        8
+      ],
       "label": {
         "fr": "Préparer les pièces demandées par la nouvelle commune (FR par ex. : acte d'origine, carte AVS, attestation d'assurance-maladie, bail)",
         "de": "Von der neuen Gemeinde verlangte Unterlagen bereitstellen (FR z. B.: Heimatschein, AHV-Ausweis, Krankenversicherungsnachweis, Mietvertrag)",
@@ -64,7 +119,12 @@
       "id": "announce_arrival",
       "who": "user",
       "action": "form_entry",
-      "sources": [0, 1, 2, 3],
+      "sources": [
+        0,
+        1,
+        2,
+        3
+      ],
       "label": {
         "fr": "Annoncer l'arrivée à la nouvelle commune : droit fédéral 14 jours au plus ; VD 8 jours ; FR 14 jours",
         "de": "Zuzug bei der neuen Gemeinde melden: Bundesrecht höchstens 14 Tage; VD 8 Tage; FR 14 Tage",
@@ -74,7 +134,10 @@
     {
       "id": "internal_move",
       "who": "user",
-      "sources": [6, 7],
+      "sources": [
+        6,
+        7
+      ],
       "label": {
         "fr": "Déménagement dans la même commune : VD 8 jours ; FR 30 jours",
         "de": "Umzug innerhalb der Gemeinde: VD 8 Tage; FR 30 Tage",
@@ -162,5 +225,5 @@
     }
   ],
   "qualification": "qualified",
-  "notes": "Délai fédéral = maximum imposé aux cantons (LHR art. 11) ; les cantons peuvent être plus stricts : VD 8 jours (LCH art. 3 al. 3 et art. 5, confirmé comme droit actuel par l'exposé des motifs LSH d'août 2026 ; l'avant-projet LSH en consultation passerait à 14 jours), FR 14 jours à l'arrivée, 30 jours pour un changement interne. Encodage : 'from_fact' (date du déménagement) et 'cantonal' (surcharge par canton) sont des paramètres proposés à ordner.rules, qui ne compte aujourd'hui que depuis une notification. Texte LCH lu via LexFind (copie du recueil vaudois ; le site BLV officiel est une application JavaScript non lisible par verify.py). VD : annonce d'arrivée exigée lorsqu'un séjour de plus de trois mois est prévisible. Ressortissants étrangers : règles migratoires en plus (non couvertes). Autres cantons : délai fédéral par défaut, à qualifier canton par canton. L'étape dependent_dossiers est une suggestion d'Ordner, pas une règle légale."
+  "notes": "Délai fédéral = maximum imposé aux cantons (LHR art. 11) ; les cantons peuvent être plus stricts : VD 8 jours (LCH art. 3 al. 3 et art. 5, confirmé comme droit actuel par l'exposé des motifs LSH d'août 2026 ; l'avant-projet LSH en consultation passerait à 14 jours), FR 14 jours à l'arrivée, 30 jours pour un changement interne. Encodage : 'from_fact' (date du déménagement), 'cantonal' (surcharge par canton) et 'kinds' (arrival / departure / internal ; departure 0 jour = « sans délai » en VD et FR). Déménagement intercantonal : l'arrivée relève du canton de destination, le départ du canton d'origine ('canton_of' : destination = fait move.planned.canton_to, origine = canton du sujet) ; sélection faite par ordner.rules (context kind = arrival | departure | internal). Texte LCH lu via LexFind (copie du recueil vaudois ; le site BLV officiel est une application JavaScript non lisible par verify.py). VD : annonce d'arrivée exigée lorsqu'un séjour de plus de trois mois est prévisible. Ressortissants étrangers : règles migratoires en plus (non couvertes). Autres cantons : délai fédéral par défaut, à qualifier canton par canton. L'étape dependent_dossiers est une suggestion d'Ordner, pas une règle légale."
 }

@@ -182,13 +182,13 @@ def check_card_params():
     moving = get_card("housing.moving.announce").deadline
     move = lambda status: [Fact("m1", "s_vd", "housing.moving.date", "2026-10-01", status=status)]
     # 1. from_fact: the deadline counts from the confirmed moving date; proposed or absent → missing_info
-    r = compute_deadline(moving, VD, {"facts": move("confirmed")})
+    r = compute_deadline(moving, VD, {"facts": move("confirmed"), "kind": "internal"})
     assert r["due"] == "2026-10-09" and r["computed_from"]["inputs"]["from_fact"] == "housing.moving.date", r  # VD: 8 days
-    assert compute_deadline(moving, VD, {"facts": move("proposed")})["missing"] == ["housing.moving.date"]
-    assert compute_deadline(moving, VD, {})["missing"] == ["housing.moving.date"]
+    assert compute_deadline(moving, VD, {"facts": move("proposed"), "kind": "internal"})["missing"] == ["housing.moving.date"]
+    assert compute_deadline(moving, VD, {"kind": "internal"})["missing"] == ["housing.moving.date"]
     # 2. cantonal: VD 8 days and its sources; ZH has no own rule → federal 14 days, flagged; no canton → missing
-    assert compute_deadline(moving, VD, {"facts": move("confirmed")})["computed_from"]["card_sources"][:2] == [1, 2]
-    zh = compute_deadline(moving, Subject("s_vd", "person", "Z", canton="ZH"), {"facts": move("confirmed")})
+    assert compute_deadline(moving, VD, {"facts": move("confirmed"), "kind": "internal"})["computed_from"]["card_sources"][1:3] == [1, 2]  # kind source first, then VD cantonal sources
+    zh = compute_deadline(moving, Subject("s_vd", "person", "Z", canton="ZH"), {"facts": move("confirmed"), "kind": "internal"})
     assert zh["due"] == "2026-10-15" and "sans règle propre" in zh["computed_from"]["warnings"][0], zh
     assert compute_deadline(moving, Subject("s_vd", "person", "N"), {"facts": move("confirmed")})["missing"] == ["subject.canton"]
     #    with an event kind (FR: 14 days arrival, 30 days internal move, departure "sans délai")

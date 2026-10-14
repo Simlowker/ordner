@@ -9,8 +9,21 @@
   "nature": "obligation",
   "jurisdiction": "CH",
   "applicability": {
-    "attr": "kind",
-    "in": ["person", "household"]
+    "all": [
+      {
+        "attr": "kind",
+        "in": [
+          "person",
+          "household"
+        ]
+      },
+      {
+        "not": {
+          "attr": "household",
+          "eq": "collective"
+        }
+      }
+    ]
   },
   "required_facts": [
     "household.members",
@@ -26,7 +39,11 @@
     {
       "id": "check_amount",
       "who": "ordner",
-      "sources": [0, 1, 2],
+      "sources": [
+        0,
+        1,
+        2
+      ],
       "label": {
         "fr": "Contrôler la facture : 335 CHF par an et par ménage privé en 2026 ; 312 CHF du 1.1.2027 au 31.12.2028",
         "de": "Rechnung prüfen: CHF 335 pro Jahr und Privathaushalt im Jahr 2026; CHF 312 vom 1.1.2027 bis 31.12.2028",
@@ -36,18 +53,27 @@
     {
       "id": "check_household",
       "who": "ordner",
-      "sources": [3, 4],
+      "sources": [
+        3,
+        4,
+        10,
+        11
+      ],
       "label": {
-        "fr": "Vérifier la composition du ménage retenue (celle du registre des habitants) ; les adultes du ménage répondent solidairement",
-        "de": "Massgebende Haushaltszusammensetzung prüfen (gemäss Einwohnerregister); die Erwachsenen haften solidarisch",
-        "it": "Verificare la composizione dell'economia domestica considerata (registro abitanti); gli adulti rispondono solidalmente"
+        "fr": "Vérifier la composition du ménage retenue (celle du registre des habitants) ; les adultes du ménage répondent solidairement ; en ménage collectif (EMS, foyer, internat…), c'est l'organe responsable qui paie",
+        "de": "Massgebende Haushaltszusammensetzung prüfen (gemäss Einwohnerregister); die Erwachsenen haften solidarisch; in einem Kollektivhaushalt (Alters- und Pflegeheim, Wohnheim, Internat…) bezahlt die verantwortliche Trägerschaft",
+        "it": "Verificare la composizione dell'economia domestica considerata (registro abitanti); gli adulti rispondono solidalmente; in un'economia domestica collettiva (casa per anziani, istituto, convitto…) paga l'ente responsabile"
       }
     },
     {
       "id": "exemption_request",
       "who": "user",
       "action": "letter",
-      "sources": [5, 6, 9],
+      "sources": [
+        5,
+        6,
+        9
+      ],
       "label": {
         "fr": "Si un membre du ménage touche des prestations complémentaires AVS/AI : demander l'exonération (rétroactive, au plus 5 ans avant la demande)",
         "de": "Bezieht ein Haushaltsmitglied Ergänzungsleistungen zur AHV/IV: Befreiung beantragen (rückwirkend, höchstens 5 Jahre vor dem Gesuch)",
@@ -57,7 +83,9 @@
     {
       "id": "quarterly_option",
       "who": "user",
-      "sources": [7],
+      "sources": [
+        7
+      ],
       "label": {
         "fr": "Option : demander une facturation trimestrielle",
         "de": "Option: vierteljährliche Rechnungsstellung verlangen",
@@ -68,7 +96,9 @@
       "id": "pay",
       "who": "user",
       "action": "payment",
-      "sources": [8],
+      "sources": [
+        8
+      ],
       "label": {
         "fr": "Payer la facture de l'organe de perception à l'échéance indiquée (Ordner ne paie jamais)",
         "de": "Rechnung der Erhebungsstelle bis zum angegebenen Fälligkeitsdatum bezahlen (Ordner zahlt nie)",
@@ -150,8 +180,22 @@
       "quote": "l'exonération est accordée rétroactivement à la date du premier versement des prestations complémentaires, mais au plus cinq ans avant la réception de la demande par l'organe de perception",
       "verified": true,
       "accessed": "2026-10-14"
+    },
+    {
+      "title": "LRTV (RS 784.40), art. 69c, al. 3 — Fedlex, version du 01.10.2024",
+      "url": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/2007/150/20241001/fr/html/fedlex-data-admin-ch-eli-cc-2007-150-20241001-fr-html-8.html",
+      "quote": "L'organe de droit privé ou de droit public responsable d'un ménage collectif est débiteur de la redevance.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "OHR (RS 431.021), art. 2, let. abis (ménages collectifs) — Fedlex, version du 15.07.2026",
+      "url": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/2007/868/20260715/fr/html/fedlex-data-admin-ch-eli-cc-2007-868-20260715-fr-html.html",
+      "quote": "les homes pour personnes âgées et les établissements médico-sociaux",
+      "verified": true,
+      "accessed": "2026-10-14"
     }
   ],
   "qualification": "qualified",
-  "notes": "Domaine 'housing' faute d'un domaine 'household' dans catalog.DOMAINS (vision : « Logement loué et ménage »). Échéance = date imprimée sur la facture (QR) : pas de date légale fixe, deadline=null ; la période d'assujettissement d'un an a un début échelonné propre au ménage (ORTV art. 58 al. 1). Organe de perception : Serafe selon la page OFCOM (publiée le 17.03.2021) ; mandat 2026 non revérifié sur une source plus récente. Montant 2027-2028 (312 CHF) tiré de la version Fedlex consolidée au 01.01.2027. Non encodé : ménages collectifs (670 CHF en 2026, ORTV art. 57 let. b), exonérations diplomatiques (LRTV art. 69b al. 1 let. b), prescription."
+  "notes": "Domaine 'housing' faute d'un domaine 'household' dans catalog.DOMAINS (vision : « Logement loué et ménage »). Échéance = date imprimée sur la facture (QR) : pas de date légale fixe, deadline=null ; la période d'assujettissement d'un an a un début échelonné propre au ménage (ORTV art. 58 al. 1). Organe de perception : Serafe selon la page OFCOM (publiée le 17.03.2021) ; mandat 2026 non revérifié sur une source plus récente. Montant 2027-2028 (312 CHF) tiré de la version Fedlex consolidée au 01.01.2027. Ménage collectif (attr household = 'collective', liste OHR art. 2 let. abis) : la personne n'est pas débitrice (LRTV art. 69c al. 3), fiche non applicable ; household absent = information manquante. Non encodé : montant du ménage collectif (670 CHF en 2026, ORTV art. 57 let. b, à charge de l'organe), exonérations diplomatiques (LRTV art. 69b al. 1 let. b), prescription."
 }

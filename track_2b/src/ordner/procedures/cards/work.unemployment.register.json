@@ -30,7 +30,15 @@
     "job_search_proofs",
     "identity_document"
   ],
-  "deadline": null,
+  "deadline": {
+    "id": "chosen_date",
+    "params": {
+      "from_fact": "work.unemployment.first_claimed_day",
+      "sources": [
+        1
+      ]
+    }
+  },
   "steps": [
     {
       "id": "register_orp",
@@ -190,5 +198,5 @@
     }
   ],
   "qualification": "qualified",
-  "notes": "Échéance d'inscription relative au « premier jour pour lequel on demande l'indemnité » (choix de la personne) : aucun DeadlineRule existant ne l'exprime, d'où deadline=null ; la règle est portée par l'étape register_orp (au plus tard ce jour-là, aussitôt que possible). L'ORP et la caisse sont deux interlocuteurs distincts. Non encodé : conditions du droit (période de cotisation, aptitude au placement), suspensions pour chômage fautif, formulaires mensuels (« Indications de la personne assurée », preuves de recherches) et leurs délais de remise, délai-cadre de deux ans."
+  "notes": "Échéance d'inscription = « premier jour pour lequel on demande l'indemnité », date choisie par la personne : deadline chosen_date lue dans le fait work.unemployment.first_claimed_day (LACI art. 17 al. 2 : au plus tard ce jour-là, aussitôt que possible). L'ORP et la caisse sont deux interlocuteurs distincts. Non encodé : conditions du droit (période de cotisation, aptitude au placement), suspensions pour chômage fautif, formulaires mensuels (« Indications de la personne assurée », preuves de recherches) et leurs délais de remise, délai-cadre de deux ans."
 }

@@ -10,8 +10,14 @@
   "jurisdiction": "CH",
   "applicability": {
     "all": [
-      {"attr": "kind", "eq": "person"},
-      {"fact": "health_insurance.basic.insurer", "exists": true}
+      {
+        "attr": "kind",
+        "eq": "person"
+      },
+      {
+        "fact": "health_insurance.basic.insurer",
+        "exists": true
+      }
     ]
   },
   "required_facts": [
@@ -31,11 +37,36 @@
       "month": 11,
       "day": 30,
       "year_offset": 0,
-      "applies_to": ["change_insurer", "lower_deductible", "leave_restricted_model"],
-      "variants": [
-        {"case": "higher_deductible", "id": "fixed_date", "month": 12, "day": 31, "year_offset": 0, "sources": [5, 7]}
+      "send_by": {
+        "month": 11,
+        "day": 15
+      },
+      "applies_to": [
+        "change_insurer",
+        "lower_deductible",
+        "leave_restricted_model"
       ],
-      "sources": [0, 1, 4, 8, 10]
+      "variants": [
+        {
+          "case": "higher_deductible",
+          "id": "fixed_date",
+          "month": 12,
+          "day": 31,
+          "year_offset": 0,
+          "sources": [
+            5,
+            7
+          ]
+        }
+      ],
+      "sources": [
+        0,
+        1,
+        4,
+        8,
+        10,
+        11
+      ]
     }
   },
   "steps": [
@@ -51,7 +82,10 @@
     {
       "id": "check_arrears",
       "who": "ordner",
-      "sources": [2, 6],
+      "sources": [
+        2,
+        6
+      ],
       "label": {
         "fr": "Vérifier l'absence d'arriérés (primes, participations, intérêts moratoires, frais de poursuite) : ils bloquent le changement s'ils ne sont pas payés au 31.12",
         "de": "Prüfen, ob Ausstände bestehen (Prämien, Kostenbeteiligungen, Verzugszinsen, Betreibungskosten): unbezahlt per 31.12 blockieren sie den Wechsel",
@@ -71,7 +105,9 @@
       "id": "new_insurer_application",
       "who": "ordner",
       "action": "letter",
-      "sources": [3],
+      "sources": [
+        3
+      ],
       "label": {
         "fr": "Préparer la demande d'affiliation à la nouvelle caisse (franchise et date de début précisées)",
         "de": "Beitrittsgesuch bei der neuen Krankenkasse vorbereiten (mit Franchise und Beginndatum)",
@@ -82,7 +118,11 @@
       "id": "termination_letter",
       "who": "ordner",
       "action": "letter",
-      "sources": [0, 4, 8],
+      "sources": [
+        0,
+        4,
+        8
+      ],
       "label": {
         "fr": "Préparer la lettre de résiliation de l'assurance de base : elle doit parvenir à la caisse au plus tard le 30.11",
         "de": "Kündigungsschreiben der Grundversicherung vorbereiten: muss spätestens am 30.11. bei der Kasse eintreffen",
@@ -93,7 +133,12 @@
       "id": "deductible_or_model_letter",
       "who": "ordner",
       "action": "letter",
-      "sources": [1, 5, 7, 10],
+      "sources": [
+        1,
+        5,
+        7,
+        10
+      ],
       "label": {
         "fr": "Préparer la lettre de changement : franchise plus basse ou sortie d'un modèle à choix limité au 30.11 ; franchise plus élevée au 31.12",
         "de": "Änderungsschreiben vorbereiten: tiefere Franchise oder Austritt aus einem Modell mit eingeschränkter Wahl bis 30.11.; höhere Franchise bis 31.12.",
@@ -103,7 +148,9 @@
     {
       "id": "send",
       "who": "user",
-      "sources": [11],
+      "sources": [
+        11
+      ],
       "label": {
         "fr": "Signer et envoyer par recommandé ou « Courrier A Plus », idéalement avant le 15.11",
         "de": "Unterschreiben und eingeschrieben oder mit «A-Post Plus» senden, idealerweise vor dem 15.11.",
@@ -113,7 +160,9 @@
     {
       "id": "verify_confirmations",
       "who": "ordner",
-      "sources": [9],
+      "sources": [
+        9
+      ],
       "label": {
         "fr": "Contrôler la confirmation de la nouvelle caisse puis celle de l'ancienne (fin d'affiliation sans interruption)",
         "de": "Bestätigung der neuen und danach der alten Kasse prüfen (lückenloser Versicherungsschutz)",
