@@ -1,0 +1,310 @@
+{
+  "id": "tax.return.TI",
+  "name": {
+    "fr": "Déclaration d'impôt (Tessin)",
+    "de": "Steuererklärung (Tessin)",
+    "it": "Dichiarazione d'imposta (Ticino)"
+  },
+  "domain": "tax",
+  "nature": "obligation",
+  "jurisdiction": "TI",
+  "applicability": {
+    "all": [
+      {
+        "attr": "canton",
+        "eq": "TI"
+      },
+      {
+        "attr": "kind",
+        "in": [
+          "person",
+          "household"
+        ]
+      },
+      {
+        "not": {
+          "attr": "tax_at_source",
+          "eq": true
+        }
+      },
+      {
+        "any": [
+          {
+            "attr": "age_at_year_end",
+            "gte": 18
+          },
+          {
+            "role": "salaried"
+          },
+          {
+            "role": "apprentice"
+          },
+          {
+            "role": "self_employed"
+          }
+        ]
+      }
+    ]
+  },
+  "required_facts": [
+    "tax.period",
+    "person.civil_status"
+  ],
+  "required_documents": [
+    "tax_return_invitation",
+    "salary_certificate",
+    "swiss_tax_statement_eCH0196",
+    "securities_list",
+    "pillar3a_certificate",
+    "pension_fund_certificate",
+    "health_insurance_tax_certificate"
+  ],
+  "deadline": {
+    "id": "fixed_date",
+    "params": {
+      "month": 4,
+      "day": 30,
+      "year_offset": 1,
+      "sources": [
+        0,
+        2
+      ],
+      "extensions": [
+        {
+          "until": null,
+          "fee_chf": null,
+          "how": "online www.ti.ch/pf-proroga (no. registro + data di nascita), solo per giustificati motivi; se impossibile online: Ufficio di tassazione",
+          "sources": [
+            1,
+            3
+          ]
+        },
+        {
+          "until": null,
+          "fee_chf": null,
+          "how": "proroghe successive: solo casi eccezionali, per iscritto e motivate all'Ufficio di tassazione di riferimento",
+          "sources": [
+            3
+          ]
+        }
+      ]
+    }
+  },
+  "steps": [
+    {
+      "id": "gather_documents",
+      "label": {
+        "fr": "Rassembler les pièces (formulaire avec n° de registre, certificats de salaire, relevés bancaires, attestations 3a, LPP et caisse maladie)",
+        "de": "Unterlagen sammeln (Formular mit Registernummer, Lohnausweise, Bankauszüge, Bescheinigungen 3a, BVG und Krankenkasse)",
+        "it": "Raccogliere i documenti (Modulo 1 con n. di registro, certificati di salario, dichiarazioni bancarie, attestazioni 3a, previdenza professionale e cassa malati)"
+      },
+      "who": "ordner",
+      "action": "document_request",
+      "sources": [
+        8,
+        9,
+        10,
+        11,
+        12,
+        13
+      ]
+    },
+    {
+      "id": "check_completeness",
+      "label": {
+        "fr": "Vérifier que la déclaration est complète et que les annexes prescrites sont jointes",
+        "de": "Prüfen, ob die Erklärung vollständig ist und die vorgeschriebenen Beilagen vorhanden sind",
+        "it": "Verificare che la dichiarazione sia completa e che gli allegati prescritti siano presenti"
+      },
+      "who": "ordner",
+      "sources": [
+        7,
+        8,
+        9,
+        12
+      ]
+    },
+    {
+      "id": "request_extension",
+      "label": {
+        "fr": "Si nécessaire, demander une prolongation en ligne (www.ti.ch/pf-proroga) avant le 30.04",
+        "de": "Falls nötig, Fristerstreckung online beantragen (www.ti.ch/pf-proroga) vor dem 30.04.",
+        "it": "Se necessario, chiedere una proroga online (www.ti.ch/pf-proroga) entro il 30.04"
+      },
+      "who": "user",
+      "action": "form_entry",
+      "sources": [
+        1,
+        3
+      ]
+    },
+    {
+      "id": "fill_in",
+      "label": {
+        "fr": "Remplir la déclaration dans eTax TI (ou sur le formulaire papier), en commençant par l'Elenco dei titoli",
+        "de": "Erklärung in eTax TI (oder auf Papier) ausfüllen, zuerst das Wertschriftenverzeichnis (Elenco dei titoli)",
+        "it": "Compilare la dichiarazione con eTax (o sui moduli cartacei), iniziando dall'Elenco dei titoli"
+      },
+      "who": "user",
+      "action": "form_entry",
+      "sources": [
+        12,
+        13,
+        14
+      ]
+    },
+    {
+      "id": "submit_sign",
+      "label": {
+        "fr": "Envoyer : transmission électronique eTax sans signature, ou papier avec le Modulo 1 original signé",
+        "de": "Einreichen: elektronisch über eTax ohne Unterschrift, oder auf Papier mit unterschriebenem Original-Modulo 1",
+        "it": "Inviare: trasmissione elettronica eTax senza firma, oppure cartacea con il Modulo 1 originale firmato"
+      },
+      "who": "user",
+      "sources": [
+        2,
+        7,
+        14,
+        15
+      ]
+    },
+    {
+      "id": "keep_receipt",
+      "label": {
+        "fr": "Conserver la feuille de confirmation eTax (preuve du dépôt)",
+        "de": "Bestätigungsblatt von eTax aufbewahren (Nachweis der Einreichung)",
+        "it": "Conservare il foglio di conferma eTax (attestazione dell'avvenuto rientro)"
+      },
+      "who": "user",
+      "sources": [
+        16
+      ]
+    }
+  ],
+  "outputs": [
+    "tax_filing_receipt"
+  ],
+  "sources": [
+    {
+      "title": "DFE TI, Istruzioni per la compilazione della dichiarazione d'imposta delle persone fisiche 2025, p. 7 (termine)",
+      "url": "https://www4.ti.ch/fileadmin/DFE/DC/DOC-IPF/2025/Istruzioni/Istruzioni_PF_2025.pdf",
+      "quote": "La dichiarazione d’imposta, compilata in modo completo, veritiero e firmata, deve essere ritornata all’Ufficio circondariale di tassazione entro il termine indicato a pagina 1 della dichiarazione d’imposta (per la dichiarazione d’imposta 2025, il 30 aprile 2026).",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "DFE TI, comunicato stampa 26.02.2026 « Dichiarazione d'imposta 2025 delle persone fisiche » (proroga online)",
+      "url": "https://www4.ti.ch/tich/area-media/comunicati/dettaglio-comunicato?NEWS_ID=257983",
+      "quote": "La richiesta di proroga dei termini di rientro della dichiarazione va presentata direttamente online",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "Legge tributaria TI (LT, RL 640.100), art. 192 cpv. 3 (osservanza dei termini per posta)",
+      "url": "https://m3.ti.ch/CAN/RLeggi/public/index.php/raccolta-leggi/pdfatto/atto/12885",
+      "quote": "Quando l’invio di un atto avviene per posta, il termine è reputato osservato se la consegna alla posta svizzera è fatta prima della mezzanotte del giorno della scadenza.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "DFE TI, Istruzioni PF 2025, p. 7 (proroga)",
+      "url": "https://www4.ti.ch/fileadmin/DFE/DC/DOC-IPF/2025/Istruzioni/Istruzioni_PF_2025.pdf",
+      "quote": "La proroga è autorizzata solo in caso di comprovata necessità, mentre ulteriori e successive proroghe sono autorizzate soltanto in casi eccezionali e devono obbligatoriamente essere presentate in forma scritta e motivata all’Ufficio di tassazione di riferimento.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "DFE TI, Istruzioni PF 2025, p. 6 (obbligo fiscale dei maggiorenni)",
+      "url": "https://www4.ti.ch/fileadmin/DFE/DC/DOC-IPF/2025/Istruzioni/Istruzioni_PF_2025.pdf",
+      "quote": "Le persone maggiorenni devono compilare una propria dichiarazione d’imposta; l’imponibilità inizia a partire dall’anno in cui si compiono i 18 anni.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "DFE TI, Istruzioni PF 2025, p. 7 (minorenni con reddito da attività lucrativa)",
+      "url": "https://www4.ti.ch/fileadmin/DFE/DC/DOC-IPF/2025/Istruzioni/Istruzioni_PF_2025.pdf",
+      "quote": "separatamente (il/la minorenne deve compilare una propria dichiarazione d’imposta), il reddito da attività lucrativa anche se accessoria o temporanea",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "LT TI, art. 109 cpv. 4 (imposta alla fonte senza tassazione ordinaria ulteriore)",
+      "url": "https://m3.ti.ch/CAN/RLeggi/public/index.php/raccolta-leggi/pdfatto/atto/12885",
+      "quote": "Se la tassazione ordinaria ulteriore non è richiesta, l’imposta alla fonte sostituisce l’imposta cantonale riscossa sul reddito da attività lucrativa secondo la procedura ordinaria.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "LT TI, art. 198 cpv. 2 (dichiarazione completa, firmata, con allegati, nel termine)",
+      "url": "https://m3.ti.ch/CAN/RLeggi/public/index.php/raccolta-leggi/pdfatto/atto/12885",
+      "quote": "Il contribuente deve compilare la dichiarazione d’imposta in modo completo e veritiero, firmarla personalmente e inviarla, con gli allegati prescritti, all’autorità competente entro il termine stabilito.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "LT TI, art. 199 cpv. 1 lett. a (certificati di salario)",
+      "url": "https://m3.ti.ch/CAN/RLeggi/public/index.php/raccolta-leggi/pdfatto/atto/12885",
+      "quote": "Le persone fisiche devono allegare alla dichiarazione d’imposta, in particolare: a) i certificati di salario concernenti tutti i proventi da attività lucrativa dipendente;",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "LT TI, art. 199 cpv. 1 lett. e (attestazione previdenza professionale e vincolata)",
+      "url": "https://m3.ti.ch/CAN/RLeggi/public/index.php/raccolta-leggi/pdfatto/atto/12885",
+      "quote": "e) un’attestazione circa i contributi versati ad istituzioni di previdenza professionale e a forme previdenziali riconosciute, sempreché non già indicati nel certificato di salario.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "DFE TI, Istruzioni PF 2025, p. 6 (documentazione: dichiarazioni bancarie)",
+      "url": "https://www4.ti.ch/fileadmin/DFE/DC/DOC-IPF/2025/Istruzioni/Istruzioni_PF_2025.pdf",
+      "quote": "le dichiarazioni bancarie o postali concernenti capitali e loro redditi,debiti e interessi passivi;",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "DFE TI, Istruzioni PF 2025, p. 6 (documentazione: 3° pilastro A e casse malati)",
+      "url": "https://www4.ti.ch/fileadmin/DFE/DC/DOC-IPF/2025/Istruzioni/Istruzioni_PF_2025.pdf",
+      "quote": "le attestazioni concernenti versamenti a forme riconosciute di previdenza individuale vincolata (III° pilastroA), casse malati e premi di assicurazione sulla vita;",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "DFE TI, Istruzioni PF 2025, p. 5 (Elenco dei titoli, Modulo 2)",
+      "url": "https://www4.ti.ch/fileadmin/DFE/DC/DOC-IPF/2025/Istruzioni/Istruzioni_PF_2025.pdf",
+      "quote": "L’elenco dei titoli (Modulo 2) è da compilare nel caso in cui il/la contribuente possieda titoli, conti e capitali.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "DFE TI, Istruzioni PF 2025, p. 8 (n. di registro e password sul Modulo 1)",
+      "url": "https://www4.ti.ch/fileadmin/DFE/DC/DOC-IPF/2025/Istruzioni/Istruzioni_PF_2025.pdf",
+      "quote": "inserire il numero di registro e la password che si trovano sulla prima pagina della dichiarazione d’imposta (Modulo 1) che è stata recapitata per posta a ciascun/a contribuente.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "DFE TI, comunicato stampa 26.02.2026 (eTax: invio elettronico senza firma)",
+      "url": "https://www4.ti.ch/tich/area-media/comunicati/dettaglio-comunicato?NEWS_ID=257983",
+      "quote": "Tramite il programma informatico eTax è possibile effettuare la trasmissione elettronica della dichiarazione 2025 e dei relativi giustificativi senza più l’obbligo di dover stampare e inviare per posta la ricevuta firmata.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "DFE TI, Istruzioni PF 2025, p. 8 (firma del Modulo 1, invio cartaceo)",
+      "url": "https://www4.ti.ch/fileadmin/DFE/DC/DOC-IPF/2025/Istruzioni/Istruzioni_PF_2025.pdf",
+      "quote": "L’originale della dichiarazione d’imposta (Modulo 1) deve essere firmato (con luogo e data) dal/dalla contribuente e dal coniuge/partner registrato.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "DFE TI, Istruzioni PF 2025, p. 9 (foglio di conferma eTax)",
+      "url": "https://www4.ti.ch/fileadmin/DFE/DC/DOC-IPF/2025/Istruzioni/Istruzioni_PF_2025.pdf",
+      "quote": "Alla fine della procedura d’invio elettronico verrà generato un foglio di conferma (che dovrà essere conservato dal/dalla contribuente) valido anche quale attestazione dell’avvenuto rientro della dichiarazione presso l’autorità fiscale.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    }
+  ],
+  "qualification": "draft",
+  "notes": "Draft: all 17 quotes verified, but 4 points are open. (1) Extension: official TI sources (Istruzioni PF 2025, comunicato 26.02.2026, FAQ eTax PF, pf-proroga form) give the channel (online first, further ones exceptional/written/motivated) but neither the length nor a fee; until/fee_chf are null. Lead only: 2013 TI communiqué (www3.ti.ch/CAN/comunicati/26-02-2013-comunicato-stampa-7507053376.pdf) said 'proroga fino al 30 settembre' and RSI press says 30.09 is usual; not confirmed for 2026. (2) Deadline is encoded as fixed_date, NOT reception_by: the sources only say 'ritornata entro il 30 aprile' and LT art. 192 cpv. 3 says a postal filing is on time if handed to Swiss Post before midnight of the last day (contradicts the research note 2026-10-14 'date de reception'). Nuance: with mixed eTax+paper sending, the return counts as 'completa e rientrata' only when the paper part is received (Istruzioni p. 9). (3) Applicability simplifications: persons taxed at source are excluded (LT art. 109 cpv. 4), but mandatory TOU cases (LT art. 108: high gross income or income not taxed at source) must file and are not covered; age_at_year_end>=18 follows 'dall'anno in cui si compiono i 18 anni' but ordner.rules evaluates it on the evaluation date's year, not the tax period; minors with earned income are covered via roles salaried/apprentice/self_employed. (4) Document kind swiss_tax_statement_eCH0196 is mapped to 'dichiarazioni bancarie o postali' (the instructions do not name eCH-0196); securities_list = Elenco dei titoli (Modulo 2), required when the taxpayer holds titoli, conti e capitali."
+}

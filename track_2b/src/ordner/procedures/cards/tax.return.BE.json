@@ -1,0 +1,57 @@
+{
+  "id": "tax.return.BE",
+  "name": {"fr": "Déclaration d'impôt (Berne)", "de": "Steuererklärung (Bern)", "it": "Dichiarazione d'imposta (Berna)"},
+  "domain": "tax",
+  "nature": "obligation",
+  "jurisdiction": "BE",
+  "applicability": {"all": [
+    {"attr": "canton", "eq": "BE"},
+    {"attr": "kind", "in": ["person", "household"]},
+    {"not": {"attr": "tax_at_source", "eq": true}},
+    {"attr": "age", "gte": 18}
+  ]},
+  "required_facts": ["tax.period", "person.civil_status"],
+  "required_documents": [
+    "tax_return_invitation",
+    "salary_certificate",
+    "swiss_tax_statement_eCH0196",
+    "pillar3a_certificate",
+    "pension_fund_certificate",
+    "health_insurance_tax_certificate"
+  ],
+  "deadline": {"id": "fixed_date", "params": {
+    "month": 3, "day": 15, "year_offset": 1, "sources": [0],
+    "extensions": [
+      {"until": "07-15", "fee_chf": 0, "how": "online (BE-Login, with ZPV number, case number and ID code from the letter), before the filing deadline expires", "request_by": "03-15", "sources": [1, 2, 5]},
+      {"until": "07-15", "fee_chf": 20, "how": "in writing (e-mail, letter), by phone or at the counter, before the filing deadline expires", "request_by": "03-15", "sources": [1, 2, 5]},
+      {"until": "09-15", "fee_chf": 20, "how": "online (BE-Login), before the current deadline expires", "request_by": "03-15", "sources": [1, 2, 5]},
+      {"until": "09-15", "fee_chf": 40, "how": "in writing (e-mail, letter), by phone or at the counter, before the current deadline expires", "request_by": "03-15", "sources": [1, 2, 5]},
+      {"until": "11-15", "fee_chf": 40, "how": "online (BE-Login), before the current deadline expires; 15.11 is the maximum", "request_by": "03-15", "sources": [1, 2, 5]},
+      {"until": "11-15", "fee_chf": 60, "how": "in writing (e-mail, letter), by phone or at the counter, before the current deadline expires; 15.11 is the maximum", "request_by": "03-15", "sources": [1, 2, 5]}
+    ]
+  }},
+  "steps": [
+    {"id": "gather_documents", "label": {"fr": "Rassembler les pièces (certificat de salaire, relevé fiscal, attestations 3a et LPP, primes maladie)", "de": "Belege sammeln (Lohnausweis, Steuerauszug, Bescheinigungen 3a und BVG, Krankenkassenprämien)", "it": "Raccogliere i documenti (certificato di salario, estratto fiscale, attestazioni 3a e LPP, premi cassa malati)"}, "who": "ordner", "action": "document_request", "sources": [9]},
+    {"id": "check_completeness", "label": {"fr": "Vérifier que les annexes obligatoires sont complètes", "de": "Vollständigkeit der vorgeschriebenen Beilagen prüfen", "it": "Verificare la completezza degli allegati obbligatori"}, "who": "ordner", "sources": [9]},
+    {"id": "request_extension", "label": {"fr": "Si besoin, demander une prolongation avant l'échéance (en ligne dans BE-Login : gratuit jusqu'au 15 juillet) et enregistrer la confirmation", "de": "Falls nötig, vor Fristablauf Fristverlängerung beantragen (online im BE-Login: bis 15. Juli gebührenfrei) und Bestätigung speichern", "it": "Se necessario, chiedere una proroga prima della scadenza (online in BE-Login: gratuita fino al 15 luglio) e salvare la conferma"}, "who": "user", "action": "form_entry", "sources": [1, 2, 3, 5]},
+    {"id": "fill_in_software", "label": {"fr": "Remplir la déclaration dans TaxMe-Online (BE-Login, connexion AGOV)", "de": "Steuererklärung in TaxMe-Online ausfüllen (BE-Login, Anmeldung mit AGOV)", "it": "Compilare la dichiarazione in TaxMe-Online (BE-Login, accesso AGOV)"}, "who": "user", "action": "form_entry", "sources": [6]},
+    {"id": "submit_and_sign", "label": {"fr": "Signer (ou valider électroniquement) et déposer la déclaration avec les annexes dans le délai", "de": "Steuererklärung unterzeichnen (oder elektronisch freigeben) und samt Beilagen fristgerecht einreichen", "it": "Firmare (o convalidare elettronicamente) e inoltrare la dichiarazione con gli allegati entro il termine"}, "who": "user", "sources": [0, 6, 8]},
+    {"id": "keep_receipt", "label": {"fr": "Conserver la quittance de dépôt", "de": "Einreichungsquittung aufbewahren", "it": "Conservare la ricevuta d'inoltro"}, "who": "user"}
+  ],
+  "outputs": ["tax_filing_receipt"],
+  "sources": [
+    {"title": "Steuerverwaltung BE, Wegleitung Natürliche Personen, Steuerjahr 2025: Einreichefrist", "url": "https://www.wegleitung.sv.fin.be.ch/de/start/np2025/allgemeine-informationen/fristen.html", "quote": "Grundsätzlich ist die Steuererklärung bis zum 15. März abzugeben.", "verified": true, "accessed": "2026-10-14"},
+    {"title": "Steuerverwaltung BE, Frist als Privatperson verlängern: Antrag vor Fristablauf", "url": "https://www.sv.fin.be.ch/de/start/themen/frist-verlaengern/fristverlaengerung-privatpersonen.html", "quote": "Beantragen Sie eine Fristverlängerung bevor die Einreichefrist für die Steuererklärung abläuft. Erledigen Sie dies online, telefonisch oder schriftlich.", "verified": true, "accessed": "2026-10-14"},
+    {"title": "Steuerverwaltung BE, Frist als Privatperson verlängern: Fristen und Gebühren", "url": "https://www.sv.fin.be.ch/de/start/themen/frist-verlaengern/fristverlaengerung-privatpersonen.html", "quote": "Fristverlängerung Online Schriftlich (E-Mail, Brief) Telefon, Schalter bis 15. Juli gebührenfrei CHF 20 bis 15. September CHF 20 CHF 40 bis 15. November* CHF 40 CHF 60", "verified": true, "accessed": "2026-10-14"},
+    {"title": "Steuerverwaltung BE, Frist als Privatperson verlängern: Bestätigung", "url": "https://www.sv.fin.be.ch/de/start/themen/frist-verlaengern/fristverlaengerung-privatpersonen.html", "quote": "Speichern Sie die Bestätigung bei sich ab und bewahren Sie den Beleg auf. Sie erhalten keine Bestätigung per Post oder per E-Mail.", "verified": true, "accessed": "2026-10-14"},
+    {"title": "Steuerverwaltung BE, Frist als Privatperson verlängern: Betriebsunterbruch (Steuererklärung 2025 only)", "url": "https://www.sv.fin.be.ch/de/start/themen/frist-verlaengern/fristverlaengerung-privatpersonen.html", "quote": "Damit Ihnen kein Nachteil entsteht, wird die letzte Einreichfrist für die Steuererklärung 2025 automatisch vom 15. auf den 30. November 2026 verlängert.", "verified": true, "accessed": "2026-10-14"},
+    {"title": "Steuerverwaltung BE, info Januar 2026 (Natürliche Personen): Fristverlängerung eingeben", "url": "https://www.sv.fin.be.ch/content/dam/sv_fin/dokumente/de/info_10minuten/info-np_januar2026_de.pdf", "quote": "Online Schriftlich (E-Mail, Brief), telefonisch, Schalter bis 15. Juli gebührenfrei CHF 20 bis 15. Sept. CHF 20 CHF 40 bis 15. Nov. CHF 40 CHF 60", "verified": true, "accessed": "2026-10-14"},
+    {"title": "Steuerverwaltung BE, info Januar 2026: Steuererklärung in BE-Login online ausfüllen", "url": "https://www.sv.fin.be.ch/content/dam/sv_fin/dokumente/de/info_10minuten/info-np_januar2026_de.pdf", "quote": "Steuererklärung vollständig elektronisch freigeben und einreichen.", "verified": true, "accessed": "2026-10-14"},
+    {"title": "Steuergesetz des Kantons Bern (BSG 661.11, Stand 01.01.2026), Art. 69 Abs. 1 (BELEX)", "url": "https://www.belex.sites.be.ch/api/de/versions/3330/pdf_file_with_annexes", "quote": "Steuerpflichtige werden erstmals für die Steuerperiode, in der sie volljährig werden, separat veranlagt.", "verified": true, "accessed": "2026-10-14"},
+    {"title": "Steuergesetz des Kantons Bern (BSG 661.11), Art. 170 Abs. 2 (BELEX)", "url": "https://www.belex.sites.be.ch/api/de/versions/3330/pdf_file_with_annexes", "quote": "Die steuerpflichtige Person muss die Steuererklärung und Einlageblätter wahrheitsgemäss und vollständig ausfüllen, persönlich unterzeichnen und samt den vorgeschriebenen Beilagen innert der vom Regierungsrat festgesetzten Frist einreichen.", "verified": true, "accessed": "2026-10-14"},
+    {"title": "Steuergesetz des Kantons Bern (BSG 661.11), Art. 171 Abs. 1 Beilagen (BELEX)", "url": "https://www.belex.sites.be.ch/api/de/versions/3330/pdf_file_with_annexes", "quote": "a Lohnausweise über alle Einkünfte aus unselbstständiger Erwerbstätigkeit,", "verified": true, "accessed": "2026-10-14"},
+    {"title": "Steuergesetz des Kantons Bern (BSG 661.11), Art. 114b Abs. 4 Quellensteuer (BELEX)", "url": "https://www.belex.sites.be.ch/api/de/versions/3330/pdf_file_with_annexes", "quote": "Erfolgt keine nachträgliche ordentliche Veranlagung auf Antrag, so tritt die Quellensteuer an die Stelle der im ordentlichen Verfahren zu veranlagenden Steuern auf dem Erwerbseinkommen.", "verified": true, "accessed": "2026-10-14"}
+  ],
+  "qualification": "qualified",
+  "notes": "Scope limits (all official, not encoded): (1) The binding deadline is the one printed on the letter ('Die Einreichefrist für Ihre Steuererklärung entnehmen Sie diesem Schreiben'); 15.03 is the rule 'grundsätzlich'. Self-employed persons, farmers and members of heirs'/co-ownership communities or partnerships have 15.05 (same Wegleitung page), not encoded. (2) Extension fees are billed with the final bill (Schlussabrechnung) per the same sv.fin.be.ch page; late filing costs a CHF 60 Mahngebühr. A first request can go straight to any of the three dates; later requests must be made before the current (extended) deadline, request_by 03-15 is the earliest safe date. (3) ONE-OFF, tax return 2025 only: because of the 23.10-01.11.2026 IT outage, the last deadline 15.11.2026 is automatically moved to 30.11.2026 (source 4); not encoded in the generic rule, Ordner should surface it for period 2025. (4) Age: Art. 69 al. 1 StG = own assessment from the period in which the person comes of age; minors with earned income are also assessed separately (al. 2), not covered. (5) tax_at_source: Art. 114b al. 4 StG; persons under mandatory or requested subsequent ordinary assessment (Art. 114a/114b) must file, not covered. (6) Art. 171 StG requires salary certificates and the securities list (eCH-0196 e-statement can feed it); 3a, LPP and health insurance certificates are deduction proofs, the invitation letter carries the access codes; not legal attachments in the BE law text. keep_receipt has no official source (Ordner practice)."
+}

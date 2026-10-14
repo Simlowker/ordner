@@ -1,0 +1,50 @@
+{
+  "id": "tax.return.ZH",
+  "name": {"fr": "Déclaration d'impôt (Zurich)", "de": "Steuererklärung (Zürich)", "it": "Dichiarazione d'imposta (Zurigo)"},
+  "domain": "tax",
+  "nature": "obligation",
+  "jurisdiction": "ZH",
+  "applicability": {"all": [
+    {"attr": "canton", "eq": "ZH"},
+    {"attr": "kind", "in": ["person", "household"]},
+    {"not": {"attr": "tax_at_source", "eq": true}},
+    {"attr": "age", "gte": 18}
+  ]},
+  "required_facts": ["tax.period", "person.civil_status"],
+  "required_documents": [
+    "tax_return_invitation",
+    "salary_certificate",
+    "swiss_tax_statement_eCH0196",
+    "pillar3a_certificate",
+    "pension_fund_certificate",
+    "health_insurance_tax_certificate"
+  ],
+  "deadline": {"id": "fixed_date", "params": {
+    "month": 3, "day": 31, "year_offset": 1, "sources": [1],
+    "extensions": [
+      {"until": "11-30", "fee_chf": null, "how": "request to the Gemeindesteueramt of the commune (online where the commune offers it) before the deadline expires; a timely first request is tacitly granted; 30.11 is the maximum", "request_by": "03-31", "sources": [2, 3, 4, 5]}
+    ]
+  }},
+  "steps": [
+    {"id": "gather_documents", "label": {"fr": "Rassembler les pièces (certificat de salaire, relevé fiscal, attestations 3a et LPP, primes maladie)", "de": "Belege sammeln (Lohnausweis, Steuerauszug, Bescheinigungen 3a und BVG, Krankenkassenprämien)", "it": "Raccogliere i documenti (certificato di salario, estratto fiscale, attestazioni 3a e LPP, premi cassa malati)"}, "who": "ordner", "action": "document_request", "sources": [8]},
+    {"id": "check_completeness", "label": {"fr": "Vérifier que les annexes obligatoires sont complètes", "de": "Vollständigkeit der vorgeschriebenen Beilagen prüfen", "it": "Verificare la completezza degli allegati obbligatori"}, "who": "ordner", "sources": [8]},
+    {"id": "request_extension", "label": {"fr": "Si besoin, demander une prolongation à l'office communal des impôts avant le 31 mars", "de": "Falls nötig, vor dem 31. März beim Gemeindesteueramt Fristerstreckung beantragen", "it": "Se necessario, chiedere una proroga all'ufficio comunale delle imposte prima del 31 marzo"}, "who": "user", "action": "letter", "sources": [2, 3, 4, 5]},
+    {"id": "fill_in_software", "label": {"fr": "Remplir la déclaration dans ZHprivateTax", "de": "Steuererklärung in ZHprivateTax ausfüllen", "it": "Compilare la dichiarazione in ZHprivateTax"}, "who": "user", "action": "form_entry", "sources": [6]},
+    {"id": "submit_and_sign", "label": {"fr": "Signer et déposer la déclaration avec les annexes dans le délai", "de": "Steuererklärung unterzeichnen und samt Beilagen fristgemäss einreichen", "it": "Firmare e inoltrare la dichiarazione con gli allegati entro il termine"}, "who": "user", "sources": [1, 7]},
+    {"id": "keep_receipt", "label": {"fr": "Conserver la quittance de dépôt", "de": "Einreichungsquittung aufbewahren", "it": "Conservare la ricevuta d'inoltro"}, "who": "user"}
+  ],
+  "outputs": ["tax_filing_receipt"],
+  "sources": [
+    {"title": "Zürcher Steuerbuch Nr. 133.1, Aufforderung zur Einreichung von Steuererklärungen (Finanzdirektion ZH), A.I.1 Pflicht zur Abgabe", "url": "https://www.zh.ch/de/steuern-finanzen/steuern/treuhaender/steuerbuch/steuerbuch-definition/zstb-133-1.html", "quote": "a) alle steuerpflichtigen Personen (bis und mit Jahrgang 2008), die am 31. Dezember 2026 Wohnsitz im Kanton Zürich hatten und nicht der Quellensteuer für ausländische Arbeitnehmende unterstehen;", "verified": true, "accessed": "2026-10-14"},
+    {"title": "Zürcher Steuerbuch Nr. 132.1, Weisung über das Steuererklärungsverfahren, G.I.1 Ordentliche Frist natürliche Personen", "url": "https://www.zh.ch/de/steuern-finanzen/steuern/treuhaender/steuerbuch/steuerbuch-definition/zstb-132-1.html", "quote": "Die Steuererklärung ist zusammen mit dem Wertschriftenverzeichnis bis 31. März des der Steuerperiode folgenden Kalenderjahres online oder dem Scan-Center einzureichen.", "verified": true, "accessed": "2026-10-14"},
+    {"title": "Zürcher Steuerbuch Nr. 132.1, G.II.2.a Fristerstreckungsgesuche: vor Ablauf beim Gemeindesteueramt", "url": "https://www.zh.ch/de/steuern-finanzen/steuern/treuhaender/steuerbuch/steuerbuch-definition/zstb-132-1.html", "quote": "Gesuche um Fristerstreckung für Steuererklärungen von natürlichen Personen sind vor deren Ablauf dem Gemeindesteueramt bzw. für Steuererklärungen von juristischen Personen dem kantonalen Steueramt, Abteilung Register, einzureichen.", "verified": true, "accessed": "2026-10-14"},
+    {"title": "Zürcher Steuerbuch Nr. 132.1, G.II.2.b längstens bis 30. November", "url": "https://www.zh.ch/de/steuern-finanzen/steuern/treuhaender/steuerbuch/steuerbuch-definition/zstb-132-1.html", "quote": "Rechtzeitig eingereichten Fristerstreckungsgesuchen ist längstens bis 30. November des der Steuerperiode folgenden Kalenderjahres zu entsprechen.", "verified": true, "accessed": "2026-10-14"},
+    {"title": "Zürcher Steuerbuch Nr. 132.1, G.II.2.d stillschweigende Bewilligung", "url": "https://www.zh.ch/de/steuern-finanzen/steuern/treuhaender/steuerbuch/steuerbuch-definition/zstb-132-1.html", "quote": "Rechtzeitig eingereichte erstmalige Fristerstreckungsgesuche gelten ohne gegenteiligen schriftlichen Entscheid als stillschweigend bewilligt.", "verified": true, "accessed": "2026-10-14"},
+    {"title": "Kanton Zürich, Steuererklärung Privatpersonen: Fristerstreckung", "url": "https://www.zh.ch/de/steuern-finanzen/steuern/steuern-natuerliche-personen/steuererklaerung-natuerliche-personen.html", "quote": "Die Fristerstreckung müssen Sie bei Ihrem jeweiligen Gemeindesteueramt einreichen. Einige Gemeinden bieten die Möglichkeit, die Frist online zu verlängern.", "verified": true, "accessed": "2026-10-14"},
+    {"title": "Kanton Zürich, Steuererklärung Privatpersonen: ZHprivateTax", "url": "https://www.zh.ch/de/steuern-finanzen/steuern/steuern-natuerliche-personen/steuererklaerung-natuerliche-personen.html", "quote": "Ab der Steuerperiode 2025 wird die bisherige Download-Software Private Tax eingestellt. Künftig steht Ihnen die Online-Lösung ZHprivateTax zur Verfügung", "verified": true, "accessed": "2026-10-14"},
+    {"title": "Steuergesetz des Kantons Zürich (LS 631.1, Stand 1.4.26), § 133 Abs. 2", "url": "https://www.notes.zh.ch/appl/zhlex_r.nsf/WebView/A1B72A220CD6E747C1258DC4002A921E/$File/631.1_8.6.97_132.pdf", "quote": "Die steuerpflichtige Person muss das amtliche Formular für die Steuererklärung wahrheitsgemäss und vollständig ausfüllen, persönlich unterzeichnen und samt den vorgeschriebenen Beilagen fristgemäss der zuständigen Behörde einreichen.", "verified": true, "accessed": "2026-10-14"},
+    {"title": "Steuergesetz des Kantons Zürich (LS 631.1, Stand 1.4.26), § 134 Abs. 1 Beilagen", "url": "https://www.notes.zh.ch/appl/zhlex_r.nsf/WebView/A1B72A220CD6E747C1258DC4002A921E/$File/631.1_8.6.97_132.pdf", "quote": "a. Lohnausweise über alle Einkünfte aus unselbstständiger Erwerbstätigkeit,", "verified": true, "accessed": "2026-10-14"}
+  ],
+  "qualification": "qualified",
+  "notes": "Scope limits (all official, not encoded): (1) ZStB 133.1 is republished each year; the page fetched on 2026-10-14 already carries the 2027 call (tax period 2026, 'bis und mit Jahrgang 2008'), i.e. age >= 18 at the end of the tax period; ordner.rules must compute age for the period year. (2) Persons taxed at source who fall under the subsequent ordinary assessment (NOV, ZStB 133.1 A.I.1.b / A.III) must also file by 31.03; this card excludes all tax_at_source subjects. (3) ZStB 132.1 G.II.1 extends ex officio to 30.09 only for self-employed persons and taxpayers living outside the canton; the '30.09 standard extension' found in secondary sources is NOT an official rule for ordinary individuals, the commune decides the granted date up to 30.11. (4) No official ZH source states an extension fee: fee_chf is null (commune practice not verified). (5) Deadline is a filing date ('einzureichen'); no official text says reception vs postmark, hence fixed_date. (6) § 134 StG requires salary certificates, the securities list (eCH-0196 e-statement can feed it) and pension contribution certificates (lit. d, LPP/3a); the health insurance certificate and the invitation letter are practical aids, not legal attachments. keep_receipt has no official source (Ordner practice)."
+}

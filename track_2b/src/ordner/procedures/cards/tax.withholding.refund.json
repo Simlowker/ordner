@@ -1,0 +1,177 @@
+{
+  "id": "tax.withholding.refund",
+  "name": {
+    "fr": "Remboursement de l'impôt anticipé (état des titres)",
+    "de": "Rückerstattung der Verrechnungssteuer (Wertschriftenverzeichnis)",
+    "it": "Rimborso dell'imposta preventiva (elenco dei titoli)"
+  },
+  "domain": "tax",
+  "nature": "right",
+  "jurisdiction": "CH",
+  "applicability": {
+    "all": [
+      {
+        "attr": "kind",
+        "in": [
+          "person",
+          "household"
+        ]
+      },
+      {
+        "attr": "canton",
+        "exists": true
+      },
+      {
+        "fact": "tax.securities.withholding_tax_total",
+        "gt": 0
+      }
+    ]
+  },
+  "required_facts": [
+    "tax.period",
+    "tax.securities.withholding_tax_total",
+    "tax.securities.total_tax_value"
+  ],
+  "required_documents": [
+    "swiss_tax_statement_eCH0196",
+    "securities_list"
+  ],
+  "deadline": {
+    "id": "fixed_date",
+    "params": {
+      "month": 12,
+      "day": 31,
+      "year_offset": 3,
+      "sources": [
+        4
+      ],
+      "cantonal": {
+        "TI": {
+          "rule": "Nessuna domanda separata: la pretesa di rimborso dell'imposta preventiva si determina compilando l'Elenco dei titoli (Modulo 2) allegato alla dichiarazione.",
+          "sources": [
+            8
+          ]
+        }
+      }
+    }
+  },
+  "steps": [
+    {
+      "id": "collect_statements",
+      "who": "ordner",
+      "label": {
+        "fr": "Rassembler les relevés fiscaux bancaires (eCH-0196) de l'année",
+        "de": "Steuerauszüge der Banken (eCH-0196) des Jahres sammeln",
+        "it": "Raccogliere gli estratti fiscali bancari (eCH-0196) dell'anno"
+      }
+    },
+    {
+      "id": "fill_securities_list",
+      "who": "user",
+      "action": "form_entry",
+      "sources": [
+        5,
+        6
+      ],
+      "label": {
+        "fr": "Déclarer tous les avoirs et leurs rendements dans l'état des titres joint à la déclaration",
+        "de": "Alle Vermögenswerte und Erträge im Wertschriftenverzeichnis der Steuererklärung angeben",
+        "it": "Dichiarare tutti gli averi e i loro redditi nell'elenco dei titoli allegato alla dichiarazione"
+      }
+    },
+    {
+      "id": "check_complete",
+      "who": "ordner",
+      "sources": [
+        1
+      ],
+      "label": {
+        "fr": "Contrôler qu'aucun revenu soumis à l'impôt anticipé n'est omis (sinon perte du droit)",
+        "de": "Prüfen, dass kein verrechnungssteuerpflichtiger Ertrag fehlt (sonst Verwirkung)",
+        "it": "Verificare che nessun reddito soggetto all'imposta preventiva sia omesso (altrimenti perdita del diritto)"
+      }
+    },
+    {
+      "id": "check_credit",
+      "who": "ordner",
+      "sources": [
+        6
+      ],
+      "label": {
+        "fr": "Vérifier l'imputation de l'impôt anticipé dans le décompte final",
+        "de": "Verrechnung im Schlussabrechnung prüfen",
+        "it": "Verificare il computo dell'imposta preventiva nel conteggio finale"
+      }
+    }
+  ],
+  "outputs": [
+    "withholding_tax_credit_in_final_bill"
+  ],
+  "sources": [
+    {
+      "title": "LIA (RS 642.21) art. 22 al. 1, Fedlex, version du 1.1.2025",
+      "url": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/1966/371_385_384/20250101/fr/xml/fedlex-data-admin-ch-eli-cc-1966-371_385_384-20250101-fr-xml-11.xml",
+      "quote": "Les personnes physiques ont droit au remboursement de l’impôt anticipé si elles étaient domiciliées en Suisse à l’échéance de la prestation imposable.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "LIA (RS 642.21) art. 23 al. 1, Fedlex, version du 1.1.2025",
+      "url": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/1966/371_385_384/20250101/fr/xml/fedlex-data-admin-ch-eli-cc-1966-371_385_384-20250101-fr-xml-11.xml",
+      "quote": "Celui qui, contrairement aux prescriptions légales, ne déclare pas aux autorités fiscales compétentes un revenu grevé de l’impôt anticipé ou la fortune d’où provient ce revenu perd le droit au remboursement de l’impôt anticipé déduit de ce revenu.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "LIA (RS 642.21) art. 29 al. 1-2, Fedlex, version du 1.1.2025",
+      "url": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/1966/371_385_384/20250101/fr/xml/fedlex-data-admin-ch-eli-cc-1966-371_385_384-20250101-fr-xml-11.xml",
+      "quote": "Celui qui veut obtenir le remboursement de l’impôt anticipé doit présenter une demande écrite à l’autorité compétente. 2 La demande peut être présentée au plus tôt après l’expiration de l’année civile au cours de laquelle la prestation imposable est échue.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "LIA (RS 642.21) art. 30 al. 1, Fedlex, version du 1.1.2025",
+      "url": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/1966/371_385_384/20250101/fr/xml/fedlex-data-admin-ch-eli-cc-1966-371_385_384-20250101-fr-xml-11.xml",
+      "quote": "Les personnes physiques doivent faire valoir leur demande en remboursement auprès des autorités fiscales du canton où elles étaient domiciliées à l’expiration de l’année civile au cours de laquelle la prestation imposable est échue.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "LIA (RS 642.21) art. 32 al. 1, Fedlex, version du 1.1.2025",
+      "url": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/1966/371_385_384/20250101/fr/xml/fedlex-data-admin-ch-eli-cc-1966-371_385_384-20250101-fr-xml-11.xml",
+      "quote": "Le droit au remboursement s’éteint si la demande n’est pas présentée dans les trois ans après l’expiration de l’année civile au cours de laquelle la prestation est échue.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "Canton de Vaud, ACI, « Impôt anticipé »",
+      "url": "https://www.vd.ch/etat-droit-finances/impots/impots-pour-les-individus/les-impots-les-differents-types-dimpots/impot-anticipe",
+      "quote": "Pour les personnes imposées de manière ordinaire, les demandes se font par l'état des titres joint à la déclaration d'impôt, respectivement ses annexes DA-1 et R-US 164.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "Canton de Berne, Guide Personnes physiques 2025, « Remboursement de l'impôt anticipé »",
+      "url": "https://www.wegleitung.sv.fin.be.ch/content/dam/sv_fin/dokumente/fr/wegleitungen/2025/wl_natuerliche-personen_2025_fr.pdf",
+      "quote": "L'impôt anticipé est remboursé aux personnes domiciliées en Suisse, à condition qu'elles indiquent leur capital et son rendement dans leur déclaration d'impôt conformément à la vérité. En général, votre avoir d'impôt anticipé vous est remboursé par compensation au moment du décompte final de l'année fiscale.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "LIA (RS 642.21) art. 13 al. 1 let. a (taux 35 %), Fedlex, version du 1.1.2025",
+      "url": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/1966/371_385_384/20250101/fr/xml/fedlex-data-admin-ch-eli-cc-1966-371_385_384-20250101-fr-xml-11.xml",
+      "quote": "à 35 % de la prestation imposable;",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "DFE TI, Istruzioni PF 2025, p. 5 (Modulo 2, rimborso imposta preventiva)",
+      "url": "https://www4.ti.ch/fileadmin/DFE/DC/DOC-IPF/2025/Istruzioni/Istruzioni_PF_2025.pdf",
+      "quote": "Questo modulo serve a determinare la sostanza da titoli e capitali (ed i relativi redditi) così come a determinare la pretesa di rimborso dell’imposta preventiva.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    }
+  ],
+  "qualification": "qualified",
+  "notes": "Natural persons domiciled in Switzerland claim the 35 % withholding tax back from their canton of domicile at 31.12 (LIA 22, 30), in practice through the securities list attached to the return (VD, BE, TI quoted). TI: the 2025 instructions (value date 30 days after the balance instalment) and the 2025 decree art. 4 (value date of the assessment notice) disagree on the credit value date, not encoded. Right lost if the income or wealth is not declared (LIA 23, with the negligence exception of al. 2) and extinguished 3 years after the end of the year the income fell due (LIA 32): deadline = 31.12 of period + 3. Foreign withholding (DA-1, R-US 164) is out of scope of this card."
+}

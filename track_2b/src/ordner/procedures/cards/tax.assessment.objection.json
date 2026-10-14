@@ -1,0 +1,334 @@
+{
+  "id": "tax.assessment.objection",
+  "name": {
+    "fr": "Réclamation contre la décision de taxation",
+    "de": "Einsprache gegen die Veranlagungsverfügung",
+    "it": "Reclamo contro la decisione di tassazione"
+  },
+  "domain": "tax",
+  "nature": "right",
+  "jurisdiction": "CH",
+  "applicability": {
+    "fact": "tax.assessment.notified_on",
+    "exists": true
+  },
+  "required_facts": [
+    "tax.assessment.notified_on",
+    "tax.period"
+  ],
+  "required_documents": [
+    "tax_assessment_decision"
+  ],
+  "deadline": {
+    "id": "days_after_notification",
+    "params": {
+      "days": 30,
+      "count": "calendar",
+      "sources": [
+        0,
+        1,
+        2
+      ],
+      "cantonal": {
+        "BE": {
+          "rule": "Einsprache against the Veranlagungsverfügung: within 30 days of its opening (Eröffnung), in writing, to the kantonale Steuerverwaltung (StG BE Art. 190 Abs. 1; Art. 189 only defines what can be challenged and who may object). The 30-day period cannot be extended. Filed signed by post or online via BE-Login (not e-mail or fax). Free of charge in principle (Art. 194 Abs. 1). Reasons: mandatory with evidence for a discretionary assessment, which can only be challenged for obvious incorrectness (Art. 191 Abs. 3); otherwise the Steuerverwaltung asks for an objection 'nach Möglichkeit begründet' with supporting documents.",
+          "sources": [
+            4,
+            5,
+            6,
+            7,
+            8
+          ]
+        },
+        "GE": {
+          "rule": "Réclamation écrite au département (AFC) contre la décision de taxation, dans les 30 jours qui suivent la notification (LPFisc art. 39 al. 1, RSG D 3 17). Le délai court dès le lendemain de la notification ; respecté si remise à l'AFC ou à un office de poste suisse le dernier jour ouvrable ; samedi, dimanche ou jour férié → premier jour ouvrable suivant (art. 41 al. 1). Taxation d'office : seulement pour inexactitude manifeste, motivée avec moyens de preuve (art. 39 al. 2). Effet suspensif sur le montant contesté (art. 40 al. 1). Le bordereau provisoire IFD ne peut pas être contesté (ge.ch).",
+          "sources": [
+            9,
+            10,
+            11,
+            12,
+            13,
+            14
+          ]
+        },
+        "TI": {
+          "rule": "Reclamo scritto all'autorità di tassazione (Ufficio circondariale di tassazione) entro 30 giorni dalla notificazione della decisione di tassazione (art. 206 cpv. 1 LT). Contro una tassazione d'ufficio: solo per manifesta inesattezza, reclamo motivato con eventuali mezzi di prova (art. 206 cpv. 3 LT). Procedura gratuita (art. 208 cpv. 3 LT). Il reclamo non sospende l'obbligo di pagare imposta e acconti; interessi di ritardo dovuti anche in caso di reclamo. Per la tassazione ordinaria la LT non dice esplicitamente 'motivato' (solo 'per scritto').",
+          "sources": [
+            15,
+            16,
+            17,
+            18
+          ]
+        },
+        "VD": {
+          "rule": "Réclamation contre la décision de taxation cantonale : acte écrit adressé à l'autorité de taxation dans les 30 jours dès la notification (LI-VD art. 186 al. 1, BLV 642.11). Signée et envoyée par courrier postal : un courriel ou le formulaire de contact rend la réclamation irrecevable. En cas de taxation d'office, seulement pour inexactitude manifeste, motivée avec moyens de preuve (art. 186 al. 2).",
+          "sources": [
+            19,
+            20,
+            21
+          ]
+        },
+        "ZH": {
+          "rule": "Einsprache against the Einschätzungsentscheid (Staats- und Gemeindesteuern): within 30 days of service (Zustellung), in writing, to the kantonales Steueramt (StG ZH § 140 Abs. 1). § 140 Abs. 2: a discretionary assessment (Ermessenseinschätzung) can only be challenged for obvious incorrectness; 'Die Einsprache ist zu begründen und muss allfällige Beweismittel nennen' (sentence placed in Abs. 2, after the discretionary-assessment rule; Ordner should always draft a reasoned objection with evidence). Distinct remedy: Einsprache against the Schlussrechnung/Zinsrechnung goes to the Gemeindesteueramt before the 30-day payment period ends (ZStB 172.1 Rz 36).",
+          "sources": [
+            22,
+            23,
+            24
+          ]
+        }
+      }
+    }
+  },
+  "steps": [
+    {
+      "id": "record_notification",
+      "who": "ordner",
+      "sources": [
+        1
+      ],
+      "label": {
+        "fr": "Enregistrer la date de notification de la décision (preuve : recommandé, enveloppe, e-mail du portail)",
+        "de": "Zustelldatum der Verfügung festhalten (Beleg: Einschreiben, Couvert, Portal-Mitteilung)",
+        "it": "Registrare la data di notificazione della decisione (prova: raccomandata, busta, avviso del portale)"
+      }
+    },
+    {
+      "id": "compare",
+      "who": "ordner",
+      "label": {
+        "fr": "Comparer ligne par ligne la décision avec la déclaration déposée",
+        "de": "Verfügung Zeile für Zeile mit der eingereichten Steuererklärung vergleichen",
+        "it": "Confrontare riga per riga la decisione con la dichiarazione presentata"
+      }
+    },
+    {
+      "id": "decide",
+      "who": "user",
+      "label": {
+        "fr": "Décider de réclamer ou non",
+        "de": "Entscheiden, ob Einsprache erhoben wird",
+        "it": "Decidere se presentare reclamo"
+      }
+    },
+    {
+      "id": "draft",
+      "who": "ordner",
+      "action": "letter",
+      "sources": [
+        0,
+        2,
+        3
+      ],
+      "label": {
+        "fr": "Préparer une réclamation écrite (taxation d'office : uniquement pour inexactitude manifeste, motivée, avec les moyens de preuve)",
+        "de": "Schriftliche Einsprache vorbereiten (Ermessensveranlagung: nur wegen offensichtlicher Unrichtigkeit, begründet, mit Beweismitteln)",
+        "it": "Preparare un reclamo scritto (tassazione d'ufficio: solo per manifesta inesattezza, motivato, con i mezzi di prova)"
+      }
+    },
+    {
+      "id": "send",
+      "who": "user",
+      "action": "letter",
+      "sources": [
+        1
+      ],
+      "label": {
+        "fr": "Signer et envoyer à l'autorité de taxation dans le délai (IFD : remise à La Poste suisse le dernier jour au plus tard)",
+        "de": "Unterschreiben und fristgerecht der Veranlagungsbehörde senden (DBG: spätestens am letzten Tag der Schweizerischen Post übergeben)",
+        "it": "Firmare e inviare all'autorità di tassazione entro il termine (IFD: consegna alla Posta svizzera al più tardi l'ultimo giorno)"
+      }
+    },
+    {
+      "id": "await_decision",
+      "who": "user",
+      "label": {
+        "fr": "Conserver la preuve d'envoi et attendre la décision sur réclamation",
+        "de": "Versandbeleg aufbewahren und Einspracheentscheid abwarten",
+        "it": "Conservare la prova d'invio e attendere la decisione su reclamo"
+      }
+    }
+  ],
+  "outputs": [
+    "objection_sent_proof",
+    "objection_decision"
+  ],
+  "sources": [
+    {
+      "title": "LIFD (RS 642.11) art. 132 al. 1, Fedlex, version du 2.9.2026",
+      "url": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/1991/1184_1184_1184/20260902/fr/xml/fedlex-data-admin-ch-eli-cc-1991-1184_1184_1184-20260902-fr-xml-1.xml",
+      "quote": "Le contribuable peut adresser à l’autorité de taxation une réclamation écrite contre la décision de taxation dans les 30 jours qui suivent sa notification.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "LIFD (RS 642.11) art. 133 al. 1, Fedlex, version du 2.9.2026",
+      "url": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/1991/1184_1184_1184/20260902/fr/xml/fedlex-data-admin-ch-eli-cc-1991-1184_1184_1184-20260902-fr-xml-1.xml",
+      "quote": "Le délai commence à courir le lendemain de la notification. Il est considéré comme respecté si la réclamation a été remise à l’autorité de taxation, à un office de poste suisse ou à une représentation diplomatique ou consulaire suisse à l’étranger le dernier jour ouvrable du délai au plus tard.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "LHID (RS 642.14) art. 48 al. 1 (impôts cantonaux et communaux), Fedlex, version du 1.1.2025",
+      "url": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/1991/1256_1256_1256/20250101/fr/xml/fedlex-data-admin-ch-eli-cc-1991-1256_1256_1256-20250101-fr-xml-11.xml",
+      "quote": "Le contribuable peut adresser à l’autorité de taxation une réclamation écrite contre la décision de taxation dans les 30 jours qui suivent sa notification.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "LIFD (RS 642.11) art. 132 al. 3 (taxation d'office), Fedlex, version du 2.9.2026",
+      "url": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/1991/1184_1184_1184/20260902/fr/xml/fedlex-data-admin-ch-eli-cc-1991-1184_1184_1184-20260902-fr-xml-1.xml",
+      "quote": "Le contribuable qui a été taxé d’office peut déposer une réclamation contre cette taxation uniquement pour le motif qu’elle est manifestement inexacte. La réclamation doit être motivée et indiquer, le cas échéant, les moyens de preuve.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "Steuergesetz des Kantons Bern (BSG 661.11, Stand 01.01.2026), Art. 190 Abs. 1 Einsprachefrist (BELEX)",
+      "url": "https://www.belex.sites.be.ch/api/de/versions/3330/pdf_file_with_annexes",
+      "quote": "Die Einsprache ist innert 30 Tagen seit der Eröffnung der Verfügung bei der kantonalen Steuerverwaltung schriftlich einzureichen.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "Steuergesetz des Kantons Bern, Art. 191 Abs. 3 Ermessensveranlagung (BELEX)",
+      "url": "https://www.belex.sites.be.ch/api/de/versions/3330/pdf_file_with_annexes",
+      "quote": "Eine Veranlagung nach pflichtgemässem Ermessen kann die steuerpflichtige Person nur wegen offensichtlicher Unrichtigkeit anfechten. Die Einsprache ist zu begründen und muss allfällige Beweismittel nennen.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "Steuergesetz des Kantons Bern, Art. 194 Abs. 1 Kosten (BELEX)",
+      "url": "https://www.belex.sites.be.ch/api/de/versions/3330/pdf_file_with_annexes",
+      "quote": "Das Einspracheverfahren ist grundsätzlich kostenlos.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "Steuerverwaltung BE, Wegleitung Natürliche Personen 2025: Einsprache",
+      "url": "https://www.wegleitung.sv.fin.be.ch/de/start/np2025/allgemeine-informationen/einsprache.html",
+      "quote": "Diese 30-tägige Einsprachefrist kann nicht erstreckt werden.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "Steuerverwaltung BE, Einsprache erheben",
+      "url": "https://www.sv.fin.be.ch/de/start/themen/steuern-bezahlen/einsprache-gegen-veranlagungsverfuegung-erheben.html",
+      "quote": "Die nach Möglichkeit begründete Einsprache inklusive Unterlagen zum Sachverhalt reichen Sie auf dem Postweg ein. Einsprachen per E-Mail oder Fax sind nicht möglich. Einsprachen gegen Verfügungen zur Einkommens- und Vermögenssteuer können Sie auch via BE-Login einreichen.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "RSG D 3 17 – Loi de procédure fiscale (LPFisc), art. 39 al. 1",
+      "url": "https://silgeneve.ch/legis/program/books/RSG/pdf/rsg_d3_17.pdf",
+      "quote": "Le contribuable peut adresser au département une réclamation écrite contre la décision d’assujettissement ou de taxation, dans les 30 jours qui suivent sa notification.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "RSG D 3 17 – LPFisc, art. 39 al. 2",
+      "url": "https://silgeneve.ch/legis/program/books/RSG/pdf/rsg_d3_17.pdf",
+      "quote": "Le contribuable qui a été taxé d’office peut déposer une réclamation contre cette taxation uniquement pour le motif qu’elle est manifestement inexacte. La réclamation doit être motivée et indiquer, le cas échéant, les moyens de preuve.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "RSG D 3 17 – LPFisc, art. 41 al. 1",
+      "url": "https://silgeneve.ch/legis/program/books/RSG/pdf/rsg_d3_17.pdf",
+      "quote": "Le délai commence à courir le lendemain de la notification. Il est considéré comme respecté si la réclamation est remise au département, à un office de poste suisse ou à une représentation diplomatique ou consulaire suisse à l’étranger le dernier jour ouvrable du délai au plus tard.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "RSG D 3 17 – LPFisc, art. 40 al. 1",
+      "url": "https://silgeneve.ch/legis/program/books/RSG/pdf/rsg_d3_17.pdf",
+      "quote": "La réclamation a un effet suspensif quant au montant contesté.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "ge.ch – Les acomptes et les bordereaux (factures) d'impôts",
+      "url": "https://www.ge.ch/paiement-impots/acomptes-bordereaux-factures-impots",
+      "quote": "Vous avez 30 jours pour faire une réclamation.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "RSG D 3 17 – LPFisc, art. 41 al. 1 (fin)",
+      "url": "https://silgeneve.ch/legis/program/books/RSG/pdf/rsg_d3_17.pdf",
+      "quote": "Lorsque le dernier jour du délai tombe un samedi, un dimanche ou un jour férié officiel, le délai expire le premier jour ouvrable qui suit.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "LT TI (RL 640.100), art. 206 cpv. 1",
+      "url": "https://m3.ti.ch/CAN/RLeggi/public/index.php/raccolta-leggi/pdfatto/atto/12885",
+      "quote": "Contro la decisione di tassazione il contribuente può reclamare per scritto all’autorità di tassazione, entro trenta giorni dalla notificazione.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "LT TI (RL 640.100), art. 206 cpv. 3",
+      "url": "https://m3.ti.ch/CAN/RLeggi/public/index.php/raccolta-leggi/pdfatto/atto/12885",
+      "quote": "Il contribuente può impugnare la tassazione operata d’ufficio soltanto con il motivo che essa è manifestamente inesatta. Il reclamo dev’essere motivato e indicare eventuali mezzi di prova.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "LT TI (RL 640.100), art. 208 cpv. 3",
+      "url": "https://m3.ti.ch/CAN/RLeggi/public/index.php/raccolta-leggi/pdfatto/atto/12885",
+      "quote": "La procedura di reclamo è gratuita.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "DFE TI, Istruzioni PF 2025, p. 48 (reclamo e pagamento)",
+      "url": "https://www4.ti.ch/fileadmin/DFE/DC/DOC-IPF/2025/Istruzioni/Istruzioni_PF_2025.pdf",
+      "quote": "Eventuali procedure di reclamo o di ricorso non sospendono l’obbligo del pagamento dell’imposta o delle richieste di acconto.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "Loi du 4 juillet 2000 sur les impôts directs cantonaux (LI, BLV 642.11), art. 186 al. 1 – lexfind, version du 01.01.2025",
+      "url": "https://www.lexfind.ch/tolv/249853/fr",
+      "quote": "La réclamation s'exerce par acte écrit, adressé à l'autorité de taxation dans les trente jours dès la notification de la décision attaquée.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "LI-VD (BLV 642.11), art. 186 al. 2 – lexfind, version du 01.01.2025",
+      "url": "https://www.lexfind.ch/tolv/249853/fr",
+      "quote": "Le contribuable qui a été taxé d'office peut déposer une réclamation contre la taxation uniquement pour le motif qu'elle est manifestement inexacte. La réclamation doit être motivée et indiquer les moyens de preuve.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "vd.ch – Demander un délai pour déposer ma déclaration d'impôt (encadré contact ACI)",
+      "url": "https://www.vd.ch/etat-droit-finances/impots/impots-pour-les-individus/demander-un-delai-pour-deposer-ma-declaration-dimpot",
+      "quote": "Une réclamation ne peut pas être valablement envoyée par courriel ni par formulaire de contact. Elle sera considérée comme irrecevable. La réclamation signée doit être déposée par courrier postal, adressée à l’autorité fiscale dans les trente jours dès la notification de la décision attaquée.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "Steuergesetz des Kantons Zürich (LS 631.1, Stand 1.4.26), § 140 Abs. 1 Einsprache",
+      "url": "https://www.notes.zh.ch/appl/zhlex_r.nsf/WebView/A1B72A220CD6E747C1258DC4002A921E/$File/631.1_8.6.97_132.pdf",
+      "quote": "Gegen den Einschätzungsentscheid können der Steuerpflichtige und die Gemeinde innert 30 Tagen nach Zustellung beim kantonalen Steueramt schriftlich Einsprache erheben.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "Steuergesetz des Kantons Zürich, § 140 Abs. 2 (Ermessenseinschätzung, Begründung)",
+      "url": "https://www.notes.zh.ch/appl/zhlex_r.nsf/WebView/A1B72A220CD6E747C1258DC4002A921E/$File/631.1_8.6.97_132.pdf",
+      "quote": "Steuerpflichtige nur wegen offensichtlicher Unrichtigkeit anfechten. Die Einsprache ist zu begründen und muss allfällige Beweismittel nennen.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "Zürcher Steuerbuch Nr. 172.1, Rz 36 Einsprache gegen Schluss-/Zinsrechnung",
+      "url": "https://www.zh.ch/de/steuern-finanzen/steuern/treuhaender/steuerbuch/steuerbuch-definition/zstb-172-1.html",
+      "quote": "Gegen die Schluss-/Zinsrechnung des Gemeindesteueramtes kann vor Ablauf der 30-tägigen Zahlungsfrist beim Gemeindesteueramt Einsprache erhoben werden.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    }
+  ],
+  "qualification": "qualified",
+  "notes": "Federal principle: 30 days for the direct federal tax (LIFD 132-133) and, harmonised, for cantonal and communal taxes (LHID 48). The postal-handover rule quoted (LIFD 133) is the federal one; cantonal procedure laws restate it and are listed in cantonal entries when verified. The law requires the written form; reasons and evidence are mandatory only against a taxation d'office (manifest inaccuracy only, LIFD 132 al. 3); Ordner still drafts a reasoned letter. Canton specifics in deadline.params.cantonal (VD LI 186, GE LPFisc 39-41, ZH StG 140, BE StG 190, TI LT 206): 30 days everywhere; VD requires a signed letter by post (e-mail or contact form inadmissible); BE: the 30 days cannot be extended, filing by post or BE-Login; TI and BE: free of charge; GE: suspensive effect on the contested amount. Not a different remedy: objections against a ZH final/interest bill go to the commune."
+}

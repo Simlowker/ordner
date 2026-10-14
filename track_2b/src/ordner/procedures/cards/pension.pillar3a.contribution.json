@@ -1,0 +1,178 @@
+{
+  "id": "pension.pillar3a.contribution",
+  "name": {
+    "fr": "Pilier 3a : cotisation annuelle et rachat",
+    "de": "Säule 3a: Jahresbeitrag und Einkauf",
+    "it": "Pilastro 3a: contributo annuo e riscatto"
+  },
+  "domain": "pension",
+  "nature": "option",
+  "jurisdiction": "CH",
+  "applicability": {
+    "any": [
+      {
+        "role": "salaried"
+      },
+      {
+        "role": "apprentice"
+      },
+      {
+        "role": "self_employed"
+      }
+    ]
+  },
+  "required_facts": [
+    "tax.period",
+    "pension.has_pension_fund",
+    "pension.pillar3a.paid_in_period",
+    "income.avs_subject"
+  ],
+  "required_documents": [
+    "pillar3a_certificate",
+    "salary_certificate"
+  ],
+  "deadline": {
+    "id": "year_end",
+    "params": {
+      "sources": [
+        4
+      ]
+    }
+  },
+  "steps": [
+    {
+      "id": "check_affiliation",
+      "who": "ordner",
+      "sources": [
+        0
+      ],
+      "label": {
+        "fr": "Vérifier l'affiliation à une caisse de pension (case LPP du certificat de salaire)",
+        "de": "Anschluss an eine Pensionskasse prüfen (BVG-Feld im Lohnausweis)",
+        "it": "Verificare l'affiliazione a una cassa pensione (casella LPP del certificato di salario)"
+      }
+    },
+    {
+      "id": "compute_room",
+      "who": "ordner",
+      "sources": [
+        0,
+        1,
+        4
+      ],
+      "params": {
+        "year": 2026,
+        "lpp_upper_limit_chf": 90720,
+        "max_with_pension_fund_chf": 7258,
+        "max_without_pension_fund_rate": 0.2,
+        "max_without_pension_fund_chf": 36288
+      },
+      "label": {
+        "fr": "Calculer la marge restante (2026 : 7 258 CHF avec caisse de pension ; sans : 20 % du revenu d'activité, max. 36 288 CHF)",
+        "de": "Verbleibenden Spielraum berechnen (2026: 7258 CHF mit Pensionskasse; ohne: 20 % des Erwerbseinkommens, max. 36 288 CHF)",
+        "it": "Calcolare il margine residuo (2026: 7258 CHF con cassa pensione; senza: 20 % del reddito da attività lucrativa, max. 36 288 CHF)"
+      }
+    },
+    {
+      "id": "pay",
+      "who": "user",
+      "action": "payment",
+      "sources": [
+        4
+      ],
+      "label": {
+        "fr": "Verser avant le 31 décembre (montant crédité pendant l'année fiscale)",
+        "de": "Vor dem 31. Dezember einzahlen (im Steuerjahr gutgeschrieben)",
+        "it": "Versare entro il 31 dicembre (importo accreditato nell'anno fiscale)"
+      }
+    },
+    {
+      "id": "check_buy_in",
+      "who": "ordner",
+      "sources": [
+        2,
+        3
+      ],
+      "label": {
+        "fr": "Rachat : vérifier les lacunes depuis 2025 (10 ans au plus), cotisation ordinaire de l'année versée en entier, rachat ≤ petit plafond",
+        "de": "Einkauf: Lücken ab 2025 prüfen (höchstens 10 Jahre), ordentlicher Beitrag des Jahres voll bezahlt, Einkauf ≤ kleiner Höchstbetrag",
+        "it": "Riscatto: verificare le lacune dal 2025 (al massimo 10 anni), contributo ordinario dell'anno versato interamente, riscatto ≤ importo massimo piccolo"
+      }
+    },
+    {
+      "id": "request_buy_in",
+      "who": "user",
+      "action": "letter",
+      "sources": [
+        5
+      ],
+      "label": {
+        "fr": "Demander le rachat par écrit à la fondation 3a (montant, années, confirmations)",
+        "de": "Einkauf schriftlich bei der 3a-Stiftung beantragen (Betrag, Jahre, Bestätigungen)",
+        "it": "Chiedere il riscatto per scritto alla fondazione 3a (importo, anni, conferme)"
+      }
+    },
+    {
+      "id": "declare",
+      "who": "user",
+      "action": "form_entry",
+      "label": {
+        "fr": "Reporter l'attestation 3a dans la déclaration d'impôt",
+        "de": "3a-Bescheinigung in die Steuererklärung übertragen",
+        "it": "Riportare l'attestazione 3a nella dichiarazione d'imposta"
+      }
+    }
+  ],
+  "outputs": [
+    "pillar3a_payment_confirmation",
+    "pillar3a_certificate"
+  ],
+  "sources": [
+    {
+      "title": "OPP 3 (RS 831.461.3) art. 7 al. 1, Fedlex, version du 1.1.2025",
+      "url": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/1985/1778_1778_1778/20250101/fr/xml/fedlex-data-admin-ch-eli-cc-1985-1778_1778_1778-20250101-fr-xml-5.xml",
+      "quote": "par année, jusqu’à 8 % du montant-limite supérieur fixé à l’art. 8, al. 1, LPP, s’ils sont affiliés à une institution de prévoyance au sens de l’art. 80 LPP;",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "OPP 2 (RS 831.441.1) art. 5, montants-limites LPP (90 720 CHF), Fedlex, version du 1.8.2026",
+      "url": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/1984/543_543_543/20260801/fr/xml/fedlex-data-admin-ch-eli-cc-1984-543_543_543-20260801-fr-xml.xml",
+      "quote": "Les montants-limites fixés aux art. 2, 7, 8 et 46 LPP sont adaptés comme suit: Anciens montants Francs Nouveaux montants Francs 22 050 22 680 25 725 26 460 88 200 90 720",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "OPP 3 (RS 831.461.3) art. 7a al. 1-2 (rachat), Fedlex, version du 1.1.2025",
+      "url": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/1985/1778_1778_1778/20250101/fr/xml/fedlex-data-admin-ch-eli-cc-1985-1778_1778_1778-20250101-fr-xml-5.xml",
+      "quote": "Au cours de l’année de rachat, les cotisations versées à titre de rachat ne doivent pas être supérieures à la différence entre la somme des cotisations annuelles maximales admises et la somme des cotisations annuelles effectivement versées au cours des dix années précédant le rachat, mais ne doivent en aucun cas dépasser 8 % du montant-limite supérieur fixé à l’art. 8, al. 1, LPP.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "OPP 3, disposition transitoire de la modification du 6.11.2024, Fedlex, version du 1.1.2025",
+      "url": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/1985/1778_1778_1778/20250101/fr/xml/fedlex-data-admin-ch-eli-cc-1985-1778_1778_1778-20250101-fr-xml-5.xml",
+      "quote": "Les lacunes de cotisations visées à l’art. 7a, al. 1, let. a, qui sont apparues avant l’entrée en vigueur de la modification du 6 novembre 2024 ne peuvent pas être comblées au moyen d’un rachat.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "Intendance des impôts du canton de Berne, « Aktuelles aus Ihrer Steuerverwaltung », janvier 2026",
+      "url": "https://www.sv.fin.be.ch/content/dam/sv_fin/dokumente/de/info_10minuten/info-np_januar2026_de.pdf",
+      "quote": "Der Maximalbetrag 2025 an die Säule 3a beträgt neu 7258 Franken für steuerpflichtige Personen mit Beiträgen an die 2. Säule. Für steuerpflichtige Personen ohne 2. Säule beträgt er weiterhin maximal 20 Prozent des jährlichen Erwerbseinkommens, neu höchstens 36288 Franken. Es gilt der Betrag, welcher bis zum 31. Dezember 2025 insgesamt für das Steuerjahr 2025 einbezahlt wurde.",
+      "verified": true,
+      "accessed": "2026-10-14"
+    },
+    {
+      "title": "OPP 3 (RS 831.461.3) art. 7b al. 1 (demande de rachat), Fedlex, version du 1.1.2025",
+      "url": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/1985/1778_1778_1778/20250101/fr/xml/fedlex-data-admin-ch-eli-cc-1985-1778_1778_1778-20250101-fr-xml-5.xml",
+      "quote": "Le preneur de prévoyance demande par écrit le rachat à l’institution de la prévoyance individuelle liée en fournissant les informations suivantes:",
+      "verified": true,
+      "accessed": "2026-10-14"
+    }
+  ],
+  "valid_from": "2026-01-01",
+  "valid_to": "2026-12-31",
+  "qualification": "qualified",
+  "notes": "2026 limits derived from the law: OPP 3 art. 7 al. 1 (8 % / 20 % up to 40 % of the LPP upper limit) x OPP 2 art. 5 upper limit 90 720 CHF, unchanged in the version in force since 1.8.2026: 8 % = 7257.60, published rounded as 7258 (BE tax office, same 90 720 base in 2025); 40 % = 36 288. The 31.12 rule is quoted from the BE tax office for tax year 2025 and applied to every year. Buy-ins (OPP 3 art. 7a-7b, in force 1.1.2025): only gaps arising from 2025 on (transitional provision), so first buy-ins in 2026; conditions in art. 7a al. 1 (10 previous years, right to contribute in the gap year, full ordinary contribution in the buy-in year). Ordner gives no investment advice. 2027 limits (press: 7373 / 36 864) not verified: card valid until 31.12.2026."
+}
