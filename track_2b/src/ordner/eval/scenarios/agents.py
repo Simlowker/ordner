@@ -146,7 +146,9 @@ class _DatedRegistry:
     def __init__(self, reg, today, toolset="base"):
         from ordner.tools.processes import in_toolset
         self.reg, self.today = reg, today
-        self.SPECS = [s for s in reg.SPECS if in_toolset(s.name, toolset)]
+        keep = (lambda n: n in toolset) if isinstance(toolset, (tuple, list, set, frozenset)) else (
+            lambda n: in_toolset(n, toolset))   # an expert's explicit tool names, or a named toolset
+        self.SPECS = [s for s in reg.SPECS if keep(s.name)]
 
     def call(self, name, args, ctx):
         ctx.setdefault("today", self.today)
@@ -154,14 +156,14 @@ class _DatedRegistry:
         return self.reg.call(name, args, ctx)
 
 
-def coordinator(resolve, llm, max_steps=12, toolset="base"):
+def coordinator(resolve, llm, max_steps=12, toolset="base", system=None):
     """ordner.agent.coordinator.run on the seeded dossier; outcome taken from its questions, prepared actions, tool
     calls and the rules/deadline results it obtained."""
     from ordner.agent import coordinator as C
 
     def agent(s, store, sid, phase, goal, today):
         reg = _DatedRegistry(C._registry(), today, toolset)
-        r = C.run(f"[{today}] {goal}", sid, llm, store, max_steps=max_steps, registry=reg)
+        r = C.run(f"[{today}] {goal}", sid, llm, store, max_steps=max_steps, registry=reg, system=system)
         out = empty()
         out["questions"] = [{"missing": q.get("missing") or "", "question": q.get("question", "")} for q in r["questions"]]
         out["actions"] = [{"procedure": None, **a} for a in r["actions"]]

@@ -17,7 +17,7 @@ from ordner.tools.registry import SPECS
 
 ROOT = Path(__file__).resolve().parents[3]   # track_2b/
 ADAPTERS = Path(os.environ.get("ORDNER_ADAPTERS", ROOT / "work" / "adapters"))
-BASE_TOOLS = ("case.load", "knowledge.search", "rules.evaluate", "document.read")
+BASE_TOOLS = ("case.load", "case.record", "piece.recevoir", "knowledge.search", "rules.evaluate", "document.read")
 MARK = re.compile(r"^\[ordner-expert: ([a-z_]+)\]")
 
 

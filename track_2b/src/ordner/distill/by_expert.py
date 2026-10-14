@@ -26,9 +26,23 @@ def expert_of(cards, experts):
     return None
 
 
+def for_expert(traj, expert, system_prompt):
+    """The trajectory as the expert sees it at inference: its system prompt and only its tools (model-side names).
+    None when the teacher called a tool outside the expert's set (the student would learn a call it cannot make)."""
+    keep = {t.replace(".", "_") for t in expert.tools} | {"ask_user", "prepare_action"}
+    phases = []
+    for ph in traj["phases"]:
+        calls = {c["name"] for t in ph["turns"] for c in t["reply"].get("tool_calls") or []}
+        if calls - keep:
+            return None
+        msgs = [{**ph["messages"][0], "content": system_prompt}] + ph["messages"][1:]
+        phases.append({**ph, "messages": msgs, "tools": [t for t in ph["tools"] if t["function"]["name"] in keep]})
+    return {**traj, "phases": phases, "expert": expert.id}
+
+
 def main(argv=None):
     from ordner.eval.scenarios.run import resolve
-    from ordner.harness.experts import EXPERTS
+    from ordner.harness.experts import EXPERTS, system_prompt
 
     ap = argparse.ArgumentParser()
     ap.add_argument("--kept", default=str(OUT / "kept.jsonl"))
@@ -39,9 +53,13 @@ def main(argv=None):
     for t in read_jsonl(a.kept):
         eid = expert_of(procedures(variants[t["variant_id"]], resolve), EXPERTS)
         groups.setdefault(eid, []).append(t)
+    dropped = {}
     for eid, rows in groups.items():
         if eid:
-            write_jsonl(OUT / "experts" / eid / "kept.jsonl", rows)
+            seen = [x for x in (for_expert(t, EXPERTS[eid], system_prompt(eid)) for t in rows) if x]
+            dropped[eid] = len(rows) - len(seen)
+            write_jsonl(OUT / "experts" / eid / "kept.jsonl", seen)
+    print("dropped (tool outside the expert's set):", dropped)
     print({eid or "coordinator only": len(rows) for eid, rows in groups.items()})
     print("by source:", Counter((eid or "-", t["source_id"]) for eid, rows in groups.items() for t in rows).most_common(40))
 

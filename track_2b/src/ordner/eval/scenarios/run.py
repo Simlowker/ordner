@@ -273,10 +273,19 @@ def main(argv=None):
     ap.add_argument("--mlx-model", help="--llm mlx: model path or HF id (default MLXLocal's 4-bit); with --adapter, the "
                                         "base it was trained on (bf16 ~/ordner/models/apertus-v1.5-8b-text)")
     ap.add_argument("--adapter", help="--llm mlx: LoRA adapter dir (H7), e.g. work/adapters/coordinator-distill-v1")
+    ap.add_argument("--expert", help="coordinator as one expert (ordner.harness.experts): its scenarios, tools and prompt")
+    ap.add_argument("--adapter-from-expert", action="store_true",
+                    help="with --expert on an MLX server: send the expert's LoRA adapter (`adapters` body field)")
     a = ap.parse_args(argv)
     scenarios = load(a.split)
     if a.only:
         scenarios = [s for s in scenarios if s["id"] in a.only.split(",")]
+    toolset, system = a.toolset, None
+    if a.expert:   # exploratory (after the PREREG freeze): one expert on the scenarios of its own cards
+        from ordner.distill.by_expert import expert_of, procedures
+        from ordner.harness import experts as E
+        scenarios = [s for s in scenarios if expert_of(procedures(s, resolve), E.EXPERTS) == a.expert]
+        toolset, system = E.EXPERTS[a.expert].tools, E.system_prompt(a.expert)
     if a.agent == "mock":
         make = lambda: A.mock(resolve)  # noqa: E731
     elif a.agent == "rules_only":
@@ -289,8 +298,14 @@ def main(argv=None):
             from ordner.harness.runtime import scenario_agent as runtime
         else:
             runtime = A.hybrid if a.agent == "hybrid" else A.coordinator
-        make = lambda: runtime(resolve, model, a.max_steps, a.toolset)  # noqa: E731
+        if a.adapter_from_expert:
+            path = E.adapter_path(a.expert)
+            assert path, f"no trained adapter for expert {a.expert}"
+            inner, model = model, type("WithAdapter", (), {"chat": lambda self, m, t=None: inner.chat(m, t, extra={"adapters": path})})()
+        make = (lambda: runtime(resolve, model, a.max_steps, toolset, system)) if a.expert else (  # noqa: E731
+            lambda: runtime(resolve, model, a.max_steps, toolset))
     name = a.agent + (f"_{a.toolset}" if a.agent in ("coordinator", "hybrid", "harness") and a.toolset != "base" else "")
+    name = f"expert_{a.expert}" + ("_adapter" if a.adapter_from_expert else "") if a.expert else name
     name += "".join(f"_{Path(p).name}" for p in (a.mlx_model, a.adapter) if p and a.llm == "mlx")
     name += "_mockllm" if a.agent in ("coordinator", "hybrid", "harness") and a.llm == "mock" else ""  # never overwrite a real run
     report = evaluate(scenarios, make, name, a.split)
