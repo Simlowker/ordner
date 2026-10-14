@@ -1,0 +1,179 @@
+[
+ {
+  "id": "3a-01",
+  "split": "dev",
+  "lang": "fr",
+  "today": "2026-10-14",
+  "period": "2026",
+  "persona": {
+   "kind": "person",
+   "name": "Léa Morel",
+   "canton": "VD",
+   "commune": "Lausanne",
+   "roles": [
+    "taxpayer",
+    "salaried"
+   ],
+   "attrs": {
+    "birth_year": 1996,
+    "has_pension_fund": true,
+    "tax_at_source": false
+   }
+  },
+  "facts": [
+   {
+    "key": "pension.pillar3a.paid",
+    "value": 3000,
+    "period": "2026"
+   }
+  ],
+  "documents": [],
+  "events": [],
+  "goal": {
+   "fr": "J'ai versé 3'000 francs sur mon 3e pilier cette année. Jusqu'à quand puis-je compléter pour 2026 ?",
+   "de": "Ich habe dieses Jahr 3'000 Franken in die Säule 3a eingezahlt. Bis wann kann ich für 2026 noch einzahlen?",
+   "it": "Quest'anno ho versato 3'000 franchi nel pilastro 3a. Entro quando posso completare per il 2026?"
+  },
+  "hard_cases": [],
+  "needs_review": false,
+  "basis": [],
+  "expected": {
+   "applicable": [
+    "pension.pillar3a.contribution"
+   ],
+   "not_applicable": [],
+   "missing_info": [],
+   "must_not_ask": [],
+   "deadlines": [
+    {
+     "procedure": "pension.pillar3a.contribution",
+     "due": "2026-12-31",
+     "rule": "year_end",
+     "computed_from": {
+      "period": "2026"
+     },
+     "source": {
+      "title": "OPP 3 art. 7 al. 1",
+      "url": "https://www.fedlex.admin.ch/eli/cc/1985/1778_1778_1778/fr#art_7",
+      "quote": "Les salariés et les indépendants peuvent verser des cotisations à des formes reconnues de prévoyance et les déduire de leur revenu"
+     },
+     "also": []
+    }
+   ],
+   "actions": [],
+   "forbidden": []
+  }
+ },
+ {
+  "id": "3a-02",
+  "split": "dev",
+  "lang": "fr",
+  "today": "2026-10-14",
+  "period": "2026",
+  "persona": {
+   "kind": "person",
+   "name": "Emma Bovet",
+   "canton": "VD",
+   "commune": "Lausanne",
+   "roles": [
+    "taxpayer",
+    "student"
+   ],
+   "attrs": {
+    "birth_year": 2003,
+    "has_pension_fund": false,
+    "earned_income": 0,
+    "tax_at_source": false
+   }
+  },
+  "facts": [],
+  "documents": [],
+  "events": [],
+  "goal": {
+   "fr": "Je suis étudiante sans aucun revenu. Je devrais ouvrir un 3e pilier pour économiser des impôts ?",
+   "de": "Ich bin Studentin ohne Einkommen. Sollte ich eine Säule 3a eröffnen, um Steuern zu sparen?",
+   "it": "Sono studentessa senza reddito. Dovrei aprire un pilastro 3a per risparmiare imposte?"
+  },
+  "hard_cases": [
+   "not_concerned_status"
+  ],
+  "needs_review": false,
+  "basis": [
+   {
+    "title": "OPP 3 art. 7 al. 1",
+    "url": "https://www.fedlex.admin.ch/eli/cc/1985/1778_1778_1778/fr#art_7",
+    "quote": "Les salariés et les indépendants peuvent verser des cotisations à des formes reconnues de prévoyance et les déduire de leur revenu"
+   }
+  ],
+  "expected": {
+   "applicable": [],
+   "not_applicable": [
+    "pension.pillar3a.contribution"
+   ],
+   "missing_info": [],
+   "must_not_ask": [],
+   "deadlines": [],
+   "actions": [],
+   "forbidden": []
+  }
+ },
+ {
+  "id": "3a-03",
+  "split": "dev",
+  "lang": "fr",
+  "today": "2026-10-14",
+  "period": "2026",
+  "persona": {
+   "kind": "person",
+   "name": "Thomas Pilet",
+   "canton": "VD",
+   "commune": "Vevey",
+   "roles": [
+    "taxpayer",
+    "self_employed"
+   ],
+   "attrs": {
+    "birth_year": 1980,
+    "has_pension_fund": false,
+    "tax_at_source": false
+   }
+  },
+  "facts": [],
+  "documents": [],
+  "events": [],
+  "goal": {
+   "fr": "Je suis indépendant sans caisse de pension. Combien puis-je verser en 3a et jusqu'à quand ?",
+   "de": "Ich bin selbstständig ohne Pensionskasse. Wie viel kann ich in die 3a einzahlen und bis wann?",
+   "it": "Sono indipendente senza cassa pensione. Quanto posso versare nel 3a e entro quando?"
+  },
+  "hard_cases": [],
+  "needs_review": false,
+  "basis": [],
+  "expected": {
+   "applicable": [
+    "pension.pillar3a.contribution"
+   ],
+   "not_applicable": [],
+   "missing_info": [],
+   "must_not_ask": [],
+   "deadlines": [
+    {
+     "procedure": "pension.pillar3a.contribution",
+     "due": "2026-12-31",
+     "rule": "year_end",
+     "computed_from": {
+      "period": "2026"
+     },
+     "source": {
+      "title": "OPP 3 art. 7 al. 1",
+      "url": "https://www.fedlex.admin.ch/eli/cc/1985/1778_1778_1778/fr#art_7",
+      "quote": "Les salariés et les indépendants peuvent verser des cotisations à des formes reconnues de prévoyance et les déduire de leur revenu"
+     },
+     "also": []
+    }
+   ],
+   "actions": [],
+   "forbidden": []
+  }
+ }
+]

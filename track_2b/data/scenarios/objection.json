@@ -1,0 +1,514 @@
+[
+ {
+  "id": "obj-01",
+  "split": "dev",
+  "lang": "fr",
+  "today": "2026-06-12",
+  "period": "2025",
+  "persona": {
+   "kind": "person",
+   "name": "Sophie Pittet",
+   "canton": "VD",
+   "commune": "Renens",
+   "roles": [
+    "taxpayer",
+    "salaried"
+   ],
+   "attrs": {
+    "birth_year": 1989,
+    "tax_at_source": false
+   }
+  },
+  "facts": [],
+  "documents": [
+   {
+    "id": "obj01_dt",
+    "kind": "tax_assessment_decision",
+    "year": 2025,
+    "issuer": "Administration cantonale des impôts",
+    "fields": {
+     "notified_on": "2026-06-10",
+     "refused": "frais de formation continue 3200"
+    }
+   }
+  ],
+  "events": [
+   {
+    "date": "2026-06-10",
+    "type": "assessment_notified",
+    "known": true,
+    "procedure": "tax.assessment.objection",
+    "fact": {
+     "key": "tax.assessment.notified_on",
+     "value": "2026-06-10"
+    }
+   }
+  ],
+  "goal": {
+   "fr": "Ma décision de taxation 2025 refuse mes frais de formation. Je l'ai reçue en recommandé le 10 juin 2026. Que faire ?",
+   "de": "Meine Veranlagungsverfügung 2025 streicht meine Weiterbildungskosten. Eingeschrieben erhalten am 10. Juni 2026. Was tun?",
+   "it": "La mia decisione di tassazione 2025 rifiuta le spese di formazione. Ricevuta per raccomandata il 10 giugno 2026. Cosa fare?"
+  },
+  "hard_cases": [],
+  "needs_review": false,
+  "basis": [],
+  "expected": {
+   "applicable": [
+    "tax.assessment.objection"
+   ],
+   "not_applicable": [],
+   "missing_info": [],
+   "must_not_ask": [],
+   "deadlines": [
+    {
+     "procedure": "tax.assessment.objection",
+     "due": "2026-07-10",
+     "rule": "days_after_notification",
+     "computed_from": {
+      "notified_on": "2026-06-10",
+      "days": 30
+     },
+     "source": {
+      "title": "LIFD art. 132 al. 1",
+      "url": "https://www.fedlex.admin.ch/eli/cc/1991/1184_1184_1184/fr#art_132",
+      "quote": "Le contribuable peut adresser à l’autorité de taxation une réclamation écrite contre la décision de taxation dans les 30 jours qui suivent sa notification."
+     },
+     "also": [
+      {
+       "title": "LHID art. 48 al. 1",
+       "url": "https://www.fedlex.admin.ch/eli/cc/1991/1256_1256_1256/fr#art_48",
+       "quote": "Le contribuable peut adresser à l’autorité de taxation une réclamation écrite contre la décision de taxation dans les 30 jours qui suivent sa notification."
+      }
+     ]
+    }
+   ],
+   "actions": [
+    "letter"
+   ],
+   "forbidden": []
+  }
+ },
+ {
+  "id": "obj-02",
+  "split": "dev",
+  "lang": "fr",
+  "today": "2026-10-01",
+  "period": "2025",
+  "persona": {
+   "kind": "person",
+   "name": "Paul Jaquet",
+   "canton": "VD",
+   "commune": "Vevey",
+   "roles": [
+    "taxpayer",
+    "salaried"
+   ],
+   "attrs": {
+    "birth_year": 1975,
+    "tax_at_source": false
+   }
+  },
+  "facts": [],
+  "documents": [
+   {
+    "id": "obj02_dt",
+    "kind": "tax_assessment_decision",
+    "year": 2025,
+    "issuer": "Administration cantonale des impôts",
+    "fields": {
+     "received_by_email": "2026-09-28"
+    },
+    "channel": "email",
+    "received_at": "2026-09-28T08:12:00+00:00"
+   }
+  ],
+  "events": [],
+  "goal": {
+   "fr": "J'ai trouvé ma décision de taxation dans mes e-mails (PDF), je ne suis pas d'accord. Jusqu'à quand puis-je réclamer ?",
+   "de": "Ich habe meine Veranlagungsverfügung als PDF in den E-Mails gefunden und bin nicht einverstanden. Bis wann kann ich Einsprache erheben?",
+   "it": "Ho trovato la decisione di tassazione nelle e-mail (PDF), non sono d'accordo. Entro quando posso reclamare?"
+  },
+  "hard_cases": [
+   "unknown_notification_date"
+  ],
+  "needs_review": false,
+  "basis": [
+   {
+    "title": "LIFD art. 132 al. 1",
+    "url": "https://www.fedlex.admin.ch/eli/cc/1991/1184_1184_1184/fr#art_132",
+    "quote": "Le contribuable peut adresser à l’autorité de taxation une réclamation écrite contre la décision de taxation dans les 30 jours qui suivent sa notification."
+   }
+  ],
+  "expected": {
+   "applicable": [
+    "tax.assessment.objection"
+   ],
+   "not_applicable": [],
+   "missing_info": [
+    {
+     "topic": "date de notification de la décision",
+     "match": [
+      "notif",
+      "zustell",
+      "date de réception",
+      "erhalten am",
+      "ricev"
+     ]
+    }
+   ],
+   "must_not_ask": [],
+   "deadlines": [
+    {
+     "procedure": "tax.assessment.objection",
+     "due": null,
+     "rule": null,
+     "computed_from": {
+      "why": "notification date not proven: the e-mail date is not the legal notification"
+     }
+    }
+   ],
+   "actions": [],
+   "forbidden": []
+  }
+ },
+ {
+  "id": "obj-03",
+  "split": "dev",
+  "lang": "fr",
+  "today": "2026-09-07",
+  "period": "2025",
+  "persona": {
+   "kind": "person",
+   "name": "Anne Rochat",
+   "canton": "VD",
+   "commune": "Pully",
+   "roles": [
+    "taxpayer",
+    "salaried"
+   ],
+   "attrs": {
+    "birth_year": 1970,
+    "tax_at_source": false
+   }
+  },
+  "facts": [],
+  "documents": [],
+  "events": [
+   {
+    "date": "2026-09-04",
+    "type": "assessment_notified",
+    "known": true,
+    "procedure": "tax.assessment.objection",
+    "fact": {
+     "key": "tax.assessment.notified_on",
+     "value": "2026-09-04"
+    }
+   }
+  ],
+  "goal": {
+   "fr": "Décision de taxation notifiée le vendredi 4 septembre 2026, je veux réclamer. Quel est le dernier jour ?",
+   "de": "Veranlagungsverfügung am Freitag, 4. September 2026 zugestellt. Ich will Einsprache erheben. Letzter Tag?",
+   "it": "Decisione di tassazione notificata venerdì 4 settembre 2026, voglio reclamare. Qual è l'ultimo giorno?"
+  },
+  "hard_cases": [
+   "weekend_end_date"
+  ],
+  "needs_review": true,
+  "review_note": "30e jour = dimanche 4.10.2026 ; le report au lundi est certain en procédure fédérale (PA art. 20 al. 3) mais la loi de procédure fiscale cantonale VD (ICC) n'a pas été vérifiée.",
+  "basis": [],
+  "expected": {
+   "applicable": [
+    "tax.assessment.objection"
+   ],
+   "not_applicable": [],
+   "missing_info": [],
+   "must_not_ask": [],
+   "deadlines": [
+    {
+     "procedure": "tax.assessment.objection",
+     "due": "2026-10-05",
+     "rule": "days_after_notification",
+     "computed_from": {
+      "notified_on": "2026-09-04",
+      "days": 30
+     },
+     "source": {
+      "title": "LIFD art. 132 al. 1",
+      "url": "https://www.fedlex.admin.ch/eli/cc/1991/1184_1184_1184/fr#art_132",
+      "quote": "Le contribuable peut adresser à l’autorité de taxation une réclamation écrite contre la décision de taxation dans les 30 jours qui suivent sa notification."
+     },
+     "also": [
+      {
+       "title": "LHID art. 48 al. 1",
+       "url": "https://www.fedlex.admin.ch/eli/cc/1991/1256_1256_1256/fr#art_48",
+       "quote": "Le contribuable peut adresser à l’autorité de taxation une réclamation écrite contre la décision de taxation dans les 30 jours qui suivent sa notification."
+      },
+      {
+       "title": "PA art. 20 al. 3",
+       "url": "https://www.fedlex.admin.ch/eli/cc/1969/737_757_755/fr#art_20",
+       "quote": "Lorsque le délai échoit un samedi, un dimanche ou un jour férié selon le droit fédéral ou cantonal, son terme est reporté au premier jour ouvrable qui suit."
+      }
+     ]
+    }
+   ],
+   "actions": [
+    "letter"
+   ],
+   "forbidden": []
+  }
+ },
+ {
+  "id": "obj-04",
+  "split": "test",
+  "lang": "fr",
+  "today": "2026-08-20",
+  "period": "2025",
+  "persona": {
+   "kind": "person",
+   "name": "Kevin Bonvin",
+   "canton": "VD",
+   "commune": "Montreux",
+   "roles": [
+    "taxpayer",
+    "salaried"
+   ],
+   "attrs": {
+    "birth_year": 1998,
+    "tax_at_source": false
+   }
+  },
+  "facts": [],
+  "documents": [
+   {
+    "id": "obj04_dt",
+    "kind": "tax_assessment_decision",
+    "year": 2025,
+    "issuer": "Administration cantonale des impôts",
+    "fields": {
+     "notified_on": "2026-08-18",
+     "ex_officio": true
+    }
+   }
+  ],
+  "events": [
+   {
+    "date": "2026-08-18",
+    "type": "assessment_notified",
+    "known": false,
+    "procedure": "tax.assessment.objection",
+    "fact": {
+     "key": "tax.assessment.notified_on",
+     "value": "2026-08-18"
+    }
+   }
+  ],
+  "goal": {
+   "fr": "Je n'avais pas rendu ma déclaration et j'ai reçu une taxation d'office le 18 août 2026, beaucoup trop élevée. Que puis-je faire ?",
+   "de": "Ich hatte keine Steuererklärung eingereicht und am 18. August 2026 eine Ermessensveranlagung erhalten, viel zu hoch. Was kann ich tun?",
+   "it": "Non avevo presentato la dichiarazione e il 18 agosto 2026 ho ricevuto una tassazione d'ufficio troppo alta. Cosa posso fare?"
+  },
+  "hard_cases": [
+   "text_only"
+  ],
+  "needs_review": false,
+  "basis": [],
+  "expected": {
+   "applicable": [
+    "tax.assessment.objection"
+   ],
+   "not_applicable": [],
+   "missing_info": [],
+   "must_not_ask": [],
+   "deadlines": [
+    {
+     "procedure": "tax.assessment.objection",
+     "due": "2026-09-17",
+     "rule": "days_after_notification",
+     "computed_from": {
+      "notified_on": "2026-08-18",
+      "days": 30
+     },
+     "source": {
+      "title": "LIFD art. 132 al. 1",
+      "url": "https://www.fedlex.admin.ch/eli/cc/1991/1184_1184_1184/fr#art_132",
+      "quote": "Le contribuable peut adresser à l’autorité de taxation une réclamation écrite contre la décision de taxation dans les 30 jours qui suivent sa notification."
+     },
+     "also": [
+      {
+       "title": "LHID art. 48 al. 1",
+       "url": "https://www.fedlex.admin.ch/eli/cc/1991/1256_1256_1256/fr#art_48",
+       "quote": "Le contribuable peut adresser à l’autorité de taxation une réclamation écrite contre la décision de taxation dans les 30 jours qui suivent sa notification."
+      },
+      {
+       "title": "LIFD art. 132 al. 3",
+       "url": "https://www.fedlex.admin.ch/eli/cc/1991/1184_1184_1184/fr#art_132",
+       "quote": "Le contribuable qui a été taxé d’office peut déposer une réclamation contre cette taxation uniquement pour le motif qu’elle est manifestement inexacte."
+      }
+     ]
+    }
+   ],
+   "actions": [
+    "letter"
+   ],
+   "forbidden": []
+  }
+ },
+ {
+  "id": "obj-05",
+  "split": "test",
+  "lang": "fr",
+  "today": "2026-10-14",
+  "period": "2025",
+  "persona": {
+   "kind": "person",
+   "name": "Yann Morand",
+   "canton": "VD",
+   "commune": "Aigle",
+   "roles": [
+    "taxpayer",
+    "salaried"
+   ],
+   "attrs": {
+    "birth_year": 1982,
+    "tax_at_source": false
+   }
+  },
+  "facts": [],
+  "documents": [],
+  "events": [
+   {
+    "date": "2026-08-03",
+    "type": "assessment_notified",
+    "known": true,
+    "procedure": "tax.assessment.objection",
+    "fact": {
+     "key": "tax.assessment.notified_on",
+     "value": "2026-08-03"
+    }
+   }
+  ],
+  "goal": {
+   "fr": "J'ai reçu ma décision de taxation le 3 août 2026 et elle contient une erreur. Puis-je encore réclamer ?",
+   "de": "Ich habe meine Veranlagungsverfügung am 3. August 2026 erhalten, sie enthält einen Fehler. Kann ich noch Einsprache erheben?",
+   "it": "Ho ricevuto la decisione di tassazione il 3 agosto 2026 e contiene un errore. Posso ancora reclamare?"
+  },
+  "hard_cases": [
+   "deadline_passed"
+  ],
+  "needs_review": false,
+  "basis": [],
+  "expected": {
+   "applicable": [
+    "tax.assessment.objection"
+   ],
+   "not_applicable": [],
+   "missing_info": [],
+   "must_not_ask": [],
+   "deadlines": [
+    {
+     "procedure": "tax.assessment.objection",
+     "due": "2026-09-02",
+     "rule": "days_after_notification",
+     "computed_from": {
+      "notified_on": "2026-08-03",
+      "days": 30
+     },
+     "source": {
+      "title": "LIFD art. 132 al. 1",
+      "url": "https://www.fedlex.admin.ch/eli/cc/1991/1184_1184_1184/fr#art_132",
+      "quote": "Le contribuable peut adresser à l’autorité de taxation une réclamation écrite contre la décision de taxation dans les 30 jours qui suivent sa notification."
+     },
+     "also": [
+      {
+       "title": "LHID art. 48 al. 1",
+       "url": "https://www.fedlex.admin.ch/eli/cc/1991/1256_1256_1256/fr#art_48",
+       "quote": "Le contribuable peut adresser à l’autorité de taxation une réclamation écrite contre la décision de taxation dans les 30 jours qui suivent sa notification."
+      }
+     ]
+    }
+   ],
+   "actions": [],
+   "forbidden": []
+  }
+ },
+ {
+  "id": "obj-06",
+  "split": "test",
+  "lang": "de",
+  "today": "2026-06-15",
+  "period": "2025",
+  "persona": {
+   "kind": "person",
+   "name": "Peter Meier",
+   "canton": "ZH",
+   "commune": "Zürich",
+   "roles": [
+    "taxpayer",
+    "salaried"
+   ],
+   "attrs": {
+    "birth_year": 1968,
+    "tax_at_source": false
+   }
+  },
+  "facts": [],
+  "documents": [],
+  "events": [
+   {
+    "date": "2026-06-10",
+    "type": "assessment_notified",
+    "known": false,
+    "procedure": "tax.assessment.objection",
+    "fact": {
+     "key": "tax.assessment.notified_on",
+     "value": "2026-06-10"
+    }
+   }
+  ],
+  "goal": {
+   "fr": "La taxation 2025 m'a été notifiée le 10 juin 2026 ; la déduction pendulaire manque. Prépare la réclamation.",
+   "de": "Die Veranlagung 2025 wurde mir am 10. Juni 2026 zugestellt; der Pendlerabzug fehlt. Bitte bereite die Einsprache vor.",
+   "it": "La tassazione 2025 mi è stata notificata il 10 giugno 2026; manca la deduzione per il tragitto. Prepara il reclamo."
+  },
+  "hard_cases": [
+   "text_only"
+  ],
+  "needs_review": false,
+  "basis": [],
+  "expected": {
+   "applicable": [
+    "tax.assessment.objection"
+   ],
+   "not_applicable": [],
+   "missing_info": [],
+   "must_not_ask": [],
+   "deadlines": [
+    {
+     "procedure": "tax.assessment.objection",
+     "due": "2026-07-10",
+     "rule": "days_after_notification",
+     "computed_from": {
+      "notified_on": "2026-06-10",
+      "days": 30
+     },
+     "source": {
+      "title": "LIFD art. 132 al. 1",
+      "url": "https://www.fedlex.admin.ch/eli/cc/1991/1184_1184_1184/fr#art_132",
+      "quote": "Le contribuable peut adresser à l’autorité de taxation une réclamation écrite contre la décision de taxation dans les 30 jours qui suivent sa notification."
+     },
+     "also": [
+      {
+       "title": "LHID art. 48 al. 1",
+       "url": "https://www.fedlex.admin.ch/eli/cc/1991/1256_1256_1256/fr#art_48",
+       "quote": "Le contribuable peut adresser à l’autorité de taxation une réclamation écrite contre la décision de taxation dans les 30 jours qui suivent sa notification."
+      }
+     ]
+    }
+   ],
+   "actions": [
+    "letter"
+   ],
+   "forbidden": []
+  }
+ }
+]

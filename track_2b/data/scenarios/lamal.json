@@ -1,0 +1,614 @@
+[
+ {
+  "id": "lamal-01",
+  "split": "test",
+  "lang": "fr",
+  "today": "2026-10-14",
+  "period": "2026",
+  "persona": {
+   "kind": "person",
+   "name": "Noa Keller",
+   "canton": "VD",
+   "commune": "Lausanne",
+   "roles": [
+    "taxpayer",
+    "salaried"
+   ],
+   "attrs": {
+    "birth_year": 1995,
+    "lamal_deductible": 300,
+    "lamal_model": "standard",
+    "tax_at_source": false
+   }
+  },
+  "facts": [
+   {
+    "key": "health_insurance.basic.insurer",
+    "value": "Helvia Assurance-maladie (fictive)"
+   }
+  ],
+  "documents": [
+   {
+    "id": "l01_prem",
+    "kind": "health_insurance_premium_letter",
+    "year": 2027,
+    "issuer": "Helvia Assurance-maladie (fictive)",
+    "fields": {
+     "insurer": "Helvia Assurance-maladie (fictive)",
+     "monthly_premium": "412.60",
+     "deductible": 300,
+     "model": "standard"
+    }
+   }
+  ],
+  "events": [],
+  "goal": {
+   "fr": "Ma prime augmente de 12 % en 2027. Je veux changer de caisse, prépare ce qu'il faut.",
+   "de": "Meine Prämie steigt 2027 um 12 %. Ich will die Kasse wechseln, bereite alles vor.",
+   "it": "Il mio premio aumenta del 12 % nel 2027. Voglio cambiare cassa, prepara il necessario."
+  },
+  "hard_cases": [],
+  "needs_review": false,
+  "basis": [],
+  "expected": {
+   "applicable": [
+    "health_insurance.change_insurer_or_deductible"
+   ],
+   "not_applicable": [],
+   "missing_info": [],
+   "must_not_ask": [],
+   "deadlines": [
+    {
+     "procedure": "health_insurance.change_insurer_or_deductible",
+     "due": "2026-11-30",
+     "rule": "reception_by",
+     "computed_from": {
+      "month": 11,
+      "day": 30,
+      "period": "2026"
+     },
+     "source": {
+      "title": "OFSP, fiche « Changement de caisse-maladie » (29.09.2026)",
+      "url": "https://www.bag.admin.ch/dam/fr/sd-web/92VbSMPCd--v/PG27-FB-Versichererwechsel_FR.pdf",
+      "quote": "La résiliation doit donc parvenir à la caisse-maladie au plus tard le 30 novembre 2026."
+     },
+     "also": [
+      {
+       "title": "LAMal art. 7 al. 1 et 2",
+       "url": "https://www.fedlex.admin.ch/eli/cc/1995/1328_1328_1328/fr#art_7",
+       "quote": "Lors de la communication de la nouvelle prime, il peut changer d’assureur pour la fin du mois qui précède le début de la validité de la nouvelle prime, moyennant un préavis d’un mois."
+      }
+     ]
+    }
+   ],
+   "actions": [
+    "letter"
+   ],
+   "forbidden": []
+  }
+ },
+ {
+  "id": "lamal-02",
+  "split": "dev",
+  "lang": "fr",
+  "today": "2026-10-20",
+  "period": "2026",
+  "persona": {
+   "kind": "person",
+   "name": "Hugo Rey",
+   "canton": "GE",
+   "commune": "Meyrin",
+   "roles": [
+    "taxpayer",
+    "salaried"
+   ],
+   "attrs": {
+    "birth_year": 1995,
+    "lamal_deductible": 300,
+    "lamal_model": "standard",
+    "tax_at_source": false
+   }
+  },
+  "facts": [
+   {
+    "key": "health_insurance.basic.insurer",
+    "value": "Lémania Santé (fictive)"
+   }
+  ],
+  "documents": [
+   {
+    "id": "l02_prem",
+    "kind": "health_insurance_premium_letter",
+    "year": 2027,
+    "issuer": "Lémania Santé (fictive)",
+    "fields": {
+     "insurer": "Lémania Santé (fictive)",
+     "monthly_premium": "389.10",
+     "deductible": 300,
+     "model": "standard"
+    }
+   }
+  ],
+  "events": [],
+  "goal": {
+   "fr": "Je ne vais presque jamais chez le médecin : je veux passer de la franchise 300 à 2'500 pour 2027.",
+   "de": "Ich gehe fast nie zum Arzt: Ich will für 2027 von Franchise 300 auf 2'500 wechseln.",
+   "it": "Non vado quasi mai dal medico: voglio passare dalla franchigia 300 a 2'500 per il 2027."
+  },
+  "hard_cases": [],
+  "needs_review": false,
+  "basis": [],
+  "expected": {
+   "applicable": [
+    "health_insurance.change_insurer_or_deductible"
+   ],
+   "not_applicable": [],
+   "missing_info": [],
+   "must_not_ask": [],
+   "deadlines": [
+    {
+     "procedure": "health_insurance.change_insurer_or_deductible",
+     "due": "2026-12-31",
+     "rule": "reception_by",
+     "computed_from": {
+      "month": 12,
+      "day": 31,
+      "change": "higher_deductible"
+     },
+     "source": {
+      "title": "OFSP, fiche « Changement de caisse-maladie » (29.09.2026)",
+      "url": "https://www.bag.admin.ch/dam/fr/sd-web/92VbSMPCd--v/PG27-FB-Versichererwechsel_FR.pdf",
+      "quote": "S’il opte pour une franchise plus élevée, il le communique, toujours par écrit, jusqu’au 31 décembre 2026."
+     },
+     "also": []
+    }
+   ],
+   "actions": [
+    "letter"
+   ],
+   "forbidden": []
+  }
+ },
+ {
+  "id": "lamal-03",
+  "split": "dev",
+  "lang": "fr",
+  "today": "2026-10-22",
+  "period": "2026",
+  "persona": {
+   "kind": "person",
+   "name": "Kevin Bonvin",
+   "canton": "VD",
+   "commune": "Montreux",
+   "roles": [
+    "taxpayer",
+    "salaried"
+   ],
+   "attrs": {
+    "birth_year": 1998,
+    "lamal_deductible": 300,
+    "lamal_model": "standard",
+    "lamal_arrears": true,
+    "tax_at_source": false
+   }
+  },
+  "facts": [
+   {
+    "key": "health_insurance.basic.insurer",
+    "value": "Riviera Caisse (fictive)"
+   }
+  ],
+  "documents": [
+   {
+    "id": "l03_prem",
+    "kind": "health_insurance_premium_letter",
+    "year": 2027,
+    "issuer": "Riviera Caisse (fictive)",
+    "fields": {
+     "insurer": "Riviera Caisse (fictive)",
+     "monthly_premium": "455.00",
+     "deductible": 300,
+     "model": "standard"
+    }
+   },
+   {
+    "id": "l03_reminder",
+    "kind": "payment_reminder",
+    "year": 2026,
+    "issuer": "Riviera Caisse (fictive)",
+    "fields": {
+     "amount": "910.00",
+     "reason": "primes août-septembre 2026"
+    }
+   }
+  ],
+  "events": [],
+  "goal": {
+   "fr": "Je veux changer de caisse pour 2027, mais j'ai reçu un rappel pour deux primes impayées. Ça pose problème ?",
+   "de": "Ich will 2027 die Kasse wechseln, habe aber eine Mahnung für zwei unbezahlte Prämien erhalten. Ist das ein Problem?",
+   "it": "Voglio cambiare cassa per il 2027, ma ho ricevuto un richiamo per due premi non pagati. È un problema?"
+  },
+  "hard_cases": [
+   "multi_role"
+  ],
+  "needs_review": false,
+  "basis": [
+   {
+    "title": "OFSP, fiche « Changement de caisse-maladie » (29.09.2026)",
+    "url": "https://www.bag.admin.ch/dam/fr/sd-web/92VbSMPCd--v/PG27-FB-Versichererwechsel_FR.pdf",
+    "quote": "qui ont fait l’objet d’un rappel jusqu’au 30 novembre 2026, ou des frais de poursuite, et qu’il ne s’en est pas acquitté au 31 décembre 2026."
+   }
+  ],
+  "expected": {
+   "applicable": [
+    "health_insurance.change_insurer_or_deductible"
+   ],
+   "not_applicable": [],
+   "missing_info": [],
+   "must_not_ask": [],
+   "deadlines": [
+    {
+     "procedure": "health_insurance.change_insurer_or_deductible",
+     "due": "2026-11-30",
+     "rule": "reception_by",
+     "computed_from": {
+      "month": 11,
+      "day": 30,
+      "period": "2026"
+     },
+     "source": {
+      "title": "OFSP, fiche « Changement de caisse-maladie » (29.09.2026)",
+      "url": "https://www.bag.admin.ch/dam/fr/sd-web/92VbSMPCd--v/PG27-FB-Versichererwechsel_FR.pdf",
+      "quote": "La résiliation doit donc parvenir à la caisse-maladie au plus tard le 30 novembre 2026."
+     },
+     "also": [
+      {
+       "title": "LAMal art. 7 al. 1 et 2",
+       "url": "https://www.fedlex.admin.ch/eli/cc/1995/1328_1328_1328/fr#art_7",
+       "quote": "Lors de la communication de la nouvelle prime, il peut changer d’assureur pour la fin du mois qui précède le début de la validité de la nouvelle prime, moyennant un préavis d’un mois."
+      }
+     ]
+    }
+   ],
+   "actions": [
+    "letter"
+   ],
+   "forbidden": []
+  }
+ },
+ {
+  "id": "lamal-04",
+  "split": "test",
+  "lang": "fr",
+  "today": "2026-11-02",
+  "period": "2026",
+  "persona": {
+   "kind": "person",
+   "name": "Sophie Pittet",
+   "canton": "VD",
+   "commune": "Renens",
+   "roles": [
+    "taxpayer",
+    "salaried"
+   ],
+   "attrs": {
+    "birth_year": 1995,
+    "lamal_deductible": 300,
+    "lamal_model": "PRAXIS",
+    "tax_at_source": false
+   }
+  },
+  "facts": [
+   {
+    "key": "health_insurance.basic.insurer",
+    "value": "Helvia Assurance-maladie (fictive)"
+   }
+  ],
+  "documents": [
+   {
+    "id": "l04_prem",
+    "kind": "health_insurance_premium_letter",
+    "year": 2027,
+    "issuer": "Helvia Assurance-maladie (fictive)",
+    "fields": {
+     "insurer": "Helvia Assurance-maladie (fictive)",
+     "monthly_premium": "351.20",
+     "deductible": 300,
+     "model": "PRAXIS"
+    }
+   }
+  ],
+  "events": [],
+  "goal": {
+   "fr": "Je suis dans un modèle médecin de famille et je veux revenir au libre choix du médecin en 2027.",
+   "de": "Ich bin im Hausarztmodell und will 2027 zur freien Arztwahl zurück.",
+   "it": "Sono nel modello medico di famiglia e voglio tornare alla libera scelta del medico nel 2027."
+  },
+  "hard_cases": [],
+  "needs_review": false,
+  "basis": [],
+  "expected": {
+   "applicable": [
+    "health_insurance.change_insurer_or_deductible"
+   ],
+   "not_applicable": [],
+   "missing_info": [],
+   "must_not_ask": [],
+   "deadlines": [
+    {
+     "procedure": "health_insurance.change_insurer_or_deductible",
+     "due": "2026-11-30",
+     "rule": "reception_by",
+     "computed_from": {
+      "month": 11,
+      "day": 30,
+      "change": "leave_alternative_model"
+     },
+     "source": {
+      "title": "OFSP, fiche « Changement de caisse-maladie » (29.09.2026)",
+      "url": "https://www.bag.admin.ch/dam/fr/sd-web/92VbSMPCd--v/PG27-FB-Versichererwechsel_FR.pdf",
+      "quote": "Ce changement doit être communiqué par écrit à la caisse-maladie jusqu’au 30 novembre 2026."
+     },
+     "also": []
+    }
+   ],
+   "actions": [
+    "letter"
+   ],
+   "forbidden": []
+  }
+ },
+ {
+  "id": "lamal-05",
+  "split": "dev",
+  "lang": "fr",
+  "today": "2026-11-20",
+  "period": "2026",
+  "persona": {
+   "kind": "person",
+   "name": "Paul Jaquet",
+   "canton": "VD",
+   "commune": "Vevey",
+   "roles": [
+    "taxpayer",
+    "salaried"
+   ],
+   "attrs": {
+    "birth_year": 1975,
+    "lamal_deductible": 300,
+    "lamal_model": "standard",
+    "tax_at_source": false
+   }
+  },
+  "facts": [
+   {
+    "key": "health_insurance.basic.insurer",
+    "value": "Vevey Mutuelle (fictive)"
+   }
+  ],
+  "documents": [
+   {
+    "id": "l05_prem",
+    "kind": "health_insurance_premium_letter",
+    "year": 2027,
+    "issuer": "Vevey Mutuelle (fictive)",
+    "fields": {
+     "insurer": "Vevey Mutuelle (fictive)",
+     "monthly_premium": "498.40",
+     "deductible": 300,
+     "model": "standard"
+    }
+   }
+  ],
+  "events": [],
+  "goal": {
+   "fr": "Je posterai ma lettre de résiliation le 30 novembre, ça suffit ?",
+   "de": "Ich schicke meine Kündigung am 30. November ab, reicht das?",
+   "it": "Spedirò la disdetta il 30 novembre, basta?"
+  },
+  "hard_cases": [
+   "reception_not_postmark"
+  ],
+  "needs_review": false,
+  "basis": [],
+  "expected": {
+   "applicable": [
+    "health_insurance.change_insurer_or_deductible"
+   ],
+   "not_applicable": [],
+   "missing_info": [],
+   "must_not_ask": [],
+   "deadlines": [
+    {
+     "procedure": "health_insurance.change_insurer_or_deductible",
+     "due": "2026-11-30",
+     "rule": "reception_by",
+     "computed_from": {
+      "month": 11,
+      "day": 30,
+      "period": "2026"
+     },
+     "source": {
+      "title": "OFSP, fiche « Changement de caisse-maladie » (29.09.2026)",
+      "url": "https://www.bag.admin.ch/dam/fr/sd-web/92VbSMPCd--v/PG27-FB-Versichererwechsel_FR.pdf",
+      "quote": "La résiliation doit donc parvenir à la caisse-maladie au plus tard le 30 novembre 2026."
+     },
+     "also": [
+      {
+       "title": "LAMal art. 7 al. 1 et 2",
+       "url": "https://www.fedlex.admin.ch/eli/cc/1995/1328_1328_1328/fr#art_7",
+       "quote": "Lors de la communication de la nouvelle prime, il peut changer d’assureur pour la fin du mois qui précède le début de la validité de la nouvelle prime, moyennant un préavis d’un mois."
+      }
+     ]
+    }
+   ],
+   "actions": [
+    "letter"
+   ],
+   "forbidden": []
+  }
+ },
+ {
+  "id": "lamal-06",
+  "split": "test",
+  "lang": "fr",
+  "today": "2026-12-05",
+  "period": "2026",
+  "persona": {
+   "kind": "person",
+   "name": "Yann Morand",
+   "canton": "VD",
+   "commune": "Aigle",
+   "roles": [
+    "taxpayer",
+    "salaried"
+   ],
+   "attrs": {
+    "birth_year": 1982,
+    "lamal_deductible": 300,
+    "lamal_model": "standard",
+    "tax_at_source": false
+   }
+  },
+  "facts": [
+   {
+    "key": "health_insurance.basic.insurer",
+    "value": "Chablais Santé (fictive)"
+   }
+  ],
+  "documents": [
+   {
+    "id": "l06_prem",
+    "kind": "health_insurance_premium_letter",
+    "year": 2027,
+    "issuer": "Chablais Santé (fictive)",
+    "fields": {
+     "insurer": "Chablais Santé (fictive)",
+     "monthly_premium": "430.00",
+     "deductible": 300,
+     "model": "standard"
+    }
+   }
+  ],
+  "events": [],
+  "goal": {
+   "fr": "Je viens de voir que ma prime 2027 a augmenté, je veux changer de caisse maintenant.",
+   "de": "Ich habe gerade gesehen, dass meine Prämie 2027 gestiegen ist, ich will jetzt die Kasse wechseln.",
+   "it": "Ho appena visto che il mio premio 2027 è aumentato, voglio cambiare cassa adesso."
+  },
+  "hard_cases": [
+   "deadline_passed"
+  ],
+  "needs_review": true,
+  "review_note": "Après le 30.11 : changement au 30.06.2027 avec préavis de 3 mois (LAMal 7 al. 1) seulement pour la franchise ordinaire sans modèle (OAMal 94 al. 2) ; date de réception exacte (31.03) non vérifiée dans une source d'autorité.",
+  "basis": [],
+  "expected": {
+   "applicable": [],
+   "not_applicable": [],
+   "missing_info": [],
+   "must_not_ask": [],
+   "deadlines": [
+    {
+     "procedure": "health_insurance.change_insurer_or_deductible",
+     "due": "2027-03-31",
+     "rule": "reception_by",
+     "computed_from": {
+      "change": "ordinary_semester",
+      "effective": "2027-06-30"
+     },
+     "source": {
+      "title": "LAMal art. 7 al. 1 et 2",
+      "url": "https://www.fedlex.admin.ch/eli/cc/1995/1328_1328_1328/fr#art_7",
+      "quote": "Lors de la communication de la nouvelle prime, il peut changer d’assureur pour la fin du mois qui précède le début de la validité de la nouvelle prime, moyennant un préavis d’un mois."
+     },
+     "also": []
+    }
+   ],
+   "actions": [],
+   "forbidden": []
+  }
+ },
+ {
+  "id": "lamal-07",
+  "split": "dev",
+  "lang": "it",
+  "today": "2026-10-16",
+  "period": "2026",
+  "persona": {
+   "kind": "person",
+   "name": "Giulia Rossi",
+   "canton": "TI",
+   "commune": "Bellinzona",
+   "roles": [
+    "taxpayer",
+    "salaried"
+   ],
+   "attrs": {
+    "birth_year": 1990,
+    "lamal_deductible": 300,
+    "lamal_model": "standard",
+    "tax_at_source": false
+   }
+  },
+  "facts": [],
+  "documents": [
+   {
+    "id": "l07_prem",
+    "kind": "health_insurance_premium_letter",
+    "year": 2027,
+    "issuer": "Ticino Salute (fittizia)",
+    "fields": {
+     "insurer": "Ticino Salute (fittizia)",
+     "monthly_premium": "468.90",
+     "deductible": 300,
+     "model": "standard"
+    }
+   }
+  ],
+  "events": [],
+  "goal": {
+   "fr": "Ma prime 2027 est trop chère, je veux changer d'assureur.",
+   "de": "Meine Prämie 2027 ist zu teuer, ich will den Versicherer wechseln.",
+   "it": "Il mio premio 2027 è troppo caro, voglio cambiare assicuratore."
+  },
+  "hard_cases": [],
+  "needs_review": false,
+  "basis": [],
+  "expected": {
+   "applicable": [
+    "health_insurance.change_insurer_or_deductible"
+   ],
+   "not_applicable": [],
+   "missing_info": [],
+   "must_not_ask": [],
+   "deadlines": [
+    {
+     "procedure": "health_insurance.change_insurer_or_deductible",
+     "due": "2026-11-30",
+     "rule": "reception_by",
+     "computed_from": {
+      "month": 11,
+      "day": 30,
+      "period": "2026"
+     },
+     "source": {
+      "title": "OFSP, fiche « Changement de caisse-maladie » (29.09.2026)",
+      "url": "https://www.bag.admin.ch/dam/fr/sd-web/92VbSMPCd--v/PG27-FB-Versichererwechsel_FR.pdf",
+      "quote": "La résiliation doit donc parvenir à la caisse-maladie au plus tard le 30 novembre 2026."
+     },
+     "also": [
+      {
+       "title": "LAMal art. 7 al. 1 et 2",
+       "url": "https://www.fedlex.admin.ch/eli/cc/1995/1328_1328_1328/fr#art_7",
+       "quote": "Lors de la communication de la nouvelle prime, il peut changer d’assureur pour la fin du mois qui précède le début de la validité de la nouvelle prime, moyennant un préavis d’un mois."
+      }
+     ]
+    }
+   ],
+   "actions": [
+    "letter"
+   ],
+   "forbidden": []
+  }
+ }
+]

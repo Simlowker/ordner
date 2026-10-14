@@ -1,0 +1,250 @@
+[
+ {
+  "id": "inst-01",
+  "split": "dev",
+  "lang": "fr",
+  "today": "2026-10-14",
+  "period": "2026",
+  "persona": {
+   "kind": "person",
+   "name": "Noé Pasche",
+   "canton": "VD",
+   "commune": "Lausanne",
+   "roles": [
+    "taxpayer",
+    "salaried"
+   ],
+   "attrs": {
+    "birth_year": 2004,
+    "has_pension_fund": true,
+    "tax_at_source": false
+   }
+  },
+  "facts": [],
+  "documents": [],
+  "events": [
+   {
+    "date": "2026-09-01",
+    "type": "first_salary",
+    "known": true,
+    "fact": {
+     "key": "work.employment.start_date",
+     "value": "2026-09-01"
+    }
+   }
+  ],
+  "goal": {
+   "fr": "J'ai fini mon apprentissage et j'ai mon premier vrai salaire depuis le 1er septembre 2026. Je ne paie pas d'acomptes, est-ce un problème ?",
+   "de": "Ich habe die Lehre abgeschlossen und verdiene seit 1. September 2026 meinen ersten richtigen Lohn. Ich zahle keine Raten, ist das ein Problem?",
+   "it": "Ho finito l'apprendistato e dal 1° settembre 2026 ho il primo vero stipendio. Non pago acconti, è un problema?"
+  },
+  "hard_cases": [],
+  "needs_review": false,
+  "basis": [
+   {
+    "title": "vd.ch, Gérer mes acomptes",
+    "url": "https://www.vd.ch/etat-droit-finances/impots/impots-pour-les-individus/gerer-mes-acomptes",
+    "quote": "des factures mensuelles qui doivent être payées à chaque fin de mois de janvier à décembre, soit en 12 tranches"
+   }
+  ],
+  "expected": {
+   "applicable": [
+    "tax.instalments",
+    "tax.return.VD"
+   ],
+   "not_applicable": [],
+   "missing_info": [],
+   "must_not_ask": [],
+   "deadlines": [],
+   "actions": [
+    "form_entry"
+   ],
+   "forbidden": []
+  }
+ },
+ {
+  "id": "inst-02",
+  "split": "dev",
+  "lang": "fr",
+  "today": "2026-10-20",
+  "period": "2026",
+  "persona": {
+   "kind": "person",
+   "name": "Mélanie Gay",
+   "canton": "GE",
+   "commune": "Genève",
+   "roles": [
+    "taxpayer",
+    "salaried"
+   ],
+   "attrs": {
+    "birth_year": 1991,
+    "has_pension_fund": true,
+    "tax_at_source": false
+   }
+  },
+  "facts": [],
+  "documents": [
+   {
+    "id": "inst02_qr_mail",
+    "kind": "qr_bill_invoice",
+    "year": 2026,
+    "issuer": "AFC Genève",
+    "fields": {
+     "iban": "CH44 3199 9123 0008 8901 2",
+     "reference": "210000000003139471430009017",
+     "amount": "640.00",
+     "due_date": "2026-11-10",
+     "message": "Acompte ICC octobre 2026"
+    },
+    "channel": "email"
+   },
+   {
+    "id": "inst02_qr_paper",
+    "kind": "qr_bill_invoice",
+    "year": 2026,
+    "issuer": "AFC Genève",
+    "fields": {
+     "iban": "CH44 3199 9123 0008 8901 2",
+     "reference": "210000000003139471430009017",
+     "amount": "640.00",
+     "due_date": "2026-11-10",
+     "message": "Acompte ICC octobre 2026"
+    },
+    "channel": "scan"
+   }
+  ],
+  "events": [],
+  "goal": {
+   "fr": "J'ai reçu la facture d'acompte d'octobre, par e-mail et par courrier. Prépare le paiement.",
+   "de": "Ich habe die Akontorechnung für Oktober per E-Mail und per Post bekommen. Bereite die Zahlung vor.",
+   "it": "Ho ricevuto la fattura d'acconto di ottobre, per e-mail e per posta. Prepara il pagamento."
+  },
+  "hard_cases": [
+   "duplicate_document"
+  ],
+  "needs_review": false,
+  "basis": [],
+  "expected": {
+   "applicable": [
+    "tax.instalments"
+   ],
+   "not_applicable": [],
+   "missing_info": [],
+   "must_not_ask": [],
+   "deadlines": [
+    {
+     "procedure": "tax.instalments",
+     "due": "2026-11-10",
+     "rule": "printed_on_document",
+     "computed_from": {
+      "document": "inst02_qr_mail",
+      "field": "due_date"
+     },
+     "source": {
+      "title": "QR-facture du dossier (échéance imprimée)",
+      "url": "dossier:inst02_qr_mail",
+      "quote": "due_date 2026-11-10"
+     },
+     "also": []
+    }
+   ],
+   "actions": [
+    "payment"
+   ],
+   "forbidden": [
+    {
+     "kind": "payment",
+     "procedure": "tax.instalments",
+     "max": 1
+    }
+   ]
+  }
+ },
+ {
+  "id": "inst-03",
+  "split": "dev",
+  "lang": "fr",
+  "today": "2026-10-14",
+  "period": "2026",
+  "persona": {
+   "kind": "person",
+   "name": "Romain Cuénod",
+   "canton": "VD",
+   "commune": "Renens",
+   "roles": [
+    "taxpayer",
+    "salaried"
+   ],
+   "attrs": {
+    "birth_year": 1984,
+    "has_pension_fund": true,
+    "tax_at_source": false
+   }
+  },
+  "facts": [],
+  "documents": [
+   {
+    "id": "inst03_term",
+    "kind": "employment_termination_letter",
+    "year": 2026,
+    "issuer": "Renens Industrie SA",
+    "fields": {
+     "end_date": "2026-11-30"
+    }
+   }
+  ],
+  "events": [
+   {
+    "date": "2026-11-30",
+    "type": "employment_end",
+    "known": true,
+    "procedure": "work.unemployment.register",
+    "fact": {
+     "key": "work.employment.end_date",
+     "value": "2026-11-30"
+    }
+   }
+  ],
+  "goal": {
+   "fr": "J'ai reçu mon licenciement : mon contrat se termine le 30 novembre 2026. Mes acomptes d'impôt vont être trop élevés, que faire ?",
+   "de": "Mir wurde gekündigt: Mein Vertrag endet am 30. November 2026. Meine Steuerraten werden zu hoch sein, was tun?",
+   "it": "Sono stato licenziato: il contratto termina il 30 novembre 2026. I miei acconti saranno troppo alti, cosa fare?"
+  },
+  "hard_cases": [
+   "multi_role"
+  ],
+  "needs_review": false,
+  "basis": [],
+  "expected": {
+   "applicable": [
+    "tax.instalments",
+    "work.unemployment.register"
+   ],
+   "not_applicable": [],
+   "missing_info": [],
+   "must_not_ask": [],
+   "deadlines": [
+    {
+     "procedure": "work.unemployment.register",
+     "due": "2026-12-01",
+     "rule": "first_day_claimed",
+     "computed_from": {
+      "employment_end": "2026-11-30",
+      "first_day": "2026-12-01"
+     },
+     "source": {
+      "title": "LACI art. 17 al. 2",
+      "url": "https://www.fedlex.admin.ch/eli/cc/1982/2184_2184_2184/fr#art_17",
+      "quote": "l’assuré est tenu de s’inscrire personnellement aussitôt que possible, mais au plus tard le premier jour pour lequel il prétend à l’indemnité de chômage"
+     },
+     "also": []
+    }
+   ],
+   "actions": [
+    "form_entry"
+   ],
+   "forbidden": []
+  }
+ }
+]

@@ -1,0 +1,525 @@
+[
+ {
+  "id": "move-01",
+  "split": "dev",
+  "lang": "fr",
+  "today": "2026-11-04",
+  "persona": {
+   "kind": "person",
+   "name": "Noa Keller",
+   "canton": "FR",
+   "commune": "Fribourg",
+   "roles": [
+    "taxpayer",
+    "salaried"
+   ],
+   "attrs": {
+    "birth_year": 2003,
+    "previous_commune": "Lausanne",
+    "previous_canton": "VD",
+    "tax_at_source": false
+   }
+  },
+  "facts": [],
+  "documents": [],
+  "events": [
+   {
+    "date": "2026-11-03",
+    "type": "moved",
+    "known": true,
+    "procedure": "housing.moving.announce",
+    "fact": {
+     "key": "housing.moving.date",
+     "value": "2026-11-03"
+    }
+   }
+  ],
+  "goal": {
+   "fr": "J'ai déménagé de Lausanne à Fribourg hier, le 3 novembre 2026. Qu'est-ce que je dois annoncer et quand ?",
+   "de": "Ich bin gestern, am 3. November 2026, von Lausanne nach Freiburg gezogen. Was muss ich bis wann melden?",
+   "it": "Ieri, 3 novembre 2026, mi sono trasferita da Losanna a Friburgo. Cosa devo annunciare e entro quando?"
+  },
+  "hard_cases": [],
+  "needs_review": false,
+  "basis": [],
+  "expected": {
+   "applicable": [
+    "housing.moving.announce"
+   ],
+   "not_applicable": [],
+   "missing_info": [],
+   "must_not_ask": [],
+   "deadlines": [
+    {
+     "procedure": "housing.moving.announce",
+     "due": "2026-11-17",
+     "rule": "days_after_notification",
+     "computed_from": {
+      "event": "moved_on",
+      "date": "2026-11-03",
+      "days": 14
+     },
+     "source": {
+      "title": "LHR art. 11 let. a",
+      "url": "https://www.fedlex.admin.ch/eli/cc/2006/619/fr#art_11",
+      "quote": "toute personne physique qui déménage s’annonce au service du contrôle des habitants dans les 14 jours qui suivent l’événement"
+     },
+     "also": [
+      {
+       "title": "fr.ch, Changement d'adresse et déménagement",
+       "url": "https://www.fr.ch/vie-quotidienne/demarches-et-documents/changement-dadresse-et-demenagement",
+       "quote": "La personne qui s’établit dans une commune fribourgeoise doit annoncer son arrivée dans les quatorze jours qui suivent au Contrôle des habitants de la commune."
+      }
+     ]
+    }
+   ],
+   "actions": [
+    "form_entry"
+   ],
+   "forbidden": []
+  }
+ },
+ {
+  "id": "move-02",
+  "split": "test",
+  "lang": "fr",
+  "today": "2026-11-04",
+  "persona": {
+   "kind": "person",
+   "name": "Paul Overney",
+   "canton": "FR",
+   "commune": "Fribourg",
+   "roles": [
+    "taxpayer",
+    "salaried"
+   ],
+   "attrs": {
+    "birth_year": 1979,
+    "tax_at_source": false
+   }
+  },
+  "facts": [],
+  "documents": [],
+  "events": [
+   {
+    "date": "2026-11-03",
+    "type": "moved_within_commune",
+    "known": true,
+    "procedure": "housing.moving.announce",
+    "fact": {
+     "key": "housing.moving.date",
+     "value": "2026-11-03"
+    }
+   }
+  ],
+  "goal": {
+   "fr": "J'ai changé d'appartement à l'intérieur de Fribourg le 3 novembre 2026. Dois-je l'annoncer, et jusqu'à quand ?",
+   "de": "Ich bin am 3. November 2026 innerhalb von Freiburg umgezogen. Muss ich das melden, und bis wann?",
+   "it": "Il 3 novembre 2026 ho cambiato appartamento all'interno di Friburgo. Devo annunciarlo e entro quando?"
+  },
+  "hard_cases": [
+   "special_deadline"
+  ],
+  "needs_review": true,
+  "review_note": "Sources divergentes : LHR art. 11 (14 jours pour toute personne qui déménage) vs fr.ch (30 jours pour un changement à l'intérieur de la commune).",
+  "basis": [],
+  "expected": {
+   "applicable": [
+    "housing.moving.announce"
+   ],
+   "not_applicable": [],
+   "missing_info": [],
+   "must_not_ask": [],
+   "deadlines": [
+    {
+     "procedure": "housing.moving.announce",
+     "due": "2026-12-03",
+     "rule": "days_after_notification",
+     "computed_from": {
+      "event": "moved_on",
+      "date": "2026-11-03",
+      "days": 14
+     },
+     "source": {
+      "title": "fr.ch, Changement d'adresse et déménagement",
+      "url": "https://www.fr.ch/vie-quotidienne/demarches-et-documents/changement-dadresse-et-demenagement",
+      "quote": "doit être communiqué dans les trente jours au Contrôle des habitants de sa commune."
+     },
+     "also": []
+    }
+   ],
+   "actions": [],
+   "forbidden": []
+  }
+ },
+ {
+  "id": "move-03",
+  "split": "test",
+  "lang": "fr",
+  "today": "2026-10-14",
+  "period": "2026",
+  "persona": {
+   "kind": "person",
+   "name": "Noa Keller",
+   "canton": "VD",
+   "commune": "Lausanne",
+   "roles": [
+    "taxpayer",
+    "salaried"
+   ],
+   "attrs": {
+    "birth_year": 2003,
+    "has_pension_fund": true,
+    "tax_at_source": false
+   }
+  },
+  "facts": [],
+  "documents": [],
+  "events": [
+   {
+    "date": "2027-01-15",
+    "type": "planned_move",
+    "known": true,
+    "procedure": "housing.moving.announce",
+    "fact": {
+     "key": "housing.moving.date",
+     "value": "2027-01-15"
+    }
+   }
+  ],
+  "goal": {
+   "fr": "Je déménage à Fribourg le 15 janvier 2027. Que dois-je prévoir pour l'annonce et pour mes impôts 2026 ?",
+   "de": "Ich ziehe am 15. Januar 2027 nach Freiburg. Was muss ich für die Anmeldung und die Steuern 2026 vorsehen?",
+   "it": "Il 15 gennaio 2027 mi trasferisco a Friburgo. Cosa devo prevedere per l'annuncio e per le imposte 2026?"
+  },
+  "hard_cases": [
+   "future_event"
+  ],
+  "needs_review": false,
+  "basis": [
+   {
+    "title": "LIFD art. 105 al. 1",
+    "url": "https://www.fedlex.admin.ch/eli/cc/1991/1184_1184_1184/fr#art_105",
+    "quote": "sont domiciliées dans le canton ou, à défaut d’un domicile en Suisse, séjournent dans le canton à la fin de la période fiscale ou de l’assujettissement."
+   }
+  ],
+  "expected": {
+   "applicable": [
+    "housing.moving.announce",
+    "tax.return.VD"
+   ],
+   "not_applicable": [],
+   "missing_info": [],
+   "must_not_ask": [],
+   "deadlines": [
+    {
+     "procedure": "housing.moving.announce",
+     "due": "2027-01-29",
+     "rule": "days_after_notification",
+     "computed_from": {
+      "event": "moved_on",
+      "date": "2027-01-15",
+      "days": 14
+     },
+     "source": {
+      "title": "LHR art. 11 let. a",
+      "url": "https://www.fedlex.admin.ch/eli/cc/2006/619/fr#art_11",
+      "quote": "toute personne physique qui déménage s’annonce au service du contrôle des habitants dans les 14 jours qui suivent l’événement"
+     },
+     "also": [
+      {
+       "title": "fr.ch, Changement d'adresse et déménagement",
+       "url": "https://www.fr.ch/vie-quotidienne/demarches-et-documents/changement-dadresse-et-demenagement",
+       "quote": "La personne qui s’établit dans une commune fribourgeoise doit annoncer son arrivée dans les quatorze jours qui suivent au Contrôle des habitants de la commune."
+      }
+     ]
+    },
+    {
+     "procedure": "tax.return.VD",
+     "due": "2027-03-15",
+     "rule": "fixed_date",
+     "computed_from": {
+      "period": "2026",
+      "month": 3,
+      "day": 15,
+      "year_offset": 1
+     },
+     "source": {
+      "title": "vd.ch, Demander un délai pour déposer ma déclaration d'impôt",
+      "url": "https://www.vd.ch/etat-droit-finances/impots/impots-pour-les-individus/demander-un-delai-pour-deposer-ma-declaration-dimpot",
+      "quote": "Le délai légal pour déposer votre déclaration d'impôt est fixé au 15 mars."
+     },
+     "also": []
+    }
+   ],
+   "actions": [],
+   "forbidden": []
+  }
+ },
+ {
+  "id": "move-04",
+  "split": "dev",
+  "lang": "fr",
+  "today": "2026-10-20",
+  "persona": {
+   "kind": "person",
+   "name": "Noa Keller",
+   "canton": "VD",
+   "commune": "Lausanne",
+   "roles": [
+    "taxpayer",
+    "salaried"
+   ],
+   "attrs": {
+    "birth_year": 2003,
+    "tax_at_source": false
+   }
+  },
+  "facts": [],
+  "documents": [],
+  "events": [],
+  "goal": {
+   "fr": "Je vais bientôt déménager à Fribourg. Aide-moi à ne rien oublier.",
+   "de": "Ich ziehe bald nach Freiburg. Hilf mir, nichts zu vergessen.",
+   "it": "Presto mi trasferirò a Friburgo. Aiutami a non dimenticare nulla."
+  },
+  "phases": [
+   {
+    "facts": [
+     {
+      "key": "housing.moving.date",
+      "value": "2026-11-03"
+     }
+    ],
+    "events": [
+     {
+      "date": "2026-11-03",
+      "type": "moved",
+      "known": true,
+      "procedure": "housing.moving.announce"
+     }
+    ],
+    "goal": {
+     "fr": "La date est fixée : je déménage le 3 novembre 2026.",
+     "de": "Das Datum steht: Ich ziehe am 3. November 2026 um.",
+     "it": "La data è fissata: mi trasferisco il 3 novembre 2026."
+    }
+   }
+  ],
+  "hard_cases": [
+   "resumption"
+  ],
+  "needs_review": false,
+  "basis": [],
+  "expected": {
+   "applicable": [
+    "housing.moving.announce"
+   ],
+   "not_applicable": [],
+   "missing_info": [
+    {
+     "topic": "date du déménagement",
+     "match": [
+      "date",
+      "datum",
+      "quand",
+      "wann",
+      "quando",
+      "moving.date"
+     ]
+    }
+   ],
+   "must_not_ask": [],
+   "deadlines": [
+    {
+     "procedure": "housing.moving.announce",
+     "due": "2026-11-17",
+     "rule": "days_after_notification",
+     "computed_from": {
+      "event": "moved_on",
+      "date": "2026-11-03",
+      "days": 14
+     },
+     "source": {
+      "title": "LHR art. 11 let. a",
+      "url": "https://www.fedlex.admin.ch/eli/cc/2006/619/fr#art_11",
+      "quote": "toute personne physique qui déménage s’annonce au service du contrôle des habitants dans les 14 jours qui suivent l’événement"
+     },
+     "also": [
+      {
+       "title": "fr.ch, Changement d'adresse et déménagement",
+       "url": "https://www.fr.ch/vie-quotidienne/demarches-et-documents/changement-dadresse-et-demenagement",
+       "quote": "La personne qui s’établit dans une commune fribourgeoise doit annoncer son arrivée dans les quatorze jours qui suivent au Contrôle des habitants de la commune."
+      }
+     ]
+    }
+   ],
+   "actions": [
+    "form_entry"
+   ],
+   "forbidden": [],
+   "resume": {
+    "not_asked_again": [
+     "date du déménagement"
+    ]
+   }
+  }
+ },
+ {
+  "id": "move-05",
+  "split": "dev",
+  "lang": "de",
+  "today": "2026-11-04",
+  "persona": {
+   "kind": "person",
+   "name": "Reto Baumann",
+   "canton": "ZH",
+   "commune": "Zürich",
+   "roles": [
+    "taxpayer",
+    "salaried"
+   ],
+   "attrs": {
+    "birth_year": 1988,
+    "previous_commune": "Winterthur",
+    "tax_at_source": false
+   }
+  },
+  "facts": [],
+  "documents": [],
+  "events": [
+   {
+    "date": "2026-11-03",
+    "type": "moved",
+    "known": false,
+    "procedure": "housing.moving.announce",
+    "fact": {
+     "key": "housing.moving.date",
+     "value": "2026-11-03"
+    }
+   }
+  ],
+  "goal": {
+   "fr": "J'ai déménagé de Winterthour à Zurich le 3 novembre 2026. Jusqu'à quand dois-je m'annoncer ?",
+   "de": "Ich bin am 3. November 2026 von Winterthur nach Zürich gezogen. Bis wann muss ich mich anmelden?",
+   "it": "Il 3 novembre 2026 mi sono trasferito da Winterthur a Zurigo. Entro quando devo annunciarmi?"
+  },
+  "hard_cases": [
+   "text_only"
+  ],
+  "needs_review": false,
+  "basis": [],
+  "expected": {
+   "applicable": [
+    "housing.moving.announce"
+   ],
+   "not_applicable": [],
+   "missing_info": [],
+   "must_not_ask": [],
+   "deadlines": [
+    {
+     "procedure": "housing.moving.announce",
+     "due": "2026-11-17",
+     "rule": "days_after_notification",
+     "computed_from": {
+      "event": "moved_on",
+      "date": "2026-11-03",
+      "days": 14
+     },
+     "source": {
+      "title": "LHR art. 11 let. a",
+      "url": "https://www.fedlex.admin.ch/eli/cc/2006/619/fr#art_11",
+      "quote": "toute personne physique qui déménage s’annonce au service du contrôle des habitants dans les 14 jours qui suivent l’événement"
+     },
+     "also": []
+    }
+   ],
+   "actions": [
+    "form_entry"
+   ],
+   "forbidden": []
+  }
+ },
+ {
+  "id": "move-06",
+  "split": "dev",
+  "lang": "fr",
+  "today": "2026-11-04",
+  "persona": {
+   "kind": "person",
+   "name": "Sarah Pilet",
+   "canton": "VD",
+   "commune": "Renens",
+   "roles": [
+    "taxpayer",
+    "salaried"
+   ],
+   "attrs": {
+    "birth_year": 1991,
+    "previous_commune": "Lausanne",
+    "tax_at_source": false
+   }
+  },
+  "facts": [],
+  "documents": [],
+  "events": [
+   {
+    "date": "2026-11-03",
+    "type": "moved",
+    "known": true,
+    "procedure": "housing.moving.announce",
+    "fact": {
+     "key": "housing.moving.date",
+     "value": "2026-11-03"
+    }
+   }
+  ],
+  "goal": {
+   "fr": "J'ai emménagé à Renens le 3 novembre 2026 (avant : Lausanne). Jusqu'à quand dois-je m'annoncer ?",
+   "de": "Ich bin am 3. November 2026 nach Renens gezogen (vorher Lausanne). Bis wann muss ich mich anmelden?",
+   "it": "Il 3 novembre 2026 mi sono trasferita a Renens (prima: Losanna). Entro quando devo annunciarmi?"
+  },
+  "hard_cases": [
+   "special_deadline"
+  ],
+  "needs_review": false,
+  "basis": [],
+  "expected": {
+   "applicable": [
+    "housing.moving.announce"
+   ],
+   "not_applicable": [],
+   "missing_info": [],
+   "must_not_ask": [],
+   "deadlines": [
+    {
+     "procedure": "housing.moving.announce",
+     "due": "2026-11-11",
+     "rule": "days_after_notification",
+     "computed_from": {
+      "event": "moved_on",
+      "date": "2026-11-03",
+      "days": 8,
+      "canton": "VD"
+     },
+     "source": {
+      "title": "VD, Loi sur le contrôle des habitants (LCH, BLV 142.01), art. 5 (via LexFind)",
+      "url": "https://www.lexfind.ch/tolv/117414/fr",
+      "quote": "Tout déménagement, y compris au sein d'un même bâtiment, tout changement d'état civil, d'adresse ou d'adresse postale y compris le numéro d'acheminement doit être signalé dans les huit jours."
+     },
+     "also": [
+      {
+       "title": "LHR art. 11 let. a",
+       "url": "https://www.fedlex.admin.ch/eli/cc/2006/619/fr#art_11",
+       "quote": "toute personne physique qui déménage s’annonce au service du contrôle des habitants dans les 14 jours qui suivent l’événement"
+      }
+     ]
+    }
+   ],
+   "actions": [
+    "form_entry"
+   ],
+   "forbidden": []
+  }
+ }
+]

@@ -1,0 +1,198 @@
+[
+ {
+  "id": "unemp-01",
+  "split": "dev",
+  "lang": "fr",
+  "today": "2026-10-14",
+  "persona": {
+   "kind": "person",
+   "name": "Romain Cuénod",
+   "canton": "VD",
+   "commune": "Renens",
+   "roles": [
+    "taxpayer",
+    "salaried"
+   ],
+   "attrs": {
+    "birth_year": 1984,
+    "tax_at_source": false
+   }
+  },
+  "facts": [],
+  "documents": [
+   {
+    "id": "u01_term",
+    "kind": "employment_termination_letter",
+    "year": 2026,
+    "issuer": "Renens Industrie SA",
+    "fields": {
+     "end_date": "2026-11-30"
+    }
+   }
+  ],
+  "events": [
+   {
+    "date": "2026-11-30",
+    "type": "employment_end",
+    "known": false,
+    "procedure": "work.unemployment.register",
+    "fact": {
+     "key": "work.employment.end_date",
+     "value": "2026-11-30"
+    }
+   }
+  ],
+  "goal": {
+   "fr": "Mon contrat se termine le 30 novembre 2026 et je n'ai rien trouvé. Je veux toucher le chômage dès le 1er décembre.",
+   "de": "Mein Vertrag endet am 30. November 2026 und ich habe nichts gefunden. Ich will ab 1. Dezember Arbeitslosengeld.",
+   "it": "Il mio contratto termina il 30 novembre 2026 e non ho trovato nulla. Voglio la disoccupazione dal 1° dicembre."
+  },
+  "hard_cases": [
+   "text_only"
+  ],
+  "needs_review": false,
+  "basis": [],
+  "expected": {
+   "applicable": [
+    "work.unemployment.register"
+   ],
+   "not_applicable": [],
+   "missing_info": [],
+   "must_not_ask": [],
+   "deadlines": [
+    {
+     "procedure": "work.unemployment.register",
+     "due": "2026-12-01",
+     "rule": "first_day_claimed",
+     "computed_from": {
+      "employment_end": "2026-11-30",
+      "first_day": "2026-12-01"
+     },
+     "source": {
+      "title": "LACI art. 17 al. 2",
+      "url": "https://www.fedlex.admin.ch/eli/cc/1982/2184_2184_2184/fr#art_17",
+      "quote": "l’assuré est tenu de s’inscrire personnellement aussitôt que possible, mais au plus tard le premier jour pour lequel il prétend à l’indemnité de chômage"
+     },
+     "also": []
+    }
+   ],
+   "actions": [
+    "form_entry"
+   ],
+   "forbidden": []
+  }
+ },
+ {
+  "id": "unemp-02",
+  "split": "test",
+  "lang": "fr",
+  "today": "2026-10-14",
+  "persona": {
+   "kind": "person",
+   "name": "Sarah Pilet",
+   "canton": "VD",
+   "commune": "Lausanne",
+   "roles": [
+    "taxpayer",
+    "salaried"
+   ],
+   "attrs": {
+    "birth_year": 1991,
+    "tax_at_source": false
+   }
+  },
+  "facts": [],
+  "documents": [],
+  "events": [],
+  "goal": {
+   "fr": "Je crois que je vais perdre mon emploi. Que dois-je faire pour le chômage ?",
+   "de": "Ich glaube, ich verliere meine Stelle. Was muss ich für die Arbeitslosenversicherung tun?",
+   "it": "Credo che perderò il lavoro. Cosa devo fare per la disoccupazione?"
+  },
+  "hard_cases": [],
+  "needs_review": false,
+  "basis": [],
+  "expected": {
+   "applicable": [
+    "work.unemployment.register"
+   ],
+   "not_applicable": [],
+   "missing_info": [
+    {
+     "topic": "date de fin du contrat de travail",
+     "match": [
+      "fin",
+      "end",
+      "ende",
+      "termine",
+      "date",
+      "datum"
+     ]
+    }
+   ],
+   "must_not_ask": [],
+   "deadlines": [
+    {
+     "procedure": "work.unemployment.register",
+     "due": null,
+     "rule": null,
+     "computed_from": {
+      "why": "employment end date unknown"
+     }
+    }
+   ],
+   "actions": [],
+   "forbidden": []
+  }
+ },
+ {
+  "id": "unemp-03",
+  "split": "dev",
+  "lang": "fr",
+  "today": "2026-10-14",
+  "persona": {
+   "kind": "person",
+   "name": "Thomas Pilet",
+   "canton": "VD",
+   "commune": "Vevey",
+   "roles": [
+    "taxpayer",
+    "self_employed"
+   ],
+   "attrs": {
+    "birth_year": 1980,
+    "tax_at_source": false
+   }
+  },
+  "facts": [],
+  "documents": [],
+  "events": [],
+  "goal": {
+   "fr": "Mon activité d'indépendant ne marche plus, je vais arrêter. Ai-je droit au chômage ?",
+   "de": "Meine selbstständige Tätigkeit läuft nicht mehr, ich höre auf. Habe ich Anspruch auf Arbeitslosengeld?",
+   "it": "La mia attività indipendente non funziona più, smetto. Ho diritto alla disoccupazione?"
+  },
+  "hard_cases": [
+   "not_concerned_status"
+  ],
+  "needs_review": false,
+  "basis": [
+   {
+    "title": "LACI art. 2 al. 1 let. a",
+    "url": "https://www.fedlex.admin.ch/eli/cc/1982/2184_2184_2184/fr#art_2",
+    "quote": "le travailleur (art. 10 LPGA) qui est assuré en vertu de la loi fédérale du 20 décembre 1946 sur l’assurance-vieillesse et survivants (LAVS) et qui doit payer des cotisations sur le revenu d’une activité salariée"
+   }
+  ],
+  "expected": {
+   "applicable": [],
+   "not_applicable": [
+    "work.unemployment.register"
+   ],
+   "missing_info": [],
+   "must_not_ask": [],
+   "deadlines": [],
+   "actions": [],
+   "forbidden": []
+  }
+ }
+]

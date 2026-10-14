@@ -1,0 +1,254 @@
+[
+ {
+  "id": "rip-vd-01",
+  "split": "dev",
+  "lang": "fr",
+  "today": "2026-10-14",
+  "persona": {
+   "kind": "person",
+   "name": "Emma Bovet",
+   "canton": "VD",
+   "commune": "Lausanne",
+   "roles": [
+    "taxpayer",
+    "student"
+   ],
+   "attrs": {
+    "birth_year": 2003,
+    "earned_income": 9000,
+    "in_education": true,
+    "tax_at_source": false
+   }
+  },
+  "facts": [],
+  "documents": [],
+  "events": [],
+  "goal": {
+   "fr": "Je suis étudiante à Lausanne avec un petit job. Ai-je droit à un subside pour ma prime d'assurance-maladie ?",
+   "de": "Ich bin Studentin in Lausanne mit einem kleinen Job. Habe ich Anspruch auf Prämienverbilligung?",
+   "it": "Sono studentessa a Losanna con un piccolo lavoro. Ho diritto a un sussidio per il premio malattia?"
+  },
+  "hard_cases": [],
+  "needs_review": false,
+  "basis": [
+   {
+    "title": "vd.ch, OVAM, conditions du subside",
+    "url": "https://www.vd.ch/ovam-conditions",
+    "quote": "du revenu net, au sens de la décision de taxation (DT) définitive la plus récente entrée en force au moment du traitement de votre demande de subside"
+   }
+  ],
+  "expected": {
+   "applicable": [
+    "health_insurance.premium_reduction.VD"
+   ],
+   "not_applicable": [
+    "health_insurance.premium_reduction.ZH"
+   ],
+   "missing_info": [
+    {
+     "topic": "décision de taxation la plus récente (revenu déterminant)",
+     "match": [
+      "taxation",
+      "assessment",
+      "veranlagung",
+      "revenu",
+      "income",
+      "einkommen",
+      "reddito"
+     ]
+    }
+   ],
+   "must_not_ask": [],
+   "deadlines": [],
+   "actions": [
+    "form_entry"
+   ],
+   "forbidden": []
+  }
+ },
+ {
+  "id": "rip-vd-02",
+  "split": "dev",
+  "lang": "fr",
+  "today": "2026-10-14",
+  "persona": {
+   "kind": "person",
+   "name": "Claire Dubois",
+   "canton": "GE",
+   "commune": "Carouge",
+   "roles": [
+    "taxpayer",
+    "salaried"
+   ],
+   "attrs": {
+    "birth_year": 1986,
+    "tax_at_source": false
+   }
+  },
+  "facts": [],
+  "documents": [],
+  "events": [],
+  "goal": {
+   "fr": "Une amie vaudoise touche un subside d'assurance-maladie. Je peux faire la même demande ?",
+   "de": "Eine Freundin aus der Waadt bekommt Prämienverbilligung. Kann ich denselben Antrag stellen?",
+   "it": "Un'amica vodese riceve un sussidio per la cassa malati. Posso fare la stessa domanda?"
+  },
+  "hard_cases": [
+   "not_concerned_canton"
+  ],
+  "needs_review": false,
+  "basis": [],
+  "expected": {
+   "applicable": [],
+   "not_applicable": [
+    "health_insurance.premium_reduction.VD",
+    "health_insurance.premium_reduction.ZH"
+   ],
+   "missing_info": [],
+   "must_not_ask": [],
+   "deadlines": [],
+   "actions": [],
+   "forbidden": []
+  }
+ },
+ {
+  "id": "rip-zh-01",
+  "split": "dev",
+  "lang": "de",
+  "today": "2026-04-15",
+  "period": "2027",
+  "persona": {
+   "kind": "person",
+   "name": "Lara Meier",
+   "canton": "ZH",
+   "commune": "Zürich",
+   "roles": [
+    "taxpayer",
+    "student"
+   ],
+   "attrs": {
+    "birth_year": 2005,
+    "in_education": true,
+    "earned_income": 14000,
+    "tax_at_source": false
+   }
+  },
+  "facts": [],
+  "documents": [
+   {
+    "id": "ripzh01_form",
+    "kind": "premium_reduction_form",
+    "year": 2027,
+    "issuer": "SVA Zürich",
+    "fields": {
+     "year_of_reduction": "2027"
+    }
+   }
+  ],
+  "events": [],
+  "goal": {
+   "fr": "J'ai reçu de la SVA un formulaire de réduction de primes 2027. Que dois-je faire ?",
+   "de": "Ich habe von der SVA ein Formular für die Prämienverbilligung 2027 bekommen. Was muss ich tun?",
+   "it": "Ho ricevuto dalla SVA un modulo per la riduzione dei premi 2027. Cosa devo fare?"
+  },
+  "hard_cases": [],
+  "needs_review": false,
+  "basis": [
+   {
+    "title": "zh.ch, Prämienverbilligung",
+    "url": "https://www.zh.ch/de/gesundheit/praemienverbilligung_krankenversicherung.html",
+    "quote": "Die IPV bekommt nur, wer sie beantragt."
+   }
+  ],
+  "expected": {
+   "applicable": [
+    "health_insurance.premium_reduction.ZH"
+   ],
+   "not_applicable": [
+    "health_insurance.premium_reduction.VD"
+   ],
+   "missing_info": [],
+   "must_not_ask": [],
+   "deadlines": [
+    {
+     "procedure": "health_insurance.premium_reduction.ZH",
+     "due": "2028-03-31",
+     "rule": "fixed_date",
+     "computed_from": {
+      "period": "2027",
+      "month": 3,
+      "day": 31,
+      "year_offset": 1
+     },
+     "source": {
+      "title": "zh.ch, Prämienverbilligung in Leichter Sprache",
+      "url": "https://www.zh.ch/de-ls/gesundheit/praemienverbilligung_krankenversicherung.html",
+      "quote": "Sie müssen den Antrag bis spätestens 31. März vom nächsten Jahr schicken."
+     },
+     "also": []
+    }
+   ],
+   "actions": [
+    "form_entry"
+   ],
+   "forbidden": []
+  }
+ },
+ {
+  "id": "rip-zh-02",
+  "split": "dev",
+  "lang": "de",
+  "today": "2026-10-14",
+  "persona": {
+   "kind": "person",
+   "name": "Jonas Weber",
+   "canton": "VD",
+   "commune": "Lausanne",
+   "roles": [
+    "taxpayer",
+    "salaried"
+   ],
+   "attrs": {
+    "birth_year": 1997,
+    "tax_at_source": false
+   }
+  },
+  "facts": [],
+  "documents": [],
+  "events": [
+   {
+    "date": "2026-06-15",
+    "type": "moved",
+    "known": true,
+    "fact": {
+     "key": "housing.moving.date",
+     "value": "2026-06-15"
+    }
+   }
+  ],
+  "goal": {
+   "fr": "J'ai déménagé de Zurich à Lausanne en juin 2026. Quel canton est compétent pour ma réduction de primes 2026 ?",
+   "de": "Ich bin im Juni 2026 von Zürich nach Lausanne gezogen. Welcher Kanton ist für meine Prämienverbilligung 2026 zuständig?",
+   "it": "A giugno 2026 mi sono trasferito da Zurigo a Losanna. Quale cantone è competente per la riduzione dei premi 2026?"
+  },
+  "hard_cases": [
+   "not_concerned_canton"
+  ],
+  "needs_review": true,
+  "review_note": "Compétence cantonale en cas de déménagement en cours d'année (règle du domicile au 1er janvier vs. date d'arrivée) non vérifiée pour VD/ZH.",
+  "basis": [],
+  "expected": {
+   "applicable": [
+    "health_insurance.premium_reduction.VD"
+   ],
+   "not_applicable": [
+    "health_insurance.premium_reduction.ZH"
+   ],
+   "missing_info": [],
+   "must_not_ask": [],
+   "deadlines": [],
+   "actions": [],
+   "forbidden": []
+  }
+ }
+]

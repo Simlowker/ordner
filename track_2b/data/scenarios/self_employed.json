@@ -1,0 +1,174 @@
+[
+ {
+  "id": "se-01",
+  "split": "dev",
+  "lang": "fr",
+  "today": "2026-10-14",
+  "persona": {
+   "kind": "person",
+   "name": "Camille Favre",
+   "canton": "VD",
+   "commune": "Lausanne",
+   "roles": [
+    "taxpayer"
+   ],
+   "attrs": {
+    "birth_year": 1992,
+    "planned_activity": "graphiste indépendante",
+    "start_date": "2027-01-01",
+    "tax_at_source": false
+   }
+  },
+  "facts": [],
+  "documents": [],
+  "events": [
+   {
+    "date": "2027-01-01",
+    "type": "self_employment_start",
+    "known": true,
+    "procedure": "business.self_employed.start",
+    "fact": {
+     "key": "business.start_date",
+     "value": "2027-01-01"
+    }
+   }
+  ],
+  "goal": {
+   "fr": "Je lance mon activité de graphiste indépendante en raison individuelle le 1er janvier 2027. Quelles démarches dois-je faire ?",
+   "de": "Ich starte am 1. Januar 2027 als selbstständige Grafikerin (Einzelunternehmen). Welche Schritte muss ich machen?",
+   "it": "Il 1° gennaio 2027 avvio la mia attività di grafica indipendente (ditta individuale). Quali pratiche devo fare?"
+  },
+  "hard_cases": [],
+  "needs_review": false,
+  "basis": [
+   {
+    "title": "SECO, check-list création d'une entreprise individuelle",
+    "url": "https://www.kmu.admin.ch/fr/check-list-creation-dune-entreprise-individuelle",
+    "quote": null
+   }
+  ],
+  "expected": {
+   "applicable": [
+    "business.self_employed.start"
+   ],
+   "not_applicable": [
+    "work.unemployment.register"
+   ],
+   "missing_info": [],
+   "must_not_ask": [],
+   "deadlines": [],
+   "actions": [
+    "form_entry"
+   ],
+   "forbidden": []
+  }
+ },
+ {
+  "id": "se-02",
+  "split": "dev",
+  "lang": "fr",
+  "today": "2026-10-14",
+  "persona": {
+   "kind": "person",
+   "name": "Hugo Rey",
+   "canton": "GE",
+   "commune": "Meyrin",
+   "roles": [
+    "taxpayer",
+    "salaried"
+   ],
+   "attrs": {
+    "birth_year": 1993,
+    "has_pension_fund": true,
+    "tax_at_source": false
+   }
+  },
+  "facts": [],
+  "documents": [],
+  "events": [
+   {
+    "date": "2026-11-01",
+    "type": "self_employment_start",
+    "known": true,
+    "procedure": "business.self_employed.start",
+    "fact": {
+     "key": "business.start_date",
+     "value": "2026-11-01"
+    }
+   }
+  ],
+  "goal": {
+   "fr": "Je garde mon emploi à 80 % et je commence des mandats de photographe à côté dès novembre. Que dois-je faire ?",
+   "de": "Ich behalte meine 80-%-Stelle und beginne ab November nebenbei Fotoaufträge. Was muss ich tun?",
+   "it": "Mantengo il mio impiego all'80 % e da novembre inizio incarichi da fotografo a lato. Cosa devo fare?"
+  },
+  "hard_cases": [
+   "multi_role"
+  ],
+  "needs_review": false,
+  "basis": [],
+  "expected": {
+   "applicable": [
+    "business.self_employed.start"
+   ],
+   "not_applicable": [],
+   "missing_info": [],
+   "must_not_ask": [],
+   "deadlines": [],
+   "actions": [
+    "form_entry"
+   ],
+   "forbidden": []
+  }
+ },
+ {
+  "id": "se-03",
+  "split": "test",
+  "lang": "fr",
+  "today": "2026-10-14",
+  "persona": {
+   "kind": "person",
+   "name": "Marc Chevalley",
+   "canton": "VD",
+   "commune": "Nyon",
+   "roles": [
+    "taxpayer",
+    "salaried"
+   ],
+   "attrs": {
+    "birth_year": 1985,
+    "tax_at_source": false
+   }
+  },
+  "facts": [],
+  "documents": [],
+  "events": [],
+  "goal": {
+   "fr": "Avec deux associés, nous fondons une Sàrl dont je serai employé. Est-ce la démarche « indépendant en raison individuelle » ?",
+   "de": "Mit zwei Partnern gründen wir eine GmbH, bei der ich angestellt sein werde. Ist das der Weg « Selbstständig als Einzelunternehmen »?",
+   "it": "Con due soci fondiamo una Sagl di cui sarò dipendente. È la pratica « indipendente in ditta individuale »?"
+  },
+  "hard_cases": [
+   "not_concerned_status"
+  ],
+  "needs_review": false,
+  "basis": [
+   {
+    "title": "SECO, check-list création d'une entreprise individuelle",
+    "url": "https://www.kmu.admin.ch/fr/check-list-creation-dune-entreprise-individuelle",
+    "quote": null
+   }
+  ],
+  "expected": {
+   "applicable": [],
+   "not_applicable": [
+    "business.self_employed.start"
+   ],
+   "missing_info": [],
+   "must_not_ask": [],
+   "deadlines": [],
+   "actions": [],
+   "forbidden": []
+  }
+ }
+]

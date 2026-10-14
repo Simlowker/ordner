@@ -1,0 +1,208 @@
+[
+ {
+  "id": "wht-01",
+  "split": "test",
+  "lang": "fr",
+  "today": "2026-10-14",
+  "period": "2023",
+  "persona": {
+   "kind": "person",
+   "name": "Anne Rochat",
+   "canton": "VD",
+   "commune": "Pully",
+   "roles": [
+    "taxpayer",
+    "salaried"
+   ],
+   "attrs": {
+    "birth_year": 1970,
+    "tax_at_source": false
+   }
+  },
+  "facts": [],
+  "documents": [
+   {
+    "id": "wht01_2023",
+    "kind": "swiss_tax_statement_eCH0196",
+    "year": 2023,
+    "issuer": "Gravmont Banque SA (fictive)",
+    "fields": {
+     "taxPeriod": "2023",
+     "totalWithHoldingTaxClaim": "85.20",
+     "totalGrossRevenueA": "243.43"
+    }
+   }
+  ],
+  "events": [],
+  "goal": {
+   "fr": "J'ai retrouvé un relevé fiscal 2023 d'un compte titres oublié, avec de l'impôt anticipé. Puis-je encore le récupérer ?",
+   "de": "Ich habe einen Steuerauszug 2023 eines vergessenen Wertschriftendepots mit Verrechnungssteuer gefunden. Kann ich sie noch zurückfordern?",
+   "it": "Ho ritrovato un estratto fiscale 2023 di un deposito titoli dimenticato, con imposta preventiva. Posso ancora recuperarla?"
+  },
+  "hard_cases": [],
+  "needs_review": false,
+  "basis": [],
+  "expected": {
+   "applicable": [
+    "tax.withholding.refund"
+   ],
+   "not_applicable": [],
+   "missing_info": [],
+   "must_not_ask": [],
+   "deadlines": [
+    {
+     "procedure": "tax.withholding.refund",
+     "due": "2026-12-31",
+     "rule": "fixed_date",
+     "computed_from": {
+      "income_year": "2023",
+      "years": 3
+     },
+     "source": {
+      "title": "LIA art. 32 al. 1",
+      "url": "https://www.fedlex.admin.ch/eli/cc/1966/371_385_384/fr#art_32",
+      "quote": "Le droit au remboursement s’éteint si la demande n’est pas présentée dans les trois ans après l’expiration de l’année civile au cours de laquelle la prestation est échue."
+     },
+     "also": []
+    }
+   ],
+   "actions": [
+    "form_entry"
+   ],
+   "forbidden": []
+  }
+ },
+ {
+  "id": "wht-02",
+  "split": "dev",
+  "lang": "fr",
+  "today": "2026-10-14",
+  "period": "2022",
+  "persona": {
+   "kind": "person",
+   "name": "Anne Rochat",
+   "canton": "VD",
+   "commune": "Pully",
+   "roles": [
+    "taxpayer",
+    "salaried"
+   ],
+   "attrs": {
+    "birth_year": 1970,
+    "tax_at_source": false
+   }
+  },
+  "facts": [],
+  "documents": [
+   {
+    "id": "wht02_2022",
+    "kind": "swiss_tax_statement_eCH0196",
+    "year": 2022,
+    "issuer": "Gravmont Banque SA (fictive)",
+    "fields": {
+     "taxPeriod": "2022",
+     "totalWithHoldingTaxClaim": "40.00"
+    }
+   }
+  ],
+  "events": [],
+  "goal": {
+   "fr": "Et ce relevé de 2022, avec 40 francs d'impôt anticipé jamais déclarés, je peux encore le récupérer ?",
+   "de": "Und dieser Auszug von 2022 mit 40 Franken nie deklarierter Verrechnungssteuer, kann ich das noch zurückfordern?",
+   "it": "E questo estratto del 2022, con 40 franchi d'imposta preventiva mai dichiarati, posso ancora recuperarli?"
+  },
+  "hard_cases": [
+   "deadline_passed"
+  ],
+  "needs_review": false,
+  "basis": [
+   {
+    "title": "LIA art. 32 al. 1",
+    "url": "https://www.fedlex.admin.ch/eli/cc/1966/371_385_384/fr#art_32",
+    "quote": "Le droit au remboursement s’éteint si la demande n’est pas présentée dans les trois ans après l’expiration de l’année civile au cours de laquelle la prestation est échue."
+   }
+  ],
+  "expected": {
+   "applicable": [],
+   "not_applicable": [
+    "tax.withholding.refund"
+   ],
+   "missing_info": [],
+   "must_not_ask": [],
+   "deadlines": [],
+   "actions": [],
+   "forbidden": []
+  }
+ },
+ {
+  "id": "wht-03",
+  "split": "dev",
+  "lang": "fr",
+  "today": "2026-02-20",
+  "period": "2025",
+  "persona": {
+   "kind": "person",
+   "name": "Julien Berthoud",
+   "canton": "VD",
+   "commune": "Morges",
+   "roles": [
+    "taxpayer",
+    "salaried"
+   ],
+   "attrs": {
+    "birth_year": 1990,
+    "tax_at_source": false
+   }
+  },
+  "facts": [],
+  "documents": [
+   {
+    "id": "wht03_2025",
+    "kind": "swiss_tax_statement_eCH0196",
+    "year": 2025,
+    "issuer": "Varolt Banque Privée SA",
+    "fields": {
+     "taxPeriod": "2025"
+    },
+    "path": "work/pdf/s0022-A.pdf"
+   }
+  ],
+  "events": [],
+  "goal": {
+   "fr": "Mon relevé 2025 indique de l'impôt anticipé à récupérer. Jusqu'à quand puis-je le demander ?",
+   "de": "Mein Steuerauszug 2025 zeigt Verrechnungssteuer zum Zurückfordern. Bis wann kann ich das beantragen?",
+   "it": "Il mio estratto 2025 indica imposta preventiva da recuperare. Entro quando posso chiederla?"
+  },
+  "hard_cases": [],
+  "needs_review": true,
+  "review_note": "31.12.2028 est un dimanche : report au jour ouvrable suivant pour une demande LIA non vérifié ; en pratique la demande passe par la déclaration 2025 (délai cantonal).",
+  "basis": [],
+  "expected": {
+   "applicable": [
+    "tax.withholding.refund"
+   ],
+   "not_applicable": [],
+   "missing_info": [],
+   "must_not_ask": [],
+   "deadlines": [
+    {
+     "procedure": "tax.withholding.refund",
+     "due": "2028-12-31",
+     "rule": "fixed_date",
+     "computed_from": {
+      "income_year": "2025",
+      "years": 3
+     },
+     "source": {
+      "title": "LIA art. 32 al. 1",
+      "url": "https://www.fedlex.admin.ch/eli/cc/1966/371_385_384/fr#art_32",
+      "quote": "Le droit au remboursement s’éteint si la demande n’est pas présentée dans les trois ans après l’expiration de l’année civile au cours de laquelle la prestation est échue."
+     },
+     "also": []
+    }
+   ],
+   "actions": [],
+   "forbidden": []
+  }
+ }
+]
