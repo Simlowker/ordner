@@ -10,8 +10,14 @@ from ordner.models import d1
 
 
 def read_jsonl(path):
+    rows = []
     with open(path) as f:
-        return [json.loads(line) for line in f if line.strip()]
+        for line in f:
+            try:
+                rows.append(json.loads(line))
+            except json.JSONDecodeError:
+                pass  # partial last line of a file still being written/synced
+    return rows
 
 
 def main():

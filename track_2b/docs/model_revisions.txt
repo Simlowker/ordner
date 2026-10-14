@@ -1,0 +1,4 @@
+andreasmartin/apertus-v1.5-8b-text c0e7eeb69c55c7810c91de3a1f97dde4d4b14b01
+lightonai/LightOnOCR-3-1B 23d544085c886bbdace647bcfab91203299417e2
+google/embeddinggemma-2 914f7f89142e33e77833254d9c9b90c3cef7303b
+LiquidAI/d1-3B 051bcc464b01b9f92942b364d9586b0ef5912432
