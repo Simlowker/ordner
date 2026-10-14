@@ -1,3 +1,4 @@
+import json
 import re
 import unicodedata
 from decimal import Decimal, InvalidOperation
@@ -8,6 +9,16 @@ from sklearn.metrics import roc_auc_score
 NUMERIC_FIELDS = ("totalTaxValue", "totalGrossRevenueA", "totalGrossRevenueB", "totalWithHoldingTaxClaim")
 TEXT_FIELDS = ("institution", "canton", "taxPeriod", "client_last_name")
 FIELDS = NUMERIC_FIELDS + TEXT_FIELDS
+
+
+def read_jsonl(path):
+    with open(path) as f:
+        return [json.loads(line) for line in f if line.strip()]
+
+
+def gold_fields(doc):
+    """Gold = values as displayed on the page: oracle_page for amounts, oracle for the text fields."""
+    return {**{k: doc["oracle"][k] for k in TEXT_FIELDS}, **{k: doc["oracle_page"][k] for k in NUMERIC_FIELDS}}
 
 
 def norm_number(v):
