@@ -1,5 +1,5 @@
 """Light evaluation of the grounded explanations on dev pages (one language per page, rotating fr/de/it):
-citation verbatim rate, share of extracted amounts mentioned, output language -> data/results/explain_eval.json.
+citation verbatim rate, share of extracted amounts mentioned, output language -> data/explain_eval.json.
     python -m ordner.explain.eval_explain [--n 30] [--system auto] [--mock]"""
 import argparse
 import json
@@ -36,7 +36,7 @@ def main(argv=None):
     ap.add_argument("--n", type=int, default=30)
     ap.add_argument("--system", default="auto")
     ap.add_argument("--mock", action="store_true", help="mocked generator (pipeline test, no Apertus)")
-    ap.add_argument("--out", default="data/results/explain_eval.json")
+    ap.add_argument("--out", default="data/explain_eval.json")
     a = ap.parse_args(argv)
     items = read_jsonl(Path(a.data) / "items.jsonl")
     system = pick_system(items, a.system)
