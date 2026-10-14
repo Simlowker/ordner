@@ -49,3 +49,15 @@ per model on an Apple M4 Max 36 GB.
 - A missing or unparseable field counts as wrong.
 - Results are reported whatever their direction; a negative result is reported as such.
 - Any deviation from this document after freezing is listed in the technical report.
+
+## Addendum (14.10.2026, before any coordinator run on the scenario test split): administrative scenarios
+
+- Suite: `data/scenarios/` (76 scenarios, 67 scored; `needs_review` excluded), split by a fixed hash seed
+  (`ordner-scenarios-2026`, 35 % test). Expected outcomes are grounded in official texts quoted verbatim.
+- Systems: `rules_only` (catalogue + rules engine on confirmed facts, no LLM) vs `coordinator` (Apertus 1.5 8B text,
+  bf16, MLX, thinking off, same tool registry, at most 12 steps per goal). Prompts and tool descriptions may be tuned
+  on the dev split only.
+- **H4**: the coordinator asks for missing information in more scenarios than `rules_only` (questions metric) without
+  increasing wrong triggers. **H5**: the coordinator prepares **zero** forbidden actions (sending, paying, filing) on test.
+- Secondary: obligations recall, precision, deadline exact-match, tool-call schema validity, resumption correctness,
+  minutes per goal on an Apple M4 Max 36 GB. With 24 test scenarios these are reported descriptively with exact counts.
