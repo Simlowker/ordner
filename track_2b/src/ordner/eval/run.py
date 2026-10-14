@@ -269,6 +269,8 @@ def evaluate(data, n_boot=10_000):
         y = ~col["correct"][fit]
         if not fit.any() or not tst.any() or y.min() == y.max():
             return None, None
+        if y.sum() < 5:  # grouped 5-fold CV needs errors in every fold
+            return None, {"not_estimable": f"{int(y.sum())} wrong among {int(fit.sum())} fit items"}
         model, C, cvs = fit_select(X[fit], y, col["stmt_id"][fit], combo_model)
         sc = np.full(len(X), np.nan)
         sc[tst] = model.predict_proba(X[tst])[:, 1]
@@ -290,8 +292,9 @@ def evaluate(data, n_boot=10_000):
             res["combined"] = {**info, "fit_on": "train+dev (probe A out-of-fold)"}
     if "apertus-lora" in systems:
         sc, info = combine("apertus-lora", fit_rows["apertus-lora"], test & (col["system"] == "apertus-lora"), False)
-        if info:
+        if sc is not None:
             extra["apertus-lora"]["combined (no probe)"] = sc
+        if info:
             res["combined_lora"] = {**info, "fit_on": "dev"}
 
     boot_auc = {}

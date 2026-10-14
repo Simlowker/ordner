@@ -1,0 +1,91 @@
+{
+ "hardware": "Apple M4 Max 36 GB",
+ "unit": "seconds per page",
+ "stages": {
+  "ocr": {
+   "n_pages": 1680,
+   "mean": 14.9264,
+   "median": 10.3,
+   "p95": 30.852,
+   "model": [
+    "LightOnOCR-3-1B"
+   ]
+  },
+  "regex": {
+   "n_pages": 1680,
+   "mean": 0.0011,
+   "median": 0.001,
+   "p95": 0.0022
+  },
+  "apertus-base": {
+   "n_pages": 1680,
+   "mean": 6.5353,
+   "median": 6.5,
+   "p95": 7.31
+  },
+  "apertus-base hidden-state pass": {
+   "n_pages": 1680,
+   "mean": 1.879,
+   "median": 1.88,
+   "p95": 2.45
+  },
+  "d1 (apertus-base)": {
+   "n_pages": 1680,
+   "mean": 0.7644,
+   "median": 0.734,
+   "p95": 1.0631
+  },
+  "apertus-lora": {
+   "n_pages": 1260,
+   "mean": 6.4237,
+   "median": 6.31,
+   "p95": 7.3605
+  },
+  "apertus-lora hidden-state pass": {
+   "n_pages": 1260,
+   "mean": 1.8506,
+   "median": 1.87,
+   "p95": 2.52
+  },
+  "d1 (apertus-lora)": {
+   "n_pages": 1260,
+   "mean": 0.731,
+   "median": 0.73,
+   "p95": 0.981
+  },
+  "total regex": {
+   "n_pages": 1680,
+   "mean": 14.9276,
+   "median": 10.3008,
+   "p95": 30.8527,
+   "components": [
+    "ocr",
+    "regex"
+   ]
+  },
+  "total apertus-base": {
+   "n_pages": 1680,
+   "mean": 24.1051,
+   "median": 19.5765,
+   "p95": 40.1227,
+   "components": [
+    "ocr",
+    "apertus-base",
+    "apertus-base hidden-state pass",
+    "d1 (apertus-base)"
+   ]
+  },
+  "total apertus-lora": {
+   "n_pages": 1260,
+   "mean": 24.4906,
+   "median": 18.8235,
+   "p95": 85.3397,
+   "components": [
+    "ocr",
+    "apertus-lora",
+    "apertus-lora hidden-state pass",
+    "d1 (apertus-lora)"
+   ]
+  }
+ }
+}
