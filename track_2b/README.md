@@ -61,19 +61,26 @@ The container (no torch, no model weights):
 2. runs the scenario suite with the rules engine (`ordner.eval.scenarios.run --agent rules_only --split all`);
 3. seeds the fictional demo dossier (Noa Keller, 22, Lausanne) in a throw-away `ORDNER_HOME` at the simulated date
    `ORDNER_TODAY=2026-02-20` (override: `ORDNER_TODAY=2026-10-14 make run`) and reviews it with the rules (no model);
-4. serves the console on <http://localhost:8000>.
+4. serves the console on <http://localhost:8000>;
+5. if the optional conversation layer built, serves the agentic conversation (DeepSeek Harness web UI under Ordner's
+   brand fork, [`harness_fork/`](harness_fork/README.md), MIT) on <http://127.0.0.1:8790>: open the URL with
+   `?token=…` printed in the log, pick an expert, ask. Without `LLM_BASE_URL` the model is a scripted mock that reads the
+   dossier; with `LLM_BASE_URL` (an OpenAI-compatible server for Apertus 1.5 8B) it runs for real.
+
+The conversation layer is built from the published npm package `@deepseek-ai/dsh@0.2.1-alpha.2` (network at build time
+only). If that step fails, the image is built without it and step 5 is skipped; the console works the same.
 
 Status 14.10.2026: the explanations in the « Relevé fiscal » view and the « Demander à Ordner » transcripts are not
 yet recorded Apertus outputs; both are labelled « Fixture » in the console until they are.
 
 ### Replay vs live
 
-|                       | `make run` (replay, Docker)                                    | Live (Apple Silicon Mac, 36 GB, local weights)                    |
-| --------------------- | -------------------------------------------------------------- | ----------------------------------------------------------------- |
-| Documents             | recorded OCR, Apertus, d1-3B outputs and hidden-state features | batch pipeline: LightOnOCR-3 → Apertus (+ LoRA) → probe, d1-3B, checks |
-| Procedures            | rules engine on the dossier                                    | same, then the Apertus coordinator on the same dossier            |
+|                       | `make run` (replay, Docker)                                    | Live (Apple Silicon Mac, 36 GB, local weights)                                                  |
+| --------------------- | -------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| Documents             | recorded OCR, Apertus, d1-3B outputs and hidden-state features | batch pipeline: LightOnOCR-3 → Apertus (+ LoRA) → probe, d1-3B, checks                          |
+| Procedures            | rules engine on the dossier                                    | same, then the Apertus coordinator on the same dossier                                          |
 | « Demander à Ordner » | fixture transcripts                                            | Apertus coordinator through `LLM_BASE_URL` (e.g. `mlx_lm.server`); its tools use cached outputs |
-| Knowledge search      | BM25 (no weights in the image)                                 | EmbeddingGemma 2 (live tools or `ORDNER_EMBED=1`)                 |
+| Knowledge search      | BM25 (no weights in the image)                                 | EmbeddingGemma 2 (live tools or `ORDNER_EMBED=1`)                                               |
 
 ### Live commands (Apple Silicon, project venv; Docker cannot use the Mac GPU)
 

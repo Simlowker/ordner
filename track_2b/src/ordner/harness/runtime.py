@@ -8,7 +8,8 @@ built exactly like the coordinator's (snapshot, cards, goal). Extra stats: emitt
 silent_failures (a call the model emitted that got no tool result, or tool-call text left in a final answer),
 harness_rejected (answered by the harness itself, e.g. unknown tool name), prompt_parity, wall_s.
 
-Needs the harness checkout + build (docs/harness_spike.md): $ORDNER_HARNESS_DIR, default work/vendor/deepseek-harness.
+Needs the harness checkout + build (docs/harness_spike.md): $ORDNER_HARNESS_DIR, default work/vendor/deepseek-harness;
+or an npm install of @deepseek-ai/dsh (`dsh` on PATH), or $ORDNER_HARNESS_BIN pointing at its lib/bin.js.
 """
 import json
 import os
@@ -26,12 +27,16 @@ from .proxy import PREFIX, Proxy
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[2]   # track_2b/
 HARNESS = Path(os.environ.get("ORDNER_HARNESS_DIR", ROOT / "work" / "vendor" / "deepseek-harness"))
+# bin.js: $ORDNER_HARNESS_BIN, else the checkout build, else an npm global install (`npm i -g @deepseek-ai/dsh`, Docker).
+_CHECKOUT_BIN = HARNESS / "apps/cli/lib/bin.js"
+BIN = Path(os.environ.get("ORDNER_HARNESS_BIN") or (
+    _CHECKOUT_BIN if _CHECKOUT_BIN.is_file() else Path(shutil.which("dsh") or _CHECKOUT_BIN).resolve()))
 DSH_HOME = Path(os.environ.get("ORDNER_DSH_HOME", ROOT / "work" / "vendor" / "harness-home"))
 PATCH = HERE / "ordner.patch.yml"
 
 
 def available() -> bool:
-    return (HARNESS / "apps/cli/lib/bin.js").is_file() and shutil.which("node") is not None
+    return BIN.is_file() and shutil.which("node") is not None
 
 
 def first_message(r, goal, subject_id):
@@ -50,7 +55,7 @@ def run(goal: str, subject_id: str, llm, store, max_steps=12, registry=None, ctx
     """raw: no tool-call translation (the spike's silent failure); keep_context: forward the harness's runtime-context
     message to the model."""
     if not available():
-        raise RuntimeError(f"DeepSeek Harness build not found in {HARNESS} (see docs/harness_spike.md)")
+        raise RuntimeError(f"DeepSeek Harness not found at {BIN} (see docs/harness_spike.md)")
     today = getattr(registry, "today", None) or (ctx or {}).get("today")
     ctx = {**(ctx or {}), **({"today": today} if today else {})}
     r = C._Run(goal, subject_id, store, registry or C._registry(), ctx)
@@ -69,7 +74,7 @@ def run(goal: str, subject_id: str, llm, store, max_steps=12, registry=None, ctx
         env = {**os.environ, "DSH_HOME": str(DSH_HOME), "ORDNER_LOCAL_KEY": "local", "ORDNER_PROXY_URL": proxy.url,
                "ORDNER_PY": sys.executable, "ORDNER_SRC": str(ROOT / "src"), "ORDNER_MCP_ARGS": json.dumps(mcp_args),
                "ORDNER_SYSTEM": C.SYSTEM, "DSH_TELEMETRY_DISABLED": "1"}   # opt out of the OTel export row
-        cmd = ["node", str(HARNESS / "apps/cli/lib/bin.js"), "--profile", "headless", "--patch", str(PATCH),
+        cmd = ["node", str(BIN), "--profile", "headless", "--patch", str(PATCH),
                "--json", prompt]
         t0, out, err = time.time(), Path(tmp) / "stdout.jsonl", Path(tmp) / "stderr.log"
         with out.open("w") as fo, err.open("w") as fe:   # files, not pipes: nobody reads a pipe while we serve

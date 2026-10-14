@@ -1,0 +1,3 @@
+# Committed on purpose: shell files and prebuilt plugin bundles (track_2b/.gitignore ignores dist/ and build/).
+!dist/
+!build/

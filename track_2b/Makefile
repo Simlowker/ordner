@@ -13,9 +13,11 @@ LIVE_PY    := PYTHONPATH=src .venv/bin/python
 
 # Judges: replay the evaluation from the recorded model outputs in data/ (no GPU, no weights, no network), run the
 # scenario baseline (rules only), write data/results/ (results.json, table.md, figures, scenarios_rules_only.*),
-# seed the fictional demo dossier, then serve the console (cockpit first) on http://localhost:$(PORT)
+# seed the fictional demo dossier, then serve the console (cockpit first) on http://localhost:$(PORT) and, when the
+# optional harness layer built, the agentic conversation on http://127.0.0.1:8790 (URL with its token printed in the log;
+# a scripted mock model unless LLM_BASE_URL points at an Apertus 1.5 8B server)
 run: build
-	docker run --rm --init $(TTY) -p $(PORT):8000 $(DOCKER_ENV) $(RESULTS) $(IMAGE)
+	docker run --rm --init $(TTY) -p $(PORT):8000 -p 127.0.0.1:8790:8790 $(DOCKER_ENV) $(RESULTS) $(IMAGE)
 
 build:
 	@mkdir -p data/results && chmod 777 data/results

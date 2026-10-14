@@ -64,10 +64,14 @@ def system_prompt(expert_id):
 
 
 def adapter_path(expert_id):
-    """The adapter directory if it exists, else None (base model)."""
+    """The adapter directory as the MLX server sees it, if it exists locally, else None (base model).
+    ORDNER_ADAPTERS_SERVER: the same directory on a remote server (e.g. the Mac Studio behind an SSH tunnel)."""
     e = EXPERTS.get(expert_id)
     p = ADAPTERS / e.adapter if e and e.adapter else None
-    return str(p) if p and (p / "adapters.safetensors").exists() else None
+    if not (p and (p / "adapters.safetensors").exists()):
+        return None
+    server = os.environ.get("ORDNER_ADAPTERS_SERVER")
+    return str(Path(server) / e.adapter) if server else str(p)
 
 
 def model_label(expert_id, adapters_ok=True):
