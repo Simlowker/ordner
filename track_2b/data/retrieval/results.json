@@ -1,0 +1,454 @@
+{
+ "passages": 378,
+ "embed_model": "google/embeddinggemma-2",
+ "rrf_k": 60,
+ "metrics": {
+  "all": {
+   "n": 36,
+   "bm25": {
+    "hit@3": 0.528,
+    "mrr@10": 0.446
+   },
+   "embed": {
+    "hit@3": 0.806,
+    "mrr@10": 0.731
+   },
+   "fusion": {
+    "hit@3": 0.611,
+    "mrr@10": 0.597
+   },
+   "fusion_minus_bm25_hit@3_ci95": [
+    0.0,
+    0.194
+   ]
+  },
+  "same_language": {
+   "n": 17,
+   "bm25": {
+    "hit@3": 0.941,
+    "mrr@10": 0.786
+   },
+   "embed": {
+    "hit@3": 1.0,
+    "mrr@10": 0.931
+   },
+   "fusion": {
+    "hit@3": 1.0,
+    "mrr@10": 0.971
+   }
+  },
+  "cross_lingual": {
+   "n": 19,
+   "bm25": {
+    "hit@3": 0.158,
+    "mrr@10": 0.142
+   },
+   "embed": {
+    "hit@3": 0.632,
+    "mrr@10": 0.552
+   },
+   "fusion": {
+    "hit@3": 0.263,
+    "mrr@10": 0.263
+   }
+  }
+ },
+ "rows": [
+  {
+   "card": "business.self_employed.start",
+   "lang": "fr",
+   "q": "je me lance à mon compte comme graphiste, je dois m'inscrire où pour l'AVS ?",
+   "cross_lingual": false,
+   "first_hit_rank": {
+    "bm25": 2,
+    "embed": 1,
+    "fusion": 1
+   }
+  },
+  {
+   "card": "business.self_employed.start",
+   "lang": "de",
+   "q": "Ich mache mich selbständig, muss ich mich irgendwo anmelden?",
+   "cross_lingual": true,
+   "first_hit_rank": {
+    "bm25": null,
+    "embed": 2,
+    "fusion": 17
+   }
+  },
+  {
+   "card": "debt.payment_order.opposition",
+   "lang": "fr",
+   "q": "j'ai reçu un commandement de payer pour une facture que je conteste, combien de jours pour réagir ?",
+   "cross_lingual": false,
+   "first_hit_rank": {
+    "bm25": 1,
+    "embed": 0,
+    "fusion": 0
+   }
+  },
+  {
+   "card": "debt.payment_order.opposition",
+   "lang": "it",
+   "q": "ho ricevuto un precetto esecutivo ingiusto, come faccio a oppormi?",
+   "cross_lingual": true,
+   "first_hit_rank": {
+    "bm25": 26,
+    "embed": 3,
+    "fusion": 12
+   }
+  },
+  {
+   "card": "health_insurance.change_insurer_or_deductible",
+   "lang": "de",
+   "q": "Bis wann kann ich meine Krankenkasse wechseln, wenn die Prämie steigt?",
+   "cross_lingual": true,
+   "first_hit_rank": {
+    "bm25": null,
+    "embed": 2,
+    "fusion": 47
+   }
+  },
+  {
+   "card": "health_insurance.change_insurer_or_deductible",
+   "lang": "fr",
+   "q": "je veux passer à une franchise plus haute l'an prochain, jusqu'à quand je peux le faire ?",
+   "cross_lingual": false,
+   "first_hit_rank": {
+    "bm25": 0,
+    "embed": 0,
+    "fusion": 0
+   }
+  },
+  {
+   "card": "health_insurance.premium_reduction.VD",
+   "lang": "fr",
+   "q": "à Lausanne je gagne peu, est-ce que l'État m'aide à payer ma prime maladie ?",
+   "cross_lingual": false,
+   "first_hit_rank": {
+    "bm25": 0,
+    "embed": 0,
+    "fusion": 0
+   }
+  },
+  {
+   "card": "health_insurance.premium_reduction.VD",
+   "lang": "de",
+   "q": "Bekomme ich im Waadtland einen Zuschuss an die Krankenkasse?",
+   "cross_lingual": true,
+   "first_hit_rank": {
+    "bm25": null,
+    "embed": 0,
+    "fusion": 39
+   }
+  },
+  {
+   "card": "health_insurance.premium_reduction.ZH",
+   "lang": "de",
+   "q": "Ich wohne in Winterthur und kann mir die Krankenkasse kaum leisten, gibt es Unterstützung?",
+   "cross_lingual": false,
+   "first_hit_rank": {
+    "bm25": 0,
+    "embed": 0,
+    "fusion": 0
+   }
+  },
+  {
+   "card": "health_insurance.premium_reduction.ZH",
+   "lang": "fr",
+   "q": "à Zurich, comment obtenir une aide pour payer mes primes d'assurance maladie ?",
+   "cross_lingual": true,
+   "first_hit_rank": {
+    "bm25": 43,
+    "embed": 4,
+    "fusion": 15
+   }
+  },
+  {
+   "card": "household.serafe_fee",
+   "lang": "de",
+   "q": "Warum bekomme ich eine Rechnung von Serafe, ich habe gar keinen Fernseher?",
+   "cross_lingual": true,
+   "first_hit_rank": {
+    "bm25": 4,
+    "embed": 0,
+    "fusion": 0
+   }
+  },
+  {
+   "card": "household.serafe_fee",
+   "lang": "it",
+   "q": "devo pagare il canone radio tv anche se non guardo la televisione?",
+   "cross_lingual": true,
+   "first_hit_rank": {
+    "bm25": 0,
+    "embed": 4,
+    "fusion": 0
+   }
+  },
+  {
+   "card": "housing.moving.announce",
+   "lang": "fr",
+   "q": "je déménage de Fribourg à Lausanne le mois prochain, je dois prévenir la commune dans quel délai ?",
+   "cross_lingual": false,
+   "first_hit_rank": {
+    "bm25": 0,
+    "embed": 0,
+    "fusion": 0
+   }
+  },
+  {
+   "card": "housing.moving.announce",
+   "lang": "de",
+   "q": "Umzug: bis wann muss ich mich bei der neuen Gemeinde melden?",
+   "cross_lingual": true,
+   "first_hit_rank": {
+    "bm25": null,
+    "embed": 0,
+    "fusion": 34
+   }
+  },
+  {
+   "card": "pension.pillar3a.contribution",
+   "lang": "fr",
+   "q": "combien je peux verser au maximum sur mon troisième pilier cette année ?",
+   "cross_lingual": false,
+   "first_hit_rank": {
+    "bm25": 0,
+    "embed": 0,
+    "fusion": 0
+   }
+  },
+  {
+   "card": "pension.pillar3a.contribution",
+   "lang": "de",
+   "q": "Wie viel darf ich dieses Jahr in die Säule 3a einzahlen?",
+   "cross_lingual": true,
+   "first_hit_rank": {
+    "bm25": 0,
+    "embed": 0,
+    "fusion": 0
+   }
+  },
+  {
+   "card": "social.ahv.non_employed_contributions",
+   "lang": "fr",
+   "q": "je suis étudiant sans salaire, dois-je payer l'AVS ?",
+   "cross_lingual": false,
+   "first_hit_rank": {
+    "bm25": 0,
+    "embed": 0,
+    "fusion": 0
+   }
+  },
+  {
+   "card": "social.ahv.non_employed_contributions",
+   "lang": "de",
+   "q": "Muss ich als Student ohne Einkommen etwas an die AHV zahlen?",
+   "cross_lingual": true,
+   "first_hit_rank": {
+    "bm25": null,
+    "embed": 1,
+    "fusion": 49
+   }
+  },
+  {
+   "card": "tax.assessment.objection",
+   "lang": "fr",
+   "q": "ma taxation est fausse, l'impôt est trop élevé, comment la contester et dans quel délai ?",
+   "cross_lingual": true,
+   "first_hit_rank": {
+    "bm25": 1,
+    "embed": 0,
+    "fusion": 0
+   }
+  },
+  {
+   "card": "tax.assessment.objection",
+   "lang": "it",
+   "q": "non sono d'accordo con la mia tassazione, entro quando posso contestarla?",
+   "cross_lingual": false,
+   "first_hit_rank": {
+    "bm25": 0,
+    "embed": 0,
+    "fusion": 0
+   }
+  },
+  {
+   "card": "tax.instalments",
+   "lang": "de",
+   "q": "Wann muss ich die provisorischen Steuerraten bezahlen und was kostet es, wenn ich zu spät zahle?",
+   "cross_lingual": true,
+   "first_hit_rank": {
+    "bm25": 14,
+    "embed": 0,
+    "fusion": 0
+   }
+  },
+  {
+   "card": "tax.instalments",
+   "lang": "fr",
+   "q": "je paie mes impôts par acomptes, que se passe-t-il si je paie en retard ?",
+   "cross_lingual": false,
+   "first_hit_rank": {
+    "bm25": 1,
+    "embed": 0,
+    "fusion": 0
+   }
+  },
+  {
+   "card": "tax.return.BE",
+   "lang": "de",
+   "q": "Bis wann muss ich die Steuererklärung in Bern abgeben?",
+   "cross_lingual": false,
+   "first_hit_rank": {
+    "bm25": 2,
+    "embed": 2,
+    "fusion": 0
+   }
+  },
+  {
+   "card": "tax.return.BE",
+   "lang": "fr",
+   "q": "délai pour rendre ma déclaration d'impôt quand on habite à Bienne",
+   "cross_lingual": true,
+   "first_hit_rank": {
+    "bm25": 238,
+    "embed": 25,
+    "fusion": 89
+   }
+  },
+  {
+   "card": "tax.return.GE",
+   "lang": "fr",
+   "q": "à Genève, jusqu'à quand je dois envoyer ma déclaration d'impôts ?",
+   "cross_lingual": false,
+   "first_hit_rank": {
+    "bm25": 0,
+    "embed": 0,
+    "fusion": 0
+   }
+  },
+  {
+   "card": "tax.return.GE",
+   "lang": "de",
+   "q": "Ich wohne in Genf, wann ist die Steuererklärung fällig?",
+   "cross_lingual": true,
+   "first_hit_rank": {
+    "bm25": null,
+    "embed": 0,
+    "fusion": 41
+   }
+  },
+  {
+   "card": "tax.return.TI",
+   "lang": "it",
+   "q": "entro quando devo consegnare la dichiarazione d'imposta in Ticino?",
+   "cross_lingual": false,
+   "first_hit_rank": {
+    "bm25": 0,
+    "embed": 0,
+    "fusion": 0
+   }
+  },
+  {
+   "card": "tax.return.TI",
+   "lang": "fr",
+   "q": "j'habite à Lugano, quel est le délai pour ma déclaration fiscale ?",
+   "cross_lingual": true,
+   "first_hit_rank": {
+    "bm25": 74,
+    "embed": 20,
+    "fusion": 42
+   }
+  },
+  {
+   "card": "tax.return.VD",
+   "lang": "fr",
+   "q": "je n'ai pas encore rempli ma déclaration d'impôt vaudoise, je peux demander plus de temps ?",
+   "cross_lingual": false,
+   "first_hit_rank": {
+    "bm25": 4,
+    "embed": 0,
+    "fusion": 0
+   }
+  },
+  {
+   "card": "tax.return.VD",
+   "lang": "de",
+   "q": "Ich wohne in Lausanne und brauche mehr Zeit für die Steuererklärung",
+   "cross_lingual": true,
+   "first_hit_rank": {
+    "bm25": null,
+    "embed": 5,
+    "fusion": 58
+   }
+  },
+  {
+   "card": "tax.return.ZH",
+   "lang": "de",
+   "q": "Ich schaffe die Zürcher Steuererklärung nicht bis Ende März, kann ich verlängern?",
+   "cross_lingual": false,
+   "first_hit_rank": {
+    "bm25": 0,
+    "embed": 0,
+    "fusion": 0
+   }
+  },
+  {
+   "card": "tax.return.ZH",
+   "lang": "it",
+   "q": "abito a Zurigo, posso avere più tempo per la dichiarazione delle imposte?",
+   "cross_lingual": true,
+   "first_hit_rank": {
+    "bm25": 203,
+    "embed": 0,
+    "fusion": 29
+   }
+  },
+  {
+   "card": "tax.withholding.refund",
+   "lang": "fr",
+   "q": "comment récupérer les 35 % retenus sur mes dividendes ?",
+   "cross_lingual": false,
+   "first_hit_rank": {
+    "bm25": 0,
+    "embed": 0,
+    "fusion": 0
+   }
+  },
+  {
+   "card": "tax.withholding.refund",
+   "lang": "de",
+   "q": "Wie bekomme ich das Geld zurück, das die Bank von meinen Zinsen abgezogen hat?",
+   "cross_lingual": true,
+   "first_hit_rank": {
+    "bm25": null,
+    "embed": 12,
+    "fusion": 62
+   }
+  },
+  {
+   "card": "work.unemployment.register",
+   "lang": "fr",
+   "q": "j'ai perdu mon emploi, je dois m'inscrire où et quand pour toucher le chômage ?",
+   "cross_lingual": false,
+   "first_hit_rank": {
+    "bm25": 1,
+    "embed": 0,
+    "fusion": 0
+   }
+  },
+  {
+   "card": "work.unemployment.register",
+   "lang": "it",
+   "q": "ho perso il lavoro, come mi iscrivo per ricevere l'indennità?",
+   "cross_lingual": true,
+   "first_hit_rank": {
+    "bm25": 47,
+    "embed": 1,
+    "fusion": 14
+   }
+  }
+ ]
+}

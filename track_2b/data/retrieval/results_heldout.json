@@ -1,0 +1,455 @@
+{
+ "queries": "data/retrieval/queries_heldout.json",
+ "passages": 378,
+ "embed_model": "google/embeddinggemma-2",
+ "rrf_k": 60,
+ "metrics": {
+  "all": {
+   "n": 36,
+   "bm25": {
+    "hit@3": 0.389,
+    "mrr@10": 0.309
+   },
+   "embed": {
+    "hit@3": 0.778,
+    "mrr@10": 0.722
+   },
+   "fusion": {
+    "hit@3": 0.5,
+    "mrr@10": 0.443
+   },
+   "fusion_minus_bm25_hit@3_ci95": [
+    0.028,
+    0.222
+   ]
+  },
+  "same_language": {
+   "n": 16,
+   "bm25": {
+    "hit@3": 0.812,
+    "mrr@10": 0.605
+   },
+   "embed": {
+    "hit@3": 0.875,
+    "mrr@10": 0.825
+   },
+   "fusion": {
+    "hit@3": 0.938,
+    "mrr@10": 0.804
+   }
+  },
+  "cross_lingual": {
+   "n": 20,
+   "bm25": {
+    "hit@3": 0.05,
+    "mrr@10": 0.072
+   },
+   "embed": {
+    "hit@3": 0.7,
+    "mrr@10": 0.64
+   },
+   "fusion": {
+    "hit@3": 0.15,
+    "mrr@10": 0.154
+   }
+  }
+ },
+ "rows": [
+  {
+   "card": "business.self_employed.start",
+   "lang": "fr",
+   "q": "j'ouvre mon propre salon de coiffure, quelles démarches administratives au début ?",
+   "cross_lingual": false,
+   "first_hit_rank": {
+    "bm25": 5,
+    "embed": 0,
+    "fusion": 2
+   }
+  },
+  {
+   "card": "business.self_employed.start",
+   "lang": "it",
+   "q": "voglio lavorare in proprio come fotografo, cosa devo fare con l'AVS?",
+   "cross_lingual": true,
+   "first_hit_rank": {
+    "bm25": 11,
+    "embed": 10,
+    "fusion": 4
+   }
+  },
+  {
+   "card": "debt.payment_order.opposition",
+   "lang": "de",
+   "q": "Ich habe einen Zahlungsbefehl bekommen, aber ich schulde das Geld nicht. Was tun?",
+   "cross_lingual": true,
+   "first_hit_rank": {
+    "bm25": null,
+    "embed": 0,
+    "fusion": 35
+   }
+  },
+  {
+   "card": "debt.payment_order.opposition",
+   "lang": "fr",
+   "q": "un huissier m'a remis un papier de l'office des poursuites, je ne suis pas d'accord",
+   "cross_lingual": false,
+   "first_hit_rank": {
+    "bm25": 1,
+    "embed": 1,
+    "fusion": 0
+   }
+  },
+  {
+   "card": "health_insurance.change_insurer_or_deductible",
+   "lang": "fr",
+   "q": "ma caisse maladie augmente encore, comment résilier pour en prendre une moins chère ?",
+   "cross_lingual": false,
+   "first_hit_rank": {
+    "bm25": 0,
+    "embed": 0,
+    "fusion": 0
+   }
+  },
+  {
+   "card": "health_insurance.change_insurer_or_deductible",
+   "lang": "it",
+   "q": "posso cambiare cassa malati a fine anno? entro quando devo disdire?",
+   "cross_lingual": true,
+   "first_hit_rank": {
+    "bm25": 52,
+    "embed": 0,
+    "fusion": 9
+   }
+  },
+  {
+   "card": "health_insurance.premium_reduction.VD",
+   "lang": "fr",
+   "q": "je suis apprentie à Yverdon, est-ce que j'ai droit à une aide pour l'assurance maladie ?",
+   "cross_lingual": false,
+   "first_hit_rank": {
+    "bm25": 1,
+    "embed": 0,
+    "fusion": 1
+   }
+  },
+  {
+   "card": "health_insurance.premium_reduction.VD",
+   "lang": "it",
+   "q": "vivo nel canton Vaud con un reddito basso, posso ricevere un sussidio per la cassa malati?",
+   "cross_lingual": true,
+   "first_hit_rank": {
+    "bm25": 46,
+    "embed": 0,
+    "fusion": 4
+   }
+  },
+  {
+   "card": "health_insurance.premium_reduction.ZH",
+   "lang": "de",
+   "q": "Wir sind eine Familie in Zürich mit kleinem Lohn, bekommen wir Geld an die Prämien?",
+   "cross_lingual": false,
+   "first_hit_rank": {
+    "bm25": 0,
+    "embed": 0,
+    "fusion": 0
+   }
+  },
+  {
+   "card": "health_insurance.premium_reduction.ZH",
+   "lang": "it",
+   "q": "a Zurigo esiste un aiuto per pagare i premi della cassa malati?",
+   "cross_lingual": true,
+   "first_hit_rank": {
+    "bm25": null,
+    "embed": 0,
+    "fusion": 45
+   }
+  },
+  {
+   "card": "household.serafe_fee",
+   "lang": "fr",
+   "q": "c'est quoi cette facture Serafe que je reçois chaque année ?",
+   "cross_lingual": false,
+   "first_hit_rank": {
+    "bm25": 6,
+    "embed": 0,
+    "fusion": 0
+   }
+  },
+  {
+   "card": "household.serafe_fee",
+   "lang": "de",
+   "q": "Muss jeder Haushalt die Radio- und Fernsehabgabe bezahlen?",
+   "cross_lingual": true,
+   "first_hit_rank": {
+    "bm25": 10,
+    "embed": 1,
+    "fusion": 0
+   }
+  },
+  {
+   "card": "housing.moving.announce",
+   "lang": "fr",
+   "q": "on emménage à Vevey, quels papiers apporter au bureau des habitants ?",
+   "cross_lingual": false,
+   "first_hit_rank": {
+    "bm25": 1,
+    "embed": 1,
+    "fusion": 0
+   }
+  },
+  {
+   "card": "housing.moving.announce",
+   "lang": "it",
+   "q": "mi trasferisco in un altro comune, devo annunciarmi all'ufficio controllo abitanti?",
+   "cross_lingual": true,
+   "first_hit_rank": {
+    "bm25": 47,
+    "embed": 0,
+    "fusion": 15
+   }
+  },
+  {
+   "card": "pension.pillar3a.contribution",
+   "lang": "de",
+   "q": "Lohnt es sich, vor Ende Jahr noch in die dritte Säule einzuzahlen?",
+   "cross_lingual": true,
+   "first_hit_rank": {
+    "bm25": 0,
+    "embed": 0,
+    "fusion": 0
+   }
+  },
+  {
+   "card": "pension.pillar3a.contribution",
+   "lang": "it",
+   "q": "quanto posso versare nel pilastro 3a se sono dipendente?",
+   "cross_lingual": true,
+   "first_hit_rank": {
+    "bm25": 37,
+    "embed": 0,
+    "fusion": 7
+   }
+  },
+  {
+   "card": "social.ahv.non_employed_contributions",
+   "lang": "fr",
+   "q": "j'ai arrêté de travailler avant la retraite, est-ce que je dois encore cotiser à l'AVS ?",
+   "cross_lingual": false,
+   "first_hit_rank": {
+    "bm25": 1,
+    "embed": 0,
+    "fusion": 0
+   }
+  },
+  {
+   "card": "social.ahv.non_employed_contributions",
+   "lang": "it",
+   "q": "sono studente all'università e non lavoro, devo pagare i contributi AVS?",
+   "cross_lingual": true,
+   "first_hit_rank": {
+    "bm25": 45,
+    "embed": 0,
+    "fusion": 10
+   }
+  },
+  {
+   "card": "tax.assessment.objection",
+   "lang": "de",
+   "q": "Die Steuerverwaltung hat meine Abzüge gestrichen, wie wehre ich mich dagegen?",
+   "cross_lingual": true,
+   "first_hit_rank": {
+    "bm25": 35,
+    "embed": 1,
+    "fusion": 14
+   }
+  },
+  {
+   "card": "tax.assessment.objection",
+   "lang": "fr",
+   "q": "le fisc n'a pas accepté mes frais de transport, je peux faire recours ?",
+   "cross_lingual": true,
+   "first_hit_rank": {
+    "bm25": 60,
+    "embed": 0,
+    "fusion": 7
+   }
+  },
+  {
+   "card": "tax.instalments",
+   "lang": "fr",
+   "q": "j'ai reçu un bulletin pour payer mes impôts provisoires, quand faut-il payer ?",
+   "cross_lingual": false,
+   "first_hit_rank": {
+    "bm25": 2,
+    "embed": 0,
+    "fusion": 2
+   }
+  },
+  {
+   "card": "tax.instalments",
+   "lang": "it",
+   "q": "le rate provvisorie delle imposte: cosa succede se pago in ritardo?",
+   "cross_lingual": true,
+   "first_hit_rank": {
+    "bm25": 4,
+    "embed": 9,
+    "fusion": 11
+   }
+  },
+  {
+   "card": "tax.return.BE",
+   "lang": "de",
+   "q": "Wie fülle ich die Steuererklärung im Kanton Bern online aus?",
+   "cross_lingual": false,
+   "first_hit_rank": {
+    "bm25": 4,
+    "embed": 4,
+    "fusion": 4
+   }
+  },
+  {
+   "card": "tax.return.BE",
+   "lang": "it",
+   "q": "abito a Berna, entro quando va presentata la dichiarazione d'imposta?",
+   "cross_lingual": true,
+   "first_hit_rank": {
+    "bm25": 246,
+    "embed": 0,
+    "fusion": 43
+   }
+  },
+  {
+   "card": "tax.return.GE",
+   "lang": "fr",
+   "q": "première déclaration d'impôt à Genève après mes études, comment ça marche ?",
+   "cross_lingual": false,
+   "first_hit_rank": {
+    "bm25": 0,
+    "embed": 0,
+    "fusion": 0
+   }
+  },
+  {
+   "card": "tax.return.GE",
+   "lang": "it",
+   "q": "a Ginevra posso chiedere una proroga per la dichiarazione delle imposte?",
+   "cross_lingual": true,
+   "first_hit_rank": {
+    "bm25": 87,
+    "embed": 1,
+    "fusion": 16
+   }
+  },
+  {
+   "card": "tax.return.TI",
+   "lang": "it",
+   "q": "posso chiedere una proroga per la dichiarazione fiscale a Bellinzona?",
+   "cross_lingual": false,
+   "first_hit_rank": {
+    "bm25": 1,
+    "embed": 0,
+    "fusion": 0
+   }
+  },
+  {
+   "card": "tax.return.TI",
+   "lang": "de",
+   "q": "Ich wohne im Tessin, bis wann muss die Steuererklärung eingereicht sein?",
+   "cross_lingual": true,
+   "first_hit_rank": {
+    "bm25": null,
+    "embed": 0,
+    "fusion": 29
+   }
+  },
+  {
+   "card": "tax.return.VD",
+   "lang": "fr",
+   "q": "jusqu'à quand dois-je rendre ma déclaration d'impôt dans le canton de Vaud ?",
+   "cross_lingual": false,
+   "first_hit_rank": {
+    "bm25": 2,
+    "embed": 0,
+    "fusion": 0
+   }
+  },
+  {
+   "card": "tax.return.VD",
+   "lang": "it",
+   "q": "vivo a Losanna, qual è il termine per la dichiarazione delle imposte?",
+   "cross_lingual": true,
+   "first_hit_rank": {
+    "bm25": 77,
+    "embed": 34,
+    "fusion": 63
+   }
+  },
+  {
+   "card": "tax.return.ZH",
+   "lang": "de",
+   "q": "Welche Unterlagen brauche ich für die Steuererklärung im Kanton Zürich?",
+   "cross_lingual": false,
+   "first_hit_rank": {
+    "bm25": 0,
+    "embed": 0,
+    "fusion": 0
+   }
+  },
+  {
+   "card": "tax.return.ZH",
+   "lang": "fr",
+   "q": "j'habite à Zurich, jusqu'à quand rendre ma déclaration d'impôt ?",
+   "cross_lingual": true,
+   "first_hit_rank": {
+    "bm25": 59,
+    "embed": 12,
+    "fusion": 34
+   }
+  },
+  {
+   "card": "tax.withholding.refund",
+   "lang": "it",
+   "q": "come recupero l'imposta preventiva trattenuta sui miei interessi?",
+   "cross_lingual": true,
+   "first_hit_rank": {
+    "bm25": 3,
+    "embed": 4,
+    "fusion": 2
+   }
+  },
+  {
+   "card": "tax.withholding.refund",
+   "lang": "fr",
+   "q": "la banque a retenu un impôt sur mes intérêts, je peux le récupérer ?",
+   "cross_lingual": false,
+   "first_hit_rank": {
+    "bm25": 0,
+    "embed": 0,
+    "fusion": 0
+   }
+  },
+  {
+   "card": "work.unemployment.register",
+   "lang": "de",
+   "q": "Ich wurde gekündigt, wann muss ich mich beim RAV melden?",
+   "cross_lingual": true,
+   "first_hit_rank": {
+    "bm25": null,
+    "embed": 11,
+    "fusion": 36
+   }
+  },
+  {
+   "card": "work.unemployment.register",
+   "lang": "fr",
+   "q": "mon contrat se termine fin du mois, comment toucher des indemnités ?",
+   "cross_lingual": false,
+   "first_hit_rank": {
+    "bm25": 0,
+    "embed": 13,
+    "fusion": 1
+   }
+  }
+ ]
+}

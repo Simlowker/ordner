@@ -140,6 +140,7 @@ no card: totals per measure, `final`/`provisional`/`incomplete`).
 
 `knowledge.search` indexes the corpus plus the verified quotes of every procedure card; with a dossier in ctx it defaults to
 the subject's canton (+ federal) and language, and boosts the cards of the open cases (or `card_id`).
+It ranks with EmbeddingGemma 2 in `live` mode and BM25 in `replay` mode. On 2 × 36 everyday questions (`python -m ordner.eval.retrieval`, `data/retrieval/`) the right card's source is in the top 3 for 53 % / 39 % of questions with BM25, 81 % / 78 % with EmbeddingGemma 2 and 61 % / 50 % with their RRF fusion, which was therefore dropped: on cross-lingual questions BM25 ranks same-language distractors first (held-out set: 5 % BM25, 70 % embedding, 15 % fusion).
 `ordner.rules.payment_check` (phishing guard) runs in the coordinator on every document read and every prepared payment.
 
 No tool has `side_effect=True`: none sends, files or pays; `case.record` writes the local dossier only and actions are

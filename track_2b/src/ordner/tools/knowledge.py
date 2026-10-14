@@ -1,5 +1,6 @@
-"""knowledge.search: BM25 over the official corpus and the verified quotes of the procedure cards (always), fused with
-EmbeddingGemma 2 (explain/retrieve.py) in live mode. With a dossier in ctx: the subject's canton and language filter the
+"""knowledge.search over the official corpus and the verified quotes of the procedure cards: EmbeddingGemma 2
+(explain/retrieve.py) in live mode, BM25 in replay mode or when the model is unavailable. RRF fusion of the two was
+dropped: BM25 matches same-language distractors and diluted the cross-lingual gain (data/retrieval/results*.json). With a dossier in ctx: the subject's canton and language filter the
 passages (unless given), and the cards of the subject's open cases (or `card_id`) rank first."""
 import math
 import re
@@ -16,6 +17,7 @@ from .document import jsonl
 CANTONS = set("AG AI AR BE BL BS FR GE GL GR JU LU NE NW OW SG SH SO SZ TG TI UR VD VS ZG ZH".split())
 RRF_K = 60
 PREFER = 2.0  # BM25 boost of the procedure in context
+PREFER_COS = 0.05  # ponytail: fixed cosine boost for the same; untuned (the retrieval eval has no dossier context)
 # ponytail: language from the canton (bilingual cantons: majority language); subject.attrs["lang"] wins
 CANTON_LANG = {"VD": "fr", "GE": "fr", "NE": "fr", "JU": "fr", "FR": "fr", "VS": "fr", "TI": "it"}
 STOP = {"fr": set("le la les des du de et est un une pour que qui dans au aux sur par pas doit être sont".split()),
@@ -94,10 +96,9 @@ def search(args, ctx):
         try:
             from ordner.explain import retrieve  # relative paths: run from track_2b/
 
-            ids = {p["passage_id"]: i for i, p in enumerate(ps)}
-            ranks.append({ids[r["passage_id"]]: j for j, r in enumerate(retrieve.top_k(query, None, k=len(ps)))
-                          if r["passage_id"] in ids})
-            prov.update(method="bm25 + EmbeddingGemma 2 (reciprocal rank fusion)", embed_model="google/embeddinggemma-2")
+            sem = [s + PREFER_COS * (ps[i].get("card_id") in preferred) for i, s in enumerate(retrieve.scores(query, ps))]
+            ranks = [{i: r for r, i in enumerate(sorted(range(len(ps)), key=lambda i: -sem[i]))}]
+            prov.update(method="EmbeddingGemma 2", embed_model="google/embeddinggemma-2")
         except Exception as e:
             warnings.append(f"semantic search unavailable, lexical only ({type(e).__name__}: {e})")
     score = {i: sum(1 / (RRF_K + r[i]) for r in ranks if i in r) for r in ranks for i in r}

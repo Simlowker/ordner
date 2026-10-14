@@ -1,4 +1,4 @@
-"""EmbeddingGemma 2 retrieval over data/corpus/passages.jsonl (embeddings cached in work/explain/emb.npy).
+"""EmbeddingGemma 2 retrieval over data/corpus/passages.jsonl or any passage list (embeddings cached in work/explain/).
 Sanity check: python -m ordner.explain.retrieve"""
 import hashlib
 import json
@@ -10,7 +10,7 @@ import numpy as np
 from ordner.models import embed
 
 PASSAGES = Path("data/corpus/passages.jsonl")
-CACHE = Path("work/explain/emb.npy")
+CACHE = Path("work/explain/emb.npy")  # one file per passage set: emb-<sha>.npy
 
 
 def load_passages(path=PASSAGES):
@@ -18,24 +18,29 @@ def load_passages(path=PASSAGES):
         return [json.loads(line) for line in f if line.strip()]
 
 
-@lru_cache(maxsize=1)
-def index():
-    ps = load_passages()
-    docs = [f"title: {p['source_title']} | text: {p['text']}" for p in ps]  # EmbeddingGemma document format
-    key = hashlib.sha256("\n".join(docs).encode()).hexdigest()
-    key_file = CACHE.with_suffix(".key")
-    if CACHE.exists() and key_file.exists() and key_file.read_text() == key:
-        return ps, np.load(CACHE)
-    emb = embed.embed(docs)
-    CACHE.parent.mkdir(parents=True, exist_ok=True)
-    np.save(CACHE, emb)
-    key_file.write_text(key)
-    return ps, emb
+def doc_text(p):
+    return f"title: {p['source_title']} | text: {p['text']}"  # EmbeddingGemma document format
 
 
-def top_k(query, lang=None, k=3):
-    ps, emb = index()
-    s = emb @ embed.embed([query], prompt_name="SearchQuery")[0]
+@lru_cache(maxsize=4)
+def _embed_docs(docs: tuple):
+    path = CACHE.with_name(f"emb-{hashlib.sha256(chr(10).join(docs).encode()).hexdigest()[:16]}.npy")
+    if path.exists():
+        return np.load(path)
+    emb = embed.embed(list(docs))
+    path.parent.mkdir(parents=True, exist_ok=True)
+    np.save(path, emb)
+    return emb
+
+
+def scores(query, ps):
+    """Cosine similarity of the query to each passage of ps (any passage list: corpus, card quotes)."""
+    return _embed_docs(tuple(map(doc_text, ps))) @ embed.embed([query], prompt_name="SearchQuery")[0]
+
+
+def top_k(query, lang=None, k=3, ps=None):
+    ps = ps or load_passages()
+    s = scores(query, ps)
     idx = [i for i in np.argsort(-s) if lang is None or ps[i]["lang"] == lang][:k]
     return [{**ps[i], "score": round(float(s[i]), 4)} for i in idx]
 
