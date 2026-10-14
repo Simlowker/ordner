@@ -25,7 +25,10 @@ clean PDF, cross-checked against the generator).
 Doubt signals per extracted field (same fields, same pages): min token probability, mean token entropy,
 d1-3B validation probability, deterministic checks (statement totals consistency where available), linear probe on
 Apertus hidden states (position A = value tokens, position B = token before the value), and a combined logistic model.
-Probe layer, regularisation and the combination weights are chosen **on dev only**.
+Doubt signals are studied on the zero-shot Apertus outputs (primary): probe and combination are fit on train+dev
+outputs and evaluated on test. Probe = logistic regression on a 256-d PCA (fit on train) of one layer; the layer, the
+regularisation and the combination weights are chosen by cross-validation on train+dev only. For the fine-tuned system,
+signals without the probe are calibrated on dev (secondary analysis).
 
 ## Hypotheses and primary metrics
 
