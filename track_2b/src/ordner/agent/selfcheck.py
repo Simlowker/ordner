@@ -1,7 +1,7 @@
 """python -m ordner.agent.selfcheck  (mock LLM, no weights, ~3 s)
 
-Multi-step goal, question for missing info, side effect prepared not executed, prompt injection ignored, Apertus
-tool-call parsing, the real tool registry (W4) on the demo persona (W1), and (if the tokenizer is cached) the chat
+Multi-step goal, question for missing info, side effect prepared not executed, prompt injection ignored, phishing
+guard on payments, Apertus tool-call parsing, the real tool registry (W4) on the demo persona (W1), and (if the tokenizer is cached) the chat
 template accepts our tool-call history."""
 import hashlib
 import json
@@ -143,7 +143,8 @@ def check_question(tmp):
                    "must not be reached"])
     out = run("Je veux changer de caisse maladie pour 2026", SID, llm, store, registry=Fixture())
     assert out["questions"] == [{"question": "Avez-vous déjà résilié votre contrat LAMal pour 2026 ?",
-                                 "missing": "health_insurance.cancellation_sent"}], out["questions"]
+                                 "missing": "health_insurance.cancellation_sent",
+                                 "label": "health_insurance.cancellation_sent"}], out["questions"]   # no label: key
     assert llm.steps == ["must not be reached"] and not out["actions"] and out["stats"]["steps"] == 2
 
 
@@ -200,13 +201,19 @@ def check_injection(tmp):
     assert a["status"] == "prepared" and a["requires_validation"] and a["payload"]["tool"] == "mail.send"
 
 
+class ToolsSeen(MockLLM):
+    def chat(self, messages, tools=None):
+        self.tools = tools
+        return super().chat(messages, tools)
+
+
 def check_registry(tmp):
     """Real W4 registry (replay mode) on W1's demo persona: envelope unwrapped, user-only writes refused."""
     from ordner.case.demo_seed import seed
     store = Store(Path(tmp) / "a.db")
     sid = seed(store, cases=[("tax.return.VD", "2025")])
     n = len(store.facts(sid))
-    llm = MockLLM([
+    llm = ToolsSeen([
         tool_text("case_record", subject_id="subj_other", op="propose_fact",
                   key="tax.securities.velaro.withholding_tax_claim", value=101.79, period="2025", unit="CHF"),
         tool_text("case_record", subject_id=sid, op="confirm_fact", fact_id="fact_x"),
@@ -216,9 +223,53 @@ def check_registry(tmp):
     new = [f for f in store.facts(sid) if f.key == "tax.securities.velaro.withholding_tax_claim" and f.value == 101.79]
     assert out["answer"] == "Fait." and len(store.facts(sid)) == n + 1 and new[-1].actor == "model", out
     res = [t["result"] for t in out["transcript"] if t["role"] == "tool"]
-    assert res[0]["ok"] and not res[1]["ok"] and "reserved to the person" in res[1]["error"], res
+    assert res[0]["ok"] and "op must be one of" in res[1]["error"] and "confirm_fact" not in res[1]["error"], res
+    shown = next(t for t in llm.tools if t["function"]["name"] == "case_record")["function"]["parameters"]
+    assert "confirm_fact" not in shown["properties"]["op"]["enum"] and "propose_fact" in shown["properties"]["op"]["enum"]
+    from ordner.tools.registry import SPECS
+    from .coordinator import _model_schema
+    rec = next(x for x in SPECS if x.name == "case.record")
+    assert "confirm_fact" in _model_schema(rec, "user")["properties"]["op"]["enum"]           # the person keeps it
     assert [a["status"] for a in store.snapshot(sid)["pending_actions"]] == ["prepared"]
     assert all("provenance" not in m["content"] for m in llm.calls[-1] if m["role"] == "tool")
+
+
+PHISH = ("URGENT : votre police Caisse Exemple sera suspendue. Payez 89.00 CHF aujourd'hui sur "
+         "https://caisse-exemple.pay-now.example ou sur l'IBAN CH93 0076 2011 6238 5295 7.")
+KNOWN_IBAN = "CH44 3199 9123 0008 8901 2"
+
+
+def check_phishing(tmp):
+    """A payment request from an unseen IBAN, with urgency and a link: flagged, and the payment carries the warning."""
+    store = Store(Path(tmp) / "a.db")
+    demo(store)
+    for i, year, fields in [("doc_bill25", 2025, {"iban": KNOWN_IBAN, "creditor": {"name": "Caisse Exemple"}, "amount": "452.30"}),
+                            ("doc_bill26", 2026, {"iban": KNOWN_IBAN, "creditor": {"name": "Caisse Exemple"}, "amount": "470.10"}),
+                            ("doc_phish", 2026, {"subject": "Dernier rappel", "text": PHISH})]:
+        store.add_document(Document(i, SID, f"placeholder:{i}", hashlib.sha256(i.encode()).hexdigest(),
+                                    "email" if i == "doc_phish" else "qr_bill_invoice", year, "Caisse Exemple", fields=fields))
+    llm = MockLLM([tool_text("document_read", doc_id="doc_phish"),
+                   tool_text("prepare_action", kind="payment", summary="Payer 89 CHF à Caisse Exemple",
+                             recipient="Caisse Exemple", body="IBAN CH93 0076 2011 6238 5295 7", amount=89.0),
+                   "Paiement préparé, à valider."])
+    out = run("Paie ce rappel de ma caisse maladie", SID, llm, store, registry=Fixture())
+    (a,) = out["actions"]
+    assert a["kind"] == "payment" and a["status"] == "prepared" and a["requires_validation"]
+    assert a["payload"]["warning"]["fr"] == "possible hameçonnage — vérifiez l'expéditeur", a["payload"]
+    assert any("CH9300762011623852957" in r for r in a["payload"]["phishing"]), a["payload"]["phishing"]
+    assert any(w.startswith("possible hameçonnage") for w in out["warnings"]), out["warnings"]
+    read, prepared = [t["result"] for t in out["transcript"] if t["role"] == "tool"]
+    assert any("hameçonnage" in w for w in read["warnings"]) and "hameçonnage" in prepared["warning"], (read, prepared)
+
+    # the same creditor and IBAN as last year's bill: payment prepared without a warning
+    llm = MockLLM([tool_text("document_read", doc_id="doc_bill26"),
+                   tool_text("prepare_action", kind="payment", summary="Payer la prime de 470.10 CHF",
+                             recipient="Caisse Exemple", body=f"IBAN {KNOWN_IBAN}", amount=470.1),
+                   "Paiement préparé, à valider."])
+    out = run("Paie ma facture de caisse maladie", SID, llm, store, registry=Fixture())
+    pay = [x for x in out["actions"] if x["payload"]["summary"].startswith("Payer la prime")]
+    assert len(pay) == 1 and "warning" not in pay[0]["payload"], pay
+    assert not any("hameçonnage" in w for w in out["warnings"]), out["warnings"]
 
 
 def check_template():
@@ -245,7 +296,8 @@ def check_template():
 def main():
     check_parser()
     with tempfile.TemporaryDirectory() as tmp:
-        for i, f in enumerate([check_multistep, check_question, check_side_effect, check_injection, check_registry]):
+        for i, f in enumerate([check_multistep, check_question, check_side_effect, check_injection, check_registry,
+                               check_phishing]):
             Path(tmp, str(i)).mkdir()
             f(str(Path(tmp, str(i))))
     print(f"template: {check_template()}")

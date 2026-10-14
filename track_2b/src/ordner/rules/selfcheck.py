@@ -10,7 +10,8 @@ from ordner.core.schema import Deadline, DeadlineRule, Document, Fact, Procedure
 from ordner.procedures.catalog import _condition as catalog_syntax
 from ordner.procedures.catalog import get as get_card
 
-from . import DEADLINE_RULE_IDS, applicable, completeness, compute_deadline, consolidate, easter, holidays, reminders, to_ics
+from . import (DEADLINE_RULE_IDS, applicable, completeness, compute_deadline, consolidate, easter, holidays, payment_check,
+               reminders, to_ics)
 
 VD = Subject("s_vd", "person", "Léa Test", canton="VD", roles=["student"], attrs={"birth_year": 2006})
 
@@ -271,11 +272,27 @@ def check_dossier():
         pass
 
 
+def check_phishing():
+    known_bill = Document("d_bill", "s", "x", "h", "qr_bill_invoice", 2026, "Caisse Exemple",
+                          fields={"iban": "CH44 3199 9123 0008 8901 2", "creditor": {"name": "Caisse Exemple"}})
+    docs = [known_bill, Document("d_tax", "s", "y", "h2", "swiss_tax_statement_eCH0196", 2025, "Banque Exemple SA")]
+    same = payment_check({"iban": "CH4431999123000889012", "creditor": {"name": "Caisse Exemple"}}, docs)
+    assert same["request"] and not same["suspicious"] and same["warning"] is None, same
+    assert payment_check({"iban": "CH4431999123000889012", "creditor": {"name": "Caisse Exemple"}}, docs, doc_id="d_bill")["suspicious"]
+    swapped = payment_check({"recipient": "Caisse Exemple SA", "body": "Payer sur CH93 0076 2011 6238 5295 7"}, docs)
+    assert swapped["suspicious"] and swapped["iban"] == "CH9300762011623852957" and "piège classique" in swapped["reasons"][0], swapped
+    mail = payment_check({"text": "URGENT : compte suspendu sous 24h, payez sur https://caisse-exemple.pay.example"}, docs)
+    assert mail["suspicious"] and mail["warning"]["fr"] == "possible hameçonnage — vérifiez l'expéditeur", mail
+    assert not payment_check({"text": "Votre prime 2026 : 452.30 CHF, voir www.caisse.ch"}, docs)["request"]
+    facts = [Fact("f1", "s", "bill.r1.iban", "CH9300762011623852957", status="confirmed")]
+    assert not payment_check({"iban": "CH93 0076 2011 6238 5295 7", "creditor": "Banque Exemple SA"}, docs, facts)["suspicious"]
+
+
 def main():
     assert DEADLINE_RULE_IDS == ["fixed_date", "days_after_notification", "debt_collection", "reception_by", "cantonal_table",
                                  "year_end", "chosen_date"]
     checks = [check_calendar, check_debt_collection, check_days_after_notification, check_fixed_dates, check_missing_info,
-              check_applicability, check_card_params, check_dossier, check_reminders_and_ics]
+              check_applicability, check_card_params, check_dossier, check_reminders_and_ics, check_phishing]
     for check in checks:
         check()
         print(f"ok  {check.__name__}")

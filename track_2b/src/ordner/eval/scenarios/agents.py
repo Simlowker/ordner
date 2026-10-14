@@ -35,7 +35,7 @@ def seed(store, s, phase: dict, tmp, first: bool) -> str:
                                   list(p.get("roles", [])), dict(p.get("attrs", {}))))
     for d in phase.get("documents", []):
         fields = dict(d.get("fields", {}))
-        if d.get("path"):
+        if d.get("path") and (ROOT / d["path"]).is_file():  # work/ is not shipped (Docker replay): placeholder below
             path = ROOT / d["path"]
             sha = hashlib.sha256(path.read_bytes()).hexdigest()
         elif d.get("text"):

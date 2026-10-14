@@ -3,7 +3,7 @@ from typing import get_args
 
 from ordner.core.schema import CaseState, Deadline, Fact, ToolSpec, new_id
 
-from .base import ToolError, store
+from .base import ToolError, store, today
 
 OPS = ["propose_fact", "confirm_fact", "reject_fact", "open_case", "set_state", "add_deadline"]
 USER_ONLY_OPS = {"confirm_fact", "reject_fact"}
@@ -37,7 +37,8 @@ def load(args, ctx):
         if len(events) > MAX_EVENTS:
             warnings.append(f"only the last {MAX_EVENTS} of {len(events)} events are shown")
         return {"case": case, "events": events[-MAX_EVENTS:]}, warnings, {"source": "ordner.case"}
-    return st.snapshot(args["subject_id"], last_events=MAX_EVENTS), warnings, {"source": "ordner.case"}
+    return (st.snapshot(args["subject_id"], today=today(ctx).isoformat(), last_events=MAX_EVENTS), warnings,
+            {"source": "ordner.case"})
 
 
 def record(args, ctx):

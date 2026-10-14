@@ -14,6 +14,7 @@ from datetime import date
 from email.message import EmailMessage
 from typing import get_args
 
+from ordner.core.labels import labels
 from ordner.core.schema import Action, CaseState, Deadline, ProcedureCard, Subject, new_id
 
 STATES = list(get_args(CaseState))
@@ -185,6 +186,42 @@ def _case_step(c):
     return None
 
 
+def split_missing(open_cases, coverage):
+    """(to qualify, missing): procedures whose applicability is still unknown (questions to answer first, then the
+    pieces they would need) apart from procedures that apply and genuinely miss documents or information."""
+    app = {i["id"]: i for i in (coverage or {}).get("items") or []} if (coverage or {}).get("rules") else None
+    qualify, missing = [], []
+    for c in open_cases:
+        items = c.get("missing") or []
+        if app is None:  # no rules engine: subject attributes are the questions
+            questions = [i for i in items if i.startswith("subject.")]
+        else:
+            a = app.get(c["card_id"], {})
+            questions = a.get("missing") or [] if a.get("applicability") == "missing_info" else []
+        rest = [i for i in items if i not in questions]
+        entry = {"case_id": c["id"], "card": c.get("card"), "items": rest}
+        if questions:
+            qualify.append({**entry, "questions": questions})
+        elif rest:
+            missing.append(entry)
+    return qualify, missing
+
+
+def payment_alerts(docs, facts):
+    """Payment requests (QR-bill, e-mail) that ordner.rules.payment_check finds suspicious: unseen IBAN or creditor,
+    urgency with a link."""
+    check = getattr(opt("rules"), "payment_check", None)
+    out = []
+    for d in docs if check else ():
+        fields = d.fields or {}
+        if d.kind in ("qr_bill_invoice", "email") or fields.get("iban"):
+            r = check(fields, docs, facts, d.id)
+            if r["suspicious"]:
+                out.append({"id": d.id, "kind": d.kind, "year": d.year, "issuer": d.issuer, "warning": r["warning"],
+                            "reasons": r["reasons"], "iban": r["iban"]})
+    return out
+
+
 def next_step(cases, docs, today):
     """One step: an urgent case first, then red pieces to re-read, then the nearest case with something to do;
     obligations before rights and options (the person decides whether to pursue those)."""
@@ -279,11 +316,15 @@ def overview(subject_id, today=None):
     docs = [plain(d) for d in docs_raw]
     cases = _with_cards(s.cases(subject_id=subject_id))
     open_cases = [c for c in cases if c["state"] not in DONE]
+    coverage = coverage_for(subject, facts, today)
+    qualify, missing = split_missing(open_cases, coverage)
+    alerts = payment_alerts(docs_raw, facts)
+    keys = ([k for c in cases for k in c.get("missing") or []] + [k for i in coverage.get("items") or [] for k in i["missing"]]
+            + [a["kind"] for a in alerts if a["kind"]])
     return {"today": today.isoformat(), "simulated": bool(SIMULATED), "subject": plain(subject), "documents": docs,
-            "cases": cases, "urgent": urgent(cases, today), "review": red_documents(docs),
+            "cases": cases, "urgent": urgent(cases, today), "review": red_documents(docs), "payment_alerts": alerts,
             "next_step": next_step(cases, docs, today), "wealth": wealth(facts, today),
-            "missing": [{"case_id": c["id"], "card": c["card"], "items": c["missing"]} for c in open_cases if c.get("missing")],
-            "coverage": coverage_for(subject, facts, today)}
+            "to_qualify": qualify, "missing": missing, "labels": labels(keys), "coverage": coverage}
 
 
 def case_detail(case_id, today=None):
@@ -311,7 +352,7 @@ def case_detail(case_id, today=None):
     basis = {k for d in case.get("deadlines") or [] for k in (d.get("computed_from") or {}).get("legal_basis") or []}
     return {"today": today.isoformat(), "case": case, "card": card, "facts": facts, "documents": docs,
             "events": events, "states": STATES, "rule_sources": {k: known[k] for k in basis if k in known},
-            "completeness": completeness}
+            "completeness": completeness, "labels": labels([*(case.get("missing") or []), *(f["key"] for f in facts)])}
 
 
 def _schedule(card, subject, docs, today, rules):
@@ -446,7 +487,7 @@ def ask(subject_id, question):
     llm, reason = llm_client()
     if llm is None:
         raise Unavailable(reason)
-    result = need("agent").run(question, subject_id, llm, store())
+    result = need("agent").run(question, subject_id, llm, store(), ctx={"today": today_().isoformat()})
     return {"mode": "live", "model": os.environ.get("LLM_NAME") or None, "result": plain(result)}
 
 
@@ -488,6 +529,20 @@ if __name__ == "__main__":
     assert "pension" in cov["domains_without_card"] and "tax" not in cov["domains_without_card"]
     assert all(i["verdict"] == "to_verify" for i in classify(cards, noa, [], None)["items"])  # no rules: nothing covered
 
+    open_ = [{"id": "c1", "card_id": "tax.return.VD", "card": None, "missing": ["subject.tax_at_source", "salary_certificate"]},
+             {"id": "c2", "card_id": "health.subsidy.VD", "card": None, "missing": ["income", "study_certificate"]},
+             {"id": "c3", "card_id": "serafe", "card": None, "missing": []}]
+    cov2 = {"rules": True, "items": [{"id": "tax.return.VD", "applicability": "missing_info", "missing": ["subject.tax_at_source"]},
+                                     {"id": "health.subsidy.VD", "applicability": "applicable", "missing": []}]}
+    q, m = split_missing(open_, cov2)
+    assert q == [{"case_id": "c1", "card": None, "items": ["salary_certificate"], "questions": ["subject.tax_at_source"]}], q
+    assert m == [{"case_id": "c2", "card": None, "items": ["income", "study_certificate"]}], m
+    assert split_missing(open_, {"available": False})[0][0]["questions"] == ["subject.tax_at_source"]  # no rules engine
+    from ordner.core import labels as L
+    assert L.labels(["tax.assessment.net_income"])["tax.assessment.net_income"]["fr"] == "revenu net imposable (décision de taxation)"
+    if opt("procedures"):  # every key a card can show has a human label
+        assert not [k for k in L.catalogue_keys(opt("procedures").load_cards()) if L._lookup(k)[0] is None]
+
     g = grid(cards)
     assert g["cells"]["tax"]["VD"]["status"] == "qualified" and g["cells"]["social"]["CH"]["status"] == "draft"
     assert g["counts"] == {"qualified": 4, "draft": 1} and g["jurisdictions"][0] == "CH" and len(g["jurisdictions"]) == 27
@@ -504,5 +559,10 @@ if __name__ == "__main__":
             assert f"{STATEMENT}:Talbruck Banque Privée SA" in vd.missing and "pillar3a_certificate" not in vd.missing, vd.missing
             reqs = [a for c in st.cases(sid) for a in c.actions if a.payload.get("issuer") == "Talbruck Banque Privée SA"]
             assert len(reqs) == 1 and reqs[0].requires_validation and reqs[0].status == "prepared", reqs
+            from ordner.core.schema import Document
+            st.add_document(Document("doc_phish", sid, "placeholder:phish", "f" * 64, "email", 2026, "Helvia (?)", fields={
+                "text": "URGENT : payez 89 CHF aujourd'hui sur https://helvia-pay.example, IBAN CH93 0076 2011 6238 5295 7"}))
+            alerts = payment_alerts(*_visible(st, sid, date(2026, 10, 14)))
+            assert [a["id"] for a in alerts] == ["doc_phish"] and alerts[0]["warning"]["fr"].startswith("possible hameçonnage"), alerts
             st.close()
     print("cockpit self-check ok")

@@ -153,6 +153,8 @@ const C18N = {
     ics: "Exporter le calendrier (.ics)", ics_off: "Export du calendrier : module des règles pas encore disponible", subject_pick: "Dossier",
     h_next: "Prochaine étape", h_urgent: "Urgent : échéances dans les 30 jours", h_missing: "Pièces et informations manquantes", h_review: "Pièces à vérifier (doute élevé)",
     none_urgent: "Aucune échéance dans les 30 prochains jours.", none_missing: "Rien ne manque dans les démarches ouvertes.",
+    h_qualify: "À qualifier : quelques questions avant de savoir si la démarche vous concerne", qualify_n: n => `à qualifier : ${n} question${n > 1 ? "s" : ""}`,
+    then_items: n => `si elle s'applique : ${n} pièce${n > 1 ? "s" : ""} ou information${n > 1 ? "s" : ""}`, more: n => `+ ${n} autre${n > 1 ? "s" : ""}`,
     none_review: "Aucune valeur en rouge : rien à relire.", none_next: "Rien à faire pour l'instant dans les parcours couverts.",
     next_validate: (k, c) => `Valider : ${k} — ${c}`, next_provide: (i, c) => `Fournir ${i} pour « ${c} »`,
     next_qualify: c => `Répondre aux questions qui qualifient « ${c} »`, next_review: (d, f) => `Relire ${d} : ${f}`,
@@ -199,8 +201,7 @@ const C18N = {
     you_here: "vous", cov_yours: "Vos parcours examinés", verdict: { covered: "couvert", to_verify: "à vérifier", not_applicable: "non applicable" },
     app: { applicable: "s'applique", not_applicable: "ne s'applique pas", missing_info: "informations manquantes", unknown: "non évalué", error: "erreur de règle" },
     yes: "oui", no: "non",
-    pk: { issuer: "établissement", to: "destinataire", channel: "canal", creditor: "bénéficiaire", amount: "montant", currency: "monnaie", reference: "référence", iban: "IBAN", due: "échéance", recipient: "destinataire" },
-    fact_labels: { "subject.tax_at_source": "imposition à la source (oui ou non)", "tax.securities.withholding_tax_total": "total de l'impôt anticipé", "tax.period": "période fiscale", "person.civil_status": "état civil" }
+    pk: { issuer: "établissement", to: "destinataire", channel: "canal", creditor: "bénéficiaire", amount: "montant", currency: "monnaie", reference: "référence", iban: "IBAN", due: "échéance", recipient: "destinataire" }
   },
   de: {
     nav_label: "Bereiche", nav_home: "Wo stehe ich", nav_inbox: "Eingang", nav_cases: "Verfahren", nav_coverage: "Abdeckung", nav_releve: "Steuerausweis",
@@ -224,6 +225,8 @@ const C18N = {
     ics: "Kalender exportieren (.ics)", ics_off: "Kalenderexport: Regelmodul noch nicht verfügbar", subject_pick: "Dossier",
     h_next: "Nächster Schritt", h_urgent: "Dringend: Fristen in den nächsten 30 Tagen", h_missing: "Fehlende Unterlagen und Angaben", h_review: "Zu prüfende Unterlagen (hoher Zweifel)",
     none_urgent: "Keine Frist in den nächsten 30 Tagen.", none_missing: "In den offenen Verfahren fehlt nichts.",
+    h_qualify: "Abzuklären: einige Fragen, bevor feststeht, ob das Verfahren Sie betrifft", qualify_n: n => `abzuklären: ${n} Frage${n > 1 ? "n" : ""}`,
+    then_items: n => `falls anwendbar: ${n} Unterlage${n > 1 ? "n" : ""} oder Angabe${n > 1 ? "n" : ""}`, more: n => `+ ${n} weitere`,
     none_review: "Kein roter Wert: nichts nachzulesen.", none_next: "In den abgedeckten Bereichen ist im Moment nichts zu tun.",
     next_validate: (k, c) => `Bestätigen: ${k} — ${c}`, next_provide: (i, c) => `${i} liefern für «${c}»`,
     next_qualify: c => `Fragen beantworten, um «${c}» abzuklären`, next_review: (d, f) => `${d} nachlesen: ${f}`,
@@ -270,8 +273,7 @@ const C18N = {
     you_here: "Sie", cov_yours: "Ihre geprüften Verfahren", verdict: { covered: "abgedeckt", to_verify: "zu prüfen", not_applicable: "nicht anwendbar" },
     app: { applicable: "anwendbar", not_applicable: "nicht anwendbar", missing_info: "Angaben fehlen", unknown: "nicht ausgewertet", error: "Regelfehler" },
     yes: "ja", no: "nein",
-    pk: { issuer: "Institut", to: "Empfänger", channel: "Kanal", creditor: "Zahlungsempfänger", amount: "Betrag", currency: "Währung", reference: "Referenz", iban: "IBAN", due: "Fälligkeit", recipient: "Empfänger" },
-    fact_labels: { "subject.tax_at_source": "Quellensteuer (ja oder nein)", "tax.securities.withholding_tax_total": "Total Verrechnungssteuer", "tax.period": "Steuerperiode", "person.civil_status": "Zivilstand" }
+    pk: { issuer: "Institut", to: "Empfänger", channel: "Kanal", creditor: "Zahlungsempfänger", amount: "Betrag", currency: "Währung", reference: "Referenz", iban: "IBAN", due: "Fälligkeit", recipient: "Empfänger" }
   },
   it: {
     nav_label: "Sezioni", nav_home: "A che punto sono", nav_inbox: "Documenti ricevuti", nav_cases: "Pratiche", nav_coverage: "Copertura", nav_releve: "Estratto fiscale",
@@ -295,6 +297,8 @@ const C18N = {
     ics: "Esportare il calendario (.ics)", ics_off: "Esportazione del calendario: modulo delle regole non ancora disponibile", subject_pick: "Dossier",
     h_next: "Prossimo passo", h_urgent: "Urgente: scadenze entro 30 giorni", h_missing: "Documenti e informazioni mancanti", h_review: "Documenti da verificare (dubbio alto)",
     none_urgent: "Nessuna scadenza nei prossimi 30 giorni.", none_missing: "Nelle pratiche aperte non manca nulla.",
+    h_qualify: "Da qualificare: alcune domande prima di sapere se la pratica la riguarda", qualify_n: n => `da qualificare: ${n} domand${n > 1 ? "e" : "a"}`,
+    then_items: n => `se si applica: ${n} document${n > 1 ? "i" : "o"} o informazion${n > 1 ? "i" : "e"}`, more: n => `+ altri ${n}`,
     none_review: "Nessun valore in rosso: niente da rileggere.", none_next: "Per ora niente da fare nei percorsi coperti.",
     next_validate: (k, c) => `Convalidare: ${k} — ${c}`, next_provide: (i, c) => `Fornire ${i} per «${c}»`,
     next_qualify: c => `Rispondere alle domande che qualificano «${c}»`, next_review: (d, f) => `Rileggere ${d}: ${f}`,
@@ -341,8 +345,7 @@ const C18N = {
     you_here: "lei", cov_yours: "I suoi percorsi esaminati", verdict: { covered: "coperto", to_verify: "da verificare", not_applicable: "non applicabile" },
     app: { applicable: "si applica", not_applicable: "non si applica", missing_info: "informazioni mancanti", unknown: "non valutato", error: "errore di regola" },
     yes: "sì", no: "no",
-    pk: { issuer: "istituto", to: "destinatario", channel: "canale", creditor: "beneficiario", amount: "importo", currency: "valuta", reference: "riferimento", iban: "IBAN", due: "scadenza", recipient: "destinatario" },
-    fact_labels: { "subject.tax_at_source": "imposizione alla fonte (sì o no)", "tax.securities.withholding_tax_total": "totale dell'imposta preventiva", "tax.period": "periodo fiscale", "person.civil_status": "stato civile" }
+    pk: { issuer: "istituto", to: "destinatario", channel: "canale", creditor: "beneficiario", amount: "importo", currency: "valuta", reference: "riferimento", iban: "IBAN", due: "scadenza", recipient: "destinatario" }
   }
 };
 for (const l in C18N) Object.assign(I18N[l], C18N[l]);
@@ -573,7 +576,13 @@ const day = iso => (iso ? `${iso.slice(8, 10)}.${iso.slice(5, 7)}.${iso.slice(0,
 const stamp = iso => { const d = new Date(iso); return isNaN(d) ? esc(iso) : d.toLocaleString(`${state.lang}-CH`, { dateStyle: "short", timeStyle: "short" }); };
 const lbl = (map, k) => esc(T()[map]?.[k] ?? k ?? "–");
 const cardName = c => esc(pick(c?.name) || c?.id || "?");
-const itemText = k => { const [kind, issuer] = String(k).split(/:(.*)/s); const t = T(); return issuer ? `${t.doc_types[kind] || kind} — ${issuer}` : t.doc_types[k] || t.fact_labels[k] || k; };
+const LBL = () => ({ ...state.overview?.data?.labels, ...state.caseDetail?.data?.labels });
+const itemText = k => { const l = LBL()[k]; if (l) return pick(l); const [kind, issuer] = String(k).split(/:(.*)/s); const t = T(); return issuer ? `${t.doc_types[kind] || kind} — ${issuer}` : t.doc_types[k] || k; };
+const chipList = (items, cls = "medium", max = 4) => {
+  const c = items.map(i => `<span class="chip ${cls}">${itemLabel(i)}</span>`);
+  return c.length > max + 1 ? `<div class="chips">${c.slice(0, max).join("")}</div><details><summary class="small">${esc(T().more(c.length - max))}</summary><div class="chips">${c.slice(max).join("")}</div></details>`
+    : `<div class="chips">${c.join("")}</div>`;
+};
 const itemLabel = k => esc(itemText(k));
 const maxDoubt = d => Math.max(-1, ...Object.values(d?.doubt || {}).filter(v => v != null));
 const notice = (html, cls = "notice") => `<p class="${cls}">${html}</p>`;
@@ -686,7 +695,7 @@ function coverageBanner(c) {
   if (!c.available) return unavail(c.module);
   const k = c.counts, nodom = c.domains_without_card.map(d => t.domains[d] || d).join(", ");
   const items = c.items.map(i => `<li><span class="chip ${i.verdict === "covered" ? "low" : i.verdict === "to_verify" ? "medium" : "na"}">${lbl("verdict", i.verdict)}</span>
-      <a href="#/coverage">${cardName(i)}</a> <span class="muted small">· ${lbl("nature", i.nature)} · ${lbl("qual", i.qualification)} · ${lbl("app", i.applicability)}${i.missing.length ? ` (${i.missing.map(esc).join(", ")})` : ""}</span></li>`).join("");
+      <a href="#/coverage">${cardName(i)}</a> <span class="muted small">· ${lbl("nature", i.nature)} · ${lbl("qual", i.qualification)} · ${lbl("app", i.applicability)}${i.missing.length ? ` (${i.missing.map(itemLabel).join(", ")})` : ""}</span></li>`).join("");
   return `<div class="banner cov" role="note">
     <p><strong>${esc(t.cov_banner(k.covered, k.to_verify, k.not_applicable, t.cov_where(c.canton || "?")))}</strong> ${esc(t.cov_claim)}</p>
     ${!c.rules ? `<p>${esc(t.cov_norules)}</p>` : ""}${nodom ? `<p class="small">${esc(t.cov_nodomain(nodom))}</p>` : ""}
@@ -728,7 +737,11 @@ function renderHome() {
   const caseLink = (id, card) => `<a href="#/case/${encodeURIComponent(id)}">${cardName(card)}</a>`;
   const urgent = o.urgent.map(u => `<li><span class="due">${esc(day(u.due))}</span> ${daysChip(u.days)} ${caseLink(u.case_id, u.card)}
       ${u.reminders.length ? `<span class="small muted">· ${esc(t.reminders)} ${u.reminders.map(day).join(", ")}</span>` : ""}</li>`).join("");
-  const missing = o.missing.map(m => `<li>${caseLink(m.case_id, m.card)}<div class="chips">${m.items.map(i => `<span class="chip medium">${itemLabel(i)}</span>`).join("")}</div></li>`).join("");
+  const missing = o.missing.map(m => `<li>${caseLink(m.case_id, m.card)}${chipList(m.items)}</li>`).join("");
+  const qualify = (o.to_qualify || []).map(m => `<li>${caseLink(m.case_id, m.card)} <span class="chip na">${esc(t.qualify_n(m.questions.length))}</span>${chipList(m.questions)}
+      ${m.items.length ? `<details><summary class="small">${esc(t.then_items(m.items.length))}</summary>${chipList(m.items, "na", 99)}</details>` : ""}</li>`).join("");
+  const alerts = (o.payment_alerts || []).map(a => `<li><span class="chip high">⚠ ${esc(pick(a.warning))}</span> <strong>${itemLabel(a.kind || "?")}</strong> ${esc([a.issuer, a.year].filter(Boolean).join(" · "))}
+      <ul class="small">${a.reasons.map(r => `<li>${esc(r)}</li>`).join("")}</ul></li>`).join("");
   const review = o.review.map(r => `<li><strong>${esc(t.doc_types[r.kind] || r.kind || "?")}</strong> ${esc([r.issuer, r.year].filter(Boolean).join(" · "))}
       <div class="small">${esc(t.red_fields)} ${r.fields.map(f => `<span class="chip high">${esc(t.fields[f] || f)}</span>`).join(" ")}</div></li>`).join("");
   el.innerHTML = `<h2 class="view-title" tabindex="-1">${esc(t.nav_home)}</h2>
@@ -739,9 +752,10 @@ function renderHome() {
     ${wealthHtml(o.wealth)}
     <div class="two">
       <section aria-labelledby="h-urgent"><h3 id="h-urgent" class="block">${esc(t.h_urgent)}</h3>${urgent ? `<ul class="list">${urgent}</ul>` : `<p class="muted">${esc(t.none_urgent)}</p>`}</section>
-      <section aria-labelledby="h-review"><h3 id="h-review" class="block">${esc(t.h_review)}</h3>${review ? `<ul class="list">${review}</ul>` : `<p class="muted">${esc(t.none_review)}</p>`}</section>
+      <section aria-labelledby="h-review"><h3 id="h-review" class="block">${esc(t.h_review)}</h3>${alerts || review ? `<ul class="list">${alerts}${review}</ul>` : `<p class="muted">${esc(t.none_review)}</p>`}</section>
     </div>
-    <section aria-labelledby="h-missing"><h3 id="h-missing" class="block">${esc(t.h_missing)}</h3>${missing ? `<ul class="list">${missing}</ul>` : `<p class="muted">${esc(t.none_missing)}</p>`}</section>`;
+    <section aria-labelledby="h-missing"><h3 id="h-missing" class="block">${esc(t.h_missing)}</h3>${missing ? `<ul class="list">${missing}</ul>` : `<p class="muted">${esc(t.none_missing)}</p>`}</section>
+    ${qualify ? `<section aria-labelledby="h-qualify"><h3 id="h-qualify" class="block">${esc(t.h_qualify)}</h3><ul class="list">${qualify}</ul></section>` : ""}`;
 }
 
 function renderInbox() {
@@ -824,6 +838,7 @@ function renderCase() {
   }).join("");
   const actions = (c.actions || []).map(a => `<li id="act-${esc(a.id)}" tabindex="-1">
       <h4>${lbl("kinds", a.kind)} <span class="chip ${a.status === "prepared" ? "medium" : a.status === "cancelled" ? "na" : "low"}">${lbl("astatus", a.status)}</span></h4>
+      ${a.payload?.warning ? `<p class="notice bad"><strong>⚠ ${esc(pick(a.payload.warning))}</strong>${(a.payload.phishing || []).map(r => `<br><span class="small">${esc(r)}</span>`).join("")}</p>` : ""}
       ${payloadHtml(a)}
       ${a.payload?.missing_vars?.length ? `<p class="small">${esc(t.missing_vars)} ${a.payload.missing_vars.map(v => `<code>${esc(v)}</code>`).join(", ")}</p>` : ""}
       <p class="small muted">${esc(a.kind === "payment" ? t.pay_note : t.send_note)}</p>
@@ -834,7 +849,7 @@ function renderCase() {
     const doc = documents[f.source_doc];
     const src = doc ? `${esc(t.doc_types[doc.kind] || doc.kind || "?")}${doc.issuer ? ` · ${esc(doc.issuer)}` : ""}${doc.read_path ? ` <span class="chip ${doc.read_path === "barcode" ? "low" : "na"}">${lbl("read", doc.read_path)}</span>` : ""}` : lbl("actors", f.actor);
     const cls = { confirmed: "low", proposed: "medium", rejected: "high", superseded: "na" }[f.status] || "na";
-    return `<tr class="fact-${esc(f.status)}"><th scope="row"><code>${esc(f.key)}</code></th><td class="value">${esc(value(f.value, f.unit))}</td><td>${esc(f.period || "–")}</td>
+    return `<tr class="fact-${esc(f.status)}"><th scope="row">${LBL()[f.key] ? `${itemLabel(f.key)} <code class="small muted">${esc(f.key)}</code>` : `<code>${esc(f.key)}</code>`}</th><td class="value">${esc(value(f.value, f.unit))}</td><td>${esc(f.period || "–")}</td>
       <td><span class="chip ${cls}">${lbl("fstatus", f.status)}</span></td><td class="small">${src}</td><td>${f.doubt != null ? doubtChip(f.doubt) : "–"}</td></tr>`;
   }).join("");
   const evs = events.slice().reverse().map(e => `<li><time datetime="${esc(e.ts)}">${stamp(e.ts)}</time><strong>${lbl("events", e.type)}</strong> <span class="muted small">· ${lbl("actors", e.actor)}</span>
@@ -847,7 +862,7 @@ function renderCase() {
     ${caseChips(c, card)}${card.notes ? `<details><summary>${esc(t.notes)}</summary><p>${esc(card.notes)}</p></details>` : ""}
     ${card.domain === "tax" ? `<p class="small"><a href="#/releve">${esc(t.releve_link)} →</a></p>` : ""}
     ${sec("prog", t.h_progress, `<ol class="stepper">${stepper}</ol>`)}
-    ${c.missing?.length || check ? sec("miss", c.missing?.length ? t.h_case_missing : t.h_check, `<div class="chips">${(c.missing || []).map(i => `<span class="chip medium">${itemLabel(i)}</span>`).join("")}</div>${check}`) : ""}
+    ${c.missing?.length || check ? sec("miss", c.missing?.length ? t.h_case_missing : t.h_check, `${chipList(c.missing || [], "medium", 8)}${check}`) : ""}
     <div class="two">
       ${sec("dl", t.h_deadlines, deadlines ? `<ul class="list">${deadlines}</ul>` : `<p class="muted">${esc(t.no_deadlines)}</p>`)}
       ${sec("act", t.h_actions, actions ? `<ul class="list">${actions}</ul>` : `<p class="muted">${esc(t.no_actions)}</p>`)}
@@ -867,7 +882,7 @@ function eventDetail(e) {
   if (e.type === "action_updated") return `${t.kinds[p.kind] || p.kind} : ${t.astatus[p.from] || p.from} → ${t.astatus[p.to] || p.to}`;
   if (e.type === "action_prepared") return t.kinds[p.kind] || p.kind || "";
   if (e.type === "deadline_added") return day(p.due);
-  if (e.type === "missing_updated") return (p.to || []).map(i => t.doc_types[i] || i).join(", ");
+  if (e.type === "missing_updated") return (p.to || []).map(itemText).join(", ");
   if (e.type === "case_opened") return [p.card_id, p.period].filter(Boolean).join(" · ");
   if (e.type.startsWith("fact_")) return `${p.key ?? ""} = ${value(p.value ?? p.new_value, p.unit)}`;
   if (e.type === "document_received") return [t.doc_types[p.kind] || p.kind, p.issuer, p.year].filter(Boolean).join(" · ");

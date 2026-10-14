@@ -129,7 +129,7 @@ Self-check: `python -m ordner.tools.selfcheck` (replay, no model, temporary doss
 |---|---|
 | `mode` | `replay` (default): cached model outputs from `work/` (OCR `ocr.*.jsonl`, Apertus `extract.*.jsonl`, d1 `route.jsonl`), labelled fallbacks (rule-based extraction, heuristics) otherwise. `live`: LightOnOCR-3, d1-3B, EmbeddingGemma 2, Apertus are loaded/called |
 | `store`, `subject_id` | Dossier session: `subject_id` args are forced to it, `doc_...` ids resolve through the store (other subjects refused), file paths outside `track_2b/` refused |
-| `actor` | `model` (default) or `user`: `confirm_fact`/`reject_fact` and `result_verified` without proof are refused to the model |
+| `actor` | `model` (default) or `user`: `confirm_fact`/`reject_fact` and `result_verified` without proof are refused to the model (the coordinator also hides these ops from the schema it shows) |
 | `llm_url`, `llm_model` / `apertus_mlx` | `expert.run` live: OpenAI-compatible endpoint (warning if not localhost) / in-process MLX (`True` or adapter path) |
 | `today` | Scenario date (YYYY-MM-DD, default the machine date): `on` of `rules.applicable` (ages, card validity), `today` of deadlines and `reminders` |
 | `expert_tags`, `work` | Replay tags (default `apertus-lora`, `apertus-base`), work dir |
@@ -137,6 +137,10 @@ Self-check: `python -m ordner.tools.selfcheck` (replay, no model, temporary doss
 `dossier.check(subject_id, period, card_id?)` (read only) exposes `ordner.rules.completeness` (with a card: missing
 documents per declared institution, wrong year, duplicates, missing facts) and `ordner.rules.consolidate` (tax cards or
 no card: totals per measure, `final`/`provisional`/`incomplete`).
+
+`knowledge.search` indexes the corpus plus the verified quotes of every procedure card; with a dossier in ctx it defaults to
+the subject's canton (+ federal) and language, and boosts the cards of the open cases (or `card_id`).
+`ordner.rules.payment_check` (phishing guard) runs in the coordinator on every document read and every prepared payment.
 
 No tool has `side_effect=True`: none sends, files or pays; `case.record` writes the local dossier only and actions are
 prepared by the coordinator. `receipt.verify` is `established` only with a proof event (action moved to `verified` by

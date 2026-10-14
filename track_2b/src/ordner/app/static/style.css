@@ -132,6 +132,7 @@ label.check input { margin-top: 3px; }
 .view-title:focus-visible { outline: 2px solid var(--ink); }
 h3.block { font: 650 16px/1.3 var(--sans); margin: 0 0 12px; }
 .notice { border-left: 4px solid var(--rule); background: var(--chip); padding: 8px 12px; margin: 12px 0 0; }
+.notice.bad { border-left-color: var(--bad); background: var(--bad-bg); }
 .banner.cov { margin-top: 12px; }
 .banner.cov p { margin: 0 0 4px; }
 .banner.cov details { color: var(--ink); font-size: 13px; }

@@ -4,12 +4,16 @@ IMAGE ?= ordner
 PORT  ?= 8000
 TTY   := $(shell [ -t 0 ] && echo -it)
 # Optional model endpoint (see .env.example): passed through when set, never required by the replay.
-DOCKER_ENV := $(if $(wildcard .env),--env-file .env,) -e LLM_NAME -e LLM_BASE_URL -e LLM_API_KEY
+# ORDNER_TODAY (simulated date of the demo dossier, default 2026-02-20 in the image) overrides only when set:
+# a bare `-e VAR` unset on the host would erase the image default.
+DOCKER_ENV := $(if $(wildcard .env),--env-file .env,) -e LLM_NAME -e LLM_BASE_URL -e LLM_API_KEY \
+              $(if $(ORDNER_TODAY),-e ORDNER_TODAY,)
 RESULTS    := -v "$(CURDIR)/data/results:/app/data/results"
 LIVE_PY    := PYTHONPATH=src .venv/bin/python
 
-# Judges: replay the evaluation from the recorded model outputs in data/ (no GPU, no weights, no network),
-# write data/results/ (results.json, table.md, figures), then serve the console on http://localhost:$(PORT)
+# Judges: replay the evaluation from the recorded model outputs in data/ (no GPU, no weights, no network), run the
+# scenario baseline (rules only), write data/results/ (results.json, table.md, figures, scenarios_rules_only.*),
+# seed the fictional demo dossier, then serve the console (cockpit first) on http://localhost:$(PORT)
 run: build
 	docker run --rm --init $(TTY) -p $(PORT):8000 $(DOCKER_ENV) $(RESULTS) $(IMAGE)
 

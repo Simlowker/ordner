@@ -9,7 +9,9 @@ import re
 from dataclasses import asdict, is_dataclass
 from typing import get_args
 
+from ordner.core.labels import label
 from ordner.core.schema import Action, ActionKind, new_id, to_dict
+from ordner.tools.case import USER_ONLY_OPS
 
 ACTION_KINDS = list(get_args(ActionKind))
 MAX_TOOL_CHARS, MAX_SNAPSHOT_CHARS, MAX_DUPLICATES = 4000, 8000, 3
@@ -181,6 +183,16 @@ def _clip(s, n):
     return s if len(s) <= n else s[:n] + " ...[truncated]"
 
 
+def _model_schema(spec, actor):
+    """Input schema shown to the model: the person-only ops of case.record (confirm/reject a fact) are hidden from it
+    (the registry refuses them anyway); a user-driven run keeps them."""
+    op = spec.input_schema.get("properties", {}).get("op", {})
+    if actor == "user" or "enum" not in op:
+        return spec.input_schema
+    props = {**spec.input_schema["properties"], "op": {**op, "enum": [o for o in op["enum"] if o not in USER_ONLY_OPS]}}
+    return {**spec.input_schema, "properties": props}
+
+
 def _kind_for(tool_name):
     for word, kind in (("mail", "email_draft"), ("pay", "payment"), ("letter", "letter"), ("remind", "reminder")):
         if word in tool_name:
@@ -193,17 +205,33 @@ class _Run:
         self.goal, self.store, self.reg = goal, store, reg
         self.ctx = {**(ctx or {}), "store": store, "subject_id": subject_id}
         self.specs = {s.name.replace(".", "_"): s for s in reg.SPECS}   # OpenAI names allow no dots
+        actor = self.ctx.get("actor", "model")
         self.tools = [{"type": "function", "function": {"name": api, "description": s.description,
-                                                        "parameters": s.input_schema}}
+                                                        "parameters": _model_schema(s, actor)}}
                       for api, s in self.specs.items()] + AGENT_TOOLS
         self.out = {"transcript": [], "actions": [], "questions": [], "warnings": [], "answer": None,
                     "stats": {"steps": 0, "calls": 0, "repaired_json": 0, "bad_json": 0, "unknown_tool": 0,
                               "bad_args": 0, "duplicate": 0, "intercepted": 0}}
-        self.removed, self.seen = [], set()
+        self.removed, self.seen, self.risks = [], set(), []
 
     @property
     def cases(self):  # read fresh: case_record may open a case during the run
         return [c.id for c in self.store.cases(self.ctx["subject_id"]) if c.state != "closed"]
+
+    def payment_risk(self, content, doc_id=None, payment=False):
+        """ordner.rules.payment_check against this dossier; a suspicious request is kept for every later payment."""
+        try:
+            from ordner.rules import payment_check
+        except ImportError:
+            return None
+        sid = self.ctx["subject_id"]
+        r = payment_check(content, self.store.documents(sid), self.store.facts(sid), doc_id, payment=payment)
+        if r["suspicious"]:
+            self.risks.append(r)
+            msg = f"{r['warning']['fr']} : {'; '.join(r['reasons'])}"
+            if msg not in self.out["warnings"]:
+                self.out["warnings"].append(msg)
+        return r
 
     def prepare(self, kind, summary, details, case_id=None, tool=None):
         cases = self.cases
@@ -216,6 +244,11 @@ class _Run:
         payload = {"summary": summary, "details": details or {}, "goal": self.goal, "prepared_by": "ordner.agent"}
         if tool:
             payload["tool"] = tool
+        if kind == "payment":  # never silently: a suspicious request travels with the prepared payment
+            self.payment_risk(details or {}, payment=True)
+            if self.risks:
+                payload["warning"] = self.risks[0]["warning"]
+                payload["phishing"] = list(dict.fromkeys(x for r in self.risks for x in r["reasons"]))
         a = Action(new_id("act"), case_id or cases[0], kind, payload, requires_validation=True,
                    status="prepared")
         try:
@@ -223,8 +256,12 @@ class _Run:
         except Exception as e:
             return {"error": f"could not store the action: {type(e).__name__}: {e}"}
         self.out["actions"].append(to_dict(a))
-        return {"status": "prepared", "action_id": a.id, "requires_validation": True,
-                "note": "Not executed. The person must validate it."}
+        out = {"status": "prepared", "action_id": a.id, "requires_validation": True,
+               "note": "Not executed. The person must validate it."}
+        if payload.get("warning"):
+            out["warning"] = (f"{payload['warning']['fr']}: tell the person to check the sender before paying "
+                              f"({'; '.join(payload['phishing'])})")
+        return out
 
     def dispatch(self, call):
         st = self.out["stats"]
@@ -251,7 +288,8 @@ class _Run:
                              "tool, or give your answer."}
         self.seen.add(key)
         if name == "ask_user":
-            self.out["questions"].append({"question": args["question"], "missing": args.get("missing")})
+            self.out["questions"].append({"question": args["question"], "missing": args.get("missing"),
+                                          "label": label(args["missing"]) if args.get("missing") else None})
             return {"status": "asked", "note": "The person will answer later; stop here."}
         if name == "prepare_action":
             details = {k: args[k] for k in ("recipient", "subject", "body", "amount") if k in args}
@@ -264,7 +302,13 @@ class _Run:
             result = self.reg.call(spec.name, args, self.ctx)
         except Exception as e:  # tool failure is reported to the model, never fatal to the run
             return {"error": f"{type(e).__name__}: {e}"}
-        return self.guard(result)
+        result = self.guard(result)
+        if spec.name in ("document.read", "document.decode") and isinstance(result, dict):
+            r = self.payment_risk(result, args.get("doc") or args.get("doc_id"))
+            if r and r["suspicious"]:
+                result["warnings"] = [*(result.get("warnings") or []), f"{r['warning']['fr']}: {'; '.join(r['reasons'])}. "
+                                      "Tell the person; any payment you prepare carries this warning."]
+        return result
 
     def guard(self, result):
         n = len(self.removed)

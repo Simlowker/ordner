@@ -37,3 +37,6 @@ data/results/
 
 # Cantonal guide passages: redistribution terms unclear, rebuilt locally with `python -m ordner.explain.corpus --download`
 data/corpus/passages.jsonl
+
+# Local tooling
+.claude/

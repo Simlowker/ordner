@@ -4,7 +4,7 @@ Stdlib HTTP server + vanilla HTML/CSS/JS (no build step, no CDN: works air-gappe
 
 ```bash
 PYTHONPATH=src python -m ordner.app.server   # console only, http://localhost:8000
-PYTHONPATH=src python -m ordner.app          # replay (python -m ordner.eval.run) if present, then console
+PYTHONPATH=src python -m ordner.app          # replay + rules-only scenario baseline + demo dossier seed, then console (Docker entry point)
 PYTHONPATH=src python -m ordner.app.deductions   # self-check of the deductions rules
 ```
 
@@ -18,7 +18,10 @@ Reads `ordner.case` (W1), `ordner.procedures.catalog` (W2), `ordner.rules` (W3),
 a missing module gives HTTP 503 `{"error": "unavailable", "module"}` and the view says « module pas encore disponible ».
 An empty dossier is seeded with the fictional persona (`ordner.case.demo_seed`) and reviewed once: every card of the
 subject's canton + CH that is not `not_applicable` opens a case with its next deadline, reminders and missing pieces
-(`POST /api/review`, idempotent; also the « Revoir le dossier » button). Missing pieces come from
+(`POST /api/review`, idempotent; also the « Revoir le dossier » button). The home splits procedures whose applicability is still
+unknown (« à qualifier », with the deciding questions) from procedures that genuinely miss pieces; every key is shown with its
+fr/de/it label from `ordner.core.labels`. Payment requests flagged by `ordner.rules.payment_check` (unseen IBAN or creditor,
+urgency with a link) appear under « Pièces à vérifier », and a prepared payment carries the « possible hameçonnage » warning. Missing pieces come from
 `ordner.rules.completeness` (waivers, wrong year, duplicates, one statement per declared bank); each missing bank
 statement gets a prepared `document_request` with the `email_drafts` letter, downloadable as `.eml` once validated. Endpoints: see the docstring of `server.py`.
 « Valider » only records the person's validation (`Store.update_action(..., "validated")`, event `action_updated`):

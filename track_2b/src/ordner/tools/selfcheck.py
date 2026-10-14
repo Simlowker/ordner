@@ -88,7 +88,17 @@ def check_knowledge(ctx):
     assert any("Verrechnungssteuer" in h["text"] for h in hits)
     hits = ok("knowledge.search", {"query": "valeur fiscale des titres", "canton": "TI", "k": 8}, ctx)["data"]["passages"]
     assert hits and {h["jurisdiction"] for h in hits} <= {"CH", "TI"}
-    print("knowledge ok: BM25 over the official corpus, language and canton filters, urls")
+    # retrieval sanity on the procedure cards' own verified sources (demo subject: canton VD -> VD + federal, French)
+    vd = {} if ctx.get("subject_id") else {"canton": "VD", "lang": "fr"}
+    top = lambda q: ok("knowledge.search", {"query": q, **vd}, ctx)["data"]["passages"][0]
+    h = top("délai de dépôt de la déclaration d'impôt")
+    assert "vd.ch" in h["url"] and h["card_id"] == "tax.return.VD", h
+    h = top("délai pour former opposition au commandement de payer")
+    assert "art. 74" in h["title"] and h["card_id"] == "debt.payment_order.opposition", h
+    h = top("changer de caisse maladie pour l'an prochain")
+    assert "bag.admin.ch" in h["url"] or ("LAMal" in h["title"] and "art. 7," in h["title"]), h
+    print("knowledge ok: BM25 over the official corpus + card sources, language and canton filters, urls, "
+          "VD deadline / LP art. 74 / LAMal change found")
 
 
 def check_decision(ctx):
