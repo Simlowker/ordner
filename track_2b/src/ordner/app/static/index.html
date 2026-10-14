@@ -14,14 +14,33 @@
     <div class="mark" aria-hidden="true"></div>
     <h1>Ordner <span class="tagline">— <span data-i18n="tagline">assistant administratif souverain</span></span></h1>
   </div>
-  <div class="langs" role="group" aria-label="Langue · Sprache · Lingua">
-    <button type="button" data-lang="fr" aria-pressed="true" lang="fr">FR</button>
-    <button type="button" data-lang="de" aria-pressed="false" lang="de">DE</button>
-    <button type="button" data-lang="it" aria-pressed="false" lang="it">IT</button>
+  <div class="tools">
+    <button type="button" id="ask-open" class="btn primary" aria-haspopup="dialog" data-i18n="ask_title">Demander à Ordner</button>
+    <div class="langs" role="group" aria-label="Langue · Sprache · Lingua">
+      <button type="button" data-lang="fr" aria-pressed="true" lang="fr">FR</button>
+      <button type="button" data-lang="de" aria-pressed="false" lang="de">DE</button>
+      <button type="button" data-lang="it" aria-pressed="false" lang="it">IT</button>
+    </div>
   </div>
 </header>
+<nav class="tabs" data-i18n-aria="nav_label" aria-label="Sections">
+  <a href="#/home" data-route="home" data-i18n="nav_home">Où j'en suis</a>
+  <a href="#/inbox" data-route="inbox" data-i18n="nav_inbox">Pièces reçues</a>
+  <a href="#/cases" data-route="cases" data-i18n="nav_cases">Démarches</a>
+  <a href="#/coverage" data-route="coverage" data-i18n="nav_coverage">Couverture</a>
+  <a href="#/releve" data-route="releve" data-i18n="nav_releve">Relevé fiscal</a>
+</nav>
 
 <main id="main">
+  <div id="subject-bar" class="subject-bar"></div>
+  <p id="sr-status" class="sr-only" role="status" aria-live="polite"></p>
+  <div class="view" id="v-home" hidden></div>
+  <div class="view" id="v-inbox" hidden></div>
+  <div class="view" id="v-cases" hidden></div>
+  <div class="view" id="v-case" hidden></div>
+  <div class="view" id="v-coverage" hidden></div>
+  <div class="view" id="v-releve" hidden>
+  <h2 class="view-title" tabindex="-1" data-i18n="nav_releve">Relevé fiscal</h2>
   <p class="lead" data-i18n="lead">Lit un relevé fiscal bancaire, extrait les montants à reporter, signale ce dont il n'est pas sûr et l'explique dans votre langue. Tout tourne en local : aucun appel réseau.</p>
   <p id="fixture-banner" class="banner" role="note" hidden></p>
 
@@ -129,7 +148,23 @@
       </div>
     </div>
   </section>
+  </div>
 </main>
+
+<dialog id="ask" aria-labelledby="ask-h">
+  <div class="ask-head">
+    <h2 id="ask-h" data-i18n="ask_title">Demander à Ordner</h2>
+    <button type="button" id="ask-close" class="btn" data-i18n="close">Fermer</button>
+  </div>
+  <p id="ask-mode" class="banner"></p>
+  <div id="ask-examples" class="examples" role="group" data-i18n-aria="ask_examples"></div>
+  <form id="ask-form">
+    <label for="ask-q" data-i18n="ask_label">Votre question</label>
+    <textarea id="ask-q" rows="3" maxlength="1000" required></textarea>
+    <button type="submit" class="btn primary" data-i18n="ask_send">Demander</button>
+  </form>
+  <div id="ask-out" aria-live="polite"></div>
+</dialog>
 
 <footer>
   <p><span data-i18n="footer_models">Modèles : Apertus 1.5 8B (extraction, explication), LightOnOCR-3 (lecture), d1-3B (routage, validation), EmbeddingGemma 2 (recherche dans les guides).</span> <span id="mode"></span></p>

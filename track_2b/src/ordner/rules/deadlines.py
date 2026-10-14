@@ -3,7 +3,7 @@ Every computed date carries computed_from = rule, version, inputs, card source i
 A missing input gives {"status": "missing_info", ...}; nothing is guessed. Stdlib only, no network."""
 from datetime import date, datetime, timedelta, timezone
 
-from .applicability import _as_date, _g
+from .applicability import _as_date, _g, latest_fact
 
 VERSION = "2026-10-14"
 DAY = timedelta(days=1)
@@ -144,20 +144,31 @@ def _holiday_basis(canton, res: dict):
 
 def _days_after(rule_id, params, subject, context):
     lp = rule_id == "debt_collection" or bool(params.get("lp_holidays"))
-    notified = context.get("notified_on")
-    if not notified:
+    if params.get("from_fact"):
+        n, why = _fact_date(params["from_fact"], subject, context)
+        if n is None:
+            return _missing(rule_id, [params["from_fact"]], why)
+        start = {"from_fact": params["from_fact"], "start_on": n.isoformat()}
+    elif context.get("notified_on"):
+        n = _as_date(context["notified_on"])
+        start = {"notified_on": n.isoformat()}
+    else:
         return _missing(rule_id, ["notified_on"], "date de notification (prouvée) inconnue : aucun délai n'est calculé")
     days = params.get("days", 10 if lp else None)
-    if not isinstance(days, int) or days <= 0:
-        raise ValueError(f"{rule_id}: params.days must be a positive int, got {days!r}")
+    if not isinstance(days, int) or days < 0:
+        raise ValueError(f"{rule_id}: params.days must be an int >= 0, got {days!r}")
     business = params.get("count", "calendar") == "business"
-    canton, n = _canton(subject, context), _as_date(notified)
-    res = {"inputs": {"notified_on": n.isoformat(), "days": days, "count": "business" if business else "calendar",
-                      "canton": canton, "lp_holidays": lp},
+    canton = _canton(subject, context)
+    res = {"inputs": {**start, "days": days, "count": "business" if business else "calendar", "canton": canton, "lp_holidays": lp},
            "steps": [], "warnings": [], "basis": ["lp_31", "cpc_142"] + (["lp_74"] if days == 10 else []) if lp else ["pa_20", "cpc_142"]}
     _holiday_basis(canton, res)
+    if days == 0:
+        res["steps"].append(f"sans délai : au plus tard le jour de l'événement, {n:%d.%m.%Y}")
+        res["warnings"].append("« sans délai » lu comme « aussitôt que possible, au plus tard le jour même » (interprétation Ordner)")
+        return {**res, "due": n}
     end = _nth_working_after(n, days, canton) if business else n + timedelta(days=days)
-    res["steps"].append(f"notification le {n:%d.%m.%Y}, le délai court dès le lendemain ; {days} jours "
+    origin = f"fait « {params['from_fact']} »" if params.get("from_fact") else "notification"
+    res["steps"].append(f"{origin} le {n:%d.%m.%Y}, le délai court dès le lendemain ; {days} jours "
                         f"{'ouvrables ' if business else ''}→ {end:%d.%m.%Y}")
     if lp and lp_ferie(n):
         res["warnings"].append("notification pendant les féries : ses effets pourraient être reportés après les féries "
@@ -225,6 +236,85 @@ def _cantonal_table(rule_id, params, subject, context):
     return res
 
 
+def _fact_date(key, subject, context):
+    """(date, None) from the latest confirmed fact `key` in context["facts"], or (None, French reason)."""
+    f, proposed = latest_fact(context.get("facts") or [], _g(subject, "id"), key)
+    if f is None:
+        return None, (f"fait « {key} » seulement proposé (valeur {_g(proposed, 'value')!r}) : à confirmer avant tout calcul"
+                      if proposed is not None else f"fait « {key} » absent du dossier : aucun délai n'est calculé")
+    try:
+        return _as_date(_g(f, "value")), None
+    except (TypeError, ValueError):
+        return None, f"fait « {key} » = {_g(f, 'value')!r} n'est pas une date ISO"
+
+
+def _chosen(rule_id, params, subject, context):
+    if context.get("chosen_date"):
+        d, origin = _as_date(context["chosen_date"]), {"chosen_date": context["chosen_date"]}
+    elif params.get("from_fact"):
+        d, why = _fact_date(params["from_fact"], subject, context)
+        if d is None:
+            return _missing(rule_id, [params["from_fact"]], why)
+        origin = {"from_fact": params["from_fact"], "chosen_date": d.isoformat()}
+    else:
+        return _missing(rule_id, ["chosen_date"], "date choisie par la personne inconnue (ex. premier jour d'indemnité demandé)")
+    return {"due": d, "inputs": origin, "steps": [f"au plus tard le jour choisi par la personne : {d:%d.%m.%Y}"],
+            "warnings": [], "basis": []}
+
+
+def _merge(params: dict, override: dict) -> dict:
+    return {**params, **override, "sources": list(dict.fromkeys((override.get("sources") or []) + (params.get("sources") or [])))}
+
+
+def _specialize(rule_id, params, subject, context):
+    """Apply params["cantonal"][canton] then params["kinds"][context kind]. Returns (params, applied) or a missing dict."""
+    applied = {"warnings": []}
+    cantonal = params.pop("cantonal", None)
+    if cantonal:
+        canton = _canton(subject, context)
+        if not canton:
+            return _missing(rule_id, ["subject.canton"], "la fiche prévoit des règles cantonales : canton nécessaire")
+        entry = dict(cantonal.get(canton) or {})
+        if entry:
+            if entry.get("rule"):
+                applied["cantonal_rule"] = entry.pop("rule")
+                applied["warnings"].append(f"règle cantonale {canton} décrite en texte (cantonal_rule) : à lire, le calcul "
+                                           "ne reprend que ses paramètres chiffrés")
+            params = _merge(params, entry)
+            applied["cantonal"] = canton
+        else:
+            applied["warnings"].append(f"canton {canton} sans règle propre dans la fiche : règle de base appliquée, à qualifier")
+    kinds = params.pop("kinds", None)
+    if kinds:
+        kind = context.get("kind")
+        if not kind:
+            return _missing(rule_id, ["kind"], f"type d'événement nécessaire (règles propres : {', '.join(kinds)})")
+        if kind in kinds:
+            params = _merge(params, kinds[kind])
+            applied["kind"] = kind
+    return params, applied
+
+
+def _variants(rule_id, params, subject, context):
+    base = {k: v for k, v in params.items() if k not in ("variants", "applies_to")}
+    options = [(params.get("applies_to") or ["default"], rule_id, base)]
+    options += [([v["case"]], v.get("id", rule_id), {k: x for k, x in v.items() if k not in ("case", "id")})
+                for v in params["variants"]]
+    known = [c for cases, _, _ in options for c in cases]
+    chosen = context.get("variant")
+    if chosen is None:
+        results = [{"cases": cases, **compute_deadline({"id": rid, "params": p}, subject, context)} for cases, rid, p in options]
+        return {"status": "variants", "rule": rule_id, "missing": ["variant"], "variants": results,
+                "why": [f"plusieurs échéances selon l'option : préciser la variante parmi {', '.join(known)}"]}
+    for cases, rid, p in options:
+        if chosen in cases:
+            r = compute_deadline({"id": rid, "params": p}, subject, context)
+            if r["status"] == "computed":
+                r["variant"] = r["computed_from"]["variant"] = chosen
+            return r
+    return _missing(rule_id, ["variant"], f"variante {chosen!r} inconnue ; variantes : {', '.join(known)}")
+
+
 RULES = {
     "fixed_date": _fixed,
     "days_after_notification": _days_after,
@@ -232,21 +322,32 @@ RULES = {
     "reception_by": _fixed,
     "cantonal_table": _cantonal_table,
     "year_end": lambda rid, p, s, c: _fixed(rid, {"month": 12, "day": 31, **p}, s, c),
+    "chosen_date": _chosen,
 }
 
 
 def compute_deadline(rule, subject, context: dict) -> dict:
     """{"status": "computed", "due": "YYYY-MM-DD", "computed_from": {...}, ...} or {"status": "missing_info", "missing": [...]}."""
     rule_id, params = _g(rule, "id"), dict(_g(rule, "params") or {})
+    context = context or {}
     if rule_id not in RULES:
         raise ValueError(f"unknown deadline rule {rule_id!r}; known: {DEADLINE_RULE_IDS}")
-    res = RULES[rule_id](rule_id, params, subject, context or {})
+    if params.get("variants"):
+        return _variants(rule_id, params, subject, context)
+    spec = _specialize(rule_id, params, subject, context)
+    if isinstance(spec, dict):
+        return spec
+    params, applied = spec
+    res = RULES[rule_id](rule_id, params, subject, context)
     if res.get("status") == "missing_info":
         return res
     table_entry = params.get("table", {}).get(res["inputs"].get("canton"), {}) if rule_id == "cantonal_table" else {}
+    if table_entry.get("rule"):
+        applied["cantonal_rule"] = table_entry["rule"]
     computed_from = {"rule": rule_id, "version": VERSION, "inputs": res["inputs"],
                      "card_sources": table_entry.get("sources", params.get("sources", [])),
-                     "legal_basis": list(dict.fromkeys(res["basis"])), "steps": res["steps"], "warnings": res["warnings"]}
+                     "legal_basis": list(dict.fromkeys(res["basis"])), "steps": res["steps"],
+                     "warnings": applied.pop("warnings") + res["warnings"], **applied}
     if context.get("label"):
         computed_from["label"] = context["label"]
     if "send_by" in res:
@@ -275,7 +376,7 @@ def _send_by(due: date, params, context, canton, steps) -> str:
     return s.isoformat()
 
 
-DEADLINE_RULE_IDS = ["fixed_date", "days_after_notification", "debt_collection", "reception_by", "cantonal_table", "year_end"]
+DEADLINE_RULE_IDS = list(RULES)
 
 # ---- reminders and calendar export --------------------------------------------------------------------------------------
 

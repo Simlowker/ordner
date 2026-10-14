@@ -18,14 +18,21 @@ def _as_date(d) -> date:
     return date.fromisoformat(d) if isinstance(d, str) else d
 
 
+def latest_fact(facts, subject_id, key, statuses=("confirmed",), period=None):
+    """(latest usable Fact, latest proposed Fact) for this subject and key; other subjects' facts are never used."""
+    same = sorted((f for f in facts if _g(f, "key") == key and _g(f, "subject_id") in (subject_id, None)
+                   and (period is None or _g(f, "period") in (str(period), None))), key=lambda f: _g(f, "created_at") or "")
+    usable = [f for f in same if _g(f, "status") in statuses]
+    proposed = [f for f in same if _g(f, "status") == "proposed"]
+    return (usable[-1] if usable else None), (proposed[-1] if proposed else None)
+
+
 class _Eval:
     def __init__(self, subject, facts, on: date, period, accept_proposed):
         self.subject, self.on, self.why = subject, on, []
         self.year = int(str(period)[:4]) if period else on.year  # age_at_year_end: the evaluated period's year
         self.accept = ("confirmed", "proposed") if accept_proposed else ("confirmed",)
-        sid = _g(subject, "id")
-        self.facts = [f for f in facts if _g(f, "subject_id") in (sid, None)  # never reuse another subject's facts
-                      and (period is None or _g(f, "period") in (str(period), None))]
+        self.facts, self.period = facts, period
 
     def node(self, c) -> tuple[bool | None, set]:
         if not c:
@@ -86,14 +93,11 @@ class _Eval:
         return None, {"subject.birth_date"}
 
     def fact(self, key, op, target):
-        same = sorted((f for f in self.facts if _g(f, "key") == key), key=lambda f: _g(f, "created_at") or "")
-        usable = [f for f in same if _g(f, "status") in self.accept]
-        proposed = [f for f in same if _g(f, "status") == "proposed"]
-        if not usable and proposed:
-            self.why.append(f"fait « {key} » seulement proposé (valeur {_g(proposed[-1], 'value')!r}), "
+        f, proposed = latest_fact(self.facts, _g(self.subject, "id"), key, self.accept, self.period)
+        if f is None and proposed is not None:
+            self.why.append(f"fait « {key} » seulement proposé (valeur {_g(proposed, 'value')!r}), "
                             "à confirmer → information manquante")
             return None, {key}
-        f = usable[-1] if usable else None
         tag = " (proposé)" if f is not None and _g(f, "status") == "proposed" else ""
         return self.leaf(key, None if f is None else _g(f, "value"), op, target, f"fait « {key} »{tag}")
 

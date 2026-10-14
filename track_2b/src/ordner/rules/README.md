@@ -8,6 +8,8 @@ applicable(card, subject, facts, on=None, period=None, accept_proposed=False) ->
 compute_deadline(rule, subject, context) -> dict
 reminders(due, policy="default", today=None) -> list[str]
 to_ics(deadlines, subject) -> str
+completeness(card, subject, facts, documents, period=None) -> dict
+consolidate(facts, period) -> dict
 ```
 Objects can be the `schema.py` dataclasses or the same fields as dicts.
 
@@ -39,11 +41,21 @@ Result: `{"status": "applicable"|"not_applicable"|"missing_info", "missing": [..
 | id | params | context needed |
 |---|---|---|
 | `fixed_date` | `month`, `day`, `year_offset`=0, `extensions`?, `reception`? | `period` |
-| `days_after_notification` | `days`, `count`=`calendar`\|`business`, `lp_holidays`=false, `extend_non_working`=true | `notified_on` |
+| `days_after_notification` | `days` (0 = « sans délai »), `count`=`calendar`\|`business`, `lp_holidays`=false, `extend_non_working`=true, `from_fact`? | `notified_on`, or `facts` with `from_fact` |
 | `debt_collection` | `days`=10 (LP art. 74) | `notified_on` |
 | `reception_by` | `month`, `day`, `year_offset`?, `send_by`={`month`,`day`}?, `margin_working_days`=5 | `period` |
 | `cantonal_table` | `table`: {canton: fixed_date params incl. `extensions`, `sources`} | `period`, canton |
 | `year_end` | `year_offset`? (31.12) | `period` |
+| `chosen_date` | `from_fact`? | `chosen_date`, or `facts` with `from_fact` |
+
+Modifiers usable with any rule:
+- **`from_fact`**: the start date (or, for `chosen_date`, the date itself) is the value of the latest **confirmed** fact with this key, read from `context["facts"]`. If the fact is absent or only proposed, the result is `missing_info` on that key.
+- **`cantonal`**: `{canton: params override}`, merged over the base params for `context.canton` or `subject.canton`. Its `sources` come before the base ones. A `"rule"` text key is kept as `computed_from.cantonal_rule`, with a warning: the text is not interpreted. If the card has `cantonal` and the canton is unknown, the result is `missing_info` (`subject.canton`), because a canton may be stricter than the base. A canton absent from the map gets the base rule, with a warning.
+- **`kinds`**: `{event kind: params override}`, at the top level or inside a cantonal entry. It is selected by `context["kind"]`; when the kind is missing, the result is `missing_info` (`kind`). A kind that is not listed gets the base params. Example: FR `{"days": 14, "kinds": {"internal": {"days": 30}, "departure": {"days": 0}}}`.
+- **`variants`** + `applies_to`: the base rule covers the `applies_to` cases, and each variant `{"case", "id"?, ...params}` is its own rule.
+  - With `context["variant"]`, the matching option is computed (`computed_from.variant`).
+  - Without it, the result is `{"status": "variants", "missing": ["variant"], "variants": [{"cases", ...result}]}`.
+  - An unknown case gives `missing_info`.
 
 Every params dict may carry `"sources": [i, ...]`, which are indexes into `card.sources`; they are returned as `computed_from.card_sources`.
 `extensions`: `[{"until": "MM-DD", "fee_chf", "how", "request_by": "MM-DD"?, "sources"}]`. The dates are resolved in the year of the due date and returned as ISO.
@@ -51,6 +63,8 @@ Every params dict may carry `"sources": [i, ...]`, which are indexes into `card.
 Context keys:
 - `period`: "2025";
 - `notified_on`: ISO date of the proven notification;
+- `facts`: list of Facts, for `from_fact`;
+- `kind`, `variant`, `chosen_date`: see the modifiers above;
 - `canton`: overrides `subject.canton`;
 - `extension`: index of the extension that was granted or chosen;
 - `margin_working_days`;
@@ -80,3 +94,19 @@ The cantonal list depends on the canton (`context.canton` or `subject.canton`). 
   - one all-day VEVENT per Deadline, with UID `<deadline id>@ordner.local`;
   - one VALARM DISPLAY per reminder, with an absolute UTC trigger at 08:00Z. When `Deadline.reminders` is empty, the default policy applies.
   - The DESCRIPTION gives the rule, the steps, the warnings and the bases. The caller writes the file locally; nothing is sent.
+
+## Dossier checks
+
+`completeness(card, subject, facts, documents, period)` compares `card.required_documents` with the documents received.
+- **Year**: for the tax-year kinds (`YEAR_BOUND`: statements, salary, 3a and LPP certificates, assessment, instalments, invitation…), the document must be of the `period` year. A document of another year is listed in `wrong_year` and does not count. Other kinds are accepted whatever their year.
+- **Statements**: `swiss_tax_statement_eCH0196` expands to one statement per declared institution. Institutions come from confirmed `finance.institutions` (list of `{"name"}` or strings), or from one fact per `finance.institutions.<x>`. Matching uses the normalized issuer name. An institution list that is undeclared or only proposed gives `missing_info`. A statement from an undeclared issuer is reported in `why`.
+- **Waivers** (`WAIVERS`): `pillar3a_certificate` is not required when `pension.pillar3a.has` = false (confirmed); `pension_fund_certificate` likewise when `pension.lpp.affiliated` = false.
+- **Required facts**: `card.required_facts` must have a confirmed fact (or a confirmed fact under `key.`). A fact that is only proposed is listed as missing.
+- **Duplicates**: same sha256, or same kind, issuer and year.
+- **Result**: `{"status": "complete"|"incomplete"|"missing_info", "missing_documents": [{"issuer", "kind", "year"}], "missing_facts", "wrong_year", "duplicates", "why"}`. If something is surely missing the status is `incomplete`; if only unknowns remain it is `missing_info`.
+
+`consolidate(facts, period)` sums per measure (`total_tax_value`, `gross_revenue_a`, `gross_revenue_b`, `withholding_tax_claim`) the per-institution facts.
+- **Accepted keys**: `tax.statement.<measure>.<institution>` (eCH-0196 connector) and `tax.securities.<institution>.<measure>` (seed). Position-level keys are ignored.
+- **Institution matching**: an institution key is mapped to the declared name, by exact or prefix slug (`morvessa` → « Morvessa Banque SA »). Two sources for the same institution and measure are counted once: a confirmed fact beats a proposed one, then the latest wins.
+- **Per measure**: `total` (exact Decimal sum), `status` = `confirmed` | `provisional` (a proposed input, or an included institution without a value) | `missing`, `by_institution`, `institutions_lacking`.
+- **Top level**: `status` = `incomplete` (declared institution without a statement, or institutions unknown) | `provisional` | `final`, plus `institutions_included`, `institutions_missing` and `why`. Facts of several subjects raise `ValueError`.

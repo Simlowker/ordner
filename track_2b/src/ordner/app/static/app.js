@@ -129,6 +129,212 @@ const I18N = {
   }
 };
 
+/* Cockpit strings (home, inbox, cases, coverage, chat). */
+const C18N = {
+  fr: {
+    nav_label: "Sections", nav_home: "Où j'en suis", nav_inbox: "Pièces reçues", nav_cases: "Démarches", nav_coverage: "Couverture", nav_releve: "Relevé fiscal",
+    review_btn: "Revoir le dossier (règles, sans modèle)", review_done: "Revue terminée : démarches, échéances et manques mis à jour.",
+    ask_title: "Demander à Ordner", close: "Fermer", ask_examples: "Questions enregistrées", ask_label: "Votre question", ask_send: "Demander",
+    ask_demo: r => `Mode démo (${r}) : les réponses sont des transcriptions enregistrées, marquées fixture, pas une sortie du modèle.`,
+    ask_reasons: { no_endpoint: "aucun modèle configuré, LLM_BASE_URL", no_agent: "coordinateur pas encore disponible", no_client: "client modèle introuvable" },
+    ask_live: n => `Modèle local : ${n}. Ordner prépare, vous validez : rien n'est envoyé.`,
+    ask_nearest: "Mode démo : réponse enregistrée la plus proche de votre question.", ask_wait: "Ordner travaille… (modèle local, cela peut prendre une minute)",
+    you: "Vous", steps_n: n => `Étapes (${n} appels d'outils)`, recorded: "réponse enregistrée (fixture)", asks_you: "Ordner vous demande :",
+    prepared_note: "préparée, à valider dans la démarche ; rien n'est envoyé", warnings: "Avertissements",
+    unavailable: m => `Module pas encore disponible : ${m}`, loading: "Chargement…", fictional: "dossier fictif",
+    ics: "Exporter le calendrier (.ics)", ics_off: "Export du calendrier : module des règles pas encore disponible", subject_pick: "Dossier",
+    h_next: "Prochaine étape", h_urgent: "Urgent : échéances dans les 30 jours", h_missing: "Pièces et informations manquantes", h_review: "Pièces à vérifier (doute élevé)",
+    none_urgent: "Aucune échéance dans les 30 prochains jours.", none_missing: "Rien ne manque dans les démarches ouvertes.",
+    none_review: "Aucune valeur en rouge : rien à relire.", none_next: "Rien à faire pour l'instant dans les parcours couverts.",
+    next_validate: (k, c) => `Valider : ${k} — ${c}`, next_provide: (i, c) => `Fournir ${i} pour « ${c} »`,
+    next_qualify: c => `Répondre aux questions qui qualifient « ${c} »`, next_review: (d, f) => `Relire ${d} : ${f}`,
+    open_case: "Ouvrir la démarche", open_inbox: "Voir les pièces", due_on: d => `échéance le ${d}`,
+    days: n => (n < 0 ? `en retard de ${-n} j` : n === 0 ? "aujourd'hui" : n === 1 ? "demain" : `dans ${n} jours`),
+    reminders: "Rappels :", red_fields: "Champs en rouge :",
+    cov_banner: (c, v, n, w) => `Parcours examinés (${w}) — couverts : ${c} · à vérifier : ${v} · non applicables : ${n}.`, notes: "Notes de qualification de la fiche",
+    cov_where: k => `${k} et fédéral`, cov_nodomain: l => `Domaines sans aucune fiche : ${l}.`,
+    cov_claim: "« Aucun problème détecté » ne vaut que pour les parcours couverts ; le reste est à vérifier.",
+    cov_norules: "Moteur de règles pas encore disponible : tout reste « à vérifier ».", cov_details: "Détail des parcours examinés", cov_map_link: "Carte de couverture",
+    no_cases: "Aucune démarche ouverte pour l'instant. Les démarches sont ouvertes à partir du profil, des pièces et du catalogue.",
+    inbox_caption: "Pièces reçues avec type, année, mode de lecture et doute", col_received: "Reçue le", col_type: "Type", col_year: "Année", col_issuer: "Émetteur",
+    col_channel: "Canal", col_read: "Lecture", read: { barcode: "code-barres · exact", ai: "IA (OCR + Apertus)" },
+    channels: { inbox: "dépôt", share: "partage", camt: "relevé bancaire", email: "e-mail", scan: "scan, photo", video: "vidéo" },
+    inbox_legend: "Code-barres : valeur exacte lue dans le code (eCH-0196, QR-facture). IA : lecture OCR puis Apertus avec un score de doute ; seules les valeurs en rouge demandent une relecture.",
+    no_docs: "Aucune pièce reçue.", progress: (i, n) => `étape ${i} sur ${n}`, next_due: d => `Prochaine échéance : ${d}`, missing_l: "Manque :",
+    nature: { obligation: "obligation", right: "droit à demander", option: "option", contract: "contrat" },
+    qual: { qualified: "fiche qualifiée", draft: "fiche en brouillon", unknown: "fiche non qualifiée" }, unknown_card: "fiche absente du catalogue",
+    states: { to_qualify: "À qualifier", missing_documents: "Pièces manquantes", ready_to_prepare: "Prêt à préparer", ready_to_validate: "À valider",
+      action_engaged: "Action engagée", awaiting_response: "En attente de réponse", complement_requested: "Complément demandé",
+      decision_received: "Décision reçue", result_verified: "Résultat vérifié", closed: "Clos" },
+    domains: { tax: "Impôts", health_insurance: "Assurance maladie", pension: "Prévoyance", social: "Assurances sociales", housing: "Logement", debt: "Dettes, poursuites",
+      work: "Travail", business: "Entreprise", identity: "Identité, domicile" },
+    back: "← Toutes les démarches", period: p => `période ${p}`, h_progress: "Avancement", h_case_missing: "Ce qui manque", h_deadlines: "Échéances",
+    h_actions: "Actions préparées", h_facts: "Informations du dossier", h_events: "Historique", h_sources: "Sources officielles", h_steps: "Étapes de la procédure",
+    who: { user: "vous", ordner: "Ordner" }, validate: "Valider",
+    validated_msg: "Validation enregistrée. Ordner n'envoie rien : c'est vous qui envoyez, déposez ou payez.",
+    pay_note: "Paiement QR : Ordner ne l'exécute jamais. Payez vous-même depuis votre e-banking.", send_note: "Rien n'est envoyé automatiquement.",
+    kinds: { form_entry: "Saisie guidée du formulaire", letter: "Lettre", email_draft: "Brouillon d'e-mail", payment: "Paiement QR", reminder: "Rappel", document_request: "Demande de pièce" },
+    astatus: { prepared: "préparée", validated: "validée par vous", done_by_user: "faite par vous", verified: "vérifiée", cancelled: "annulée" },
+    fstatus: { proposed: "proposée", confirmed: "confirmée", rejected: "rejetée", superseded: "remplacée" },
+    actors: { user: "vous", ordner: "Ordner", connector: "connecteur", rule: "règle", model: "modèle" },
+    col_key: "Information", col_period: "Période", col_status: "Statut", col_source: "Source", facts_caption: "Informations liées à cette démarche, avec statut et source",
+    rule_l: "Règle :", basis_l: "Bases :", computed_l: "Calcul", send_by: d => `envoi conseillé avant le ${d}`,
+    no_deadlines: "Aucune échéance enregistrée.", no_actions: "Aucune action préparée.", no_facts: "Aucune information liée.", no_events: "Aucun événement.",
+    no_sources: "Aucune source citée : fiche à qualifier.", releve_link: "Voir les relevés fiscaux lus (champs, doute, explication, déductions)",
+    events: { subject_added: "dossier créé", document_received: "pièce reçue", fact_proposed: "information proposée", fact_confirmed: "information confirmée",
+      fact_rejected: "information rejetée", fact_superseded: "information remplacée", case_opened: "démarche ouverte", state_changed: "changement d'état",
+      missing_updated: "manques mis à jour", action_prepared: "action préparée", action_updated: "action mise à jour", deadline_added: "échéance ajoutée" },
+    cov_title: "Couverture du catalogue",
+    cov_intro: "Une démarche peut être qualifiée au niveau fédéral, en brouillon dans un canton et non couverte ailleurs. Une case vide ne signifie pas qu'il n'y a rien à faire : le catalogue ne couvre pas encore cette zone.",
+    cov_caption: "Fiches de procédure par domaine et par juridiction", cov_domain: "Domaine",
+    cov_status: { qualified: "qualifiée", draft: "brouillon", none: "non couverte" }, cov_counts: (q, d) => `${q} cases qualifiées, ${d} en brouillon.`,
+    you_here: "vous", cov_yours: "Vos parcours examinés", verdict: { covered: "couvert", to_verify: "à vérifier", not_applicable: "non applicable" },
+    app: { applicable: "s'applique", not_applicable: "ne s'applique pas", missing_info: "informations manquantes", unknown: "non évalué", error: "erreur de règle" },
+    yes: "oui", no: "non",
+    pk: { to: "destinataire", channel: "canal", creditor: "bénéficiaire", amount: "montant", currency: "monnaie", reference: "référence", iban: "IBAN", due: "échéance", recipient: "destinataire" },
+    fact_labels: { "subject.tax_at_source": "imposition à la source (oui ou non)", "tax.securities.withholding_tax_total": "total de l'impôt anticipé", "tax.period": "période fiscale", "person.civil_status": "état civil" }
+  },
+  de: {
+    nav_label: "Bereiche", nav_home: "Wo stehe ich", nav_inbox: "Eingang", nav_cases: "Verfahren", nav_coverage: "Abdeckung", nav_releve: "Steuerausweis",
+    review_btn: "Dossier überprüfen (Regeln, ohne Modell)", review_done: "Überprüfung beendet: Verfahren, Fristen und Fehlendes aktualisiert.",
+    ask_title: "Ordner fragen", close: "Schliessen", ask_examples: "Aufgezeichnete Fragen", ask_label: "Ihre Frage", ask_send: "Fragen",
+    ask_demo: r => `Demo-Modus (${r}): Die Antworten sind aufgezeichnete Transkripte, als Fixture markiert, keine Modellausgabe.`,
+    ask_reasons: { no_endpoint: "kein Modell konfiguriert, LLM_BASE_URL", no_agent: "Koordinator noch nicht verfügbar", no_client: "Modell-Client nicht gefunden" },
+    ask_live: n => `Lokales Modell: ${n}. Ordner bereitet vor, Sie bestätigen: Es wird nichts gesendet.`,
+    ask_nearest: "Demo-Modus: aufgezeichnete Antwort, die Ihrer Frage am nächsten kommt.", ask_wait: "Ordner arbeitet… (lokales Modell, das kann eine Minute dauern)",
+    you: "Sie", steps_n: n => `Schritte (${n} Werkzeugaufrufe)`, recorded: "aufgezeichnete Antwort (Fixture)", asks_you: "Ordner fragt Sie:",
+    prepared_note: "vorbereitet, im Verfahren zu bestätigen; es wird nichts gesendet", warnings: "Warnungen",
+    unavailable: m => `Modul noch nicht verfügbar: ${m}`, loading: "Wird geladen…", fictional: "fiktives Dossier",
+    ics: "Kalender exportieren (.ics)", ics_off: "Kalenderexport: Regelmodul noch nicht verfügbar", subject_pick: "Dossier",
+    h_next: "Nächster Schritt", h_urgent: "Dringend: Fristen in den nächsten 30 Tagen", h_missing: "Fehlende Unterlagen und Angaben", h_review: "Zu prüfende Unterlagen (hoher Zweifel)",
+    none_urgent: "Keine Frist in den nächsten 30 Tagen.", none_missing: "In den offenen Verfahren fehlt nichts.",
+    none_review: "Kein roter Wert: nichts nachzulesen.", none_next: "In den abgedeckten Bereichen ist im Moment nichts zu tun.",
+    next_validate: (k, c) => `Bestätigen: ${k} — ${c}`, next_provide: (i, c) => `${i} liefern für «${c}»`,
+    next_qualify: c => `Fragen beantworten, um «${c}» abzuklären`, next_review: (d, f) => `${d} nachlesen: ${f}`,
+    open_case: "Verfahren öffnen", open_inbox: "Unterlagen ansehen", due_on: d => `Frist am ${d}`,
+    days: n => (n < 0 ? `${-n} T überfällig` : n === 0 ? "heute" : n === 1 ? "morgen" : `in ${n} Tagen`),
+    reminders: "Erinnerungen:", red_fields: "Rote Felder:",
+    cov_banner: (c, v, n, w) => `Geprüfte Verfahren (${w}) — abgedeckt: ${c} · zu prüfen: ${v} · nicht anwendbar: ${n}.`, notes: "Qualifizierungsnotizen der Karte",
+    cov_where: k => `${k} und Bund`, cov_nodomain: l => `Bereiche ohne Karte: ${l}.`,
+    cov_claim: "«Kein Problem gefunden» gilt nur für die abgedeckten Verfahren; der Rest ist zu prüfen.",
+    cov_norules: "Regelwerk noch nicht verfügbar: Alles bleibt «zu prüfen».", cov_details: "Geprüfte Verfahren im Detail", cov_map_link: "Abdeckungskarte",
+    no_cases: "Noch kein offenes Verfahren. Verfahren werden aus Profil, Unterlagen und Katalog eröffnet.",
+    inbox_caption: "Eingegangene Unterlagen mit Typ, Jahr, Leseart und Zweifel", col_received: "Eingang", col_type: "Typ", col_year: "Jahr", col_issuer: "Aussteller",
+    col_channel: "Kanal", col_read: "Lesung", read: { barcode: "Barcode · exakt", ai: "KI (OCR + Apertus)" },
+    channels: { inbox: "Ablage", share: "Teilen", camt: "Bankauszug", email: "E-Mail", scan: "Scan, Foto", video: "Video" },
+    inbox_legend: "Barcode: exakter Wert aus dem Code (eCH-0196, QR-Rechnung). KI: OCR, dann Apertus mit Zweifelswert; nur rote Werte müssen nachgelesen werden.",
+    no_docs: "Keine Unterlagen eingegangen.", progress: (i, n) => `Schritt ${i} von ${n}`, next_due: d => `Nächste Frist: ${d}`, missing_l: "Fehlt:",
+    nature: { obligation: "Pflicht", right: "Anspruch (auf Antrag)", option: "Option", contract: "Vertrag" },
+    qual: { qualified: "qualifizierte Karte", draft: "Karte im Entwurf", unknown: "nicht qualifizierte Karte" }, unknown_card: "Karte nicht im Katalog",
+    states: { to_qualify: "Abzuklären", missing_documents: "Unterlagen fehlen", ready_to_prepare: "Bereit zur Vorbereitung", ready_to_validate: "Zu bestätigen",
+      action_engaged: "Schritt eingeleitet", awaiting_response: "Antwort ausstehend", complement_requested: "Ergänzung verlangt",
+      decision_received: "Entscheid erhalten", result_verified: "Ergebnis geprüft", closed: "Abgeschlossen" },
+    domains: { tax: "Steuern", health_insurance: "Krankenversicherung", pension: "Vorsorge", social: "Sozialversicherungen", housing: "Wohnen", debt: "Schulden, Betreibung",
+      work: "Arbeit", business: "Unternehmen", identity: "Identität, Wohnsitz" },
+    back: "← Alle Verfahren", period: p => `Periode ${p}`, h_progress: "Fortschritt", h_case_missing: "Was fehlt", h_deadlines: "Fristen",
+    h_actions: "Vorbereitete Schritte", h_facts: "Angaben im Dossier", h_events: "Verlauf", h_sources: "Amtliche Quellen", h_steps: "Ablauf des Verfahrens",
+    who: { user: "Sie", ordner: "Ordner" }, validate: "Bestätigen",
+    validated_msg: "Bestätigung gespeichert. Ordner sendet nichts: Sie selbst senden, reichen ein oder bezahlen.",
+    pay_note: "QR-Zahlung: Ordner führt sie nie aus. Bezahlen Sie selbst im E-Banking.", send_note: "Es wird nichts automatisch gesendet.",
+    kinds: { form_entry: "Geführte Formulareingabe", letter: "Brief", email_draft: "E-Mail-Entwurf", payment: "QR-Zahlung", reminder: "Erinnerung", document_request: "Unterlagen anfordern" },
+    astatus: { prepared: "vorbereitet", validated: "von Ihnen bestätigt", done_by_user: "von Ihnen erledigt", verified: "geprüft", cancelled: "abgebrochen" },
+    fstatus: { proposed: "vorgeschlagen", confirmed: "bestätigt", rejected: "abgelehnt", superseded: "ersetzt" },
+    actors: { user: "Sie", ordner: "Ordner", connector: "Konnektor", rule: "Regel", model: "Modell" },
+    col_key: "Angabe", col_period: "Periode", col_status: "Status", col_source: "Quelle", facts_caption: "Angaben zu diesem Verfahren mit Status und Quelle",
+    rule_l: "Regel:", basis_l: "Grundlagen:", computed_l: "Berechnung", send_by: d => `Versand empfohlen vor dem ${d}`,
+    no_deadlines: "Keine Frist erfasst.", no_actions: "Kein vorbereiteter Schritt.", no_facts: "Keine verknüpfte Angabe.", no_events: "Kein Ereignis.",
+    no_sources: "Keine Quelle zitiert: Karte noch zu qualifizieren.", releve_link: "Gelesene Steuerausweise ansehen (Felder, Zweifel, Erklärung, Abzüge)",
+    events: { subject_added: "Dossier erstellt", document_received: "Unterlage eingegangen", fact_proposed: "Angabe vorgeschlagen", fact_confirmed: "Angabe bestätigt",
+      fact_rejected: "Angabe abgelehnt", fact_superseded: "Angabe ersetzt", case_opened: "Verfahren eröffnet", state_changed: "Statuswechsel",
+      missing_updated: "Fehlendes aktualisiert", action_prepared: "Schritt vorbereitet", action_updated: "Schritt aktualisiert", deadline_added: "Frist hinzugefügt" },
+    cov_title: "Abdeckung des Katalogs",
+    cov_intro: "Ein Verfahren kann auf Bundesebene qualifiziert, in einem Kanton im Entwurf und anderswo nicht abgedeckt sein. Ein leeres Feld heisst nicht, dass nichts zu tun ist: Der Katalog deckt diesen Bereich noch nicht ab.",
+    cov_caption: "Verfahrenskarten nach Bereich und Zuständigkeit", cov_domain: "Bereich",
+    cov_status: { qualified: "qualifiziert", draft: "Entwurf", none: "nicht abgedeckt" }, cov_counts: (q, d) => `${q} Felder qualifiziert, ${d} im Entwurf.`,
+    you_here: "Sie", cov_yours: "Ihre geprüften Verfahren", verdict: { covered: "abgedeckt", to_verify: "zu prüfen", not_applicable: "nicht anwendbar" },
+    app: { applicable: "anwendbar", not_applicable: "nicht anwendbar", missing_info: "Angaben fehlen", unknown: "nicht ausgewertet", error: "Regelfehler" },
+    yes: "ja", no: "nein",
+    pk: { to: "Empfänger", channel: "Kanal", creditor: "Zahlungsempfänger", amount: "Betrag", currency: "Währung", reference: "Referenz", iban: "IBAN", due: "Fälligkeit", recipient: "Empfänger" },
+    fact_labels: { "subject.tax_at_source": "Quellensteuer (ja oder nein)", "tax.securities.withholding_tax_total": "Total Verrechnungssteuer", "tax.period": "Steuerperiode", "person.civil_status": "Zivilstand" }
+  },
+  it: {
+    nav_label: "Sezioni", nav_home: "A che punto sono", nav_inbox: "Documenti ricevuti", nav_cases: "Pratiche", nav_coverage: "Copertura", nav_releve: "Estratto fiscale",
+    review_btn: "Rivedere il dossier (regole, senza modello)", review_done: "Revisione terminata: pratiche, scadenze e mancanze aggiornate.",
+    ask_title: "Chiedere a Ordner", close: "Chiudere", ask_examples: "Domande registrate", ask_label: "La sua domanda", ask_send: "Chiedere",
+    ask_demo: r => `Modalità demo (${r}): le risposte sono trascrizioni registrate, marcate fixture, non un output del modello.`,
+    ask_reasons: { no_endpoint: "nessun modello configurato, LLM_BASE_URL", no_agent: "coordinatore non ancora disponibile", no_client: "client del modello non trovato" },
+    ask_live: n => `Modello locale: ${n}. Ordner prepara, lei convalida: non viene inviato nulla.`,
+    ask_nearest: "Modalità demo: risposta registrata più vicina alla sua domanda.", ask_wait: "Ordner lavora… (modello locale, può richiedere un minuto)",
+    you: "Lei", steps_n: n => `Passi (${n} chiamate di strumenti)`, recorded: "risposta registrata (fixture)", asks_you: "Ordner le chiede:",
+    prepared_note: "preparata, da convalidare nella pratica; non viene inviato nulla", warnings: "Avvertenze",
+    unavailable: m => `Modulo non ancora disponibile: ${m}`, loading: "Caricamento…", fictional: "dossier fittizio",
+    ics: "Esportare il calendario (.ics)", ics_off: "Esportazione del calendario: modulo delle regole non ancora disponibile", subject_pick: "Dossier",
+    h_next: "Prossimo passo", h_urgent: "Urgente: scadenze entro 30 giorni", h_missing: "Documenti e informazioni mancanti", h_review: "Documenti da verificare (dubbio alto)",
+    none_urgent: "Nessuna scadenza nei prossimi 30 giorni.", none_missing: "Nelle pratiche aperte non manca nulla.",
+    none_review: "Nessun valore in rosso: niente da rileggere.", none_next: "Per ora niente da fare nei percorsi coperti.",
+    next_validate: (k, c) => `Convalidare: ${k} — ${c}`, next_provide: (i, c) => `Fornire ${i} per «${c}»`,
+    next_qualify: c => `Rispondere alle domande che qualificano «${c}»`, next_review: (d, f) => `Rileggere ${d}: ${f}`,
+    open_case: "Aprire la pratica", open_inbox: "Vedere i documenti", due_on: d => `scadenza il ${d}`,
+    days: n => (n < 0 ? `in ritardo di ${-n} g` : n === 0 ? "oggi" : n === 1 ? "domani" : `tra ${n} giorni`),
+    reminders: "Promemoria:", red_fields: "Campi in rosso:",
+    cov_banner: (c, v, n, w) => `Percorsi esaminati (${w}) — coperti: ${c} · da verificare: ${v} · non applicabili: ${n}.`, notes: "Note di qualificazione della scheda",
+    cov_where: k => `${k} e Confederazione`, cov_nodomain: l => `Ambiti senza alcuna scheda: ${l}.`,
+    cov_claim: "«Nessun problema rilevato» vale solo per i percorsi coperti; il resto è da verificare.",
+    cov_norules: "Motore delle regole non ancora disponibile: tutto resta «da verificare».", cov_details: "Dettaglio dei percorsi esaminati", cov_map_link: "Carta della copertura",
+    no_cases: "Ancora nessuna pratica aperta. Le pratiche vengono aperte a partire dal profilo, dai documenti e dal catalogo.",
+    inbox_caption: "Documenti ricevuti con tipo, anno, modalità di lettura e dubbio", col_received: "Ricevuto il", col_type: "Tipo", col_year: "Anno", col_issuer: "Emittente",
+    col_channel: "Canale", col_read: "Lettura", read: { barcode: "codice a barre · esatto", ai: "IA (OCR + Apertus)" },
+    channels: { inbox: "deposito", share: "condivisione", camt: "estratto bancario", email: "e-mail", scan: "scansione, foto", video: "video" },
+    inbox_legend: "Codice a barre: valore esatto letto nel codice (eCH-0196, fattura QR). IA: lettura OCR poi Apertus con un punteggio di dubbio; solo i valori in rosso vanno riletti.",
+    no_docs: "Nessun documento ricevuto.", progress: (i, n) => `passo ${i} di ${n}`, next_due: d => `Prossima scadenza: ${d}`, missing_l: "Manca:",
+    nature: { obligation: "obbligo", right: "diritto da richiedere", option: "opzione", contract: "contratto" },
+    qual: { qualified: "scheda qualificata", draft: "scheda in bozza", unknown: "scheda non qualificata" }, unknown_card: "scheda assente dal catalogo",
+    states: { to_qualify: "Da qualificare", missing_documents: "Documenti mancanti", ready_to_prepare: "Pronto da preparare", ready_to_validate: "Da convalidare",
+      action_engaged: "Azione avviata", awaiting_response: "In attesa di risposta", complement_requested: "Complemento richiesto",
+      decision_received: "Decisione ricevuta", result_verified: "Risultato verificato", closed: "Chiuso" },
+    domains: { tax: "Imposte", health_insurance: "Assicurazione malattia", pension: "Previdenza", social: "Assicurazioni sociali", housing: "Alloggio", debt: "Debiti, esecuzioni",
+      work: "Lavoro", business: "Impresa", identity: "Identità, domicilio" },
+    back: "← Tutte le pratiche", period: p => `periodo ${p}`, h_progress: "Avanzamento", h_case_missing: "Cosa manca", h_deadlines: "Scadenze",
+    h_actions: "Azioni preparate", h_facts: "Informazioni del dossier", h_events: "Cronologia", h_sources: "Fonti ufficiali", h_steps: "Passi della procedura",
+    who: { user: "lei", ordner: "Ordner" }, validate: "Convalidare",
+    validated_msg: "Convalida registrata. Ordner non invia nulla: è lei a inviare, depositare o pagare.",
+    pay_note: "Pagamento QR: Ordner non lo esegue mai. Paghi lei stesso dal suo e-banking.", send_note: "Non viene inviato nulla automaticamente.",
+    kinds: { form_entry: "Compilazione guidata del modulo", letter: "Lettera", email_draft: "Bozza di e-mail", payment: "Pagamento QR", reminder: "Promemoria", document_request: "Richiesta di documento" },
+    astatus: { prepared: "preparata", validated: "convalidata da lei", done_by_user: "fatta da lei", verified: "verificata", cancelled: "annullata" },
+    fstatus: { proposed: "proposta", confirmed: "confermata", rejected: "respinta", superseded: "sostituita" },
+    actors: { user: "lei", ordner: "Ordner", connector: "connettore", rule: "regola", model: "modello" },
+    col_key: "Informazione", col_period: "Periodo", col_status: "Stato", col_source: "Fonte", facts_caption: "Informazioni legate a questa pratica, con stato e fonte",
+    rule_l: "Regola:", basis_l: "Basi:", computed_l: "Calcolo", send_by: d => `invio consigliato entro il ${d}`,
+    no_deadlines: "Nessuna scadenza registrata.", no_actions: "Nessuna azione preparata.", no_facts: "Nessuna informazione collegata.", no_events: "Nessun evento.",
+    no_sources: "Nessuna fonte citata: scheda da qualificare.", releve_link: "Vedere gli estratti fiscali letti (campi, dubbio, spiegazione, deduzioni)",
+    events: { subject_added: "dossier creato", document_received: "documento ricevuto", fact_proposed: "informazione proposta", fact_confirmed: "informazione confermata",
+      fact_rejected: "informazione respinta", fact_superseded: "informazione sostituita", case_opened: "pratica aperta", state_changed: "cambio di stato",
+      missing_updated: "mancanze aggiornate", action_prepared: "azione preparata", action_updated: "azione aggiornata", deadline_added: "scadenza aggiunta" },
+    cov_title: "Copertura del catalogo",
+    cov_intro: "Una pratica può essere qualificata a livello federale, in bozza in un Cantone e non coperta altrove. Una casella vuota non significa che non ci sia nulla da fare: il catalogo non copre ancora questa zona.",
+    cov_caption: "Schede di procedura per ambito e giurisdizione", cov_domain: "Ambito",
+    cov_status: { qualified: "qualificata", draft: "bozza", none: "non coperta" }, cov_counts: (q, d) => `${q} caselle qualificate, ${d} in bozza.`,
+    you_here: "lei", cov_yours: "I suoi percorsi esaminati", verdict: { covered: "coperto", to_verify: "da verificare", not_applicable: "non applicabile" },
+    app: { applicable: "si applica", not_applicable: "non si applica", missing_info: "informazioni mancanti", unknown: "non valutato", error: "errore di regola" },
+    yes: "sì", no: "no",
+    pk: { to: "destinatario", channel: "canale", creditor: "beneficiario", amount: "importo", currency: "valuta", reference: "riferimento", iban: "IBAN", due: "scadenza", recipient: "destinatario" },
+    fact_labels: { "subject.tax_at_source": "imposizione alla fonte (sì o no)", "tax.securities.withholding_tax_total": "totale dell'imposta preventiva", "tax.period": "periodo fiscale", "person.civil_status": "stato civile" }
+  }
+};
+for (const l in C18N) Object.assign(I18N[l], C18N[l]);
+Object.assign(I18N.fr.doc_types, { salary_certificate: "certificat de salaire", pillar3a_certificate: "attestation 3a", tax_return_invitation: "formulaire de déclaration (code de contrôle)",
+  pension_fund_certificate: "attestation de rachat 2e pilier", health_insurance_tax_certificate: "attestation fiscale d'assurance maladie", securities_list: "état des titres",
+  tax_assessment_decision: "décision de taxation", camt053: "relevé bancaire camt.053", identity_document: "pièce d'identité", health_insurance_policy: "police d'assurance maladie",
+  study_certificate: "attestation d'études", tax_instalment_bill: "bordereau d'acomptes" });
+Object.assign(I18N.de.doc_types, { salary_certificate: "Lohnausweis", pillar3a_certificate: "Bescheinigung Säule 3a", tax_return_invitation: "Steuerformular (Kontrollcode)",
+  pension_fund_certificate: "Bescheinigung Einkauf 2. Säule", health_insurance_tax_certificate: "Steuerbescheinigung Krankenkasse", securities_list: "Wertschriftenverzeichnis",
+  tax_assessment_decision: "Veranlagungsverfügung", camt053: "Bankauszug camt.053", identity_document: "Ausweis", health_insurance_policy: "Versicherungspolice Krankenkasse",
+  study_certificate: "Studienbescheinigung", tax_instalment_bill: "Ratenrechnung" });
+Object.assign(I18N.it.doc_types, { salary_certificate: "certificato di salario", pillar3a_certificate: "attestazione 3a", tax_return_invitation: "modulo di dichiarazione (codice di controllo)",
+  pension_fund_certificate: "attestazione di riscatto 2° pilastro", health_insurance_tax_certificate: "attestazione fiscale cassa malati", securities_list: "elenco dei titoli",
+  tax_assessment_decision: "decisione di tassazione", camt053: "estratto bancario camt.053", identity_document: "documento d'identità", health_insurance_policy: "polizza cassa malati",
+  study_certificate: "attestato di studio", tax_instalment_bill: "fattura degli acconti" });
+
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const pct = x => Math.round(x * 100);
@@ -162,7 +368,7 @@ function applyStatic() {
 
 function level(doubt) {
   if (doubt == null) return "na";
-  const lv = state.demo.doubt_levels || { orange: 0.25, red: 0.5 };
+  const lv = state.demo?.doubt_levels || { orange: 0.25, red: 0.5 };
   return doubt >= lv.red ? "high" : doubt >= lv.orange ? "medium" : "low";
 }
 
@@ -322,13 +528,428 @@ function renderMode(h) {
   $("#mode").textContent = h ? t.mode_replay + (h.llm_configured ? t.mode_llm(h.llm_name || "?") : "") : "";
 }
 
+/* ---------- cockpit ---------- */
+
+const VIEWS = ["home", "inbox", "cases", "case", "coverage", "releve"];
+const RED = 0.5;
+Object.assign(state, { route: { view: "home" }, subjects: null, subject: null, overview: null, caseDetail: null, coverage: null, transcripts: null, ask: null });
 let health = null;
+
+async function api(url, opts) {
+  const r = await fetch(url, opts);
+  const body = await r.json().catch(() => ({}));
+  if (r.status === 503 && body.error === "unavailable") return { unavailable: body.module };
+  if (!r.ok) throw new Error(body.error || `HTTP ${r.status}`);
+  return { data: body };
+}
+const post = (url, obj) => api(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(obj) });
+
+const pick = x => (x && typeof x === "object" && !Array.isArray(x) ? x[state.lang] ?? x.fr ?? "" : x ?? "");
+const day = iso => (iso ? `${iso.slice(8, 10)}.${iso.slice(5, 7)}.${iso.slice(0, 4)}` : "–");
+const stamp = iso => { const d = new Date(iso); return isNaN(d) ? esc(iso) : d.toLocaleString(`${state.lang}-CH`, { dateStyle: "short", timeStyle: "short" }); };
+const lbl = (map, k) => esc(T()[map]?.[k] ?? k ?? "–");
+const cardName = c => esc(pick(c?.name) || c?.id || "?");
+const itemLabel = k => esc(T().doc_types[k] || T().fact_labels[k] || k);
+const maxDoubt = d => Math.max(-1, ...Object.values(d?.doubt || {}).filter(v => v != null));
+const notice = (html, cls = "notice") => `<p class="${cls}">${html}</p>`;
+const unavail = m => notice(esc(T().unavailable(m)));
+const announce = msg => { $("#sr-status").textContent = ""; setTimeout(() => { $("#sr-status").textContent = msg; }, 30); };
+
+function value(v, unit) {
+  if (typeof v === "boolean") return T()[v ? "yes" : "no"];
+  if (typeof v === "number") return v.toLocaleString("de-CH") + (unit ? ` ${unit}` : "");
+  if (v && typeof v === "object") return JSON.stringify(v);
+  return String(v ?? "–") + (unit ? ` ${unit}` : "");
+}
+
+function daysChip(n) {
+  const cls = n == null ? "na" : n < 0 || n <= 7 ? "high" : n <= 30 ? "medium" : "low";
+  return n == null ? "" : `<span class="chip ${cls}">${esc(T().days(n))}</span>`;
+}
+
+function doubtChip(p) {
+  if (p < 0) return `<span class="chip na">${esc(T().lv.na)}</span>`;
+  const lv = level(p);
+  return `<span class="chip ${lv}">${esc(T().lv[lv])} · ${num(p)}</span>`;
+}
+
+function parseRoute() {
+  const m = location.hash.match(/^#\/(home|inbox|cases|coverage|releve|case)(?:\/([A-Za-z0-9_.:-]{1,80}))?$/);
+  return m && (m[1] !== "case" || m[2]) ? { view: m[1], id: m[2] } : { view: "home" };
+}
+
+async function loadOverview() {
+  if (!state.subject) return;
+  try { state.overview = await api(`/api/overview?subject=${encodeURIComponent(state.subject)}`); }
+  catch (e) { state.overview = { error: e.message }; }
+}
+
+async function loadSubjects() {
+  try {
+    state.subjects = await api("/api/subjects");
+    const list = state.subjects.data?.subjects || [];
+    let saved = null;
+    try { saved = localStorage.getItem("ordner.subject"); } catch (e) { /* storage blocked */ }
+    state.subject = (list.find(s => s.id === saved) || list[0])?.id || null;
+  } catch (e) { state.subjects = { error: e.message }; }
+  await loadOverview();
+}
+
+async function route(focus = true) {
+  state.route = parseRoute();
+  const v = state.route.view;
+  VIEWS.forEach(n => { $(`#v-${n}`).hidden = n !== v; });
+  document.querySelectorAll(".tabs a").forEach(a => {
+    if (a.dataset.route === (v === "case" ? "cases" : v)) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
+  });
+  if (v === "case") {
+    state.caseDetail = null;
+    renderView();
+    try { state.caseDetail = await api(`/api/case?id=${encodeURIComponent(state.route.id)}`); }
+    catch (e) { state.caseDetail = { error: e.message }; }
+  }
+  if (v === "coverage" && !state.coverage) {
+    try { state.coverage = await api("/api/coverage"); } catch (e) { state.coverage = { error: e.message }; }
+  }
+  renderView();
+  if (focus) $(`#v-${v} h2`)?.focus();
+}
+
+function renderView() {
+  const v = state.route.view, t = T();
+  document.title = `Ordner — ${t["nav_" + (v === "case" ? "cases" : v)]}`;
+  renderSubjectBar();
+  ({ home: renderHome, inbox: renderInbox, cases: renderCases, case: renderCase, coverage: renderCoverage, releve: () => {} })[v]();
+}
+
+function renderSubjectBar() {
+  const t = T(), s = state.subjects;
+  if (!s) { $("#subject-bar").innerHTML = `<span class="muted">${esc(t.loading)}</span>`; return; }
+  if (s.unavailable || s.error) { $("#subject-bar").innerHTML = s.unavailable ? unavail(s.unavailable) : notice(esc(`${t.err} ${s.error}`)); return; }
+  const list = s.data.subjects, cur = list.find(x => x.id === state.subject);
+  if (!cur) { $("#subject-bar").innerHTML = ""; return; }
+  const where = [cur.commune, cur.canton].filter(Boolean).join(" ");
+  const who = list.length > 1
+    ? `<label class="small muted" for="subject-pick">${esc(t.subject_pick)}</label> <select id="subject-pick">${list.map(x => `<option value="${esc(x.id)}"${x.id === cur.id ? " selected" : ""}>${esc(x.name)}</option>`).join("")}</select>`
+    : `<strong>${esc(cur.name)}</strong>`;
+  const ics = health?.modules?.rules
+    ? `<a class="btn" href="/api/calendar.ics?subject=${encodeURIComponent(cur.id)}" download>${esc(t.ics)}</a>`
+    : `<span class="small muted">${esc(t.ics_off)}</span>`;
+  $("#subject-bar").innerHTML = `<div class="who">${who}${where ? ` <span class="muted">· ${esc(where)}</span>` : ""}${cur.attrs?.fictional ? ` <span class="chip na">${esc(t.fictional)}</span>` : ""}</div>${ics}`;
+  $("#subject-pick")?.addEventListener("change", async e => {
+    state.subject = e.target.value;
+    try { localStorage.setItem("ordner.subject", state.subject); } catch (err) { /* storage blocked */ }
+    state.overview = null; renderView(); await loadOverview(); renderView();
+  });
+}
+
+/* Shared guard for the views that read the overview. Returns the data or renders a state and returns null. */
+function overviewOr(el, title) {
+  const t = T(), o = state.overview, head = `<h2 class="view-title" tabindex="-1">${esc(title)}</h2>`;
+  const sub = state.subjects;
+  if (sub?.unavailable) { el.innerHTML = head + unavail(sub.unavailable); return null; }
+  if (sub?.error || o?.error) { el.innerHTML = head + notice(esc(`${t.err} ${sub?.error || o.error}`)); return null; }
+  if (o?.unavailable) { el.innerHTML = head + unavail(o.unavailable); return null; }
+  if (!o) { el.innerHTML = head + `<p class="muted">${esc(t.loading)}</p>`; return null; }
+  return o.data;
+}
+
+function coverageBanner(c) {
+  const t = T();
+  if (!c) return "";
+  if (!c.available) return unavail(c.module);
+  const k = c.counts, nodom = c.domains_without_card.map(d => t.domains[d] || d).join(", ");
+  const items = c.items.map(i => `<li><span class="chip ${i.verdict === "covered" ? "low" : i.verdict === "to_verify" ? "medium" : "na"}">${lbl("verdict", i.verdict)}</span>
+      <a href="#/coverage">${cardName(i)}</a> <span class="muted small">· ${lbl("nature", i.nature)} · ${lbl("qual", i.qualification)} · ${lbl("app", i.applicability)}${i.missing.length ? ` (${i.missing.map(esc).join(", ")})` : ""}</span></li>`).join("");
+  return `<div class="banner cov" role="note">
+    <p><strong>${esc(t.cov_banner(k.covered, k.to_verify, k.not_applicable, t.cov_where(c.canton || "?")))}</strong> ${esc(t.cov_claim)}</p>
+    ${!c.rules ? `<p>${esc(t.cov_norules)}</p>` : ""}${nodom ? `<p class="small">${esc(t.cov_nodomain(nodom))}</p>` : ""}
+    ${items ? `<details><summary>${esc(t.cov_details)}</summary><ul class="plain">${items}</ul></details>` : ""}
+    <p class="small"><a href="#/coverage">${esc(t.cov_map_link)} →</a></p></div>`;
+}
+
+function nextStepHtml(n) {
+  const t = T();
+  if (!n) return `<p class="what">${esc(t.none_next)}</p>`;
+  const c = n.card ? (pick(n.card.name) || n.card.id) : "";
+  const due = n.due ? ` <span class="muted">· ${esc(t.due_on(day(n.due)))}</span>` : "";
+  if (n.kind === "review") {
+    const d = n.document, what = [t.doc_types[d.kind] || d.kind, d.issuer, d.year].filter(Boolean).join(" · ");
+    return `<p class="what">${esc(t.next_review(what, d.fields.join(", ")))}</p><p><a class="btn primary" href="#/inbox">${esc(t.open_inbox)}</a></p>`;
+  }
+  const text = n.kind === "validate" ? t.next_validate(t.kinds[n.action_kind] || n.action_kind, c)
+    : n.kind === "provide" ? t.next_provide(n.items.map(i => t.doc_types[i] || t.fact_labels[i] || i).join(", "), c) : t.next_qualify(c);
+  return `<p class="what">${esc(text)}${due}</p><p><a class="btn primary" href="#/case/${encodeURIComponent(n.case_id)}">${esc(t.open_case)}</a></p>`;
+}
+
+function renderHome() {
+  const t = T(), el = $("#v-home"), o = overviewOr(el, t.nav_home);
+  if (!o) return;
+  const caseLink = (id, card) => `<a href="#/case/${encodeURIComponent(id)}">${cardName(card)}</a>`;
+  const urgent = o.urgent.map(u => `<li><span class="due">${esc(day(u.due))}</span> ${daysChip(u.days)} ${caseLink(u.case_id, u.card)}
+      ${u.reminders.length ? `<span class="small muted">· ${esc(t.reminders)} ${u.reminders.map(day).join(", ")}</span>` : ""}</li>`).join("");
+  const missing = o.missing.map(m => `<li>${caseLink(m.case_id, m.card)}<div class="chips">${m.items.map(i => `<span class="chip medium">${itemLabel(i)}</span>`).join("")}</div></li>`).join("");
+  const review = o.review.map(r => `<li><strong>${esc(t.doc_types[r.kind] || r.kind || "?")}</strong> ${esc([r.issuer, r.year].filter(Boolean).join(" · "))}
+      <div class="small">${esc(t.red_fields)} ${r.fields.map(f => `<span class="chip high">${esc(t.fields[f] || f)}</span>`).join(" ")}</div></li>`).join("");
+  el.innerHTML = `<h2 class="view-title" tabindex="-1">${esc(t.nav_home)}</h2>
+    ${coverageBanner(o.coverage)}
+    <p><button type="button" class="btn" id="review-btn">${esc(t.review_btn)}</button></p>
+    <section class="next" aria-labelledby="h-next"><h3 id="h-next" class="block">${esc(t.h_next)}</h3>${nextStepHtml(o.next_step)}</section>
+    ${o.cases.length ? "" : notice(esc(t.no_cases))}
+    <div class="two">
+      <section aria-labelledby="h-urgent"><h3 id="h-urgent" class="block">${esc(t.h_urgent)}</h3>${urgent ? `<ul class="list">${urgent}</ul>` : `<p class="muted">${esc(t.none_urgent)}</p>`}</section>
+      <section aria-labelledby="h-review"><h3 id="h-review" class="block">${esc(t.h_review)}</h3>${review ? `<ul class="list">${review}</ul>` : `<p class="muted">${esc(t.none_review)}</p>`}</section>
+    </div>
+    <section aria-labelledby="h-missing"><h3 id="h-missing" class="block">${esc(t.h_missing)}</h3>${missing ? `<ul class="list">${missing}</ul>` : `<p class="muted">${esc(t.none_missing)}</p>`}</section>`;
+}
+
+function renderInbox() {
+  const t = T(), el = $("#v-inbox"), o = overviewOr(el, t.nav_inbox);
+  if (!o) return;
+  const rows = o.documents.slice().sort((a, b) => (b.received_at || "").localeCompare(a.received_at || "")).map(d => {
+    const p = maxDoubt(d), red = Object.entries(d.doubt || {}).filter(([, v]) => v >= RED).map(([f]) => t.fields[f] || f);
+    const read = d.read_path ? `<span class="chip ${d.read_path === "barcode" ? "low" : "na"}">${lbl("read", d.read_path)}</span>` : "–";
+    return `<tr class="lv-${p < 0 ? "na" : level(p)}">
+      <td>${esc(day((d.received_at || "").slice(0, 10)))}</td>
+      <th scope="row">${esc(t.doc_types[d.kind] || d.kind || "?")}</th>
+      <td>${esc(d.year ?? "–")}</td><td>${esc(d.issuer || "–")}</td><td>${lbl("channels", d.channel)}</td><td>${read}</td>
+      <td>${d.read_path === "barcode" && p <= 0 ? "–" : doubtChip(p)}${red.length ? `<div class="small">${esc(t.red_fields)} ${esc(red.join(", "))}</div>` : ""}</td></tr>`;
+  }).join("");
+  el.innerHTML = `<h2 class="view-title" tabindex="-1">${esc(t.nav_inbox)}</h2>
+    <section>${rows ? `<div class="table-wrap"><table><caption class="sr-only">${esc(t.inbox_caption)}</caption>
+      <thead><tr><th scope="col">${esc(t.col_received)}</th><th scope="col">${esc(t.col_type)}</th><th scope="col">${esc(t.col_year)}</th><th scope="col">${esc(t.col_issuer)}</th>
+      <th scope="col">${esc(t.col_channel)}</th><th scope="col">${esc(t.col_read)}</th><th scope="col">${esc(t.col_doubt)}</th></tr></thead><tbody>${rows}</tbody></table></div>`
+      : `<p class="muted">${esc(t.no_docs)}</p>`}
+    <p class="muted small">${esc(t.inbox_legend)}</p></section>`;
+}
+
+function caseChips(c, card) {
+  const t = T();
+  return `<div class="chips">${card.nature ? `<span class="chip na">${lbl("nature", card.nature)}</span>` : ""}
+    <span class="chip ${c.state === "ready_to_validate" ? "medium" : c.state === "closed" || c.state === "result_verified" ? "low" : "na"}">${lbl("states", c.state)}</span>
+    <span class="chip ${card.qualification === "qualified" ? "low" : "medium"}">${card.unknown_card ? esc(t.unknown_card) : lbl("qual", card.qualification)}</span>
+    ${card.domain ? `<span class="chip na">${lbl("domains", card.domain)}</span>` : ""}</div>`;
+}
+
+function renderCases() {
+  const t = T(), el = $("#v-cases"), o = overviewOr(el, t.nav_cases);
+  if (!o) return;
+  const states = Object.keys(t.states), today = o.today;
+  const items = o.cases.map(c => {
+    const dues = (c.deadlines || []).map(d => d.due).sort(), next = dues.find(d => d >= today) || dues[dues.length - 1];
+    const days = next ? Math.round((Date.parse(next) - Date.parse(today)) / 864e5) : null;
+    return `<li><h3><a href="#/case/${encodeURIComponent(c.id)}">${cardName(c.card)}</a>${c.period ? ` <span class="muted small">${esc(t.period(c.period))}</span>` : ""}</h3>
+      ${caseChips(c, c.card)}
+      <p class="small"><span class="muted">${esc(t.progress(states.indexOf(c.state) + 1, states.length))}</span>
+      ${next ? ` · ${esc(t.next_due(day(next)))} ${daysChip(days)}` : ""}</p>
+      ${c.missing?.length ? `<p class="small">${esc(t.missing_l)} ${c.missing.map(itemLabel).join(", ")}</p>` : ""}</li>`;
+  }).join("");
+  el.innerHTML = `<h2 class="view-title" tabindex="-1">${esc(t.nav_cases)}</h2>${items ? `<ul class="case-list">${items}</ul>` : notice(esc(t.no_cases))}`;
+}
+
+function payloadHtml(a) {
+  const t = T(), p = a.payload || {}, d = { ...p, ...(p.details && typeof p.details === "object" ? p.details : {}) };
+  const title = d.summary || d.subject || d.title || d.label;
+  const longText = ["body", "text", "letter", "message"].map(k => d[k]).find(v => typeof v === "string");
+  const skip = new Set(["summary", "subject", "title", "label", "details", "body", "text", "letter", "message", "goal", "prepared_by", "steps"]);
+  const kv = Object.entries(d).filter(([k, v]) => !skip.has(k) && v != null && typeof v !== "object")
+    .map(([k, v]) => `<dt>${lbl("pk", k)}</dt><dd>${esc(value(v))}</dd>`).join("");
+  const steps = Array.isArray(d.steps) ? `<ol class="small">${d.steps.map(s => `<li>${esc(pick(s?.label ?? s))}</li>`).join("")}</ol>` : "";
+  return `${title ? `<p><strong>${esc(pick(title))}</strong></p>` : ""}${kv ? `<dl class="kv">${kv}</dl>` : ""}${steps}${longText ? `<pre class="letter">${esc(longText)}</pre>` : ""}`;
+}
+
+function renderCase() {
+  const t = T(), el = $("#v-case"), r = state.caseDetail;
+  const back = `<p><a href="#/cases">${esc(t.back)}</a></p>`;
+  if (!r) { el.innerHTML = back + `<h2 class="view-title" tabindex="-1">${esc(t.loading)}</h2>`; return; }
+  if (r.unavailable || r.error) { el.innerHTML = back + `<h2 class="view-title" tabindex="-1">${esc(t.nav_cases)}</h2>` + (r.unavailable ? unavail(r.unavailable) : notice(esc(`${t.err} ${r.error}`))); return; }
+  const { case: c, card, facts, documents, events, states, rule_sources: rs = {} } = r.data;
+  const cur = states.indexOf(c.state);
+  const stepper = states.map((s, i) => `<li class="${i === cur ? "" : s === "complement_requested" ? "branch" : i < cur ? "done" : ""}"${i === cur ? ' aria-current="step"' : ""}>${i < cur && s !== "complement_requested" ? "✓ " : ""}${lbl("states", s)}</li>`).join("");
+  const deadlines = (c.deadlines || []).map(d => {
+    const cf = d.computed_from || {};
+    const basis = (cf.legal_basis || []).map(k => rs[k] ? `<a href="${esc(rs[k].url)}" target="_blank" rel="noopener noreferrer">${esc(rs[k].title)}</a>` : esc(k)).join(", ");
+    const steps = [...(cf.steps || []), ...(cf.warnings || []).map(w => `⚠ ${w}`)];
+    return `<li><span class="due">${esc(day(d.due))}</span> ${daysChip(d.days)} ${cf.label ? esc(cf.label) : ""}
+      <div class="small"><span class="muted">${esc(t.rule_l)}</span> ${esc(cf.rule || d.rule_id)}${cf.version ? ` (v${esc(cf.version)})` : ""}${basis ? ` · <span class="muted">${esc(t.basis_l)}</span> ${basis}` : ""}</div>
+      ${d.reminders?.length ? `<div class="small"><span class="muted">${esc(t.reminders)}</span> ${d.reminders.map(day).join(", ")}</div>` : ""}
+      ${steps.length ? `<details><summary>${esc(t.computed_l)}</summary><ul>${steps.map(s => `<li>${esc(s)}</li>`).join("")}</ul></details>` : ""}
+      ${!cf.steps && Object.keys(cf).length ? `<details><summary>${esc(t.computed_l)}</summary><dl class="kv">${Object.entries(cf).map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(value(v))}</dd>`).join("")}</dl></details>` : ""}</li>`;
+  }).join("");
+  const actions = (c.actions || []).map(a => `<li id="act-${esc(a.id)}" tabindex="-1">
+      <h4>${lbl("kinds", a.kind)} <span class="chip ${a.status === "prepared" ? "medium" : a.status === "cancelled" ? "na" : "low"}">${lbl("astatus", a.status)}</span></h4>
+      ${payloadHtml(a)}
+      <p class="small muted">${esc(a.kind === "payment" ? t.pay_note : t.send_note)}</p>
+      ${a.status === "prepared" && a.requires_validation ? `<button type="button" class="btn primary" data-validate="${esc(a.id)}">${esc(t.validate)}</button>` : ""}</li>`).join("");
+  const order = { confirmed: 0, proposed: 1, superseded: 2, rejected: 3 };
+  const factRows = facts.slice().sort((a, b) => a.key.localeCompare(b.key) || order[a.status] - order[b.status]).map(f => {
+    const doc = documents[f.source_doc];
+    const src = doc ? `${esc(t.doc_types[doc.kind] || doc.kind || "?")}${doc.issuer ? ` · ${esc(doc.issuer)}` : ""}${doc.read_path ? ` <span class="chip ${doc.read_path === "barcode" ? "low" : "na"}">${lbl("read", doc.read_path)}</span>` : ""}` : lbl("actors", f.actor);
+    const cls = { confirmed: "low", proposed: "medium", rejected: "high", superseded: "na" }[f.status] || "na";
+    return `<tr class="fact-${esc(f.status)}"><th scope="row"><code>${esc(f.key)}</code></th><td class="value">${esc(value(f.value, f.unit))}</td><td>${esc(f.period || "–")}</td>
+      <td><span class="chip ${cls}">${lbl("fstatus", f.status)}</span></td><td class="small">${src}</td><td>${f.doubt != null ? doubtChip(f.doubt) : "–"}</td></tr>`;
+  }).join("");
+  const evs = events.slice().reverse().map(e => `<li><time datetime="${esc(e.ts)}">${stamp(e.ts)}</time><strong>${lbl("events", e.type)}</strong> <span class="muted small">· ${lbl("actors", e.actor)}</span>
+      <span class="small">${esc(eventDetail(e))}</span></li>`).join("");
+  const srcs = (card.sources || []).map(s => `<div class="cite"><a href="${esc(s.url)}" target="_blank" rel="noopener noreferrer">${esc(s.title)}</a>
+      ${s.verified ? `<span class="badge ok">${esc(t.verified)}</span>` : `<span class="badge no">${esc(t.unverified_quote)}</span>`}${s.quote ? `<blockquote>${esc(s.quote)}</blockquote>` : ""}</div>`).join("");
+  const steps = (card.steps || []).map(s => `<li>${esc(pick(s.label) || s.id)} <span class="muted small">· ${lbl("who", s.who)}${s.action ? ` · ${lbl("kinds", s.action)}` : ""}</span></li>`).join("");
+  const sec = (id, title, body) => `<section aria-labelledby="h-${id}"><h3 id="h-${id}" class="block">${esc(title)}</h3>${body}</section>`;
+  el.innerHTML = back + `<h2 class="view-title" tabindex="-1">${cardName(card)}${c.period ? ` <span class="muted">· ${esc(t.period(c.period))}</span>` : ""}</h2>
+    ${caseChips(c, card)}${card.notes ? `<details><summary>${esc(t.notes)}</summary><p>${esc(card.notes)}</p></details>` : ""}
+    ${card.domain === "tax" ? `<p class="small"><a href="#/releve">${esc(t.releve_link)} →</a></p>` : ""}
+    ${sec("prog", t.h_progress, `<ol class="stepper">${stepper}</ol>`)}
+    ${c.missing?.length ? sec("miss", t.h_case_missing, `<div class="chips">${c.missing.map(i => `<span class="chip medium">${itemLabel(i)}</span>`).join("")}</div>`) : ""}
+    <div class="two">
+      ${sec("dl", t.h_deadlines, deadlines ? `<ul class="list">${deadlines}</ul>` : `<p class="muted">${esc(t.no_deadlines)}</p>`)}
+      ${sec("act", t.h_actions, actions ? `<ul class="list">${actions}</ul>` : `<p class="muted">${esc(t.no_actions)}</p>`)}
+    </div>
+    ${sec("facts", t.h_facts, factRows ? `<div class="table-wrap"><table><caption class="sr-only">${esc(t.facts_caption)}</caption><thead><tr>
+      <th scope="col">${esc(t.col_key)}</th><th scope="col">${esc(t.col_value)}</th><th scope="col">${esc(t.col_period)}</th><th scope="col">${esc(t.col_status)}</th>
+      <th scope="col">${esc(t.col_source)}</th><th scope="col">${esc(t.col_doubt)}</th></tr></thead><tbody>${factRows}</tbody></table></div>` : `<p class="muted">${esc(t.no_facts)}</p>`)}
+    <div class="two">
+      ${sec("ev", t.h_events, evs ? `<ol class="timeline">${evs}</ol>` : `<p class="muted">${esc(t.no_events)}</p>`)}
+      <div>${steps ? sec("steps", t.h_steps, `<ol>${steps}</ol>`) : ""}${sec("src", t.h_sources, srcs || `<p class="muted">${esc(t.no_sources)}</p>`)}</div>
+    </div>`;
+}
+
+function eventDetail(e) {
+  const p = e.payload || {}, t = T();
+  if (e.type === "state_changed") return `${t.states[p.from] || p.from} → ${t.states[p.to] || p.to}${p.reason ? ` (${p.reason})` : ""}`;
+  if (e.type === "action_updated") return `${t.kinds[p.kind] || p.kind} : ${t.astatus[p.from] || p.from} → ${t.astatus[p.to] || p.to}`;
+  if (e.type === "action_prepared") return t.kinds[p.kind] || p.kind || "";
+  if (e.type === "deadline_added") return day(p.due);
+  if (e.type === "missing_updated") return (p.to || []).map(i => t.doc_types[i] || i).join(", ");
+  if (e.type === "case_opened") return [p.card_id, p.period].filter(Boolean).join(" · ");
+  if (e.type.startsWith("fact_")) return `${p.key ?? ""} = ${value(p.value ?? p.new_value, p.unit)}`;
+  if (e.type === "document_received") return [t.doc_types[p.kind] || p.kind, p.issuer, p.year].filter(Boolean).join(" · ");
+  return "";
+}
+
+async function validateAction(id) {
+  const t = T(), c = state.caseDetail?.data?.case;
+  if (!c) return;
+  try {
+    const r = await post("/api/actions/validate", { case_id: c.id, action_id: id });
+    if (r.unavailable) { announce(t.unavailable(r.unavailable)); return; }
+    state.caseDetail = r;
+    renderCase();
+    const li = $(`#act-${CSS.escape(id)}`);
+    li?.insertAdjacentHTML("beforeend", `<p class="ok-mark small">✓ ${esc(t.validated_msg)}</p>`);
+    li?.focus();
+    announce(t.validated_msg);
+    loadOverview();
+  } catch (e) { announce(`${t.err} ${e.message}`); }
+}
+
+function renderCoverage() {
+  const t = T(), el = $("#v-coverage"), g = state.coverage;
+  const head = `<h2 class="view-title" tabindex="-1">${esc(t.cov_title)}</h2><p class="lead">${esc(t.cov_intro)}</p>`;
+  const mine = state.overview?.data?.coverage;
+  if (!g) { el.innerHTML = head + `<p class="muted">${esc(t.loading)}</p>`; return; }
+  if (g.unavailable || g.error) { el.innerHTML = head + (g.unavailable ? unavail(g.unavailable) : notice(esc(`${t.err} ${g.error}`))); return; }
+  const { domains, jurisdictions, cells, counts } = g.data, here = mine?.canton;
+  const sym = { qualified: "✓", draft: "◐", none: "·" };
+  const cell = (dom, j) => {
+    const c = cells[dom]?.[j], s = c?.status || "none";
+    const names = c ? c.cards.map(x => pick(x.name) || x.id).join(", ") : "";
+    return `<td class="cov ${s[0]}${j === here ? " here" : ""}"${names ? ` title="${esc(names)}"` : ""}><span aria-hidden="true">${sym[s]}</span><span class="sr-only">${lbl("cov_status", s)}${names ? ` : ${esc(names)}` : ""}</span></td>`;
+  };
+  const rows = domains.map(d => `<tr><th scope="row">${lbl("domains", d)}</th>${jurisdictions.map(j => cell(d, j)).join("")}</tr>`).join("");
+  el.innerHTML = head + `<section><p class="small">${esc(t.cov_counts(counts.qualified, counts.draft))}</p>
+    <div class="table-wrap"><table class="cov-table"><caption class="sr-only">${esc(t.cov_caption)}</caption>
+      <thead><tr><th scope="col">${esc(t.cov_domain)}</th>${jurisdictions.map(j => `<th scope="col"${j === here ? ' class="here"' : ""}>${esc(j)}${j === here ? `<span class="sr-only"> (${esc(t.you_here)})</span>` : ""}</th>`).join("")}</tr></thead>
+      <tbody>${rows}</tbody></table></div>
+    <p class="legend small"><span class="cov q">✓</span> ${lbl("cov_status", "qualified")} &nbsp; <span class="cov d">◐</span> ${lbl("cov_status", "draft")} &nbsp; <span class="cov n">·</span> ${lbl("cov_status", "none")}</p></section>
+    ${mine ? `<section aria-labelledby="h-yours"><h3 id="h-yours" class="block">${esc(t.cov_yours)}</h3>${coverageBanner(mine)}</section>` : ""}`;
+}
+
+/* ---------- chat panel ---------- */
+
+function askMode() {
+  const t = T();
+  return health?.agent_live ? t.ask_live(health.llm_name || "?") : t.ask_demo(t.ask_reasons[health?.agent_reason] || health?.agent_reason || "?");
+}
+
+function renderAskPanel() {
+  const t = T(), list = state.transcripts?.transcripts || [];
+  $("#ask-mode").textContent = askMode();
+  $("#ask-examples").innerHTML = list.map((x, i) => `<button type="button" class="btn" data-example="${i}">${esc(pick(x.question))}</button>`).join("");
+  $("#ask-out").innerHTML = state.ask ? askResultHtml(state.ask) : "";
+}
+
+function askResultHtml(a) {
+  const t = T(), r = a.result || {};
+  if (a.wait) return `<p class="muted">${esc(t.ask_wait)}</p>`;
+  if (a.error) return notice(esc(`${t.err} ${a.error}`));
+  const tr = r.transcript || [], calls = tr.filter(x => x.role === "tool");
+  const steps = tr.map(x => x.role === "tool"
+    ? `<li>← <code>${esc(x.name)}</code> ${esc(JSON.stringify(x.result ?? {}).slice(0, 300))}</li>`
+    : `${(x.tool_calls || []).map(c => `<li>→ <code>${esc(c.name)}</code>(${esc(JSON.stringify(c.arguments ?? {}).slice(0, 200))})${c.error ? ` ⚠ ${esc(c.error)}` : ""}</li>`).join("")}${x.content ? `<li>${esc(pick(x.content))}</li>` : ""}`).join("");
+  const qs = (r.questions || []).map(q => `<li>${esc(pick(q.question))}</li>`).join("");
+  const acts = (r.actions || []).map(x => `<li>${lbl("kinds", x.kind)} : ${esc(pick(x.payload?.summary) || "")} <span class="muted small">· ${esc(t.prepared_note)}</span></li>`).join("");
+  const warns = (r.warnings || []).map(w => `<li>${esc(w)}</li>`).join("");
+  return `<div class="qa"><p class="q"><strong>${esc(t.you)} :</strong> ${esc(a.question)}</p>
+    <p class="small muted">${esc(a.mode === "live" ? t.ask_live(a.model || "?") : (a.nearest ? t.ask_nearest + " " : "") + t.recorded)}</p>
+    ${steps ? `<details><summary>${esc(t.steps_n(calls.length))}</summary><ol class="steps">${steps}</ol></details>` : ""}
+    ${r.answer ? `<div class="answer">${pick(r.answer).split("\n").filter(Boolean).map(p => `<p>${esc(p)}</p>`).join("")}</div>` : ""}
+    ${qs ? `<p><strong>${esc(t.asks_you)}</strong></p><ul>${qs}</ul>` : ""}
+    ${acts ? `<p><strong>${esc(t.h_actions)}</strong></p><ul>${acts}</ul>` : ""}
+    ${warns ? `<details><summary>${esc(t.warnings)}</summary><ul>${warns}</ul></details>` : ""}</div>`;
+}
+
+function nearestExample(q) {
+  const words = s => new Set(String(s).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").match(/[a-z0-9]{3,}/g) || []);
+  const w = words(q), list = state.transcripts?.transcripts || [];
+  let best = 0, score = -1;
+  list.forEach((x, i) => {
+    const s = [...words(Object.values(x.question || {}).join(" "))].filter(v => w.has(v)).length;
+    if (s > score) { best = i; score = s; }
+  });
+  return best;
+}
+
+function showExample(i, question, nearest = false) {
+  const x = state.transcripts?.transcripts?.[i];
+  if (!x) return;
+  state.ask = { mode: "demo", question: question ?? pick(x.question), nearest, result: x };
+  renderAskPanel();
+}
+
+async function openAsk() {
+  if (!state.transcripts) {
+    try { state.transcripts = await getJSON("/data/demo/transcripts.json"); } catch (e) { state.transcripts = { transcripts: [] }; }
+  }
+  renderAskPanel();
+  $("#ask").showModal();
+  $("#ask-q").focus();
+}
+
+async function submitAsk(e) {
+  e.preventDefault();
+  const q = $("#ask-q").value.trim();
+  if (!q) return;
+  if (!health?.agent_live || !state.subject) { showExample(nearestExample(q), q, true); return; }
+  state.ask = { wait: true, question: q };
+  renderAskPanel();
+  try {
+    const r = await post("/api/ask", { subject: state.subject, question: q });
+    state.ask = r.unavailable ? { error: T().unavailable(r.unavailable), question: q } : { ...r.data, question: q };
+  } catch (err) { state.ask = { error: err.message, question: q }; }
+  renderAskPanel();
+  loadOverview().then(() => { if (state.route.view !== "case") renderView(); });
+}
+
+/* ---------- boot ---------- */
+
 function renderAll() {
   applyStatic();
   if (state.demo) { renderThumbs(); renderDoc(); renderExplain(); }
   renderTriage();
   renderDeductions();
   renderMode(health);
+  renderView();
+  if ($("#ask").open) renderAskPanel();
 }
 
 async function init() {
@@ -340,8 +961,31 @@ async function init() {
   $("#thr").oninput = renderTriage;
   $("#profile").addEventListener("input", refreshDeductions);
   $("#profile").addEventListener("submit", e => e.preventDefault());
+  $("#v-home").addEventListener("click", async e => {
+    if (!e.target.closest("#review-btn") || !state.subject) return;
+    e.target.disabled = true;
+    try {
+      const r = await post("/api/review", { subject: state.subject });
+      state.overview = r;
+      renderView();
+      announce(r.unavailable ? T().unavailable(r.unavailable) : T().review_done);
+      $("#review-btn")?.focus();
+    } catch (err) { announce(`${T().err} ${err.message}`); e.target.disabled = false; }
+  });
+  $("#v-case").addEventListener("click", e => { const b = e.target.closest("button[data-validate]"); if (b) { b.disabled = true; validateAction(b.dataset.validate); } });
+  $("#ask-open").onclick = openAsk;
+  $("#ask-close").onclick = () => $("#ask").close();
+  $("#ask-form").addEventListener("submit", submitAsk);
+  $("#ask-examples").addEventListener("click", e => {
+    const b = e.target.closest("button[data-example]");
+    if (!b) return;
+    if (health?.agent_live) { $("#ask-q").value = b.textContent; $("#ask-q").focus(); } else showExample(+b.dataset.example);
+  });
+  window.addEventListener("hashchange", () => route());
 
-  const [demo, results, h] = await Promise.allSettled([getJSON("/data/demo/demo.json"), getJSON("/data/results/results.json"), getJSON("/api/health")]);
+  applyStatic();
+  route(false);
+  const [demo, results, h] = await Promise.allSettled([getJSON("/data/demo/demo.json"), getJSON("/data/results/results.json"), getJSON("/api/health"), loadSubjects()]);
   if (demo.status === "fulfilled") state.demo = demo.value;
   else $("#fields tbody").innerHTML = `<tr><td colspan="5">${esc(T().err)} ${esc(demo.reason.message)}</td></tr>`;
   if (results.status === "fulfilled") {

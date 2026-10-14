@@ -1,4 +1,4 @@
-# `ordner.app` — demo console
+# `ordner.app` — Ordner cockpit and demo console
 
 Stdlib HTTP server + vanilla HTML/CSS/JS (no build step, no CDN: works air-gapped).
 
@@ -8,7 +8,18 @@ PYTHONPATH=src python -m ordner.app          # replay (python -m ordner.eval.run
 PYTHONPATH=src python -m ordner.app.deductions   # self-check of the deductions rules
 ```
 
-Env: `PORT` (8000), `HOST` (0.0.0.0), `ORDNER_DATA` (default `track_2b/data`).
+Env: `PORT` (8000), `HOST` (0.0.0.0), `ORDNER_DATA` (default `track_2b/data`), `ORDNER_HOME` (dossier, default `~/.ordner`),
+`LLM_BASE_URL` / `LLM_NAME` / `LLM_API_KEY` (live « Demander à Ordner »; without them the panel replays `data/demo/transcripts.json`).
+
+## Cockpit (`cockpit.py`, hash routes `#/home`, `#/inbox`, `#/cases`, `#/case/<id>`, `#/coverage`, `#/releve`)
+
+Reads `ordner.case` (W1), `ordner.procedures.catalog` (W2), `ordner.rules` (W3), `ordner.agent` (W5), all imported lazily:
+a missing module gives HTTP 503 `{"error": "unavailable", "module"}` and the view says « module pas encore disponible ».
+An empty dossier is seeded with the fictional persona (`ordner.case.demo_seed`) and reviewed once: every card of the
+subject's canton + CH that is not `not_applicable` opens a case with its next deadline, reminders and missing pieces
+(`POST /api/review`, idempotent; also the « Revoir le dossier » button). Endpoints: see the docstring of `server.py`.
+« Valider » only records the person's validation (`Store.update_action(..., "validated")`, event `action_updated`):
+nothing is ever sent, filed or paid. Self-check: `PYTHONPATH=src python -m ordner.app.cockpit`.
 
 The console reads three files; all of them are produced elsewhere:
 

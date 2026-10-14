@@ -1,0 +1,309 @@
+{
+  "fixture": true,
+  "note": "FIXTURE: hand-written transcripts in the ordner.agent.coordinator.run output format, for the « Demander à Ordner » panel when no model endpoint is configured. Replace with recorded runs (same keys, plus `question`). Dossier: fictional persona Noa Keller (ordner.case.demo_seed).",
+  "transcripts": [
+    {
+      "question": {
+        "fr": "Qu'est-ce que je dois faire en premier ?",
+        "de": "Was muss ich zuerst erledigen?",
+        "it": "Che cosa devo fare per prima cosa?"
+      },
+      "transcript": [
+        {
+          "step": 0,
+          "role": "assistant",
+          "content": "",
+          "tool_calls": [
+            {
+              "name": "case_load",
+              "arguments": {
+                "subject_id": "subj_noa_keller"
+              },
+              "error": null
+            }
+          ]
+        },
+        {
+          "step": 0,
+          "role": "tool",
+          "name": "case_load",
+          "arguments": {
+            "subject_id": "subj_noa_keller"
+          },
+          "result": {
+            "documents": 5,
+            "facts_proposed": 7,
+            "open_cases": 5,
+            "pending_actions": 0
+          }
+        },
+        {
+          "step": 1,
+          "role": "assistant",
+          "content": "",
+          "tool_calls": [
+            {
+              "name": "rules_evaluate",
+              "arguments": {
+                "card_id": "tax.return.VD",
+                "subject_id": "subj_noa_keller",
+                "period": "2025"
+              },
+              "error": null
+            }
+          ]
+        },
+        {
+          "step": 1,
+          "role": "tool",
+          "name": "rules_evaluate",
+          "arguments": {
+            "card_id": "tax.return.VD",
+            "period": "2025"
+          },
+          "result": {
+            "status": "missing_info",
+            "missing": [
+              "subject.tax_at_source"
+            ],
+            "deadline": {
+              "due": "2026-03-15"
+            }
+          }
+        }
+      ],
+      "answer": {
+        "fr": "Votre dossier contient 5 pièces et 7 informations lues mais pas encore confirmées par vous. Le point le plus pressant : la déclaration d'impôt 2025 (Vaud), dont l'échéance de base, le 15.03.2026, est passée. Indiquez si vous l'avez déjà déposée ou obtenu un délai ; sinon, Ordner prépare la suite avec vous. Rien n'est envoyé sans votre validation.",
+        "de": "Ihr Dossier enthält 5 Unterlagen und 7 gelesene, von Ihnen noch nicht bestätigte Angaben. Am dringendsten: die Steuererklärung 2025 (Waadt), deren ordentliche Frist am 15.03.2026 abgelaufen ist. Sagen Sie, ob Sie sie schon eingereicht oder eine Fristverlängerung erhalten haben; sonst bereitet Ordner das Weitere mit Ihnen vor. Ohne Ihre Bestätigung wird nichts gesendet.",
+        "it": "Il suo dossier contiene 5 documenti e 7 informazioni lette ma non ancora confermate da lei. Il punto più urgente: la dichiarazione d'imposta 2025 (Vaud), la cui scadenza ordinaria del 15.03.2026 è passata. Indichi se l'ha già inoltrata o ottenuto una proroga; altrimenti Ordner prepara il seguito con lei. Nulla viene inviato senza la sua convalida."
+      },
+      "actions": [],
+      "questions": [],
+      "warnings": []
+    },
+    {
+      "question": {
+        "fr": "Mon dossier fiscal 2025 est-il complet ?",
+        "de": "Ist mein Steuerdossier 2025 vollständig?",
+        "it": "Il mio dossier fiscale 2025 è completo?"
+      },
+      "transcript": [
+        {
+          "step": 0,
+          "role": "assistant",
+          "content": "",
+          "tool_calls": [
+            {
+              "name": "case_load",
+              "arguments": {
+                "subject_id": "subj_noa_keller"
+              },
+              "error": null
+            }
+          ]
+        },
+        {
+          "step": 0,
+          "role": "tool",
+          "name": "case_load",
+          "arguments": {
+            "subject_id": "subj_noa_keller"
+          },
+          "result": {
+            "finance.institutions": [
+              "Morvessa Banque SA (bank)",
+              "Talbruck Banque Privée SA (bank)",
+              "Zelfeld Courtage SA (broker)"
+            ],
+            "tax_statements_2025": [
+              {
+                "issuer": "Morvessa Banque SA",
+                "read_path": "barcode",
+                "doubt": 0.0
+              },
+              {
+                "issuer": "Zelfeld Courtage SA",
+                "read_path": "ai",
+                "doubt": {
+                  "totalTaxValue": 0.18,
+                  "totalWithHoldingTaxClaim": 0.25
+                }
+              }
+            ]
+          }
+        },
+        {
+          "step": 1,
+          "role": "assistant",
+          "content": "",
+          "tool_calls": [
+            {
+              "name": "prepare_action",
+              "arguments": {
+                "kind": "document_request",
+                "summary": "Demander le relevé fiscal 2025 à Talbruck Banque Privée SA",
+                "details": {
+                  "to": "Talbruck Banque Privée SA"
+                }
+              },
+              "error": null
+            }
+          ]
+        },
+        {
+          "step": 1,
+          "role": "tool",
+          "name": "prepare_action",
+          "arguments": {
+            "kind": "document_request"
+          },
+          "result": {
+            "status": "prepared",
+            "requires_validation": true,
+            "note": "Not executed. The person must validate it."
+          }
+        }
+      ],
+      "answer": {
+        "fr": "Pas encore. Vous avez déclaré trois établissements ; deux relevés fiscaux 2025 sont arrivés. Morvessa : codes-barres lus, valeurs exactes. Zelfeld : photo lue par l'IA, doute modéré sur l'impôt anticipé (0.25), à confirmer. Il manque le relevé de Talbruck Banque Privée SA : j'ai préparé une demande, à valider dans la démarche.",
+        "de": "Noch nicht. Sie haben drei Institute angegeben; zwei Steuerausweise 2025 sind eingetroffen. Morvessa: Barcodes gelesen, exakte Werte. Zelfeld: Foto von der KI gelesen, mässiger Zweifel bei der Verrechnungssteuer (0.25), zu bestätigen. Es fehlt der Ausweis der Talbruck Banque Privée SA: Ich habe eine Anfrage vorbereitet, im Verfahren zu bestätigen.",
+        "it": "Non ancora. Ha dichiarato tre istituti; sono arrivati due estratti fiscali 2025. Morvessa: codici a barre letti, valori esatti. Zelfeld: foto letta dall'IA, dubbio moderato sull'imposta preventiva (0.25), da confermare. Manca l'estratto di Talbruck Banque Privée SA: ho preparato una richiesta, da convalidare nella pratica."
+      },
+      "actions": [
+        {
+          "kind": "document_request",
+          "status": "prepared",
+          "payload": {
+            "summary": {
+              "fr": "Demander le relevé fiscal 2025 à Talbruck Banque Privée SA",
+              "de": "Steuerausweis 2025 bei der Talbruck Banque Privée SA anfordern",
+              "it": "Chiedere l'estratto fiscale 2025 a Talbruck Banque Privée SA"
+            }
+          }
+        }
+      ],
+      "questions": [],
+      "warnings": []
+    },
+    {
+      "question": {
+        "fr": "Je déménage à Fribourg en janvier : qu'est-ce qui change ?",
+        "de": "Ich ziehe im Januar nach Freiburg: Was ändert sich?",
+        "it": "A gennaio trasloco a Friburgo: che cosa cambia?"
+      },
+      "transcript": [
+        {
+          "step": 0,
+          "role": "assistant",
+          "content": "",
+          "tool_calls": [
+            {
+              "name": "case_load",
+              "arguments": {
+                "subject_id": "subj_noa_keller"
+              },
+              "error": null
+            }
+          ]
+        },
+        {
+          "step": 0,
+          "role": "tool",
+          "name": "case_load",
+          "arguments": {
+            "subject_id": "subj_noa_keller"
+          },
+          "result": {
+            "facts": [
+              {
+                "key": "move.planned.date",
+                "value": "2027-01-15",
+                "status": "confirmed"
+              },
+              {
+                "key": "move.planned.canton",
+                "value": "FR",
+                "status": "confirmed"
+              }
+            ]
+          }
+        },
+        {
+          "step": 1,
+          "role": "assistant",
+          "content": "",
+          "tool_calls": [
+            {
+              "name": "knowledge_search",
+              "arguments": {
+                "query": "déménagement annonce départ arrivée",
+                "canton": "FR"
+              },
+              "error": null
+            }
+          ]
+        },
+        {
+          "step": 1,
+          "role": "tool",
+          "name": "knowledge_search",
+          "arguments": {
+            "query": "déménagement annonce départ arrivée",
+            "canton": "FR"
+          },
+          "result": {
+            "hits": [
+              {
+                "title": "ch.ch — Aide-mémoire pour un déménagement réussi",
+                "url": "https://www.ch.ch/fr/logement/demenagement/aide-memoire-pour-un-demenagement-reussi/"
+              }
+            ]
+          }
+        },
+        {
+          "step": 2,
+          "role": "assistant",
+          "content": "",
+          "tool_calls": [
+            {
+              "name": "ask_user",
+              "arguments": {
+                "question": "Avez-vous déjà signé le bail du logement à Fribourg ?",
+                "missing": "housing.lease.signed"
+              },
+              "error": null
+            }
+          ]
+        },
+        {
+          "step": 2,
+          "role": "tool",
+          "name": "ask_user",
+          "arguments": {
+            "question": "Avez-vous déjà signé le bail du logement à Fribourg ?"
+          },
+          "result": {
+            "status": "asked"
+          }
+        }
+      ],
+      "answer": {
+        "fr": "Votre déménagement à Fribourg le 15.01.2027 touche plusieurs démarches : annonces de départ et d'arrivée, assurance maladie, impôts. Le catalogue n'a pas encore de fiche qualifiée pour ce passage VD → FR : ces démarches restent « à vérifier ». Une question avant d'aller plus loin :",
+        "de": "Ihr Umzug nach Freiburg am 15.01.2027 betrifft mehrere Verfahren: Ab- und Anmeldung, Krankenversicherung, Steuern. Der Katalog hat für den Wechsel VD → FR noch keine qualifizierte Karte: Diese Verfahren bleiben «zu prüfen». Eine Frage, bevor es weitergeht:",
+        "it": "Il trasloco a Friburgo il 15.01.2027 tocca più pratiche: notifiche di partenza e di arrivo, assicurazione malattia, imposte. Il catalogo non ha ancora una scheda qualificata per il passaggio VD → FR: queste pratiche restano «da verificare». Una domanda prima di proseguire:"
+      },
+      "actions": [],
+      "questions": [
+        {
+          "question": {
+            "fr": "Avez-vous déjà signé le bail du logement à Fribourg ?",
+            "de": "Haben Sie den Mietvertrag in Freiburg schon unterschrieben?",
+            "it": "Ha già firmato il contratto d'affitto a Friburgo?"
+          },
+          "missing": "housing.lease.signed"
+        }
+      ],
+      "warnings": []
+    }
+  ]
+}

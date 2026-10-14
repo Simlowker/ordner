@@ -1,11 +1,16 @@
-"""python -m ordner.rules.selfcheck  (asserts on reference cases; no network, no files written)"""
+"""python -m ordner.rules.selfcheck  (asserts on reference cases; no network; the Noa case uses a temporary DB)"""
 import re
+import tempfile
 from datetime import date
+from pathlib import Path
 
-from ordner.core.schema import Deadline, DeadlineRule, Fact, ProcedureCard, Subject
+from ordner.case import demo_seed
+from ordner.case.store import Store
+from ordner.core.schema import Deadline, DeadlineRule, Document, Fact, ProcedureCard, Subject
 from ordner.procedures.catalog import _condition as catalog_syntax
+from ordner.procedures.catalog import get as get_card
 
-from . import DEADLINE_RULE_IDS, applicable, compute_deadline, easter, holidays, reminders, to_ics
+from . import DEADLINE_RULE_IDS, applicable, completeness, compute_deadline, consolidate, easter, holidays, reminders, to_ics
 
 VD = Subject("s_vd", "person", "Léa Test", canton="VD", roles=["student"], attrs={"birth_year": 2006})
 
@@ -172,10 +177,95 @@ def check_reminders_and_ics():
     assert all(re.fullmatch(r"DTSTAMP:\d{8}T\d{6}Z", l) for l in unfolded if l.startswith("DTSTAMP"))
 
 
+def check_card_params():
+    """from_fact, cantonal, kinds, variants and chosen_date, on W2b's real cards where they exist."""
+    moving = get_card("housing.moving.announce").deadline
+    move = lambda status: [Fact("m1", "s_vd", "housing.moving.date", "2026-10-01", status=status)]
+    # 1. from_fact: the deadline counts from the confirmed moving date; proposed or absent → missing_info
+    r = compute_deadline(moving, VD, {"facts": move("confirmed")})
+    assert r["due"] == "2026-10-09" and r["computed_from"]["inputs"]["from_fact"] == "housing.moving.date", r  # VD: 8 days
+    assert compute_deadline(moving, VD, {"facts": move("proposed")})["missing"] == ["housing.moving.date"]
+    assert compute_deadline(moving, VD, {})["missing"] == ["housing.moving.date"]
+    # 2. cantonal: VD 8 days and its sources; ZH has no own rule → federal 14 days, flagged; no canton → missing
+    assert compute_deadline(moving, VD, {"facts": move("confirmed")})["computed_from"]["card_sources"][:2] == [1, 2]
+    zh = compute_deadline(moving, Subject("s_vd", "person", "Z", canton="ZH"), {"facts": move("confirmed")})
+    assert zh["due"] == "2026-10-15" and "sans règle propre" in zh["computed_from"]["warnings"][0], zh
+    assert compute_deadline(moving, Subject("s_vd", "person", "N"), {"facts": move("confirmed")})["missing"] == ["subject.canton"]
+    #    with an event kind (FR: 14 days arrival, 30 days internal move, departure "sans délai")
+    fr_rule = DeadlineRule("days_after_notification", {"days": 14, "from_fact": "housing.moving.date", "cantonal": {"FR": {
+        "days": 14, "sources": [3], "kinds": {"internal": {"days": 30, "sources": [7]}, "departure": {"days": 0, "sources": [4]}}}}})
+    fr = Subject("s_vd", "person", "F", canton="FR")
+    assert compute_deadline(fr_rule, fr, {"facts": move("confirmed")})["missing"] == ["kind"]
+    internal = compute_deadline(fr_rule, fr, {"facts": move("confirmed"), "kind": "internal"})
+    assert internal["due"] == "2026-11-02" and internal["computed_from"]["kind"] == "internal", internal  # 31.10 = Saturday
+    assert compute_deadline(fr_rule, fr, {"facts": move("confirmed"), "kind": "arrival"})["due"] == "2026-10-15"
+    assert compute_deadline(fr_rule, fr, {"facts": move("confirmed"), "kind": "departure"})["due"] == "2026-10-01"
+    #    a cantonal rule given only as text keeps the base computation and is surfaced
+    objection = compute_deadline(get_card("tax.assessment.objection").deadline, VD, {"notified_on": "2026-10-02"})
+    assert objection["due"] == "2026-11-02" and "LI-VD" in objection["computed_from"]["cantonal_rule"], objection
+    # 3. variants: LAMal 30.11 reception (change, lower deductible) vs 31.12 (higher deductible)
+    lamal = get_card("health_insurance.change_insurer_or_deductible").deadline
+    both = compute_deadline(lamal, VD, {"period": "2026"})
+    assert both["status"] == "variants" and both["missing"] == ["variant"], both
+    assert [(v["cases"][0], v["due"]) for v in both["variants"]] == [("change_insurer", "2026-11-30"), ("higher_deductible", "2026-12-31")]
+    low = compute_deadline(lamal, VD, {"period": "2026", "variant": "lower_deductible"})
+    assert low["due"] == "2026-11-30" and low["send_by"] and low["computed_from"]["variant"] == "lower_deductible"
+    assert compute_deadline(lamal, VD, {"period": "2026", "variant": "higher_deductible"})["due"] == "2026-12-31"
+    assert compute_deadline(lamal, VD, {"period": "2026", "variant": "other"})["missing"] == ["variant"]
+    # 4. chosen_date: ORP registration at the latest on the first day claimed by the person
+    orp = DeadlineRule("chosen_date", {"from_fact": "work.unemployment.first_claimed_day", "sources": [1]})
+    assert compute_deadline(orp, VD, {"chosen_date": "2026-11-02"})["due"] == "2026-11-02"
+    claimed = [Fact("u1", "s_vd", "work.unemployment.first_claimed_day", "2026-12-01", status="confirmed")]
+    assert compute_deadline(orp, VD, {"facts": claimed})["due"] == "2026-12-01"
+    assert compute_deadline(DeadlineRule("chosen_date"), VD, {})["missing"] == ["chosen_date"]
+
+
+def check_dossier():
+    # reference case: persona Noa, 3 institutions declared, 2 statements 2025 received → Talbruck missing
+    with tempfile.TemporaryDirectory() as tmp:
+        store = Store(Path(tmp) / "ordner.db")
+        sid = demo_seed.seed(store)
+        subject, facts, docs = store.get_subject(sid), store.facts(sid), store.documents(sid)
+        store.db.close()
+    r = completeness(get_card("tax.return.VD"), subject, facts, docs, "2025")
+    assert r["status"] == "incomplete" and demo_seed.MANIFEST["missing"][0] in r["missing_documents"], r
+    assert [d["issuer"] for d in r["missing_documents"] if d["kind"] == "swiss_tax_statement_eCH0196"] == ["Talbruck Banque Privée SA"]
+    assert not any(d["kind"] == "pillar3a_certificate" for d in r["missing_documents"])  # waived: no pillar 3a (confirmed)
+    c = consolidate(facts, "2025")
+    assert c["status"] == "incomplete" and c["institutions_missing"] == ["Talbruck Banque Privée SA"], c
+    assert c["institutions_included"] == ["Morvessa Banque SA", "Zelfeld Courtage SA"]
+    ttv = c["totals"]["total_tax_value"]
+    zelfeld_page = next(d for d in demo_seed.MANIFEST["documents"] if d["issuer"] == "Zelfeld Courtage SA")["page"]
+    assert ttv["status"] == "provisional" and ttv["total"] == round(9288.08 + float(zelfeld_page["totalTaxValue"]), 2), ttv
+    assert ttv["by_institution"]["Zelfeld Courtage SA"]["status"] == "proposed"
+    # synthetic: wrong year, duplicates, undeclared institutions, connector + seed keys counted once, final totals
+    one = Subject("s1", "person", "P", canton="VD")
+    inst = lambda status="confirmed": Fact("i", "s1", "finance.institutions", [{"name": "Alpha Bank AG"}], period="2025", status=status)
+    stmt = lambda i, year, sha, issuer="Alpha Bank AG": Document(i, "s1", f"/x/{i}.pdf", sha, kind="swiss_tax_statement_eCH0196", year=year, issuer=issuer)
+    need = card({})
+    need.required_documents = ["swiss_tax_statement_eCH0196"]
+    r = completeness(need, one, [inst()], [stmt("d1", 2024, "a"), stmt("d2", 2025, "b"), stmt("d3", 2025, "b"), stmt("d4", 2025, "c")], "2025")
+    assert r["status"] == "complete" and r["wrong_year"][0]["document"] == "d1", r
+    assert [x["documents"] for x in r["duplicates"]] == [["d2", "d3"], ["d2", "d4"]]
+    assert completeness(need, one, [inst()], [stmt("d1", 2024, "a")], "2025")["status"] == "incomplete"
+    assert completeness(need, one, [], [stmt("d2", 2025, "b")], "2025")["status"] == "missing_info"
+    assert completeness(need, one, [inst("proposed")], [], "2025")["missing_facts"] == ["finance.institutions"]
+    both = [inst(), Fact("a", "s1", "tax.statement.total_tax_value.alpha_bank_ag", 100.5, period="2025", status="confirmed"),
+            Fact("b", "s1", "tax.securities.alpha.total_tax_value", 100.5, period="2025", status="confirmed")]
+    c = consolidate(both, "2025")
+    assert c["status"] == "final" and c["totals"]["total_tax_value"]["total"] == 100.5 and c["institutions_missing"] == [], c
+    try:
+        consolidate(both + [Fact("z", "s2", "tax.statement.total_tax_value.x", 1, period="2025", status="confirmed")], "2025")
+        raise AssertionError("mixed subjects accepted")
+    except ValueError:
+        pass
+
+
 def main():
-    assert DEADLINE_RULE_IDS == ["fixed_date", "days_after_notification", "debt_collection", "reception_by", "cantonal_table", "year_end"]
+    assert DEADLINE_RULE_IDS == ["fixed_date", "days_after_notification", "debt_collection", "reception_by", "cantonal_table",
+                                 "year_end", "chosen_date"]
     checks = [check_calendar, check_debt_collection, check_days_after_notification, check_fixed_dates, check_missing_info,
-              check_applicability, check_reminders_and_ics]
+              check_applicability, check_card_params, check_dossier, check_reminders_and_ics]
     for check in checks:
         check()
         print(f"ok  {check.__name__}")
