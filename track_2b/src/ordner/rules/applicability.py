@@ -21,6 +21,7 @@ def _as_date(d) -> date:
 class _Eval:
     def __init__(self, subject, facts, on: date, period, accept_proposed):
         self.subject, self.on, self.why = subject, on, []
+        self.year = int(str(period)[:4]) if period else on.year  # age_at_year_end: the evaluated period's year
         self.accept = ("confirmed", "proposed") if accept_proposed else ("confirmed",)
         sid = _g(subject, "id")
         self.facts = [f for f in facts if _g(f, "subject_id") in (sid, None)  # never reuse another subject's facts
@@ -66,9 +67,10 @@ class _Eval:
         if by is None:
             self.why.append(f"{name} : année de naissance inconnue → information manquante")
             return None, {"subject.birth_year"}
-        y = self.on.year
         if name == "age_at_year_end":  # exact from the year alone: the birthday has passed by 31.12
+            y = self.year
             return self.leaf("subject.birth_year", y - by, op, target, f"âge au 31.12.{y} ({y} − {by})")
+        y = self.on.year
         if bd:
             b = date.fromisoformat(bd)
             exact = y - b.year - ((self.on.month, self.on.day) < (b.month, b.day))
@@ -118,7 +120,8 @@ def _fr(ok: bool) -> str:
 
 def applicable(card, subject, facts, on=None, period=None, accept_proposed=False) -> dict:
     """{"status": "applicable"|"not_applicable"|"missing_info", "missing": [...], "why": [...]}.
-    `on`: reference date (ISO or date, default today) for ages and card validity. `accept_proposed`: preview mode where
+    `on`: reference date (ISO or date, default today) for `age` and card validity; `age_at_year_end` uses the year of
+    `period` when given (a 2025 tax return evaluated in 2026 looks at 31.12.2025), else the year of `on`. `accept_proposed`: preview mode where
     proposed (unconfirmed) facts count; by default only confirmed facts decide."""
     on = _as_date(on) if on else date.today()
     ev = _Eval(subject, facts, on, period, accept_proposed)

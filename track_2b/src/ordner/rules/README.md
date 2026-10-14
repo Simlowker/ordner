@@ -21,7 +21,7 @@ Same syntax as `ordner.procedures.catalog` (W2a validates it, this module evalua
 | `{"all": [...]}` / `{"any": [...]}` / `{"not": c}` | boolean combinators |
 | `{"role": "student"}` | `"student" in subject.roles`; **empty roles = unknown** (`subject.roles` missing) |
 | `{"attr": "canton", "eq": "VD"}` | Subject field (`id kind name canton commune`) or key of `subject.attrs` |
-| `{"attr": "age_at_year_end", "gte": 21}` | computed: year of `on` − `birth_year` (exact, the birthday has passed by 31.12) |
+| `{"attr": "age_at_year_end", "gte": 21}` | computed: year of `period` (else of `on`) − `birth_year`, exact since the birthday has passed by 31.12 |
 | `{"attr": "age", "gte": 18}` | computed: completed years at `on`; uses `attrs.birth_date` (ISO); with `birth_year` only, decided if both possible ages agree, else `subject.birth_date` missing |
 | `{"fact": "income.net", "lte": 46800}` | latest **confirmed** Fact with that key for this subject (and `period` if given) |
 

@@ -104,6 +104,12 @@ def check_applicability():
     no_year = Subject("s6", "person", "C", canton="VD", roles=["student"])
     r = applicable(avs, no_year, [], on="2026-10-14")
     assert r["status"] == "missing_info" and r["missing"] == ["subject.birth_year"], r
+    # age_at_year_end follows the evaluated period, not the evaluation date: 18 in 2026 → not bound for 2025, bound for 2026
+    tax18 = card({"attr": "age_at_year_end", "gte": 18})
+    turns_18 = Subject("s18", "person", "G", attrs={"birth_year": 2008})
+    assert applicable(tax18, turns_18, [], on="2026-03-01", period="2025")["status"] == "not_applicable"
+    assert applicable(tax18, turns_18, [], on="2027-03-01", period="2026")["status"] == "applicable"
+    assert applicable(tax18, turns_18, [], on="2026-03-01")["status"] == "applicable"  # no period → year of `on`
     # salaried short-circuits to not_applicable even with the birth year unknown
     worker = Subject("s7", "person", "D", roles=["salaried"])
     assert applicable(avs, worker, [])["status"] == "not_applicable"
