@@ -4,7 +4,7 @@
 
 - **Track:** Track 2B — Ordner
 - **Event:** Online
-- **Team:** `{{team_name}}` — {{members}}
+- **Team:** `Meotis` — {{members}}
 - **Demo:** {{video_url}}
 - **Code:** {{repo_url}}, commit `{{commit}}`; pre-registration `PREREG.md` frozen in commit `{{prereg_commit}}`
 
@@ -398,7 +398,7 @@ Creative Commons Attribution 4.0 (CC-BY-4.0). All HackApertus projects are open-
 | `{{prereg_commit}}`      | commit that adds "FROZEN" to PREREG.md                                         |
 | `{{prereg_deviations}}`  | deviations from PREREG.md after freezing, or "none"                            |
 | `{{repo_url}}`           | public repository URL                                                          |
-| `{{team_name}}`          | team name                                                                      |
+| `Meotis`          | team name                                                                      |
 | `{{video_url}}`          | demo video URL                                                                 |
 
 Also copy `data/results/triage_curves.png` and `data/results/accuracy_by_degradation.png` to `docs/` after the frozen run (Figures 2-3).

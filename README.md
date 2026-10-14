@@ -1,60 +1,56 @@
-# Hack Apertus — project template
+# Ordner — a sovereign Swiss admin assistant built on Apertus
 
-Template repository for [Hack Apertus](https://hackapertus.ch/) submissions.
-Every project keeps almost the same layout, so organizers and judges find the
-same things in the same place.
+**Team Meotis · Hack Apertus 2026 · Track 2B (Own Project)**
 
-## Select your track
+Nobody teaches young adults how to do their taxes. Ordner reads the papers a person in Switzerland receives — starting
+with the bank's electronic tax statement (eCH-0196) — extracts what has to be reported in the tax return, **says which
+values it is not sure about**, and explains in German, French or Italian where each amount goes, quoting official
+sources word for word. Everything runs **locally**: no document, no amount, no name ever leaves the machine.
 
-This repository holds one example project per track:
-
-- `track_1a/`
-- `track_1b/`
-- `track_2a/`
-- `track_2b/`
-
-Keep the directory for the track you are competing in **exactly as it is** —
-don't rename it or move its files — and delete the other track directories.
-That directory is your project root. Keep the files and directories as shown
-below.
-
-## The structure
-
-| Path | What it is |
-| --- | --- |
-| `README.md` | The challenge description and submission requirements for your track |
-| `technical_report.md` | The deeper write-up: architecture, evaluation, limitations |
-| `Makefile` | `make run` must spin up your project |
-| `src/` | Your code |
-| `data/` | Datasets — `track_1a`, `track_2a` and `track_2b` only; max. 100 MB |
-| `findings/` | Issue files — `track_1a` only |
-| `docs/` | Diagrams, notes, longer write-ups |
+- **Apertus 1.5 8B is the core**: it extracts the fields (fine-tuned with LoRA on a laptop), explains them, and its own
+  hidden states are read by a probe that predicts when an extracted value is wrong.
+- **Free, exact ground truth**: a Swiss e-tax statement carries its own data in PDF417 barcodes. We use them to evaluate
+  every field and to fine-tune Apertus — no manual annotation, no closed model anywhere.
+- **Doubt you can act on**: probe + calibrated judge (d1-3B) + rule checks → only doubtful fields go to a human.
+- **Tested where it matters**: two page layouts never seen in training, phone-photo degradations, three languages,
+  pre-registered hypotheses ([`track_2b/PREREG.md`](track_2b/PREREG.md)).
 
 ## Run it
-
-Judges run `make run` from the root of the project, on a clean checkout:
 
 ```bash
 make run
 ```
 
-`make run` is expected to run the project using Docker, since that
-is how the judges will run it.
-- If you used other local open-weight models, include instructions for running the project in your technical report.
-- Use the following environment variables:
+Docker, from a clean checkout, **no GPU, no network, no API key**: replays the recorded model outputs and hidden-state
+features, re-trains the probe, recomputes every number of the report and serves the console on http://localhost:8000.
+The full live pipeline (OCR → Apertus → probe → judge) runs on Apple Silicon with `make -C track_2b live`
+(Docker cannot use the Mac GPU). Details: [`track_2b/README.md`](track_2b/README.md) and the
+[technical report](track_2b/technical_report.md).
+
+## Architecture
+
 ```
-LLM_NAME — name and version of the model
-LLM_BASE_URL — endpoint base URL
-LLM_API_KEY — your API key
+document ─► d1-3B router ─► LightOnOCR-3 ─► APERTUS 1.5 8B (LoRA) ─► rule checks
+                                              │ hidden states ─► probe ┐
+                                              └──────────────► d1-3B judge ┴─► doubt ─► human triage
+                                                                                   └─► APERTUS explanation
+                                                                                       (EmbeddingGemma 2 retrieval,
+                                                                                        verbatim-checked citations)
 ```
 
-## Getting started
+Target architecture: **air-gapped (b)** and **on-premise (a)**. External services at runtime: **none**.
 
-1. Click **Use this template** to create your own repository.
-2. Delete the other track directories. Don't rename or restructure yours.
-3. Read its `README.md` and fill in `technical_report.md`.
-4. Make `make run` work from the root of the project, on a clean checkout.
+## Repository
 
-## License
+| Path                            | What                                                                                   |
+| ------------------------------- | -------------------------------------------------------------------------------------- |
+| `track_2b/src/ordner/gen/`      | synthetic eCH-0196 statements, 3 layouts, degradations, barcode oracle                 |
+| `track_2b/src/ordner/models/`   | local model wrappers (Apertus MLX/transformers, LightOnOCR-3, d1-3B, EmbeddingGemma 2) |
+| `track_2b/src/ordner/finetune/` | LoRA data from the barcode oracle, mlx-lm training                                     |
+| `track_2b/src/ordner/eval/`     | rules baseline, probe, metrics, replay (`make run`)                                    |
+| `track_2b/src/ordner/explain/`  | grounded explanations over official sources                                            |
+| `track_2b/src/ordner/app/`      | offline console                                                                        |
+| `track_2b/data/`                | everything the replay needs (< 100 MB)                                                 |
 
-All Hack Apertus projects are open-sourced. Please check our Terms & Conditions for specific licensing details (6. What you build is open source): https://hackapertus.ch/terms-and-conditions
+Not tax advice: Ordner informs and cites, the person decides. Code: Apache-2.0 · documentation: CC-BY-4.0 ·
+data: CDLA-Permissive-2.0 (see the technical report for third-party components and licences).
