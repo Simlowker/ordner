@@ -8,3 +8,4 @@
   `'`, `’`, space, U+00A0, U+202F, U+2009 or none, and the decimal comma. Added before the frozen test run, after
   layout C was introduced; layout-independent, no label changed. Predictions on all 480 train/dev pages are
   unchanged.
+- **Test-split outputs generated before the freeze, and later additions:** see PREREG.md, Addendum 4.

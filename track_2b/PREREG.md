@@ -81,3 +81,30 @@ per model on an Apple M4 Max 36 GB.
   1.5 8B), same toolset, same step budget, same scenarios (dev for integration, test once). Decision rule: the harness
   is adopted for the product only if it is not worse on deadline exact-match, obligations recall and questions, keeps
   zero forbidden actions, and has no silent failures (a tool call misread as a final answer counts as a failure).
+
+## Addendum 4 (14.10.2026, 22:00, at freeze): deviations and additions known before any test score
+
+- **Test-split model outputs generated before this freeze.** The batch extraction chain (Mac Studio, 14.10 about
+  10:00–16:30) ran systems 1–3 and the d1-3B validation over all 1,680 pages, including the 1,200 test pages, because it
+  processed every split in one pass. No test score was computed and no test output was inspected. Prompts, decoding
+  and the extraction LoRA (trained on the train split only, commit `004feef`) were fixed before. Decoding is greedy, so
+  regenerating the outputs after the freeze would reproduce them. `data/items.jsonl` (an untracked smoke-test file of
+  05:29) holds per-item `correct` flags for 32 regex items of 4 test pages; no aggregate was computed or viewed.
+  Earlier disclosures: `src/ordner/eval/DEVIATIONS.md`.
+- **H7 teacher.** GLM-5.3 (via OpenRouter, fictional synthetic data only) was the only teacher; Apertus 70B was not
+  used. 400 variants of dev-split scenarios; 113 trajectories kept by the strict filter (`ordner.distill.filter`).
+- **H7 training.** QLoRA: LoRA on the last 16 layers of a 4-bit-quantised copy of the base, because the bf16 LoRA ran
+  out of memory at 8k-token turns on 36 GB. The adapter is evaluated on the bf16 base (the announced configuration).
+- **Added system, exploratory.** `hybrid`: `rules_only` then the coordinator on the same dossier (merged outputs).
+  It was defined after seeing dev results (14.10 20:00) and is reported on test as exploratory, not as a hypothesis.
+  A double-payment guard in the dossier (`Store.add_action`) was added after the dev run in which `hybrid` prepared two
+  payments for one bill; it applies to every system.
+- **Knowledge search.** Scenario runs since 14.10 17:00 use EmbeddingGemma 2 (`ORDNER_EMBED=1`), chosen on a separate
+  retrieval evaluation (`data/retrieval/`). All dev and test scenario runs of H6–H8 use it.
+- **H8.** The harness was compared with the coordinator on the process toolset only.
+- **Run-to-run noise.** Two identical dev runs at temperature 0 differ on 5 of 43 scenario verdicts (batched MLX
+  serving). Each system is run once on test; the dev noise is reported next to the test results.
+- **Hardware.** All model runs (extraction, d1, scenario serving with `mlx_lm.server`, training) on a Mac Studio
+  M4 Max 36 GB; evaluation clients on a laptop. Models that do not fit together are loaded one at a time.
+
+FROZEN — 14.10.2026, before any score on the test split.
