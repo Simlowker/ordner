@@ -75,6 +75,8 @@ class Fact:
     doubt: float | None = None
     created_at: str = field(default_factory=now)
     supersedes: str | None = None
+    confirmed_at: str | None = None
+    confirmed_by: Actor | None = None
 
 
 @dataclass
@@ -112,6 +114,7 @@ class Deadline:
     rule_id: str
     computed_from: dict[str, Any] = field(default_factory=dict)
     reminders: list[str] = field(default_factory=list)          # ISO dates
+    status: Literal["active", "superseded", "done"] = "active"  # a recomputed deadline supersedes the previous one
 
 
 @dataclass
