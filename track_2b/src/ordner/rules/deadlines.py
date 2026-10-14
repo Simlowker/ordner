@@ -263,17 +263,37 @@ def _chosen(rule_id, params, subject, context):
 
 
 def _merge(params: dict, override: dict) -> dict:
-    return {**params, **override, "sources": list(dict.fromkeys((override.get("sources") or []) + (params.get("sources") or [])))}
+    out = {**params, **override, "sources": list(dict.fromkeys((override.get("sources") or []) + (params.get("sources") or [])))}
+    if "kinds" in params and "kinds" in override:  # per-kind merge: a cantonal "internal" keeps the card's "departure"
+        out["kinds"] = {k: {**params["kinds"].get(k, {}), **override["kinds"].get(k, {})}
+                        for k in {**params["kinds"], **override["kinds"]}}
+    return out
+
+
+DESTINATION_FACT = "move.planned.canton_to"
 
 
 def _specialize(rule_id, params, subject, context):
-    """Apply params["cantonal"][canton] then params["kinds"][context kind]. Returns (params, applied) or a missing dict."""
+    """Apply params["cantonal"][canton] then params["kinds"][kind]. A kind with "canton_of": "destination" (intercantonal
+    arrival) reads the canton of arrival, "origin" the subject's. Returns (params, applied, context) or a missing dict."""
     applied = {"warnings": []}
+    kind = context.get("kind")
+    if params.get("kinds") and not kind:
+        return _missing(rule_id, ["kind"], f"type d'événement nécessaire (règles propres : {', '.join(params['kinds'])})")
+    canton_of = (params.get("kinds") or {}).get(kind, {}).get("canton_of", "origin")
     cantonal = params.pop("cantonal", None)
     if cantonal:
-        canton = _canton(subject, context)
+        if canton_of == "destination":
+            canton, key = context.get("to_canton"), DESTINATION_FACT
+            if not canton:
+                f, _ = latest_fact(context.get("facts") or [], _g(subject, "id"), DESTINATION_FACT)
+                canton = _g(f, "value") if f is not None else None
+        else:
+            canton, key = _canton(subject, context), "subject.canton"
         if not canton:
-            return _missing(rule_id, ["subject.canton"], "la fiche prévoit des règles cantonales : canton nécessaire")
+            return _missing(rule_id, [key], f"canton {'d’arrivée' if canton_of == 'destination' else ''} inconnu : la fiche "
+                            "prévoit des règles cantonales".replace("  ", " "))
+        context = {**context, "canton": canton}  # holidays follow the canton whose rule applies
         entry = dict(cantonal.get(canton) or {})
         if entry:
             if entry.get("rule"):
@@ -284,15 +304,13 @@ def _specialize(rule_id, params, subject, context):
             applied["cantonal"] = canton
         else:
             applied["warnings"].append(f"canton {canton} sans règle propre dans la fiche : règle de base appliquée, à qualifier")
+        if canton_of == "destination":
+            applied["canton_of"] = "destination"
     kinds = params.pop("kinds", None)
-    if kinds:
-        kind = context.get("kind")
-        if not kind:
-            return _missing(rule_id, ["kind"], f"type d'événement nécessaire (règles propres : {', '.join(kinds)})")
-        if kind in kinds:
-            params = _merge(params, kinds[kind])
-            applied["kind"] = kind
-    return params, applied
+    if kinds and kind in kinds:
+        params = _merge(params, {k: v for k, v in kinds[kind].items() if k != "canton_of"})
+        applied["kind"] = kind
+    return params, applied, context
 
 
 def _variants(rule_id, params, subject, context):
@@ -337,7 +355,7 @@ def compute_deadline(rule, subject, context: dict) -> dict:
     spec = _specialize(rule_id, params, subject, context)
     if isinstance(spec, dict):
         return spec
-    params, applied = spec
+    params, applied, context = spec
     res = RULES[rule_id](rule_id, params, subject, context)
     if res.get("status") == "missing_info":
         return res

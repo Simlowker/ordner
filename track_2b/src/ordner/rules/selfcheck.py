@@ -192,14 +192,24 @@ def check_card_params():
     assert zh["due"] == "2026-10-15" and "sans règle propre" in zh["computed_from"]["warnings"][0], zh
     assert compute_deadline(moving, Subject("s_vd", "person", "N"), {"facts": move("confirmed")})["missing"] == ["subject.canton"]
     #    with an event kind (FR: 14 days arrival, 30 days internal move, departure "sans délai")
-    fr_rule = DeadlineRule("days_after_notification", {"days": 14, "from_fact": "housing.moving.date", "cantonal": {"FR": {
-        "days": 14, "sources": [3], "kinds": {"internal": {"days": 30, "sources": [7]}, "departure": {"days": 0, "sources": [4]}}}}})
+    fr_rule = DeadlineRule("days_after_notification", {
+        "days": 14, "from_fact": "housing.moving.date",
+        "kinds": {"arrival": {"canton_of": "destination"}, "departure": {"canton_of": "origin", "days": 0, "sources": [4]}},
+        "cantonal": {"VD": {"days": 8, "sources": [1]}, "FR": {"days": 14, "sources": [3], "kinds": {"internal": {"days": 30, "sources": [7]}}}}})
     fr = Subject("s_vd", "person", "F", canton="FR")
     assert compute_deadline(fr_rule, fr, {"facts": move("confirmed")})["missing"] == ["kind"]
     internal = compute_deadline(fr_rule, fr, {"facts": move("confirmed"), "kind": "internal"})
     assert internal["due"] == "2026-11-02" and internal["computed_from"]["kind"] == "internal", internal  # 31.10 = Saturday
-    assert compute_deadline(fr_rule, fr, {"facts": move("confirmed"), "kind": "arrival"})["due"] == "2026-10-15"
+    assert compute_deadline(fr_rule, fr, {"facts": move("confirmed"), "kind": "arrival", "to_canton": "FR"})["due"] == "2026-10-15"
     assert compute_deadline(fr_rule, fr, {"facts": move("confirmed"), "kind": "departure"})["due"] == "2026-10-01"
+    #    intercantonal VD → FR: arrival follows the canton of arrival (FR 14 days), departure the canton of origin (VD)
+    to_fr = move("confirmed") + [Fact("m2", "s_vd", "move.planned.canton_to", "FR", status="confirmed")]
+    arrival = compute_deadline(fr_rule, VD, {"facts": to_fr, "kind": "arrival"})
+    assert arrival["due"] == "2026-10-15" and arrival["computed_from"]["cantonal"] == "FR", arrival
+    assert compute_deadline(fr_rule, VD, {"facts": move("confirmed"), "kind": "arrival"})["missing"] == ["move.planned.canton_to"]
+    assert compute_deadline(fr_rule, VD, {"facts": move("confirmed"), "kind": "arrival", "to_canton": "VD"})["due"] == "2026-10-09"
+    departure = compute_deadline(fr_rule, VD, {"facts": to_fr, "kind": "departure"})
+    assert departure["due"] == "2026-10-01" and departure["computed_from"]["cantonal"] == "VD"
     #    a cantonal rule given only as text keeps the base computation and is surfaced
     objection = compute_deadline(get_card("tax.assessment.objection").deadline, VD, {"notified_on": "2026-10-02"})
     assert objection["due"] == "2026-11-02" and "LI-VD" in objection["computed_from"]["cantonal_rule"], objection

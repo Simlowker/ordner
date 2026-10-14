@@ -78,7 +78,7 @@ FACTS = [
     ("finance.institutions", MANIFEST["declared_institutions"], "2025", None, "user", None, None, "confirm"),
     ("pension.pillar3a.has", False, None, None, "user", None, None, "confirm"),
     ("move.planned.date", "2027-01-15", None, None, "user", None, None, "confirm"),
-    ("move.planned.canton", "FR", None, None, "user", None, None, "confirm"),
+    ("move.planned.canton_to", "FR", None, None, "user", None, None, "confirm"),
     ("move.planned.commune", "Fribourg", None, None, "user", None, None, "confirm"),
     # salary certificates (AI read): the 60 % rate is a misread, rejected and replaced by the user's 100 %
     ("income.employment.alpinea.gross", 9450, "2025", "CHF", "model", "salary_alpinea", 0.06, None),
