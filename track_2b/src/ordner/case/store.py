@@ -121,7 +121,7 @@ class Store:
                         (new_id("evt"), now(), subject_id, case_id, type, actor, _dumps(payload)))
 
     def _case(self, c: Case) -> Case:
-        c.deadlines = self._select("deadlines", Deadline, order="due", case_id=c.id)
+        c.deadlines = self.deadlines(c.id, status="active")  # history: deadlines(case_id)
         c.actions = self._select("actions", Action, case_id=c.id)
         return c
 
@@ -170,7 +170,7 @@ class Store:
             raise ValueError("facts enter the dossier as proposed; use confirm_fact")
         if f.source_doc and self.get_document(f.source_doc).subject_id != f.subject_id:
             raise ValueError(f"source document {f.source_doc} belongs to another subject")
-        f = replace(f, supersedes=None)
+        f = replace(f, supersedes=None, confirmed_at=None, confirmed_by=None)
         with self._tx():
             self._insert("facts", asdict(f), subject_id=f.subject_id, key=f.key, period=f.period, status=f.status)
             self._event(f.subject_id, "fact_proposed", _fact_payload(f), f.actor)
@@ -192,19 +192,20 @@ class Store:
                 self._update("facts", asdict(old), status=old.status)
                 self._event(f.subject_id, "fact_superseded", {"fact_id": old.id, "by": f.id, "key": f.key,
                             "period": f.period, "old_value": old.value, "new_value": f.value}, actor)
-            f.status = "confirmed"
+            f.status, f.confirmed_at, f.confirmed_by = "confirmed", now(), actor
             self._update("facts", asdict(f), status=f.status)
             self._event(f.subject_id, "fact_confirmed", {**_fact_payload(f), "supersedes": f.supersedes}, actor)
         return f
 
     def reject_fact(self, fact_id, actor="user") -> Fact:
-        """Proposed or confirmed -> rejected (a confirmed fact it superseded is not restored)."""
+        """Proposed or confirmed -> rejected (a confirmed fact it superseded is not restored).
+        confirmed_at/confirmed_by then record the rejection decision."""
         _check(actor, Actor)
         with self._tx():
             f = self._get("facts", Fact, fact_id)
             if f.status not in ("proposed", "confirmed"):
                 raise ValueError(f"fact {fact_id} is {f.status}; cannot reject")
-            prev, f.status = f.status, "rejected"
+            prev, f.status, f.confirmed_at, f.confirmed_by = f.status, "rejected", now(), actor
             self._update("facts", asdict(f), status=f.status)
             self._event(f.subject_id, "fact_rejected", {**_fact_payload(f), "was": prev}, actor)
         return f
@@ -304,17 +305,45 @@ class Store:
         return a
 
     def add_deadline(self, d: Deadline, actor="rule") -> Deadline:
-        """Idempotent on (case, rule_id, due)."""
+        """Same case + rule_id: same due date -> the existing (active or done) deadline is returned; a different
+        date is a recomputation -> the active one becomes superseded."""
         date.fromisoformat(d.due)
+        if d.status != "active":
+            raise ValueError("deadlines enter the dossier as active")
         with self._tx():
-            c = self.get_case(d.case_id)
-            for old in c.deadlines:
-                if old.rule_id == d.rule_id and old.due == d.due:
+            c = self._get("cases", Case, d.case_id)
+            same_rule = [x for x in self.deadlines(c.id) if x.rule_id == d.rule_id]
+            for old in same_rule:
+                if old.due == d.due and old.status != "superseded":
                     return old
+            for old in same_rule:
+                if old.status == "active":
+                    old.status = "superseded"
+                    self._update("deadlines", asdict(old))
+                    self._event(c.subject_id, "deadline_superseded", {"deadline_id": old.id, "by": d.id,
+                                "rule_id": d.rule_id, "old_due": old.due, "new_due": d.due}, actor, c.id)
             self._insert("deadlines", asdict(d), case_id=d.case_id, due=d.due, rule_id=d.rule_id)
             self._event(c.subject_id, "deadline_added", {"deadline_id": d.id, "due": d.due, "rule_id": d.rule_id},
                         actor, c.id)
         return d
+
+    def complete_deadline(self, deadline_id, actor="user") -> Deadline:
+        with self._tx():
+            d = self._get("deadlines", Deadline, deadline_id)
+            if d.status == "done":
+                return d
+            if d.status != "active":
+                raise ValueError(f"deadline {deadline_id} is {d.status}")
+            d.status = "done"
+            self._update("deadlines", asdict(d))
+            self._event(self._get("cases", Case, d.case_id).subject_id, "deadline_done",
+                        {"deadline_id": d.id, "due": d.due, "rule_id": d.rule_id}, actor, d.case_id)
+        return d
+
+    def deadlines(self, case_id, status=None) -> list[Deadline]:
+        """All deadlines of a case (history included) unless a status is given; Case.deadlines holds the active ones."""
+        return [d for d in self._select("deadlines", Deadline, order="due", case_id=case_id)
+                if status is None or d.status == status]
 
     # -- reading back ---------------------------------------------------------------------------------------
     def events(self, subject_id=None, case_id=None) -> list[Event]:

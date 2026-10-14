@@ -1,0 +1,86 @@
+{
+  "subject": "Noa Keller (fictional)",
+  "declared_institutions": [
+    {
+      "name": "Morvessa Banque SA",
+      "type": "bank"
+    },
+    {
+      "name": "Talbruck Banque Privée SA",
+      "type": "bank"
+    },
+    {
+      "name": "Zelfeld Courtage SA",
+      "type": "broker"
+    }
+  ],
+  "missing": [
+    {
+      "issuer": "Talbruck Banque Privée SA",
+      "kind": "swiss_tax_statement_eCH0196",
+      "year": 2025
+    }
+  ],
+  "documents": [
+    {
+      "file": "releve_fiscal_2025_morvessa.pdf",
+      "sha256": "35cfbde3e90214bc994bab875fb46a1d8977d9ad25808c8a80e5da7e11993874",
+      "kind": "swiss_tax_statement_eCH0196",
+      "year": 2025,
+      "issuer": "Morvessa Banque SA",
+      "channel": "inbox",
+      "read_path": "barcode",
+      "degradation": 0,
+      "synth": {
+        "seed": 2026,
+        "idx": 267
+      },
+      "truth": {
+        "totalTaxValue": "9288.08",
+        "totalGrossRevenueA": "0",
+        "totalGrossRevenueB": "33.21",
+        "totalWithHoldingTaxClaim": "0",
+        "institution": "Morvessa Banque SA",
+        "canton": "VD",
+        "taxPeriod": "2025",
+        "client_last_name": "Keller"
+      },
+      "page": {
+        "totalTaxValue": "9288",
+        "totalGrossRevenueA": "0",
+        "totalGrossRevenueB": "33",
+        "totalWithHoldingTaxClaim": "0.00"
+      }
+    },
+    {
+      "file": "releve_fiscal_2025_zelfeld_photo.png",
+      "sha256": "df8e05b1bd59fab2fde50379d82edaa8aa133fe1cdc4d32ae4d8c1d93548e2c0",
+      "kind": "swiss_tax_statement_eCH0196",
+      "year": 2025,
+      "issuer": "Zelfeld Courtage SA",
+      "channel": "scan",
+      "read_path": "ai",
+      "degradation": 2,
+      "synth": {
+        "seed": 2026,
+        "idx": 291
+      },
+      "truth": {
+        "totalTaxValue": "12527.57",
+        "totalGrossRevenueA": "162.16",
+        "totalGrossRevenueB": "17.97",
+        "totalWithHoldingTaxClaim": "56.756",
+        "institution": "Zelfeld Courtage SA",
+        "canton": "VD",
+        "taxPeriod": "2025",
+        "client_last_name": "Keller"
+      },
+      "page": {
+        "totalTaxValue": "12528",
+        "totalGrossRevenueA": "162",
+        "totalGrossRevenueB": "18",
+        "totalWithHoldingTaxClaim": "56.76"
+      }
+    }
+  ]
+}

@@ -35,6 +35,7 @@ class Store:                      # Store(path=None) -> $ORDNER_HOME/ordner.db (
     def add_deadline(self, d: Deadline) -> Deadline
     def events(self, subject_id=None, case_id=None) -> list[Event]
     def snapshot(self, subject_id) -> dict   # everything needed to resume a conversation
+    # extensions (see "Store" below): set_missing, get_document, complete_deadline, deadlines, close, actor= kwargs
 
 # ordner.procedures.catalog
 def load_cards(jurisdiction=None) -> list[ProcedureCard]; def get(card_id) -> ProcedureCard
@@ -51,3 +52,68 @@ SPECS: list[ToolSpec]; def call(name: str, args: dict, ctx: dict) -> dict; def o
 # ordner.agent.coordinator
 def run(goal: str, subject_id: str, llm, store, max_steps=12) -> dict   # {"transcript": [...], "actions": [...], "questions": [...]}
 ```
+
+## Store (`ordner.case`, W1)
+
+`Store(path=None)`: one SQLite file (`$ORDNER_HOME/ordner.db`, default `~/.ordner`), JSON columns, WAL, foreign keys on.
+One `Store` per process is fine: writes go through a lock, each mutation and its event are a single transaction.
+Self-check: `python -m ordner.case.selfcheck`. Demo persona: `python -m ordner.case.demo_seed` (see below).
+
+**Extensions to the signatures above**
+
+| Call | Effect |
+|---|---|
+| `actor=` on every mutation | Who acted (`user`, `ordner`, `connector`, `rule`, `model`), written to the event. Defaults: `add_subject` user, `add_document` connector, `confirm_fact`/`reject_fact` user, `open_case` rule, `set_state` ordner, `set_missing` rule, `add_action` ordner, `update_action` user, `add_deadline` rule, `complete_deadline` user |
+| `set_missing(case_id, missing: list[str])` | Replace `Case.missing` (missing fact keys / document kinds); event `missing_updated` |
+| `get_document(id)` | One document; `KeyError` if unknown |
+| `complete_deadline(id)` | `active` → `done` (idempotent on `done`); event `deadline_done` |
+| `deadlines(case_id, status=None)` | Every deadline of a case, history included |
+| `snapshot(subject_id, today=None, last_events=20)` | `today` fixes `overdue` for tests |
+| `close()` | Close the connection |
+
+**Rules enforced**
+
+- Facts enter as `proposed` (with `actor`, `source_doc`). A `model` cannot confirm. `confirm_fact` sets `confirmed_at`/`confirmed_by` and supersedes the confirmed fact with the same subject + key + period (old one → `superseded`, new `supersedes` = old id). `reject_fact` works from `proposed` or `confirmed`; `confirmed_at`/`confirmed_by` then record the rejection. Nothing is deleted.
+- Subjects are isolated: `documents()`/`facts()` require an existing subject (no "all subjects" via `None`); a fact's `source_doc` must belong to the same subject; the same file for two subjects is two documents.
+- Actions enter as `prepared`. Every kind except `reminder` must keep `requires_validation=True`. Path: `prepared → validated → done_by_user → verified`, `cancelled` from `prepared`/`validated`; only `actor="user"` can validate. A `reminder` without validation may go `prepared → done_by_user`.
+- `Case.deadlines` (and the snapshot) only carry `active` deadlines; use `deadlines(case_id)` for history.
+- The `events` table is append-only (SQLite triggers reject UPDATE and DELETE).
+
+**Idempotency**
+
+| Call | Same input again returns the existing row, no event |
+|---|---|
+| `add_document` | same `subject_id` + `sha256` (callers must use the returned `id`, it may differ from the one passed) |
+| `open_case` | same subject + `card_id` + `period` while the case is not `closed` |
+| `add_action` | same case + `kind` + `payload` while pending (`prepared`/`validated`/`done_by_user`) |
+| `add_deadline` | same case + `rule_id` + `due` (active or done). Same rule with another date = recomputation: the active one becomes `superseded` (event `deadline_superseded`) |
+| `set_state` / `set_missing` | same value: no-op |
+
+**Case transitions** (`NEXT` in `store.py`)
+
+```
+to_qualify → missing_documents | ready_to_prepare (nothing missing)
+missing_documents → ready_to_prepare → ready_to_validate → action_engaged
+action_engaged → awaiting_response | result_verified (no response expected, e.g. payment receipt)
+awaiting_response → complement_requested | decision_received
+complement_requested → missing_documents | ready_to_prepare | awaiting_response
+decision_received → result_verified → closed
+```
+Any move to an earlier state (including reopening a closed case) or closing early needs a non-empty `reason`, stored
+in the `state_changed` event. Anything else raises `ValueError`.
+
+**Event types**: `subject_added`, `document_received`, `fact_proposed`, `fact_confirmed`, `fact_rejected`,
+`fact_superseded`, `case_opened`, `state_changed`, `missing_updated`, `action_prepared`, `action_updated`,
+`deadline_added`, `deadline_superseded`, `deadline_done`.
+
+**Snapshot keys**: `as_of`, `subject`, `documents`, `facts` (by status), `open_cases` (with `missing`, active
+`deadlines`, `actions`), `closed_cases`, `upcoming_deadlines` (active, sorted, with `card_id` and `overdue`),
+`pending_actions` (with `card_id`), `last_events`.
+
+**Demo persona** `subj_noa_keller` (fictional): `demo_seed.seed(store, cases=())` is idempotent and opens no case
+unless asked. Its 2025 tax statements are versioned in `data/demo/noa/` with `manifest.json` (truth from the barcode,
+totals as printed): Morvessa Banque SA as a clean PDF (barcode path), Zelfeld Courtage SA as a level-2 photo (AI path).
+Talbruck Banque Privée SA is declared in `finance.institutions` but has no statement, on purpose (completeness check).
+Salary certificates and the LAMal 2027 notice are `placeholder:` documents. Regenerate the files with
+`python -m ordner.case.demo_docs` (generator deps needed; the PDF bytes change with the render timestamp, the manifest
+follows).

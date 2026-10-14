@@ -50,14 +50,15 @@ def main():
         # facts: provenance + proposed -> confirmed / rejected
         f1 = st.propose_fact(fact(a.id, "tax.wealth", 100, doc=d1.id))
         assert f1.status == "proposed" and f1.actor == "model" and f1.source_doc == d1.id
+        assert f1.confirmed_at is None and f1.confirmed_by is None
         raises(lambda: st.confirm_fact(f1.id, actor="model"))
         f1 = st.confirm_fact(f1.id)
-        assert f1.status == "confirmed"
+        assert f1.status == "confirmed" and f1.confirmed_by == "user" and f1.confirmed_at
         raises(lambda: st.confirm_fact(f1.id))
         raises(lambda: st.propose_fact(fact(b.id, "tax.wealth", 1, doc=d1.id)))  # A's document for B: refused
         raises(lambda: st.propose_fact(Fact(new_id("fact"), a.id, "k", 1, status="confirmed")))
-        r = st.reject_fact(st.propose_fact(fact(a.id, "tax.wealth", 999)).id)
-        assert r.status == "rejected"
+        r = st.reject_fact(st.propose_fact(fact(a.id, "tax.wealth", 999)).id, actor="connector")
+        assert r.status == "rejected" and r.confirmed_by == "connector" and r.confirmed_at
 
         # supersede: same key + period, history kept; other period / other subject untouched
         f_other_period = st.confirm_fact(st.propose_fact(fact(a.id, "tax.wealth", 80, period="2024")).id)
@@ -110,11 +111,24 @@ def main():
         assert st.update_action(rem.id, "done_by_user", actor="ordner").status == "done_by_user"
         pay = st.add_action(Action(new_id("act"), c.id, "payment", {"amount": 250}))
 
-        # deadlines
+        # deadlines: same rule + same date = idempotent, new date = recomputation (old one superseded), done
         dl = st.add_deadline(Deadline(new_id("dl"), c.id, "2026-03-15", "fixed_date"))
+        assert dl.status == "active"
         assert st.add_deadline(Deadline(new_id("dl"), c.id, "2026-03-15", "fixed_date")).id == dl.id
-        st.add_deadline(Deadline(new_id("dl"), c.id, "2026-12-31", "extension"))
+        ext = st.add_deadline(Deadline(new_id("dl"), c.id, "2026-09-30", "extension"))
+        ext2 = st.add_deadline(Deadline(new_id("dl"), c.id, "2026-12-31", "extension"))
+        assert [(d.id, d.status) for d in st.deadlines(c.id, status=None) if d.rule_id == "extension"] == [
+            (ext.id, "superseded"), (ext2.id, "active")]
+        sup_dl = [e.payload for e in st.events(case_id=c.id) if e.type == "deadline_superseded"]
+        assert sup_dl == [{"deadline_id": ext.id, "by": ext2.id, "rule_id": "extension", "old_due": "2026-09-30",
+                           "new_due": "2026-12-31"}]
+        assert [d.id for d in st.get_case(c.id).deadlines] == [dl.id, ext2.id]  # Case.deadlines = active only
+        rem_dl = st.add_deadline(Deadline(new_id("dl"), c.id, "2026-11-15", "reminder_rule"))
+        assert st.complete_deadline(rem_dl.id).status == "done"
+        assert st.add_deadline(Deadline(new_id("dl"), c.id, "2026-11-15", "reminder_rule")).id == rem_dl.id
+        raises(lambda: st.complete_deadline(ext.id))
         raises(lambda: st.add_deadline(Deadline(new_id("dl"), c.id, "31.12.2026", "x")))
+        raises(lambda: st.add_deadline(Deadline(new_id("dl"), c.id, "2026-12-31", "x", status="done")))
 
         # append-only log, enforced by the database
         raises(lambda: st.db.execute("UPDATE events SET type='x'"), sqlite3.DatabaseError)
@@ -123,7 +137,7 @@ def main():
         types = {e.type for e in st.events(a.id)}
         assert {"document_received", "fact_proposed", "fact_confirmed", "fact_rejected", "fact_superseded",
                 "case_opened", "state_changed", "missing_updated", "action_prepared", "action_updated",
-                "deadline_added"} <= types
+                "deadline_added", "deadline_superseded", "deadline_done"} <= types
 
         # snapshot: plain JSON, complete, no leak across subjects
         snap = st.snapshot(a.id, today="2026-10-14")
@@ -154,10 +168,26 @@ def main():
         json.dumps(noa)
         assert noa["subject"]["name"] == "Noa Keller" and noa["subject"]["attrs"]["fictional"]
         assert len(noa["documents"]) == len(demo_seed.DOCS)
-        assert {k: len(v) for k, v in noa["facts"].items()} == {"proposed": 7, "confirmed": 20, "rejected": 1,
+        assert {k: len(v) for k, v in noa["facts"].items()} == {"proposed": 7, "confirmed": 19, "rejected": 1,
                                                                 "superseded": 1}
-        tallin = st.facts(sid, key_prefix="tax.securities.tallin", status="confirmed")
-        assert [f.value for f in tallin] == [28087.28] and tallin[0].supersedes
+        # tax statements: 3 institutions declared, 2 delivered (barcode PDF + AI photo), the real files match the
+        # manifest; everything else is an explicit placeholder
+        declared = st.facts(sid, key_prefix="finance.institutions", status="confirmed")[0].value
+        stmts = st.documents(sid, kind="swiss_tax_statement_eCH0196", year=2025)
+        assert len(declared) == 3 and len(stmts) == 2
+        assert {d["name"] for d in declared} - {d.issuer for d in stmts} == {"Talbruck Banque Privée SA"}
+        assert {d.read_path for d in stmts} == {"barcode", "ai"}
+        for d, m in zip(stmts, demo_seed.MANIFEST["documents"]):
+            p = Path(d.path)
+            assert p.is_file() and d.sha256 == m["sha256"] and p.stat().st_size < (100_000 if p.suffix == ".pdf"
+                                                                                       else 300_000)
+            assert m["truth"]["client_last_name"] == "Keller" and m["truth"]["canton"] == "VD"
+        others = [d for d in st.documents(sid) if d.kind != "swiss_tax_statement_eCH0196"]
+        assert others and all(d.path.startswith("placeholder:") for d in others)
+        photo = st.facts(sid, key_prefix="tax.securities.zelfeld.total", status="proposed")
+        assert photo and photo[0].actor == "model" and photo[0].doubt
+        emp = st.facts(sid, key_prefix="work.employment.employer")
+        assert [(f.value, f.status) for f in emp] == [("Alpinea Garage Sàrl", "superseded"), ("Logivia SA", "confirmed")]
         assert "Alice" not in json.dumps(noa)
         st.close()
     print("ordner.case selfcheck OK")
