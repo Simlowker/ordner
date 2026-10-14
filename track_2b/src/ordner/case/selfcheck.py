@@ -168,7 +168,7 @@ def main():
         json.dumps(noa)
         assert noa["subject"]["name"] == "Noa Keller" and noa["subject"]["attrs"]["fictional"]
         assert len(noa["documents"]) == len(demo_seed.DOCS)
-        assert {k: len(v) for k, v in noa["facts"].items()} == {"proposed": 7, "confirmed": 19, "rejected": 1,
+        assert {k: len(v) for k, v in noa["facts"].items()} == {"proposed": 7, "confirmed": 20, "rejected": 1,
                                                                 "superseded": 1}
         # tax statements: 3 institutions declared, 2 delivered (barcode PDF + AI photo), the real files match the
         # manifest; everything else is an explicit placeholder

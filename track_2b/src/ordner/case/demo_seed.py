@@ -44,6 +44,12 @@ DOCS = {  # name -> (path relative to track_2b, or "placeholder:<name>", Documen
         received_at="2026-01-30T09:05:00+00:00",
         fields={"employer": "Logivia SA", "period": "2025-08-01/2025-12-31", "gross": 26000,
                 "lpp_employee": 900, "activity_rate": "60%"}, doubt={"activity_rate": 0.4, "gross": 0.04})),
+    "pension_fund_2025": ("placeholder:attestation_caisse_pension_logivia_2025.pdf", dict(
+        kind="pension_fund_certificate", year=2025, issuer="Caisse de pension Logivia (fictive)", channel="email",
+        received_at="2026-01-30T09:06:00+00:00", fields={})),
+    "tax_invitation_2025": ("placeholder:invitation_declaration_impot_vd_2025.pdf", dict(
+        kind="tax_return_invitation", year=2025, issuer="ACI VD (placeholder)", channel="inbox",
+        received_at="2026-02-12T08:00:00+00:00", fields={})),
     "tax_morvessa": _statement("releve_fiscal_2025_morvessa.pdf", "2026-02-02T07:30:00+00:00"),
     "tax_zelfeld": _statement("releve_fiscal_2025_zelfeld_photo.png", "2026-02-19T19:12:00+00:00",
                               doubt={"totalTaxValue": 0.18, "totalWithHoldingTaxClaim": 0.25}),
@@ -62,7 +68,7 @@ FACTS = [
     ("person.birth_year", 2003, None, None, "user", None, None, "confirm"),
     ("residence.canton", "VD", None, None, "user", None, None, "confirm"),
     ("residence.commune", "Lausanne", None, None, "user", None, None, "confirm"),
-    ("household.marital_status", "single", None, None, "user", None, None, "confirm"),
+    ("person.civil_status", "single", None, None, "user", None, None, "confirm"),
     ("household.children", 0, None, None, "user", None, None, "confirm"),
     ("work.apprenticeship.end_date", "2025-07-31", None, None, "user", None, None, "confirm"),
     ("work.employment.start_date", "2025-08-01", None, None, "user", None, None, "confirm"),
@@ -81,6 +87,7 @@ FACTS = [
     ("work.employment.rate", 1.0, "2025", None, "user", None, None, "confirm"),
     ("pension.lpp.affiliated", True, "2025", None, "model", "salary_logivia", 0.02, "confirm"),
     ("pension.lpp.employee_contributions", 900, "2025", "CHF", "model", "salary_logivia", 0.05, None),
+    ("tax.period", "2025", "2025", None, "ordner", "tax_morvessa", 0.0, "confirm"),
     # tax statements 2025: Morvessa via barcode (exact, confirmed), Zelfeld via photo (to confirm), Talbruck missing
     ("tax.securities.morvessa.total_tax_value", float(_m["totalTaxValue"]), "2025", "CHF", "ordner", "tax_morvessa",
      0.0, "confirm"),
