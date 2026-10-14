@@ -117,3 +117,22 @@ Talbruck Banque Privée SA is declared in `finance.institutions` but has no stat
 Salary certificates and the LAMal 2027 notice are `placeholder:` documents. Regenerate the files with
 `python -m ordner.case.demo_docs` (generator deps needed; the PDF bytes change with the render timestamp, the manifest
 follows).
+
+## Tools (`ordner.tools`, W4)
+
+`call(name, args, ctx)` accepts `document.read` or the OpenAI alias `document_read` and always returns plain JSON
+`{"ok", "data", "warnings", "provenance"}` (+ `"error"` when `ok` is false; exceptions never escape). Arguments are
+checked against `input_schema` (type, enum, required, nested `items`); unknown arguments are an error.
+Self-check: `python -m ordner.tools.selfcheck` (replay, no model, temporary dossier with the demo persona).
+
+| ctx key | Effect |
+|---|---|
+| `mode` | `replay` (default): cached model outputs from `work/` (OCR `ocr.*.jsonl`, Apertus `extract.*.jsonl`, d1 `route.jsonl`), labelled fallbacks (rule-based extraction, heuristics) otherwise. `live`: LightOnOCR-3, d1-3B, EmbeddingGemma 2, Apertus are loaded/called |
+| `store`, `subject_id` | Dossier session: `subject_id` args are forced to it, `doc_...` ids resolve through the store (other subjects refused), file paths outside `track_2b/` refused |
+| `actor` | `model` (default) or `user`: `confirm_fact`/`reject_fact` and `result_verified` without proof are refused to the model |
+| `llm_url`, `llm_model` / `apertus_mlx` | `expert.run` live: OpenAI-compatible endpoint (warning if not localhost) / in-process MLX (`True` or adapter path) |
+| `expert_tags`, `work`, `today` | Replay tags (default `apertus-lora`, `apertus-base`), work dir, reference date of `schedule.plan` |
+
+No tool has `side_effect=True`: none sends, files or pays; `case.record` writes the local dossier only and actions are
+prepared by the coordinator. `receipt.verify` is `established` only with a proof event (action moved to `verified` by
+the person or a connector, or a `receipt_recorded`/`decision_received`/`payment_confirmed` event), else `unknown`.
