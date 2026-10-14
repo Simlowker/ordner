@@ -31,7 +31,7 @@
             "subject_id": "subj_noa_keller"
           },
           "result": {
-            "documents": 5,
+            "documents": 6,
             "facts_proposed": 7,
             "open_cases": 6,
             "pending_actions": 0
@@ -73,9 +73,9 @@
         }
       ],
       "answer": {
-        "fr": "Votre dossier contient 5 pièces et 7 informations lues mais pas encore confirmées par vous. Le point le plus pressant : la déclaration d'impôt 2025 (Vaud), à déposer d'ici au 15.03.2026. Une question reste ouverte pour la qualifier : êtes-vous imposé·e à la source ? Ensuite, Ordner prépare la suite avec vous. Rien n'est envoyé sans votre validation.",
-        "de": "Ihr Dossier enthält 5 Unterlagen und 7 gelesene, von Ihnen noch nicht bestätigte Angaben. Am dringendsten: die Steuererklärung 2025 (Waadt), einzureichen bis zum 15.03.2026. Um sie zu qualifizieren, bleibt eine Frage offen: Werden Sie an der Quelle besteuert? Danach bereitet Ordner das Weitere mit Ihnen vor. Ohne Ihre Bestätigung wird nichts gesendet.",
-        "it": "Il suo dossier contiene 5 documenti e 7 informazioni lette ma non ancora confermate da lei. Il punto più urgente: la dichiarazione d'imposta 2025 (Vaud), da inoltrare entro il 15.03.2026. Per qualificarla resta una domanda: è imposto/a alla fonte? Poi Ordner prepara il seguito con lei. Nulla viene inviato senza la sua convalida."
+        "fr": "Votre dossier contient 6 pièces et 7 informations lues mais pas encore confirmées par vous. Le point le plus pressant : la déclaration d'impôt 2025 (Vaud), à déposer d'ici au 15.03.2026. Une question reste ouverte pour la qualifier : êtes-vous imposé·e à la source ? Ensuite, Ordner prépare la suite avec vous. Rien n'est envoyé sans votre validation.",
+        "de": "Ihr Dossier enthält 6 Unterlagen und 7 gelesene, von Ihnen noch nicht bestätigte Angaben. Am dringendsten: die Steuererklärung 2025 (Waadt), einzureichen bis zum 15.03.2026. Um sie zu qualifizieren, bleibt eine Frage offen: Werden Sie an der Quelle besteuert? Danach bereitet Ordner das Weitere mit Ihnen vor. Ohne Ihre Bestätigung wird nichts gesendet.",
+        "it": "Il suo dossier contiene 6 documenti e 7 informazioni lette ma non ancora confermate da lei. Il punto più urgente: la dichiarazione d'imposta 2025 (Vaud), da inoltrare entro il 15.03.2026. Per qualificarla resta una domanda: è imposto/a alla fonte? Poi Ordner prepara il seguito con lei. Nulla viene inviato senza la sua convalida."
       },
       "actions": [],
       "questions": [],
@@ -221,7 +221,7 @@
                 "status": "confirmed"
               },
               {
-                "key": "move.planned.canton",
+                "key": "move.planned.canton_to",
                 "value": "FR",
                 "status": "confirmed"
               }

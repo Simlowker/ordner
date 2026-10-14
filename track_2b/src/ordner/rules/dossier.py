@@ -1,5 +1,6 @@
 """Dossier checks on what was actually received: completeness of a card's pieces, and per-institution tax totals."""
 import re
+from datetime import date
 from decimal import Decimal
 
 from .applicability import _g, latest_fact
@@ -9,6 +10,9 @@ STATEMENT = "swiss_tax_statement_eCH0196"   # one per declared financial institu
 # year. Move to card-level year offsets if a card needs e.g. "year = period + 1".
 YEAR_BOUND = {STATEMENT, "salary_certificate", "pillar3a_certificate", "pension_fund_certificate", "securities_list",
               "health_insurance_tax_certificate", "tax_assessment_decision", "tax_instalment_bill", "tax_return_invitation"}
+# issued once the tax year is over (certificates, statements, invitation, assessment): not expected before 1 January of
+# period + 1. Instalment bills come before or during the year, so they stay required.
+AFTER_YEAR = YEAR_BOUND - {"tax_instalment_bill"}
 # a required document is waived when a confirmed fact says the person has nothing of that kind
 WAIVERS = {"pillar3a_certificate": ("pension.pillar3a.has", False), "pension_fund_certificate": ("pension.lpp.affiliated", False)}
 MEASURES = ("total_tax_value", "gross_revenue_a", "gross_revenue_b", "withholding_tax_claim")
@@ -38,11 +42,13 @@ def declared_institutions(facts, subject_id, period=None):
     return [n for n in dict.fromkeys(names) if n], None
 
 
-def completeness(card, subject, facts, documents, period=None) -> dict:
-    """{"status": "complete"|"incomplete"|"missing_info", "missing_documents", "missing_facts", "wrong_year", "duplicates", "why"}"""
+def completeness(card, subject, facts, documents, period=None, today=None) -> dict:
+    """{"status": "complete"|"incomplete"|"missing_info", "missing_documents", "missing_facts", "wrong_year", "duplicates",
+    "not_yet_due", "why"}. With `today` inside the period's year, AFTER_YEAR documents are `not_yet_due`, not missing."""
     sid, year = _g(subject, "id"), int(str(period)[:4]) if period else None
     docs = [d for d in documents if _g(d, "subject_id") in (sid, None)]
-    why, missing_docs, missing_facts, wrong_year, unknown = [], [], [], [], []
+    why, missing_docs, missing_facts, wrong_year, unknown, not_yet = [], [], [], [], [], []
+    running = bool(today and year) and date.fromisoformat(str(today)[:10]) < date(year + 1, 1, 1)
 
     def ok_year(d):
         return year is None or _g(d, "kind") not in YEAR_BOUND or _g(d, "year") in (year, None)
@@ -56,6 +62,10 @@ def completeness(card, subject, facts, documents, period=None) -> dict:
                 continue
         of_kind = [d for d in docs if _g(d, "kind") == kind]
         good = [d for d in of_kind if ok_year(d)]
+        if running and not good and kind in AFTER_YEAR:
+            not_yet.append({"kind": kind, "year": year})
+            why.append(f"{kind} {year} : pas encore attendu (émis après la fin de l'année {year})")
+            continue
         wrong_year += [{"document": _g(d, "id"), "kind": kind, "year": _g(d, "year"), "expected": year}
                        for d in of_kind if not ok_year(d)]
         if kind == STATEMENT:
@@ -84,6 +94,9 @@ def completeness(card, subject, facts, documents, period=None) -> dict:
         why.append(f"{w['kind']} {w['document']} est de {w['year']}, attendu {w['expected']} : mauvaise année")
 
     for key in _g(card, "required_facts") or []:
+        if key == "tax.period" and period:  # the case's own period answers it
+            why.append(f"fait « tax.period » : période du dossier {period}")
+            continue
         f, proposed = latest_fact(facts, sid, key, period=period)
         if f is None:
             prefixed = [x for x in facts if str(_g(x, "key")).startswith(key + ".") and _g(x, "status") == "confirmed"
@@ -108,7 +121,7 @@ def completeness(card, subject, facts, documents, period=None) -> dict:
     status = "incomplete" if missing_docs or [k for k in missing_facts if k not in unknown] else (
         "missing_info" if unknown else "complete")
     return {"status": status, "missing_documents": missing_docs, "missing_facts": missing_facts, "wrong_year": wrong_year,
-            "duplicates": duplicates, "why": why, "card": _g(card, "id"), "period": str(period) if period else None}
+            "duplicates": duplicates, "not_yet_due": not_yet, "why": why, "card": _g(card, "id"), "period": str(period) if period else None}
 
 
 def _measure_key(key: str):

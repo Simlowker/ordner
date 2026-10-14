@@ -62,6 +62,7 @@ DOCS = {  # name -> (path relative to track_2b, or "placeholder:<name>", Documen
 }
 _m = DOCS["tax_morvessa"][1]["fields"]
 _z = DOCS["tax_zelfeld"][1]["fields"]
+_zd = DOCS["tax_zelfeld"][1]["doubt"]  # photo read: no doubt recorded for revenue A/B -> None (unknown), never invented
 
 # (key, value, period, unit, proposed_by, source doc, doubt, outcome)  outcome: confirm | reject | None (left proposed)
 FACTS = [
@@ -77,6 +78,7 @@ FACTS = [
     ("work.employment.employer", "Logivia SA", None, None, "user", None, None, "confirm"),
     ("finance.institutions", MANIFEST["declared_institutions"], "2025", None, "user", None, None, "confirm"),
     ("pension.pillar3a.has", False, None, None, "user", None, None, "confirm"),
+    ("pension.has_pension_fund", True, None, None, "user", None, None, "confirm"),  # card key; LPP box below agrees
     ("move.planned.date", "2027-01-15", None, None, "user", None, None, "confirm"),
     ("move.planned.canton_to", "FR", None, None, "user", None, None, "confirm"),
     ("move.planned.commune", "Fribourg", None, None, "user", None, None, "confirm"),
@@ -93,10 +95,18 @@ FACTS = [
      0.0, "confirm"),
     ("tax.securities.morvessa.withholding_tax_claim", float(_m["totalWithHoldingTaxClaim"]), "2025", "CHF", "ordner",
      "tax_morvessa", 0.0, "confirm"),
+    ("tax.securities.morvessa.gross_revenue_a", float(_m["totalGrossRevenueA"]), "2025", "CHF", "ordner", "tax_morvessa",
+     0.0, "confirm"),
+    ("tax.securities.morvessa.gross_revenue_b", float(_m["totalGrossRevenueB"]), "2025", "CHF", "ordner", "tax_morvessa",
+     0.0, "confirm"),
     ("tax.securities.zelfeld.total_tax_value", float(_z["totalTaxValue"]), "2025", "CHF", "model", "tax_zelfeld",
      0.18, None),
     ("tax.securities.zelfeld.withholding_tax_claim", float(_z["totalWithHoldingTaxClaim"]), "2025", "CHF", "model",
      "tax_zelfeld", 0.25, None),
+    ("tax.securities.zelfeld.gross_revenue_a", float(_z["totalGrossRevenueA"]), "2025", "CHF", "model", "tax_zelfeld",
+     _zd.get("totalGrossRevenueA"), None),
+    ("tax.securities.zelfeld.gross_revenue_b", float(_z["totalGrossRevenueB"]), "2025", "CHF", "model", "tax_zelfeld",
+     _zd.get("totalGrossRevenueB"), None),
     # LAMal premium notice 2027 (AI read)
     ("health.lamal.insurer", "Helvia Assurance-maladie (fictive)", "2027", None, "model", "lamal_2027", 0.03, "confirm"),
     ("health.lamal.deductible", 300, "2027", "CHF", "model", "lamal_2027", 0.02, "confirm"),

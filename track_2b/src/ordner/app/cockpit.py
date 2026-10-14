@@ -336,7 +336,7 @@ def case_detail(case_id, today=None):
         d["days"] = (_due(d) - today).days if _due(d) else None
     docs_raw, facts_raw = _visible(s, case["subject_id"], today)
     check = getattr(opt("rules"), "completeness", None)
-    completeness = (check(card, s.get_subject(case["subject_id"]), facts_raw, docs_raw, case.get("period"))
+    completeness = (check(card, s.get_subject(case["subject_id"]), facts_raw, docs_raw, case.get("period"), today=today)
                     if check and not card.get("unknown_card") else None)
     docs = {d["id"]: {k: d.get(k) for k in ("kind", "year", "issuer", "read_path")} for d in map(plain, docs_raw)}
     keys, kinds, dom = card.get("required_facts") or [], set(card.get("required_documents") or []), card.get("domain")
@@ -345,8 +345,9 @@ def case_detail(case_id, today=None):
         k = f["key"]
         return (any(k == r or k.startswith(r + ".") for r in keys) or (dom and k.startswith(dom + "."))
                 or docs.get(f.get("source_doc"), {}).get("kind") in kinds)
-    facts = [f for f in map(plain, facts_raw) if linked(f)
-             and (not case.get("period") or f.get("period") in (None, case["period"]))]
+    facts = [f for f in map(plain, facts_raw) if not case.get("period") or f.get("period") in (None, case["period"])]
+    shown = {f["key"] for f in facts if linked(f)}  # a linked key brings its whole history (e.g. the person's correction)
+    facts = [f for f in facts if f["key"] in shown]
     events = sorted((plain(e) for e in s.events(case_id=case_id)), key=lambda e: e.get("ts") or "")
     known = getattr(opt("rules"), "SOURCES", {})
     basis = {k for d in case.get("deadlines") or [] for k in (d.get("computed_from") or {}).get("legal_basis") or []}
@@ -401,7 +402,7 @@ def review_dossier(subject_id, today=None, s=None):
             s.add_deadline(Deadline(new_id("dl"), case.id, dl["due"], card.deadline.id,
                                     {**dl["computed_from"], **{k: dl[k] for k in ("send_by", "extensions") if k in dl}},
                                     rules.reminders(dl["due"], today=today)))
-        comp = rules.completeness(card, subject, facts, docs, period)  # waivers (no 3a), wrong year, per-bank statements
+        comp = rules.completeness(card, subject, facts, docs, period, today=today)  # waivers, wrong year, per-bank, not yet issued
         missing = [f"{m['kind']}:{m['issuer']}" if m.get("issuer") else m["kind"] for m in comp["missing_documents"]]
         missing = list(dict.fromkeys(missing + comp["missing_facts"] + list(app.get("missing") or [])))
         s.set_missing(case.id, missing, actor="rule")
@@ -559,6 +560,12 @@ if __name__ == "__main__":
             assert f"{STATEMENT}:Talbruck Banque Privée SA" in vd.missing and "pillar3a_certificate" not in vd.missing, vd.missing
             reqs = [a for c in st.cases(sid) for a in c.actions if a.payload.get("issuer") == "Talbruck Banque Privée SA"]
             assert len(reqs) == 1 and reqs[0].requires_validation and reqs[0].status == "prepared", reqs
+            p3a = next(c for c in st.cases(sid) if c.card_id == "pension.pillar3a.contribution")  # period known, cert not due
+            assert p3a.period == "2026" and p3a.missing == ["pension.pillar3a.paid_in_period", "income.avs_subject"], p3a
+            _store = st  # case_detail reads the process store
+            rate = [(f["value"], f["status"]) for f in case_detail(vd.id, today=date(2026, 2, 20))["facts"]
+                    if f["key"] == "work.employment.rate"]
+            assert rate == [(0.6, "rejected"), (1.0, "confirmed")], rate  # the misread comes with its correction
             from ordner.core.schema import Document
             st.add_document(Document("doc_phish", sid, "placeholder:phish", "f" * 64, "email", 2026, "Helvia (?)", fields={
                 "text": "URGENT : payez 89 CHF aujourd'hui sur https://helvia-pay.example, IBAN CH93 0076 2011 6238 5295 7"}))

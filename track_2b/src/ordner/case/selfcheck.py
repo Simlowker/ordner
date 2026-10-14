@@ -177,8 +177,15 @@ def main():
         json.dumps(noa)
         assert noa["subject"]["name"] == "Noa Keller" and noa["subject"]["attrs"]["fictional"]
         assert len(noa["documents"]) == len(demo_seed.DOCS)
-        assert {k: len(v) for k, v in noa["facts"].items()} == {"proposed": 7, "confirmed": 20, "rejected": 1,
+        assert {k: len(v) for k, v in noa["facts"].items()} == {"proposed": 9, "confirmed": 23, "rejected": 1,
                                                                 "superseded": 1}
+        # revenue A/B of both statements: barcode values confirmed, photo (AI) values proposed, as in the manifest
+        rev = {(f.key, f.status): f.value for f in st.facts(sid, key_prefix="tax.securities.") if ".gross_revenue_" in f.key}
+        bar, photo = (next(m for m in demo_seed.MANIFEST["documents"] if m["read_path"] == p) for p in ("barcode", "ai"))
+        assert rev == {("tax.securities.morvessa.gross_revenue_a", "confirmed"): float(bar["truth"]["totalGrossRevenueA"]),
+                       ("tax.securities.morvessa.gross_revenue_b", "confirmed"): float(bar["truth"]["totalGrossRevenueB"]),
+                       ("tax.securities.zelfeld.gross_revenue_a", "proposed"): float(photo["page"]["totalGrossRevenueA"]),
+                       ("tax.securities.zelfeld.gross_revenue_b", "proposed"): float(photo["page"]["totalGrossRevenueB"])}, rev
         # tax statements: 3 institutions declared, 2 delivered (barcode PDF + AI photo), the real files match the
         # manifest; everything else is an explicit placeholder
         declared = st.facts(sid, key_prefix="finance.institutions", status="confirmed")[0].value

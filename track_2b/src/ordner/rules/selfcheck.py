@@ -242,6 +242,13 @@ def check_dossier():
     assert r["status"] == "incomplete" and demo_seed.MANIFEST["missing"][0] in r["missing_documents"], r
     assert [d["issuer"] for d in r["missing_documents"] if d["kind"] == "swiss_tax_statement_eCH0196"] == ["Talbruck Banque Privée SA"]
     assert not any(d["kind"] == "pillar3a_certificate" for d in r["missing_documents"])  # waived: no pillar 3a (confirmed)
+    # pillar 3a 2026 on 20.02.2026: the case period answers tax.period, the 2026 salary certificate is not issued yet,
+    # only the person's genuine answers stay missing (without `today` the certificate is still required, as before)
+    p3a = get_card("pension.pillar3a.contribution")
+    r = completeness(p3a, subject, facts, docs, "2026", today=date(2026, 2, 20))
+    assert r["missing_facts"] == ["pension.pillar3a.paid_in_period", "income.avs_subject"], r
+    assert not r["missing_documents"] and not r["wrong_year"] and r["not_yet_due"] == [{"kind": "salary_certificate", "year": 2026}], r
+    assert completeness(p3a, subject, facts, docs, "2026")["missing_documents"][0]["kind"] == "salary_certificate"
     c = consolidate(facts, "2025")
     assert c["status"] == "incomplete" and c["institutions_missing"] == ["Talbruck Banque Privée SA"], c
     assert c["institutions_included"] == ["Morvessa Banque SA", "Zelfeld Courtage SA"]
