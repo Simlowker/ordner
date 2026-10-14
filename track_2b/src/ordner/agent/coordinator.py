@@ -250,13 +250,18 @@ class _Run:
                 payload["phishing"] = list(dict.fromkeys(x for r in self.risks for x in r["reasons"]))
         a = Action(new_id("act"), case_id or cases[0], kind, payload, requires_validation=True,
                    status="prepared")
+        new = a.id
         try:
             a = self.store.add_action(a) or a
         except Exception as e:
             return {"error": f"could not store the action: {type(e).__name__}: {e}"}
-        self.out["actions"].append(to_dict(a))
-        out = {"status": "prepared", "action_id": a.id, "requires_validation": True,
-               "note": "Not executed. The person must validate it."}
+        if a.id != new:
+            out = {"status": "already_prepared", "action_id": a.id, "requires_validation": True,
+                   "note": f"A pending {kind} already exists for this case: not duplicated. Tell the person."}
+        else:
+            self.out["actions"].append(to_dict(a))
+            out = {"status": "prepared", "action_id": a.id, "requires_validation": True,
+                   "note": "Not executed. The person must validate it."}
         if payload.get("warning"):
             out["warning"] = (f"{payload['warning']['fr']}: tell the person to check the sender before paying "
                               f"({'; '.join(payload['phishing'])})")

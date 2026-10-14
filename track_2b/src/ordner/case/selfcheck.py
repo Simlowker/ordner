@@ -150,6 +150,7 @@ def main():
         assert {x["id"] for x in snap["pending_actions"]} == {rem.id, pay.id}
         assert len(snap["facts"]["confirmed"]) == 2 and len(snap["facts"]["superseded"]) == 1
         assert len(snap["last_events"]) == 20
+
         snap_b = json.dumps(st.snapshot(b.id))
         for leaked in (d1.id, f1.id, f2.id, c.id, act.id, "Alice"):
             assert leaked not in snap_b, leaked
@@ -158,6 +159,14 @@ def main():
         st.close()
         st = Store(Path(tmp) / "ordner.db")
         assert st.snapshot(a.id, today="2026-10-14") == snap
+        # double-payment guard: a concrete payment replaces the rules' generic step; the same bill twice is one payment;
+        # another amount is another bill
+        step = st.add_action(Action(new_id("act"), c_2024.id, "payment", {"card": "tax.return.VD", "step": "pay"}))
+        bill = st.add_action(Action(new_id("act"), c_2024.id, "payment", {"summary": "post", "details": {"amount": 89.5}}))
+        assert st.add_action(Action(new_id("act"), c_2024.id, "payment", {"summary": "e-mail", "details": {"amount": 89.5}})).id == bill.id
+        other = st.add_action(Action(new_id("act"), c_2024.id, "payment", {"summary": "x", "details": {"amount": 470.1}}))
+        assert {(x.id, x.status) for x in st.get_case(c_2024.id).actions} == {
+            (step.id, "cancelled"), (bill.id, "prepared"), (other.id, "prepared")}
 
         # demo seed: idempotent, coherent
         sid = demo_seed.seed(st)

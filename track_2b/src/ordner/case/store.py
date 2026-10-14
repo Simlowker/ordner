@@ -270,7 +270,9 @@ class Store:
 
     # -- actions & deadlines --------------------------------------------------------------------------------
     def add_action(self, a: Action, actor="ordner") -> Action:
-        """Idempotent: an identical pending action (same case, kind, payload) is returned instead of duplicated."""
+        """Idempotent: an identical pending action (same case, kind, payload) is returned instead of duplicated.
+        Double-payment guard: a pending payment of the same case and amount (one bill seen twice) is returned; a
+        concrete payment cancels the case's generic one (a card step prepared by the rules engine, without details)."""
         _check(a.kind, ActionKind)
         if a.status != "prepared":
             raise ValueError("actions enter the dossier as prepared")
@@ -278,9 +280,18 @@ class Store:
             raise ValueError(f"{a.kind} has an external effect and requires the user's validation")
         with self._tx():
             c = self.get_case(a.case_id)
+            amount = lambda x: (x.payload.get("details") or {}).get("amount")  # noqa: E731
             for old in c.actions:
-                if old.status in PENDING and old.kind == a.kind and old.payload == a.payload:
+                if old.status not in PENDING or old.kind != a.kind:
+                    continue
+                if old.payload == a.payload or (a.kind == "payment" and "details" in old.payload
+                                                and amount(old) == amount(a)):
                     return old
+                if a.kind == "payment" and old.status == "prepared" and "details" not in old.payload and "details" in a.payload:
+                    old.status = "cancelled"
+                    self._update("actions", asdict(old), status=old.status)
+                    self._event(c.subject_id, "action_cancelled", {"action_id": old.id, "kind": old.kind,
+                                "replaced_by": a.id}, actor, c.id)
             self._insert("actions", asdict(a), case_id=a.case_id, status=a.status)
             self._event(c.subject_id, "action_prepared", {"action_id": a.id, "kind": a.kind,
                         "requires_validation": a.requires_validation}, actor, c.id)
