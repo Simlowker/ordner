@@ -1,484 +1,555 @@
 {
-  "fixture": true,
-  "note": "FIXTURE: hand-written placeholder values on real generated pages (test split). Replace with the pipeline export; schema in src/ordner/app/README.md.",
-  "doubt_levels": { "orange": 0.25, "red": 0.5 },
-  "documents": [
+ "fixture": true,
+ "note": "Pipeline export (Apertus 1.5 8B (LoRA)). Pages: one per target [('A', 0, 'de'), ('A', 2, 'fr'), ('A', 3, 'it'), ('B', 2, None)] (layout, degradation, language); layout A from dev, layout B from test; within a target, degradation >= 2 prefers a page with an extraction error, otherwise an error-free page. Doubt = combined model of ordner.eval.run (out-of-fold on its fit rows). Explanations: Apertus 1.5 8B (base, MLX), quotes verified word for word. MISSING: s0004-A-p1-d0: no doubt score for 8 field(s); s0021-A-p1-d2: no doubt score for 8 field(s); s0058-A-p1-d3: no doubt score for 8 field(s); s0003-B-p1-d2: no doubt score for 8 field(s); s0004-A-p1-d0: no explanation (run with --generate); s0021-A-p1-d2: no explanation (run with --generate); s0058-A-p1-d3: no explanation (run with --generate); s0003-B-p1-d2: no explanation (run with --generate)",
+ "doubt_levels": {
+  "orange": 0.25,
+  "red": 0.5
+ },
+ "documents": [
+  {
+   "page_id": "s0004-A-p1-d0",
+   "image": "s0004-A-p1-d0.jpg",
+   "language": "de",
+   "layout": "A",
+   "degradation": 0,
+   "split": "dev",
+   "fields": [
     {
-      "page_id": "s0003-A-p1-d1",
-      "image": "s0003-A-p1-d1.jpg",
-      "language": "fr",
-      "layout": "A",
-      "degradation": 1,
-      "route": {
-        "model": "d1-3B",
-        "label": "swiss_tax_statement_eCH0196",
-        "p": 0.97
-      },
-      "fields": [
-        {
-          "field": "totalTaxValue",
-          "value": "23806",
-          "gold": "23806",
-          "correct": true,
-          "model": "Apertus 1.5 8B (LoRA)",
-          "doubt": 0.06,
-          "signals": {
-            "probe": 0.05,
-            "d1_p_yes": 0.94,
-            "rule": null,
-            "rule_ok": null,
-            "lp_min": -0.02
-          }
-        },
-        {
-          "field": "totalGrossRevenueA",
-          "value": "26",
-          "gold": "26",
-          "correct": true,
-          "model": "Apertus 1.5 8B (LoRA)",
-          "doubt": 0.12,
-          "signals": {
-            "probe": 0.1,
-            "d1_p_yes": 0.81,
-            "rule": "wht_35",
-            "rule_ok": true,
-            "lp_min": -0.15
-          }
-        },
-        {
-          "field": "totalGrossRevenueB",
-          "value": "184",
-          "gold": "184",
-          "correct": true,
-          "model": "Apertus 1.5 8B (LoRA)",
-          "doubt": 0.09,
-          "signals": {
-            "probe": 0.08,
-            "d1_p_yes": 0.88,
-            "rule": "sum_ab",
-            "rule_ok": true,
-            "lp_min": -0.05
-          }
-        },
-        {
-          "field": "totalWithHoldingTaxClaim",
-          "value": "9.03",
-          "gold": "9.03",
-          "correct": true,
-          "model": "Apertus 1.5 8B (LoRA)",
-          "doubt": 0.05,
-          "signals": {
-            "probe": 0.04,
-            "d1_p_yes": 0.93,
-            "rule": "wht_35",
-            "rule_ok": true,
-            "lp_min": -0.01
-          }
-        },
-        {
-          "field": "institution",
-          "value": "Talmira Banque de Gestion SA",
-          "gold": "Talmira Banque de Gestion SA",
-          "correct": true,
-          "model": "Apertus 1.5 8B (LoRA)",
-          "doubt": 0.03,
-          "signals": {
-            "probe": 0.03,
-            "d1_p_yes": 0.96,
-            "rule": null,
-            "rule_ok": null,
-            "lp_min": -0.01
-          }
-        },
-        {
-          "field": "canton",
-          "value": "JU",
-          "gold": "JU",
-          "correct": true,
-          "model": "Apertus 1.5 8B (LoRA)",
-          "doubt": 0.04,
-          "signals": {
-            "probe": 0.03,
-            "d1_p_yes": 0.97,
-            "rule": null,
-            "rule_ok": null,
-            "lp_min": -0.02
-          }
-        },
-        {
-          "field": "taxPeriod",
-          "value": "2025",
-          "gold": "2025",
-          "correct": true,
-          "model": "Apertus 1.5 8B (LoRA)",
-          "doubt": 0.02,
-          "signals": {
-            "probe": 0.02,
-            "d1_p_yes": 0.98,
-            "rule": null,
-            "rule_ok": null,
-            "lp_min": 0.0
-          }
-        },
-        {
-          "field": "client_last_name",
-          "value": "Bonvin",
-          "gold": "Bonvin",
-          "correct": true,
-          "model": "Apertus 1.5 8B (LoRA)",
-          "doubt": 0.28,
-          "signals": {
-            "probe": 0.33,
-            "d1_p_yes": 0.62,
-            "rule": null,
-            "rule_ok": null,
-            "lp_min": -0.9
-          }
-        }
-      ],
-      "explanation": {
-        "text": {
-          "fr": "Ce relevé fiscal de Talmira Banque de Gestion SA (période 2025, canton JU) résume vos comptes et vos titres. Les totaux de la page de synthèse se reportent dans l'état des titres de votre déclaration d'impôt 2025 :\n• Valeur fiscale 23'806 CHF : colonne « valeur fiscale » de l'état des titres ; ce montant fait partie de votre fortune.\n• Revenus A 26 CHF : rendements soumis à l'impôt anticipé ; ils s'ajoutent à votre revenu.\n• Revenus B 184 CHF : rendements sans impôt anticipé ; ils s'ajoutent aussi à votre revenu.\n• Impôt anticipé 9.03 CHF : montant que vous pouvez récupérer, à condition de déclarer les revenus A.\nLes intitulés exacts dépendent du logiciel de votre canton : vérifiez dans le guide officiel du canton du Jura.",
-          "de": "Dieser Steuerausweis der Talmira Banque de Gestion SA (Steuerperiode 2025, Kanton JU) fasst Ihre Konten und Wertschriften zusammen. Die Totale der Übersichtsseite gehören ins Wertschriftenverzeichnis Ihrer Steuererklärung 2025:\n• Steuerwert CHF 23'806: Spalte «Steuerwert» im Wertschriftenverzeichnis; der Betrag zählt zu Ihrem Vermögen.\n• Erträge A CHF 26: Erträge mit Verrechnungssteuerabzug; sie zählen zu Ihrem Einkommen.\n• Erträge B CHF 184: Erträge ohne Verrechnungssteuerabzug; sie zählen ebenfalls zum Einkommen.\n• Verrechnungssteuer CHF 9.03: Betrag, den Sie zurückfordern können, sofern die Erträge A deklariert sind.\nDie genauen Bezeichnungen hängen von der Steuersoftware Ihres Kantons ab: Prüfen Sie die offizielle Wegleitung des Kantons Jura.",
-          "it": "Questo estratto fiscale di Talmira Banque de Gestion SA (periodo 2025, Cantone JU) riassume i suoi conti e titoli. I totali della pagina di sintesi vanno riportati nell'elenco dei titoli della dichiarazione d'imposta 2025:\n• Valore fiscale CHF 23'806: colonna «valore fiscale» dell'elenco dei titoli; l'importo fa parte della sostanza.\n• Redditi A CHF 26: redditi soggetti all'imposta preventiva; si aggiungono al reddito.\n• Redditi B CHF 184: redditi senza imposta preventiva; si aggiungono anch'essi al reddito.\n• Imposta preventiva CHF 9.03: importo che può recuperare, a condizione di dichiarare i redditi A.\nLe denominazioni esatte dipendono dal software del suo Cantone: verifichi nella guida ufficiale del Cantone del Giura."
-        },
-        "citations": [
-          {
-            "source": "Relevé fiscal, page 1 (texte imprimé)",
-            "url": null,
-            "verified": true,
-            "quote": "Valeurs pour le formulaire \"Détail état des titres et autres placements de capitaux\" (y compris les comptes, sans les valeurs DA-1 et USA)"
-          },
-          {
-            "source": "Relevé fiscal, page 1 (texte imprimé)",
-            "url": null,
-            "verified": true,
-            "quote": "Si aucun crédit pour la retenue d'impôt étranger (DA-1) n'est demandé, alors ces totaux doivent être inscrits dans l'état des titres."
-          },
-          {
-            "source": "AFC/ESTV, guide pour les nouveaux contribuables",
-            "url": "https://www.estv.admin.ch/dam/fr/sd-web/5-fLbzigwEtn/estv-leitfaden-neue-steuerpflichtige-fr.pdf",
-            "verified": false,
-            "quote": null
-          }
-        ]
-      }
+     "field": "totalTaxValue",
+     "value": "111982",
+     "gold": "111982",
+     "correct": true,
+     "model": "Apertus 1.5 8B (LoRA)",
+     "doubt": null,
+     "signals": {
+      "probe": null,
+      "d1_p_yes": 0.856,
+      "rule": "consistency",
+      "rule_ok": true,
+      "lp_min": -0.0
+     }
     },
     {
-      "page_id": "s0012-B-p1-d2",
-      "image": "s0012-B-p1-d2.jpg",
-      "language": "de",
-      "layout": "B",
-      "degradation": 2,
-      "route": {
-        "model": "d1-3B",
-        "label": "swiss_tax_statement_eCH0196",
-        "p": 0.93
-      },
-      "fields": [
-        {
-          "field": "totalTaxValue",
-          "value": "82321.44",
-          "gold": "82321.44",
-          "correct": true,
-          "model": "Apertus 1.5 8B (LoRA)",
-          "doubt": 0.18,
-          "signals": {
-            "probe": 0.2,
-            "d1_p_yes": 0.77,
-            "rule": null,
-            "rule_ok": null,
-            "lp_min": -0.3
-          }
-        },
-        {
-          "field": "totalGrossRevenueA",
-          "value": "219.29",
-          "gold": "219.29",
-          "correct": true,
-          "model": "Apertus 1.5 8B (LoRA)",
-          "doubt": 0.11,
-          "signals": {
-            "probe": 0.12,
-            "d1_p_yes": 0.84,
-            "rule": "wht_35",
-            "rule_ok": true,
-            "lp_min": -0.12
-          }
-        },
-        {
-          "field": "totalGrossRevenueB",
-          "value": "283.82",
-          "gold": "283.82",
-          "correct": true,
-          "model": "Apertus 1.5 8B (LoRA)",
-          "doubt": 0.14,
-          "signals": {
-            "probe": 0.15,
-            "d1_p_yes": 0.8,
-            "rule": null,
-            "rule_ok": null,
-            "lp_min": -0.2
-          }
-        },
-        {
-          "field": "totalWithHoldingTaxClaim",
-          "value": "76.75",
-          "gold": "76.75",
-          "correct": true,
-          "model": "Apertus 1.5 8B (LoRA)",
-          "doubt": 0.07,
-          "signals": {
-            "probe": 0.06,
-            "d1_p_yes": 0.9,
-            "rule": "wht_35",
-            "rule_ok": true,
-            "lp_min": -0.04
-          }
-        },
-        {
-          "field": "institution",
-          "value": "Quinolt Privatbank AG",
-          "gold": "Quinolt Privatbank AG",
-          "correct": true,
-          "model": "Apertus 1.5 8B (LoRA)",
-          "doubt": 0.04,
-          "signals": {
-            "probe": 0.04,
-            "d1_p_yes": 0.95,
-            "rule": null,
-            "rule_ok": null,
-            "lp_min": -0.02
-          }
-        },
-        {
-          "field": "canton",
-          "value": "GR",
-          "gold": "GR",
-          "correct": true,
-          "model": "Apertus 1.5 8B (LoRA)",
-          "doubt": 0.06,
-          "signals": {
-            "probe": 0.05,
-            "d1_p_yes": 0.93,
-            "rule": null,
-            "rule_ok": null,
-            "lp_min": -0.05
-          }
-        },
-        {
-          "field": "taxPeriod",
-          "value": "2025",
-          "gold": "2025",
-          "correct": true,
-          "model": "Apertus 1.5 8B (LoRA)",
-          "doubt": 0.03,
-          "signals": {
-            "probe": 0.02,
-            "d1_p_yes": 0.97,
-            "rule": null,
-            "rule_ok": null,
-            "lp_min": -0.01
-          }
-        },
-        {
-          "field": "client_last_name",
-          "value": "Muller",
-          "gold": "Müller",
-          "correct": false,
-          "model": "Apertus 1.5 8B (LoRA)",
-          "doubt": 0.57,
-          "signals": {
-            "probe": 0.61,
-            "d1_p_yes": 0.38,
-            "rule": null,
-            "rule_ok": null,
-            "lp_min": -1.6
-          }
-        }
-      ],
-      "explanation": {
-        "text": {
-          "fr": "Ce relevé de Quinolt Privatbank AG (période 2025, canton GR) a une autre mise en page que les autres exemples, mais les montants sont les mêmes :\n• Valeur fiscale totale 82'321.44 CHF (avoirs en compte et titres) : état des titres, colonne « valeur fiscale » ; ce montant fait partie de votre fortune.\n• Revenus A 219.29 CHF : rendements soumis à l'impôt anticipé ; ils s'ajoutent à votre revenu.\n• Revenus B 283.82 CHF : rendements sans impôt anticipé ; ils s'ajoutent aussi à votre revenu.\n• Impôt anticipé récupérable 76.75 CHF (35 % des revenus A) : remboursé seulement si tout est déclaré.\nLes intitulés exacts dépendent du logiciel de votre canton : vérifiez dans le guide officiel du canton des Grisons.",
-          "de": "Dieser Steuerausweis der Quinolt Privatbank AG (Steuerperiode 2025, Kanton GR) hat ein anderes Layout als die übrigen Beispiele, die Beträge sind aber dieselben:\n• Steuerwert total CHF 82'321.44 (Kontoguthaben und Wertschriften): Wertschriftenverzeichnis, Spalte «Steuerwert»; der Betrag zählt zu Ihrem Vermögen.\n• Erträge A CHF 219.29: Erträge mit Verrechnungssteuerabzug; sie zählen zu Ihrem Einkommen.\n• Erträge B CHF 283.82: Erträge ohne Verrechnungssteuerabzug; sie zählen ebenfalls zum Einkommen.\n• Rückforderbare Verrechnungssteuer CHF 76.75 (35 % der Erträge A): wird nur bei vollständiger Deklaration zurückerstattet.\nDie genauen Bezeichnungen hängen von der Steuersoftware Ihres Kantons ab: Prüfen Sie die offizielle Wegleitung des Kantons Graubünden.",
-          "it": "Questo estratto di Quinolt Privatbank AG (periodo 2025, Cantone GR) ha un'impaginazione diversa dagli altri esempi, ma gli importi sono gli stessi:\n• Valore fiscale totale CHF 82'321.44 (averi in conto e titoli): elenco dei titoli, colonna «valore fiscale»; l'importo fa parte della sostanza.\n• Redditi A CHF 219.29: redditi soggetti all'imposta preventiva; si aggiungono al reddito.\n• Redditi B CHF 283.82: redditi senza imposta preventiva; si aggiungono anch'essi al reddito.\n• Imposta preventiva recuperabile CHF 76.75 (35 % dei redditi A): rimborsata solo se tutto è dichiarato.\nLe denominazioni esatte dipendono dal software del suo Cantone: verifichi nella guida ufficiale del Cantone dei Grigioni."
-        },
-        "citations": [
-          {
-            "source": "Steuerausweis, Seite 1 (gedruckter Text)",
-            "url": null,
-            "verified": true,
-            "quote": "Übertragen Sie die Beträge in das Wertschriftenverzeichnis Ihrer Steuererklärung. Die Verrechnungssteuer wird nur bei vollständiger Deklaration zurückerstattet."
-          },
-          {
-            "source": "AFC/ESTV, guide pour les nouveaux contribuables",
-            "url": "https://www.estv.admin.ch/dam/fr/sd-web/5-fLbzigwEtn/estv-leitfaden-neue-steuerpflichtige-fr.pdf",
-            "verified": false,
-            "quote": null
-          }
-        ]
-      }
+     "field": "totalGrossRevenueA",
+     "value": "589",
+     "gold": "589",
+     "correct": true,
+     "model": "Apertus 1.5 8B (LoRA)",
+     "doubt": null,
+     "signals": {
+      "probe": null,
+      "d1_p_yes": 0.579,
+      "rule": "consistency",
+      "rule_ok": true,
+      "lp_min": -0.0
+     }
     },
     {
-      "page_id": "s0029-A-p1-d3",
-      "image": "s0029-A-p1-d3.jpg",
-      "language": "it",
-      "layout": "A",
-      "degradation": 3,
-      "route": {
-        "model": "d1-3B",
-        "label": "swiss_tax_statement_eCH0196",
-        "p": 0.89
-      },
-      "fields": [
-        {
-          "field": "totalTaxValue",
-          "value": "13514",
-          "gold": "13514",
-          "correct": true,
-          "model": "Apertus 1.5 8B (LoRA)",
-          "doubt": 0.34,
-          "signals": {
-            "probe": 0.41,
-            "d1_p_yes": 0.66,
-            "rule": null,
-            "rule_ok": null,
-            "lp_min": -0.8
-          }
-        },
-        {
-          "field": "totalGrossRevenueA",
-          "value": "0",
-          "gold": "0",
-          "correct": true,
-          "model": "Apertus 1.5 8B (LoRA)",
-          "doubt": 0.21,
-          "signals": {
-            "probe": 0.22,
-            "d1_p_yes": 0.71,
-            "rule": "wht_35",
-            "rule_ok": true,
-            "lp_min": -0.4
-          }
-        },
-        {
-          "field": "totalGrossRevenueB",
-          "value": "96",
-          "gold": "98",
-          "correct": false,
-          "model": "Apertus 1.5 8B (LoRA)",
-          "doubt": 0.78,
-          "signals": {
-            "probe": 0.74,
-            "d1_p_yes": 0.29,
-            "rule": "sum_ab",
-            "rule_ok": false,
-            "lp_min": -1.9
-          }
-        },
-        {
-          "field": "totalWithHoldingTaxClaim",
-          "value": "0.00",
-          "gold": "0.00",
-          "correct": true,
-          "model": "Apertus 1.5 8B (LoRA)",
-          "doubt": 0.09,
-          "signals": {
-            "probe": 0.08,
-            "d1_p_yes": 0.88,
-            "rule": "wht_35",
-            "rule_ok": true,
-            "lp_min": -0.06
-          }
-        },
-        {
-          "field": "institution",
-          "value": "Lunmira Banca di Gestione SA",
-          "gold": "Lunmira Banca di Gestione SA",
-          "correct": true,
-          "model": "Apertus 1.5 8B (LoRA)",
-          "doubt": 0.08,
-          "signals": {
-            "probe": 0.07,
-            "d1_p_yes": 0.9,
-            "rule": null,
-            "rule_ok": null,
-            "lp_min": -0.05
-          }
-        },
-        {
-          "field": "canton",
-          "value": "TI",
-          "gold": "TI",
-          "correct": true,
-          "model": "Apertus 1.5 8B (LoRA)",
-          "doubt": 0.05,
-          "signals": {
-            "probe": 0.04,
-            "d1_p_yes": 0.95,
-            "rule": null,
-            "rule_ok": null,
-            "lp_min": -0.02
-          }
-        },
-        {
-          "field": "taxPeriod",
-          "value": "2025",
-          "gold": "2025",
-          "correct": true,
-          "model": "Apertus 1.5 8B (LoRA)",
-          "doubt": 0.04,
-          "signals": {
-            "probe": 0.03,
-            "d1_p_yes": 0.96,
-            "rule": null,
-            "rule_ok": null,
-            "lp_min": -0.01
-          }
-        },
-        {
-          "field": "client_last_name",
-          "value": "Rossi",
-          "gold": "Rossi",
-          "correct": true,
-          "model": "Apertus 1.5 8B (LoRA)",
-          "doubt": 0.12,
-          "signals": {
-            "probe": 0.11,
-            "d1_p_yes": 0.83,
-            "rule": null,
-            "rule_ok": null,
-            "lp_min": -0.2
-          }
-        }
-      ],
-      "explanation": {
-        "text": {
-          "fr": "Ce relevé fiscal de Lunmira Banca di Gestione SA (période 2025, canton TI) est une photo de mauvaise qualité ; vérifiez les montants marqués en rouge. Les totaux se reportent dans l'état des titres de votre déclaration 2025 :\n• Valeur fiscale 13'514 CHF : colonne « valeur fiscale » de l'état des titres ; ce montant fait partie de votre fortune.\n• Revenus A 0 CHF : aucun rendement soumis à l'impôt anticipé.\n• Revenus B 96 CHF (valeur incertaine, à contrôler sur le document) : rendements sans impôt anticipé ; ils s'ajoutent à votre revenu.\n• Impôt anticipé 0.00 CHF : rien à récupérer.\nLes intitulés exacts dépendent du logiciel de votre canton : vérifiez dans le guide officiel du canton du Tessin.",
-          "de": "Dieser Steuerausweis der Lunmira Banca di Gestione SA (Steuerperiode 2025, Kanton TI) ist ein Foto in schlechter Qualität; prüfen Sie die rot markierten Beträge. Die Totale gehören ins Wertschriftenverzeichnis Ihrer Steuererklärung 2025:\n• Steuerwert CHF 13'514: Spalte «Steuerwert»; der Betrag zählt zu Ihrem Vermögen.\n• Erträge A CHF 0: keine Erträge mit Verrechnungssteuerabzug.\n• Erträge B CHF 96 (unsicherer Wert, bitte am Dokument prüfen): Erträge ohne Verrechnungssteuerabzug; sie zählen zum Einkommen.\n• Verrechnungssteuer CHF 0.00: nichts zurückzufordern.\nDie genauen Bezeichnungen hängen von der Steuersoftware Ihres Kantons ab: Prüfen Sie die offizielle Wegleitung des Kantons Tessin.",
-          "it": "Questo estratto fiscale di Lunmira Banca di Gestione SA (periodo 2025, Cantone TI) è una foto di qualità scarsa; verifichi gli importi segnati in rosso. I totali vanno riportati nell'elenco dei titoli della dichiarazione 2025:\n• Valore fiscale CHF 13'514: colonna «valore fiscale»; l'importo fa parte della sostanza.\n• Redditi A CHF 0: nessun reddito soggetto all'imposta preventiva.\n• Redditi B CHF 96 (valore incerto, da controllare sul documento): redditi senza imposta preventiva; si aggiungono al reddito.\n• Imposta preventiva CHF 0.00: niente da recuperare.\nLe denominazioni esatte dipendono dal software del suo Cantone: verifichi nella guida ufficiale del Cantone Ticino."
-        },
-        "citations": [
-          {
-            "source": "Estratto fiscale, pagina 1 (testo stampato)",
-            "url": null,
-            "verified": true,
-            "quote": "Valori per il modulo \"Elenco dei titoli e altri collocamenti in capitale\" (compresi i conti, senza valori DA-1 e USA)"
-          },
-          {
-            "source": "Estratto fiscale, pagina 1 (testo stampato)",
-            "url": null,
-            "verified": true,
-            "quote": "Se non viene richiesto alcun credito per l'imposta alla fonte estera (DA-1), questi valori totali devono essere inseriti nell' elenco titoli."
-          },
-          {
-            "source": "AFC/ESTV, guide pour les nouveaux contribuables",
-            "url": "https://www.estv.admin.ch/dam/fr/sd-web/5-fLbzigwEtn/estv-leitfaden-neue-steuerpflichtige-fr.pdf",
-            "verified": false,
-            "quote": null
-          }
-        ]
-      }
+     "field": "totalGrossRevenueB",
+     "value": "678",
+     "gold": "678",
+     "correct": true,
+     "model": "Apertus 1.5 8B (LoRA)",
+     "doubt": null,
+     "signals": {
+      "probe": null,
+      "d1_p_yes": 0.709,
+      "rule": "consistency",
+      "rule_ok": true,
+      "lp_min": -0.0
+     }
+    },
+    {
+     "field": "totalWithHoldingTaxClaim",
+     "value": "206.3",
+     "gold": "206.30",
+     "correct": true,
+     "model": "Apertus 1.5 8B (LoRA)",
+     "doubt": null,
+     "signals": {
+      "probe": null,
+      "d1_p_yes": 0.773,
+      "rule": "consistency",
+      "rule_ok": true,
+      "lp_min": -0.0
+     }
+    },
+    {
+     "field": "institution",
+     "value": "Talmont Vermögensbank AG",
+     "gold": "Talmont Vermögensbank AG",
+     "correct": true,
+     "model": "Apertus 1.5 8B (LoRA)",
+     "doubt": null,
+     "signals": {
+      "probe": null,
+      "d1_p_yes": 0.965,
+      "rule": "consistency",
+      "rule_ok": true,
+      "lp_min": -0.0
+     }
+    },
+    {
+     "field": "canton",
+     "value": "GR",
+     "gold": "GR",
+     "correct": true,
+     "model": "Apertus 1.5 8B (LoRA)",
+     "doubt": null,
+     "signals": {
+      "probe": null,
+      "d1_p_yes": 0.708,
+      "rule": "consistency",
+      "rule_ok": true,
+      "lp_min": -0.0
+     }
+    },
+    {
+     "field": "taxPeriod",
+     "value": "2025",
+     "gold": "2025",
+     "correct": true,
+     "model": "Apertus 1.5 8B (LoRA)",
+     "doubt": null,
+     "signals": {
+      "probe": null,
+      "d1_p_yes": 0.983,
+      "rule": "consistency",
+      "rule_ok": true,
+      "lp_min": -0.0
+     }
+    },
+    {
+     "field": "client_last_name",
+     "value": "Graf",
+     "gold": "Graf",
+     "correct": true,
+     "model": "Apertus 1.5 8B (LoRA)",
+     "doubt": null,
+     "signals": {
+      "probe": null,
+      "d1_p_yes": 0.756,
+      "rule": "consistency",
+      "rule_ok": true,
+      "lp_min": -0.0
+     }
     }
-  ]
+   ],
+   "explanation": null,
+   "route": {
+    "model": "d1-3B",
+    "label": "swiss_tax_statement_eCH0196",
+    "p": 0.966
+   }
+  },
+  {
+   "page_id": "s0021-A-p1-d2",
+   "image": "s0021-A-p1-d2.jpg",
+   "language": "fr",
+   "layout": "A",
+   "degradation": 2,
+   "split": "dev",
+   "fields": [
+    {
+     "field": "totalTaxValue",
+     "value": "74306",
+     "gold": "74306",
+     "correct": true,
+     "model": "Apertus 1.5 8B (LoRA)",
+     "doubt": null,
+     "signals": {
+      "probe": null,
+      "d1_p_yes": 0.664,
+      "rule": "consistency",
+      "rule_ok": true,
+      "lp_min": -0.0
+     }
+    },
+    {
+     "field": "totalGrossRevenueA",
+     "value": "234",
+     "gold": "234",
+     "correct": true,
+     "model": "Apertus 1.5 8B (LoRA)",
+     "doubt": null,
+     "signals": {
+      "probe": null,
+      "d1_p_yes": 0.182,
+      "rule": "consistency",
+      "rule_ok": true,
+      "lp_min": -0.0
+     }
+    },
+    {
+     "field": "totalGrossRevenueB",
+     "value": "0",
+     "gold": "0",
+     "correct": true,
+     "model": "Apertus 1.5 8B (LoRA)",
+     "doubt": null,
+     "signals": {
+      "probe": null,
+      "d1_p_yes": 0.78,
+      "rule": "consistency",
+      "rule_ok": true,
+      "lp_min": -0.0
+     }
+    },
+    {
+     "field": "totalWithHoldingTaxClaim",
+     "value": "81.9",
+     "gold": "81.90",
+     "correct": true,
+     "model": "Apertus 1.5 8B (LoRA)",
+     "doubt": null,
+     "signals": {
+      "probe": null,
+      "d1_p_yes": 0.785,
+      "rule": "consistency",
+      "rule_ok": true,
+      "lp_min": -0.0
+     }
+    },
+    {
+     "field": "institution",
+     "value": "Gravdorn Banque SA",
+     "gold": "Gravdorn Banque SA",
+     "correct": true,
+     "model": "Apertus 1.5 8B (LoRA)",
+     "doubt": null,
+     "signals": {
+      "probe": null,
+      "d1_p_yes": 0.898,
+      "rule": "consistency",
+      "rule_ok": true,
+      "lp_min": -0.001
+     }
+    },
+    {
+     "field": "canton",
+     "value": "FR",
+     "gold": "FR",
+     "correct": true,
+     "model": "Apertus 1.5 8B (LoRA)",
+     "doubt": null,
+     "signals": {
+      "probe": null,
+      "d1_p_yes": 0.711,
+      "rule": "consistency",
+      "rule_ok": true,
+      "lp_min": -0.0
+     }
+    },
+    {
+     "field": "taxPeriod",
+     "value": "2025",
+     "gold": "2025",
+     "correct": true,
+     "model": "Apertus 1.5 8B (LoRA)",
+     "doubt": null,
+     "signals": {
+      "probe": null,
+      "d1_p_yes": 0.982,
+      "rule": "consistency",
+      "rule_ok": true,
+      "lp_min": -0.0
+     }
+    },
+    {
+     "field": "client_last_name",
+     "value": "Bonvin",
+     "gold": "Bonvin",
+     "correct": true,
+     "model": "Apertus 1.5 8B (LoRA)",
+     "doubt": null,
+     "signals": {
+      "probe": null,
+      "d1_p_yes": 0.902,
+      "rule": "consistency",
+      "rule_ok": true,
+      "lp_min": -0.0
+     }
+    }
+   ],
+   "explanation": null,
+   "route": {
+    "model": "d1-3B",
+    "label": "swiss_tax_statement_eCH0196",
+    "p": 0.943
+   }
+  },
+  {
+   "page_id": "s0058-A-p1-d3",
+   "image": "s0058-A-p1-d3.jpg",
+   "language": "it",
+   "layout": "A",
+   "degradation": 3,
+   "split": "dev",
+   "fields": [
+    {
+     "field": "totalTaxValue",
+     "value": "470618",
+     "gold": "470618",
+     "correct": true,
+     "model": "Apertus 1.5 8B (LoRA)",
+     "doubt": null,
+     "signals": {
+      "probe": null,
+      "d1_p_yes": 0.816,
+      "rule": "consistency",
+      "rule_ok": true,
+      "lp_min": -0.0
+     }
+    },
+    {
+     "field": "totalGrossRevenueA",
+     "value": "697",
+     "gold": "697",
+     "correct": true,
+     "model": "Apertus 1.5 8B (LoRA)",
+     "doubt": null,
+     "signals": {
+      "probe": null,
+      "d1_p_yes": 0.608,
+      "rule": "consistency",
+      "rule_ok": true,
+      "lp_min": -0.0
+     }
+    },
+    {
+     "field": "totalGrossRevenueB",
+     "value": "7257",
+     "gold": "7257",
+     "correct": true,
+     "model": "Apertus 1.5 8B (LoRA)",
+     "doubt": null,
+     "signals": {
+      "probe": null,
+      "d1_p_yes": 0.458,
+      "rule": "consistency",
+      "rule_ok": true,
+      "lp_min": -0.0
+     }
+    },
+    {
+     "field": "totalWithHoldingTaxClaim",
+     "value": "244",
+     "gold": "244.00",
+     "correct": true,
+     "model": "Apertus 1.5 8B (LoRA)",
+     "doubt": null,
+     "signals": {
+      "probe": null,
+      "d1_p_yes": 0.823,
+      "rule": "consistency",
+      "rule_ok": true,
+      "lp_min": -0.001
+     }
+    },
+    {
+     "field": "institution",
+     "value": "Brisaro Banca di Gestione SA",
+     "gold": "Brisaro Banca di Gestione SA",
+     "correct": true,
+     "model": "Apertus 1.5 8B (LoRA)",
+     "doubt": null,
+     "signals": {
+      "probe": null,
+      "d1_p_yes": 0.943,
+      "rule": "consistency",
+      "rule_ok": true,
+      "lp_min": -0.0
+     }
+    },
+    {
+     "field": "canton",
+     "value": "TI",
+     "gold": "TI",
+     "correct": true,
+     "model": "Apertus 1.5 8B (LoRA)",
+     "doubt": null,
+     "signals": {
+      "probe": null,
+      "d1_p_yes": 0.951,
+      "rule": "consistency",
+      "rule_ok": true,
+      "lp_min": 0.0
+     }
+    },
+    {
+     "field": "taxPeriod",
+     "value": "2025",
+     "gold": "2025",
+     "correct": true,
+     "model": "Apertus 1.5 8B (LoRA)",
+     "doubt": null,
+     "signals": {
+      "probe": null,
+      "d1_p_yes": 0.98,
+      "rule": "consistency",
+      "rule_ok": true,
+      "lp_min": -0.0
+     }
+    },
+    {
+     "field": "client_last_name",
+     "value": "Cattaneo",
+     "gold": "Cattaneo",
+     "correct": true,
+     "model": "Apertus 1.5 8B (LoRA)",
+     "doubt": null,
+     "signals": {
+      "probe": null,
+      "d1_p_yes": 0.867,
+      "rule": "consistency",
+      "rule_ok": true,
+      "lp_min": -0.001
+     }
+    }
+   ],
+   "explanation": null,
+   "route": {
+    "model": "d1-3B",
+    "label": "swiss_tax_statement_eCH0196",
+    "p": 0.93
+   }
+  },
+  {
+   "page_id": "s0003-B-p1-d2",
+   "image": "s0003-B-p1-d2.jpg",
+   "language": "fr",
+   "layout": "B",
+   "degradation": 2,
+   "split": "test",
+   "fields": [
+    {
+     "field": "totalTaxValue",
+     "value": "23805.62",
+     "gold": "23805.62",
+     "correct": true,
+     "model": "Apertus 1.5 8B (LoRA)",
+     "doubt": null,
+     "signals": {
+      "probe": null,
+      "d1_p_yes": 0.439,
+      "rule": "consistency",
+      "rule_ok": true,
+      "lp_min": -0.0
+     }
+    },
+    {
+     "field": "totalGrossRevenueA",
+     "value": "25.8",
+     "gold": "25.80",
+     "correct": true,
+     "model": "Apertus 1.5 8B (LoRA)",
+     "doubt": null,
+     "signals": {
+      "probe": null,
+      "d1_p_yes": 0.251,
+      "rule": "consistency",
+      "rule_ok": true,
+      "lp_min": -0.043
+     }
+    },
+    {
+     "field": "totalGrossRevenueB",
+     "value": "183.92",
+     "gold": "183.92",
+     "correct": true,
+     "model": "Apertus 1.5 8B (LoRA)",
+     "doubt": null,
+     "signals": {
+      "probe": null,
+      "d1_p_yes": 0.711,
+      "rule": "consistency",
+      "rule_ok": true,
+      "lp_min": -0.0
+     }
+    },
+    {
+     "field": "totalWithHoldingTaxClaim",
+     "value": "9.03",
+     "gold": "9.03",
+     "correct": true,
+     "model": "Apertus 1.5 8B (LoRA)",
+     "doubt": null,
+     "signals": {
+      "probe": null,
+      "d1_p_yes": 0.905,
+      "rule": "consistency",
+      "rule_ok": true,
+      "lp_min": -0.0
+     }
+    },
+    {
+     "field": "institution",
+     "value": "Talmira Banque de Gestion SA",
+     "gold": "Talmira Banque de Gestion SA",
+     "correct": true,
+     "model": "Apertus 1.5 8B (LoRA)",
+     "doubt": null,
+     "signals": {
+      "probe": null,
+      "d1_p_yes": 0.953,
+      "rule": "consistency",
+      "rule_ok": true,
+      "lp_min": -0.0
+     }
+    },
+    {
+     "field": "canton",
+     "value": "JU",
+     "gold": "JU",
+     "correct": true,
+     "model": "Apertus 1.5 8B (LoRA)",
+     "doubt": null,
+     "signals": {
+      "probe": null,
+      "d1_p_yes": 0.973,
+      "rule": "consistency",
+      "rule_ok": true,
+      "lp_min": -0.001
+     }
+    },
+    {
+     "field": "taxPeriod",
+     "value": "2025",
+     "gold": "2025",
+     "correct": true,
+     "model": "Apertus 1.5 8B (LoRA)",
+     "doubt": null,
+     "signals": {
+      "probe": null,
+      "d1_p_yes": 0.961,
+      "rule": "consistency",
+      "rule_ok": true,
+      "lp_min": -0.0
+     }
+    },
+    {
+     "field": "client_last_name",
+     "value": "Bonvin",
+     "gold": "Bonvin",
+     "correct": true,
+     "model": "Apertus 1.5 8B (LoRA)",
+     "doubt": null,
+     "signals": {
+      "probe": null,
+      "d1_p_yes": 0.811,
+      "rule": "consistency",
+      "rule_ok": true,
+      "lp_min": -0.0
+     }
+    }
+   ],
+   "explanation": null,
+   "note": "Layout B (test split): unseen layout, display only (never used for training or tuning).",
+   "route": {
+    "model": "d1-3B",
+    "label": "swiss_tax_statement_eCH0196",
+    "p": 0.891
+   }
+  }
+ ]
 }

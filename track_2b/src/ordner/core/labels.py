@@ -110,6 +110,8 @@ LABELS = {
     "health.lamal.accident_cover": ("couverture accident (oui ou non)", "Unfalldeckung (ja oder nein)", "copertura infortuni (sì o no)"),
     "income.employment.*.gross": ("salaire brut — {}", "Bruttolohn — {}", "salario lordo — {}"),
     "tax.securities.*.total_tax_value": ("valeur fiscale des titres — {}", "Steuerwert der Wertschriften — {}", "valore fiscale dei titoli — {}"),
+    "tax.securities.*.gross_revenue_a": ("rendement brut A (soumis à l'impôt anticipé) — {}", "Bruttoertrag A (mit Verrechnungssteuer) — {}", "reddito lordo A (soggetto all'imposta preventiva) — {}"),
+    "tax.securities.*.gross_revenue_b": ("rendement brut B (sans impôt anticipé) — {}", "Bruttoertrag B (ohne Verrechnungssteuer) — {}", "reddito lordo B (non soggetto all'imposta preventiva) — {}"),
     "tax.securities.*.withholding_tax_claim": ("impôt anticipé à récupérer — {}", "rückforderbare Verrechnungssteuer — {}", "imposta preventiva da recuperare — {}"),
     "bill.*.creditor": ("bénéficiaire de la facture {}", "Zahlungsempfänger der Rechnung {}", "beneficiario della fattura {}"),
     "bill.*.iban": ("IBAN de la facture {}", "IBAN der Rechnung {}", "IBAN della fattura {}"),
