@@ -246,6 +246,16 @@ def evaluate(scenarios, make_agent, agent_name, split, out_dir=RESULTS, write=Tr
     return report
 
 
+def _mlx(L, path=None, adapter=None):
+    """MLXLocal, optionally another base and a LoRA adapter (applied as mlx_lm.load(adapter_path=...) does)."""
+    llm = L.MLXLocal(path) if path else L.MLXLocal()
+    if adapter:
+        from mlx_lm.tuner.utils import load_adapters
+        llm.model = load_adapters(llm.model, adapter)
+        llm.model.eval()
+    return llm
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--agent", choices=["rules_only", "coordinator", "mock"], required=True)
@@ -257,6 +267,9 @@ def main(argv=None):
     ap.add_argument("--max-steps", type=int, default=12)
     ap.add_argument("--toolset", choices=["base", "process", "both"], default="base",
                     help="coordinator tools (H6): generic base tools, process tools, or both")
+    ap.add_argument("--mlx-model", help="--llm mlx: model path or HF id (default MLXLocal's 4-bit); with --adapter, the "
+                                        "base it was trained on (bf16 ~/ordner/models/apertus-v1.5-8b-text)")
+    ap.add_argument("--adapter", help="--llm mlx: LoRA adapter dir (H7), e.g. work/adapters/coordinator-distill-v1")
     a = ap.parse_args(argv)
     scenarios = load(a.split)
     if a.only:
@@ -267,10 +280,11 @@ def main(argv=None):
         make = lambda: A.rules_only(resolve)  # noqa: E731
     else:
         from ordner.agent import llm as L
-        model = {"openai": lambda: L.OpenAICompat(a.llm_url, a.llm_model), "mlx": lambda: L.MLXLocal(),
+        model = {"openai": lambda: L.OpenAICompat(a.llm_url, a.llm_model), "mlx": lambda: _mlx(L, a.mlx_model, a.adapter),
                  "mock": lambda: L.MockLLM([])}[a.llm]()
         make = lambda: A.coordinator(resolve, model, a.max_steps, a.toolset)  # noqa: E731
     name = a.agent + (f"_{a.toolset}" if a.agent == "coordinator" and a.toolset != "base" else "")
+    name += "".join(f"_{Path(p).name}" for p in (a.mlx_model, a.adapter) if p and a.llm == "mlx")
     name += "_mockllm" if a.agent == "coordinator" and a.llm == "mock" else ""  # never overwrite a real run
     report = evaluate(scenarios, make, name, a.split)
     print(json.dumps(report["metrics"], indent=1))
