@@ -11,9 +11,10 @@ import sys
 import threading
 from dataclasses import asdict, is_dataclass
 from datetime import date
+from email.message import EmailMessage
 from typing import get_args
 
-from ordner.core.schema import CaseState, Deadline, ProcedureCard, Subject, new_id
+from ordner.core.schema import Action, CaseState, Deadline, ProcedureCard, Subject, new_id
 
 STATES = list(get_args(CaseState))
 DONE = {"result_verified", "closed"}
@@ -22,8 +23,17 @@ CANTONS = ("AG", "AI", "AR", "BE", "BL", "BS", "FR", "GE", "GL", "GR", "JU", "LU
            "NW", "OW", "SG", "SH", "SO", "SZ", "TG", "TI", "UR", "VD", "VS", "ZG", "ZH")
 URGENT_DAYS = 30
 RED = 0.5
+STATEMENT = "swiss_tax_statement_eCH0196"
 MODULES = {"case": "ordner.case.store", "seed": "ordner.case.demo_seed", "procedures": "ordner.procedures.catalog",
-           "rules": "ordner.rules", "agent": "ordner.agent.coordinator", "llm": "ordner.agent.llm"}
+           "rules": "ordner.rules", "agent": "ordner.agent.coordinator", "llm": "ordner.agent.llm",
+           "drafts": "ordner.connectors.email_drafts"}
+SIMULATED = os.environ.get("ORDNER_TODAY") or None   # demo date, e.g. 2026-02-20
+if SIMULATED:
+    date.fromisoformat(SIMULATED)  # fail at startup on a malformed date
+
+
+def today_():
+    return date.fromisoformat(SIMULATED) if SIMULATED else date.today()
 _lock = threading.Lock()
 
 
@@ -60,7 +70,7 @@ def plain(x):
 
 def modules():
     probe = {"case": "Store", "seed": "seed", "procedures": "load_cards", "rules": "applicable", "agent": "run",
-             "llm": "OpenAICompat"}
+             "llm": "OpenAICompat", "drafts": "render"}
     return {k: hasattr(opt(k), attr) for k, attr in probe.items()}
 
 
@@ -103,6 +113,13 @@ def _get(fn, key):
     if x is None:
         raise NotFound(key)
     return x
+
+
+def _visible(s, subject_id, today):
+    """Documents received by `today` and the facts they did not produce later (matters only with ORDNER_TODAY)."""
+    docs, facts = s.documents(subject_id), s.facts(subject_id)
+    late = {d.id for d in docs if (d.received_at or "")[:10] > today.isoformat()}
+    return [d for d in docs if d.id not in late], [f for f in facts if f.source_doc not in late]
 
 
 def card_info(card_id):
@@ -159,7 +176,8 @@ def _case_step(c):
     base = {"case_id": c["id"], "card": c.get("card"), "state": c["state"], "due": due.isoformat() if due else None}
     action = next((a for a in c.get("actions") or [] if a.get("status") == "prepared" and a.get("requires_validation", True)), None)
     if action:
-        return {**base, "kind": "validate", "action_id": action["id"], "action_kind": action.get("kind")}
+        return {**base, "kind": "validate", "action_id": action["id"], "action_kind": action.get("kind"),
+                "summary": (action.get("payload") or {}).get("summary")}
     if c.get("missing"):
         return {**base, "kind": "provide", "items": c["missing"]}
     if c["state"] == "to_qualify":
@@ -233,56 +251,78 @@ def _with_cards(cases):
     return out
 
 
-def coverage_for(subject, facts):
+def coverage_for(subject, facts, today):
     cat = opt("procedures")
     if cat is None:
         return {"available": False, "module": MODULES["procedures"]}
-    rules = opt("rules")
-    return classify(cat.load_cards(), subject, facts, getattr(rules, "applicable", None))
+    fn = getattr(opt("rules"), "applicable", None)
+    return classify(cat.load_cards(), subject, facts, fn and (lambda c, s, f: fn(c, s, f, on=today)))
+
+
+def wealth(facts, today):
+    """Consolidated per-institution tax-statement totals for last year (ordner.rules.consolidate)."""
+    fn = getattr(opt("rules"), "consolidate", None)
+    if fn is None:
+        return {"available": False, "module": "ordner.rules.consolidate"}
+    try:
+        return {"available": True, **fn(facts, str(today.year - 1))}
+    except ValueError as e:  # e.g. facts of several subjects
+        sys.stderr.write(f"cockpit: consolidate: {e!r}\n")
+        return {"available": False, "module": "ordner.rules.consolidate"}
 
 
 def overview(subject_id, today=None):
-    today = today or date.today()
+    today = today or today_()
     s = store()
     subject = _get(s.get_subject, subject_id)
-    docs = [plain(d) for d in s.documents(subject_id)]
+    docs_raw, facts = _visible(s, subject_id, today)
+    docs = [plain(d) for d in docs_raw]
     cases = _with_cards(s.cases(subject_id=subject_id))
     open_cases = [c for c in cases if c["state"] not in DONE]
-    return {"today": today.isoformat(), "subject": plain(subject), "documents": docs, "cases": cases,
-            "urgent": urgent(cases, today), "review": red_documents(docs), "next_step": next_step(cases, docs, today),
+    return {"today": today.isoformat(), "simulated": bool(SIMULATED), "subject": plain(subject), "documents": docs,
+            "cases": cases, "urgent": urgent(cases, today), "review": red_documents(docs),
+            "next_step": next_step(cases, docs, today), "wealth": wealth(facts, today),
             "missing": [{"case_id": c["id"], "card": c["card"], "items": c["missing"]} for c in open_cases if c.get("missing")],
-            "coverage": coverage_for(subject, s.facts(subject_id))}
+            "coverage": coverage_for(subject, facts, today)}
 
 
 def case_detail(case_id, today=None):
-    today = today or date.today()
+    today = today or today_()
     s = store()
     case = plain(_get(s.get_case, case_id))
     card = card_info(case["card_id"])
     for d in case.get("deadlines") or []:
         d["days"] = (_due(d) - today).days if _due(d) else None
-    docs = {d["id"]: {k: d.get(k) for k in ("kind", "year", "issuer", "read_path")}
-            for d in map(plain, s.documents(case["subject_id"]))}
+    docs_raw, facts_raw = _visible(s, case["subject_id"], today)
+    check = getattr(opt("rules"), "completeness", None)
+    completeness = (check(card, s.get_subject(case["subject_id"]), facts_raw, docs_raw, case.get("period"))
+                    if check and not card.get("unknown_card") else None)
+    docs = {d["id"]: {k: d.get(k) for k in ("kind", "year", "issuer", "read_path")} for d in map(plain, docs_raw)}
     keys, kinds, dom = card.get("required_facts") or [], set(card.get("required_documents") or []), card.get("domain")
 
     def linked(f):  # ponytail: key/domain/document heuristic, an explicit case<->fact link in W1 if this misleads
         k = f["key"]
         return (any(k == r or k.startswith(r + ".") for r in keys) or (dom and k.startswith(dom + "."))
                 or docs.get(f.get("source_doc"), {}).get("kind") in kinds)
-    facts = [f for f in map(plain, s.facts(case["subject_id"])) if linked(f)
+    facts = [f for f in map(plain, facts_raw) if linked(f)
              and (not case.get("period") or f.get("period") in (None, case["period"]))]
     events = sorted((plain(e) for e in s.events(case_id=case_id)), key=lambda e: e.get("ts") or "")
     known = getattr(opt("rules"), "SOURCES", {})
     basis = {k for d in case.get("deadlines") or [] for k in (d.get("computed_from") or {}).get("legal_basis") or []}
     return {"today": today.isoformat(), "case": case, "card": card, "facts": facts, "documents": docs,
-            "events": events, "states": STATES, "rule_sources": {k: known[k] for k in basis if k in known}}
+            "events": events, "states": STATES, "rule_sources": {k: known[k] for k in basis if k in known},
+            "completeness": completeness}
 
 
 def _schedule(card, subject, docs, today, rules):
     """(period, computed deadline | None). The year the documents point to (latest year among the kinds the card
     needs) when its deadline is ahead, or when the card is an obligation (a passed deadline is shown, never skipped);
     otherwise the first period whose deadline is still ahead; otherwise last year."""
-    compute = lambda y: rules.compute_deadline(card.deadline, subject, {"period": str(y), "label": card.name.get("fr", card.id)})
+    def compute(y):
+        try:
+            return rules.compute_deadline(card.deadline, subject, {"period": str(y), "label": card.name.get("fr", card.id)})
+        except ValueError as e:  # rule id unknown to this rules version
+            return {"status": "error", "error": str(e)}
     years = [d.year for d in docs if d.kind in (card.required_documents or []) and d.year]
     if not card.deadline:
         return str(max(years) if years else today.year - 1), None
@@ -302,17 +342,17 @@ def _schedule(card, subject, docs, today, rules):
 def review_dossier(subject_id, today=None, s=None):
     """Periodic review (transversal path 2, no model): compare the subject to the catalogue and open the expected
     cases with their next deadline, reminders and missing pieces. Idempotent (Store dedups cases and deadlines)."""
-    today = today or date.today()
+    today = today or today_()
     s = s or store()
     rules, cat = need("rules"), need("procedures")
     subject = _get(s.get_subject, subject_id)
-    facts, docs = s.facts(subject_id), s.documents(subject_id)
+    docs, facts = _visible(s, subject_id, today)
     opened = []
     for card in cat.load_cards():
         if card.jurisdiction not in ("CH", subject.canton):
             continue
         period, dl = _schedule(card, subject, docs, today, rules)
-        app = rules.applicable(card, subject, facts, period=period)
+        app = rules.applicable(card, subject, facts, on=today, period=period)
         if app["status"] == "not_applicable":
             continue
         case = s.open_case(subject_id, card.id, period, actor="rule")
@@ -320,13 +360,55 @@ def review_dossier(subject_id, today=None, s=None):
             s.add_deadline(Deadline(new_id("dl"), case.id, dl["due"], card.deadline.id,
                                     {**dl["computed_from"], **{k: dl[k] for k in ("send_by", "extensions") if k in dl}},
                                     rules.reminders(dl["due"], today=today)))
-        have = {d.kind for d in docs if d.year in (None, int(period))}
-        missing = [k for k in card.required_documents if k not in have] + list(app.get("missing") or [])
+        comp = rules.completeness(card, subject, facts, docs, period)  # waivers (no 3a), wrong year, per-bank statements
+        missing = [f"{m['kind']}:{m['issuer']}" if m.get("issuer") else m["kind"] for m in comp["missing_documents"]]
+        missing = list(dict.fromkeys(missing + comp["missing_facts"] + list(app.get("missing") or [])))
         s.set_missing(case.id, missing, actor="rule")
         if s.get_case(case.id).state == "to_qualify":
             s.set_state(case.id, "missing_documents" if missing else "ready_to_prepare", actor="rule")
+        if s.get_case(case.id).state not in DONE:
+            for m in comp["missing_documents"]:
+                if m["kind"] == STATEMENT and m.get("issuer"):
+                    _request_statement(s, case.id, subject, m["issuer"], period)
         opened.append(case.id)
     return {"cases": opened}
+
+
+def _request_statement(s, case_id, subject, issuer, period):
+    """Prepare (never send) the request of a missing eCH-0196 statement, with the email_drafts letter."""
+    for c in s.cases(subject_id=subject.id):  # one request per bank and year, even if several cases need it
+        if any(a.payload.get("issuer") == issuer and a.payload.get("vars", {}).get("year") == period
+               and a.status != "cancelled" for a in c.actions):
+            return
+    vars_ = {"year": period, "sender_name": subject.name, "recipient_name": issuer, "place": subject.commune or ""}
+    payload = {"template": "bank_document_request", "vars": vars_, "issuer": issuer, "kind": STATEMENT,
+               "summary": {"fr": f"Demander le relevé fiscal {period} (eCH-0196) à {issuer}",
+                           "de": f"Steuerausweis {period} (eCH-0196) bei {issuer} anfordern",
+                           "it": f"Chiedere l'estratto fiscale {period} (eCH-0196) a {issuer}"}}
+    if ed := opt("drafts"):
+        r = ed.render("bank_document_request", vars_)
+        payload.update(subject=r["subject"], body=r["body"], missing_vars=r["missing"])
+    s.add_action(Action(new_id("act"), case_id, "document_request", payload), actor="ordner")  # idempotent on payload
+
+
+def eml(case_id, action_id):
+    """The .eml draft of a validated action: same headers as email_drafts.draft, in memory, no PDF. Never sent."""
+    case = _get(store().get_case, case_id)
+    a = next((x for x in case.actions if x.id == action_id), None)
+    if a is None or not a.payload.get("template"):
+        raise NotFound(action_id)
+    if a.status in ("prepared", "cancelled"):
+        raise ValueError("only a validated action has a draft to download")
+    r = need("drafts").render(a.payload["template"], a.payload.get("vars", {}))
+    msg = EmailMessage()
+    if a.payload.get("to"):
+        msg["To"] = a.payload["to"]
+    msg["Subject"] = r["subject"]
+    msg["X-Unsent"] = "1"
+    msg["X-Ordner-Action"] = a.id
+    msg["X-Ordner-Status"] = "draft, never sent by Ordner"
+    msg.set_content(r["body"])
+    return bytes(msg), "message/rfc822", f"{a.id}.eml"
 
 
 def review(subject_id):
@@ -389,7 +471,7 @@ if __name__ == "__main__":
     assert next_step(cases, [], date(2026, 9, 1))["case_id"] == "c1"                # nothing red: nearest case
     assert next_step([cases[0]], [], today) == {"case_id": "c2", "card": None, "state": "ready_to_validate",
                                                 "due": "2027-01-31", "kind": "validate", "action_id": "a1",
-                                                "action_kind": "letter"}
+                                                "action_kind": "letter", "summary": None}
     assert next_step([plain(done)], [], today) is None
 
     card = lambda i, dom, jur, q: ProcedureCard(i, {"fr": i}, dom, "obligation", jur, {}, qualification=q)
@@ -409,4 +491,18 @@ if __name__ == "__main__":
     g = grid(cards)
     assert g["cells"]["tax"]["VD"]["status"] == "qualified" and g["cells"]["social"]["CH"]["status"] == "draft"
     assert g["counts"] == {"qualified": 4, "draft": 1} and g["jurisdictions"][0] == "CH" and len(g["jurisdictions"]) == 27
+    # review on the demo persona (temporary dossier): Talbruck statement missing, one request prepared, idempotent
+    if all(opt(k) for k in ("case", "seed", "procedures", "rules")):
+        import tempfile
+        with tempfile.TemporaryDirectory() as tmp:
+            st = opt("case").Store(f"{tmp}/t.db")
+            sid = opt("seed").seed(st)
+            for _ in range(2):
+                review_dossier(sid, today=date(2026, 2, 20), s=st)
+            vd = next(c for c in st.cases(sid) if c.card_id == "tax.return.VD")
+            assert vd.period == "2025" and vd.deadlines[0].due == "2026-03-15", vd
+            assert f"{STATEMENT}:Talbruck Banque Privée SA" in vd.missing and "pillar3a_certificate" not in vd.missing, vd.missing
+            reqs = [a for c in st.cases(sid) for a in c.actions if a.payload.get("issuer") == "Talbruck Banque Privée SA"]
+            assert len(reqs) == 1 and reqs[0].requires_validation and reqs[0].status == "prepared", reqs
+            st.close()
     print("cockpit self-check ok")

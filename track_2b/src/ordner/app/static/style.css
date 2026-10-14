@@ -163,6 +163,9 @@ dl.kv dd { margin: 0; overflow-wrap: anywhere; font-variant-numeric: tabular-num
 tr.fact-superseded td, tr.fact-rejected td, tr.fact-superseded th, tr.fact-rejected th { color: var(--muted); }
 tr.fact-rejected .value, tr.fact-superseded .value { text-decoration: line-through; font-weight: 400; }
 tr.lv-na td:first-child { box-shadow: inset 4px 0 var(--rule); }
+table.compact { min-width: 0; }
+table.compact th[scope="row"] { font-weight: 400; }
+td.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
 code { font: 12px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; overflow-wrap: anywhere; }
 .cov-table { min-width: 0; font-size: 13px; }
 .cov-table th, .cov-table td { padding: 5px 4px; text-align: center; border-bottom: 1px solid var(--rule); }

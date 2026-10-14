@@ -133,6 +133,14 @@ const I18N = {
 const C18N = {
   fr: {
     nav_label: "Sections", nav_home: "Où j'en suis", nav_inbox: "Pièces reçues", nav_cases: "Démarches", nav_coverage: "Couverture", nav_releve: "Relevé fiscal",
+    sim_date: d => `date simulée : ${d}`, h_wealth: y => `Votre fortune et vos revenus de titres à déclarer (${y})`,
+    wealth_status: { final: "définitif", provisional: "provisoire", incomplete: "incomplet" },
+    measures: { total_tax_value: "Valeur fiscale des titres (fortune)", gross_revenue_a: "Rendements bruts A (avec impôt anticipé)",
+      gross_revenue_b: "Rendements bruts B (sans impôt anticipé)", withholding_tax_claim: "Impôt anticipé à récupérer" },
+    m_status: { confirmed: "confirmé", provisional: "provisoire", missing: "manquant" }, inst_in: "Établissements inclus :", inst_missing: "Établissements sans relevé :",
+    wealth_note: "Somme des relevés fiscaux reçus. Une valeur seulement proposée, ou un relevé manquant, rend le total provisoire.",
+    eml: "Télécharger le brouillon (.eml) — Ordner ne l'envoie jamais", missing_vars: "À compléter avant envoi :",
+    h_check: "Contrôle des pièces", wrong_year: "Mauvaise année :", duplicates: "Doublons probables :", check_why: "Détail du contrôle",
     review_btn: "Revoir le dossier (règles, sans modèle)", review_done: "Revue terminée : démarches, échéances et manques mis à jour.",
     ask_title: "Demander à Ordner", close: "Fermer", ask_examples: "Questions enregistrées", ask_label: "Votre question", ask_send: "Demander",
     ask_demo: r => `Mode démo (${r}) : les réponses sont des transcriptions enregistrées, marquées fixture, pas une sortie du modèle.`,
@@ -191,11 +199,19 @@ const C18N = {
     you_here: "vous", cov_yours: "Vos parcours examinés", verdict: { covered: "couvert", to_verify: "à vérifier", not_applicable: "non applicable" },
     app: { applicable: "s'applique", not_applicable: "ne s'applique pas", missing_info: "informations manquantes", unknown: "non évalué", error: "erreur de règle" },
     yes: "oui", no: "non",
-    pk: { to: "destinataire", channel: "canal", creditor: "bénéficiaire", amount: "montant", currency: "monnaie", reference: "référence", iban: "IBAN", due: "échéance", recipient: "destinataire" },
+    pk: { issuer: "établissement", to: "destinataire", channel: "canal", creditor: "bénéficiaire", amount: "montant", currency: "monnaie", reference: "référence", iban: "IBAN", due: "échéance", recipient: "destinataire" },
     fact_labels: { "subject.tax_at_source": "imposition à la source (oui ou non)", "tax.securities.withholding_tax_total": "total de l'impôt anticipé", "tax.period": "période fiscale", "person.civil_status": "état civil" }
   },
   de: {
     nav_label: "Bereiche", nav_home: "Wo stehe ich", nav_inbox: "Eingang", nav_cases: "Verfahren", nav_coverage: "Abdeckung", nav_releve: "Steuerausweis",
+    sim_date: d => `simuliertes Datum: ${d}`, h_wealth: y => `Ihr Vermögen und Ihre Wertschriftenerträge zum Deklarieren (${y})`,
+    wealth_status: { final: "definitiv", provisional: "provisorisch", incomplete: "unvollständig" },
+    measures: { total_tax_value: "Steuerwert der Wertschriften (Vermögen)", gross_revenue_a: "Bruttoerträge A (mit Verrechnungssteuer)",
+      gross_revenue_b: "Bruttoerträge B (ohne Verrechnungssteuer)", withholding_tax_claim: "Rückforderbare Verrechnungssteuer" },
+    m_status: { confirmed: "bestätigt", provisional: "provisorisch", missing: "fehlt" }, inst_in: "Einbezogene Institute:", inst_missing: "Institute ohne Ausweis:",
+    wealth_note: "Summe der eingegangenen Steuerausweise. Ein nur vorgeschlagener Wert oder ein fehlender Ausweis macht das Total provisorisch.",
+    eml: "Entwurf herunterladen (.eml) — Ordner sendet ihn nie", missing_vars: "Vor dem Versand ergänzen:",
+    h_check: "Prüfung der Unterlagen", wrong_year: "Falsches Jahr:", duplicates: "Wahrscheinliche Doppel:", check_why: "Details der Prüfung",
     review_btn: "Dossier überprüfen (Regeln, ohne Modell)", review_done: "Überprüfung beendet: Verfahren, Fristen und Fehlendes aktualisiert.",
     ask_title: "Ordner fragen", close: "Schliessen", ask_examples: "Aufgezeichnete Fragen", ask_label: "Ihre Frage", ask_send: "Fragen",
     ask_demo: r => `Demo-Modus (${r}): Die Antworten sind aufgezeichnete Transkripte, als Fixture markiert, keine Modellausgabe.`,
@@ -254,11 +270,19 @@ const C18N = {
     you_here: "Sie", cov_yours: "Ihre geprüften Verfahren", verdict: { covered: "abgedeckt", to_verify: "zu prüfen", not_applicable: "nicht anwendbar" },
     app: { applicable: "anwendbar", not_applicable: "nicht anwendbar", missing_info: "Angaben fehlen", unknown: "nicht ausgewertet", error: "Regelfehler" },
     yes: "ja", no: "nein",
-    pk: { to: "Empfänger", channel: "Kanal", creditor: "Zahlungsempfänger", amount: "Betrag", currency: "Währung", reference: "Referenz", iban: "IBAN", due: "Fälligkeit", recipient: "Empfänger" },
+    pk: { issuer: "Institut", to: "Empfänger", channel: "Kanal", creditor: "Zahlungsempfänger", amount: "Betrag", currency: "Währung", reference: "Referenz", iban: "IBAN", due: "Fälligkeit", recipient: "Empfänger" },
     fact_labels: { "subject.tax_at_source": "Quellensteuer (ja oder nein)", "tax.securities.withholding_tax_total": "Total Verrechnungssteuer", "tax.period": "Steuerperiode", "person.civil_status": "Zivilstand" }
   },
   it: {
     nav_label: "Sezioni", nav_home: "A che punto sono", nav_inbox: "Documenti ricevuti", nav_cases: "Pratiche", nav_coverage: "Copertura", nav_releve: "Estratto fiscale",
+    sim_date: d => `data simulata: ${d}`, h_wealth: y => `La sua sostanza e i redditi da titoli da dichiarare (${y})`,
+    wealth_status: { final: "definitivo", provisional: "provvisorio", incomplete: "incompleto" },
+    measures: { total_tax_value: "Valore fiscale dei titoli (sostanza)", gross_revenue_a: "Redditi lordi A (con imposta preventiva)",
+      gross_revenue_b: "Redditi lordi B (senza imposta preventiva)", withholding_tax_claim: "Imposta preventiva da recuperare" },
+    m_status: { confirmed: "confermato", provisional: "provvisorio", missing: "mancante" }, inst_in: "Istituti inclusi:", inst_missing: "Istituti senza estratto:",
+    wealth_note: "Somma degli estratti fiscali ricevuti. Un valore solo proposto, o un estratto mancante, rende il totale provvisorio.",
+    eml: "Scaricare la bozza (.eml) — Ordner non la invia mai", missing_vars: "Da completare prima dell'invio:",
+    h_check: "Controllo dei documenti", wrong_year: "Anno sbagliato:", duplicates: "Probabili doppioni:", check_why: "Dettaglio del controllo",
     review_btn: "Rivedere il dossier (regole, senza modello)", review_done: "Revisione terminata: pratiche, scadenze e mancanze aggiornate.",
     ask_title: "Chiedere a Ordner", close: "Chiudere", ask_examples: "Domande registrate", ask_label: "La sua domanda", ask_send: "Chiedere",
     ask_demo: r => `Modalità demo (${r}): le risposte sono trascrizioni registrate, marcate fixture, non un output del modello.`,
@@ -317,7 +341,7 @@ const C18N = {
     you_here: "lei", cov_yours: "I suoi percorsi esaminati", verdict: { covered: "coperto", to_verify: "da verificare", not_applicable: "non applicabile" },
     app: { applicable: "si applica", not_applicable: "non si applica", missing_info: "informazioni mancanti", unknown: "non valutato", error: "errore di regola" },
     yes: "sì", no: "no",
-    pk: { to: "destinatario", channel: "canale", creditor: "beneficiario", amount: "importo", currency: "valuta", reference: "riferimento", iban: "IBAN", due: "scadenza", recipient: "destinatario" },
+    pk: { issuer: "istituto", to: "destinatario", channel: "canale", creditor: "beneficiario", amount: "importo", currency: "valuta", reference: "riferimento", iban: "IBAN", due: "scadenza", recipient: "destinatario" },
     fact_labels: { "subject.tax_at_source": "imposizione alla fonte (sì o no)", "tax.securities.withholding_tax_total": "totale dell'imposta preventiva", "tax.period": "periodo fiscale", "person.civil_status": "stato civile" }
   }
 };
@@ -549,7 +573,8 @@ const day = iso => (iso ? `${iso.slice(8, 10)}.${iso.slice(5, 7)}.${iso.slice(0,
 const stamp = iso => { const d = new Date(iso); return isNaN(d) ? esc(iso) : d.toLocaleString(`${state.lang}-CH`, { dateStyle: "short", timeStyle: "short" }); };
 const lbl = (map, k) => esc(T()[map]?.[k] ?? k ?? "–");
 const cardName = c => esc(pick(c?.name) || c?.id || "?");
-const itemLabel = k => esc(T().doc_types[k] || T().fact_labels[k] || k);
+const itemText = k => { const [kind, issuer] = String(k).split(/:(.*)/s); const t = T(); return issuer ? `${t.doc_types[kind] || kind} — ${issuer}` : t.doc_types[k] || t.fact_labels[k] || k; };
+const itemLabel = k => esc(itemText(k));
 const maxDoubt = d => Math.max(-1, ...Object.values(d?.doubt || {}).filter(v => v != null));
 const notice = (html, cls = "notice") => `<p class="${cls}">${html}</p>`;
 const unavail = m => notice(esc(T().unavailable(m)));
@@ -635,7 +660,8 @@ function renderSubjectBar() {
   const ics = health?.modules?.rules
     ? `<a class="btn" href="/api/calendar.ics?subject=${encodeURIComponent(cur.id)}" download>${esc(t.ics)}</a>`
     : `<span class="small muted">${esc(t.ics_off)}</span>`;
-  $("#subject-bar").innerHTML = `<div class="who">${who}${where ? ` <span class="muted">· ${esc(where)}</span>` : ""}${cur.attrs?.fictional ? ` <span class="chip na">${esc(t.fictional)}</span>` : ""}</div>${ics}`;
+  const sim = health?.simulated ? ` <span class="chip medium">${esc(t.sim_date(day(health.today)))}</span>` : "";
+  $("#subject-bar").innerHTML = `<div class="who">${who}${where ? ` <span class="muted">· ${esc(where)}</span>` : ""}${cur.attrs?.fictional ? ` <span class="chip na">${esc(t.fictional)}</span>` : ""}${sim}</div>${ics}`;
   $("#subject-pick")?.addEventListener("change", async e => {
     state.subject = e.target.value;
     try { localStorage.setItem("ordner.subject", state.subject); } catch (err) { /* storage blocked */ }
@@ -677,9 +703,23 @@ function nextStepHtml(n) {
     const d = n.document, what = [t.doc_types[d.kind] || d.kind, d.issuer, d.year].filter(Boolean).join(" · ");
     return `<p class="what">${esc(t.next_review(what, d.fields.join(", ")))}</p><p><a class="btn primary" href="#/inbox">${esc(t.open_inbox)}</a></p>`;
   }
-  const text = n.kind === "validate" ? t.next_validate(t.kinds[n.action_kind] || n.action_kind, c)
-    : n.kind === "provide" ? t.next_provide(n.items.map(i => t.doc_types[i] || t.fact_labels[i] || i).join(", "), c) : t.next_qualify(c);
+  const text = n.kind === "validate" ? t.next_validate(pick(n.summary) || t.kinds[n.action_kind] || n.action_kind, c)
+    : n.kind === "provide" ? t.next_provide(n.items.map(itemText).join(", "), c) : t.next_qualify(c);
   return `<p class="what">${esc(text)}${due}</p><p><a class="btn primary" href="#/case/${encodeURIComponent(n.case_id)}">${esc(t.open_case)}</a></p>`;
+}
+
+function wealthHtml(w) {
+  const t = T();
+  if (!w) return "";
+  if (!w.available) return `<section>${unavail(w.module)}</section>`;
+  const chip = st => `<span class="chip ${st === "confirmed" || st === "final" ? "low" : st === "missing" || st === "incomplete" ? "high" : "medium"}">${esc(t.m_status[st] || t.wealth_status[st] || st)}</span>`;
+  const rows = Object.entries(w.totals).map(([m, v]) => `<tr><th scope="row">${lbl("measures", m)}</th>
+      <td class="value num">${v.total == null ? "–" : esc(chf(v.total))}</td><td>${chip(v.status)}</td></tr>`).join("");
+  return `<section aria-labelledby="h-wealth"><h3 id="h-wealth" class="block">${esc(t.h_wealth(w.period))} ${chip(w.status)}</h3>
+    <div class="table-wrap"><table class="compact"><tbody>${rows}</tbody></table></div>
+    <p class="small"><span class="muted">${esc(t.inst_in)}</span> ${w.institutions_included.map(esc).join(", ") || "–"}</p>
+    ${w.institutions_missing?.length ? `<p class="small"><span class="muted">${esc(t.inst_missing)}</span> ${w.institutions_missing.map(i => `<span class="chip high">${esc(i)}</span>`).join(" ")}</p>` : ""}
+    <p class="muted small">${esc(t.wealth_note)}</p></section>`;
 }
 
 function renderHome() {
@@ -696,6 +736,7 @@ function renderHome() {
     <p><button type="button" class="btn" id="review-btn">${esc(t.review_btn)}</button></p>
     <section class="next" aria-labelledby="h-next"><h3 id="h-next" class="block">${esc(t.h_next)}</h3>${nextStepHtml(o.next_step)}</section>
     ${o.cases.length ? "" : notice(esc(t.no_cases))}
+    ${wealthHtml(o.wealth)}
     <div class="two">
       <section aria-labelledby="h-urgent"><h3 id="h-urgent" class="block">${esc(t.h_urgent)}</h3>${urgent ? `<ul class="list">${urgent}</ul>` : `<p class="muted">${esc(t.none_urgent)}</p>`}</section>
       <section aria-labelledby="h-review"><h3 id="h-review" class="block">${esc(t.h_review)}</h3>${review ? `<ul class="list">${review}</ul>` : `<p class="muted">${esc(t.none_review)}</p>`}</section>
@@ -751,7 +792,8 @@ function payloadHtml(a) {
   const t = T(), p = a.payload || {}, d = { ...p, ...(p.details && typeof p.details === "object" ? p.details : {}) };
   const title = d.summary || d.subject || d.title || d.label;
   const longText = ["body", "text", "letter", "message"].map(k => d[k]).find(v => typeof v === "string");
-  const skip = new Set(["summary", "subject", "title", "label", "details", "body", "text", "letter", "message", "goal", "prepared_by", "steps"]);
+  const skip = new Set(["summary", "subject", "title", "label", "details", "body", "text", "letter", "message", "goal", "prepared_by", "steps",
+    "template", "kind", "vars", "missing_vars"]);
   const kv = Object.entries(d).filter(([k, v]) => !skip.has(k) && v != null && typeof v !== "object")
     .map(([k, v]) => `<dt>${lbl("pk", k)}</dt><dd>${esc(value(v))}</dd>`).join("");
   const steps = Array.isArray(d.steps) ? `<ol class="small">${d.steps.map(s => `<li>${esc(pick(s?.label ?? s))}</li>`).join("")}</ol>` : "";
@@ -763,7 +805,11 @@ function renderCase() {
   const back = `<p><a href="#/cases">${esc(t.back)}</a></p>`;
   if (!r) { el.innerHTML = back + `<h2 class="view-title" tabindex="-1">${esc(t.loading)}</h2>`; return; }
   if (r.unavailable || r.error) { el.innerHTML = back + `<h2 class="view-title" tabindex="-1">${esc(t.nav_cases)}</h2>` + (r.unavailable ? unavail(r.unavailable) : notice(esc(`${t.err} ${r.error}`))); return; }
-  const { case: c, card, facts, documents, events, states, rule_sources: rs = {} } = r.data;
+  const { case: c, card, facts, documents, events, states, rule_sources: rs = {}, completeness: comp } = r.data;
+  const check = comp && (comp.wrong_year.length || comp.duplicates.length || comp.why.length)
+    ? `${comp.wrong_year.length ? `<p class="small">${esc(t.wrong_year)} ${comp.wrong_year.map(w => `<span class="chip high">${esc(`${T().doc_types[w.kind] || w.kind} ${w.year} ≠ ${w.expected}`)}</span>`).join(" ")}</p>` : ""}
+       ${comp.duplicates.length ? `<p class="small">${esc(t.duplicates)} ${comp.duplicates.map(d => `<span class="chip medium">${esc(d.reason)}</span>`).join(" ")}</p>` : ""}
+       <details><summary>${esc(t.check_why)}</summary><ul>${comp.why.map(w => `<li>${esc(w)}</li>`).join("")}</ul></details>` : "";
   const cur = states.indexOf(c.state);
   const stepper = states.map((s, i) => `<li class="${i === cur ? "" : s === "complement_requested" ? "branch" : i < cur ? "done" : ""}"${i === cur ? ' aria-current="step"' : ""}>${i < cur && s !== "complement_requested" ? "✓ " : ""}${lbl("states", s)}</li>`).join("");
   const deadlines = (c.deadlines || []).map(d => {
@@ -779,8 +825,10 @@ function renderCase() {
   const actions = (c.actions || []).map(a => `<li id="act-${esc(a.id)}" tabindex="-1">
       <h4>${lbl("kinds", a.kind)} <span class="chip ${a.status === "prepared" ? "medium" : a.status === "cancelled" ? "na" : "low"}">${lbl("astatus", a.status)}</span></h4>
       ${payloadHtml(a)}
+      ${a.payload?.missing_vars?.length ? `<p class="small">${esc(t.missing_vars)} ${a.payload.missing_vars.map(v => `<code>${esc(v)}</code>`).join(", ")}</p>` : ""}
       <p class="small muted">${esc(a.kind === "payment" ? t.pay_note : t.send_note)}</p>
-      ${a.status === "prepared" && a.requires_validation ? `<button type="button" class="btn primary" data-validate="${esc(a.id)}">${esc(t.validate)}</button>` : ""}</li>`).join("");
+      ${a.status === "prepared" && a.requires_validation ? `<button type="button" class="btn primary" data-validate="${esc(a.id)}">${esc(t.validate)}</button>` : ""}
+      ${a.payload?.template && !["prepared", "cancelled"].includes(a.status) ? `<a class="btn" href="/api/actions/eml?case_id=${encodeURIComponent(c.id)}&action_id=${encodeURIComponent(a.id)}" download>${esc(t.eml)}</a>` : ""}</li>`).join("");
   const order = { confirmed: 0, proposed: 1, superseded: 2, rejected: 3 };
   const factRows = facts.slice().sort((a, b) => a.key.localeCompare(b.key) || order[a.status] - order[b.status]).map(f => {
     const doc = documents[f.source_doc];
@@ -799,7 +847,7 @@ function renderCase() {
     ${caseChips(c, card)}${card.notes ? `<details><summary>${esc(t.notes)}</summary><p>${esc(card.notes)}</p></details>` : ""}
     ${card.domain === "tax" ? `<p class="small"><a href="#/releve">${esc(t.releve_link)} →</a></p>` : ""}
     ${sec("prog", t.h_progress, `<ol class="stepper">${stepper}</ol>`)}
-    ${c.missing?.length ? sec("miss", t.h_case_missing, `<div class="chips">${c.missing.map(i => `<span class="chip medium">${itemLabel(i)}</span>`).join("")}</div>`) : ""}
+    ${c.missing?.length || check ? sec("miss", c.missing?.length ? t.h_case_missing : t.h_check, `<div class="chips">${(c.missing || []).map(i => `<span class="chip medium">${itemLabel(i)}</span>`).join("")}</div>${check}`) : ""}
     <div class="two">
       ${sec("dl", t.h_deadlines, deadlines ? `<ul class="list">${deadlines}</ul>` : `<p class="muted">${esc(t.no_deadlines)}</p>`)}
       ${sec("act", t.h_actions, actions ? `<ul class="list">${actions}</ul>` : `<p class="muted">${esc(t.no_actions)}</p>`)}

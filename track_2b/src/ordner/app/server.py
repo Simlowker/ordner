@@ -6,7 +6,8 @@ GET  /                      console (static/index.html)
 GET  /static/<file>         console assets
 GET  /data/demo/<file>      demo pages + demo.json (precomputed pipeline outputs)
 GET  /data/results/<file>   outputs of `python -m ordner.eval.run` (results.json, table.md, figures)
-GET  /api/health            liveness, model endpoint (LLM_*), which workstream modules are importable, agent live or demo
+GET  /api/health            liveness, model endpoint (LLM_*), importable workstream modules, agent live or demo, today
+                            (ORDNER_TODAY=YYYY-MM-DD simulates the date for the demo)
 POST /api/deductions        {profile} -> triggered deduction rules (data/rules/deductions_<year>.json)
 
 Cockpit (ordner.app.cockpit; 503 {"error": "unavailable", "module"} while a workstream module is missing):
@@ -16,6 +17,7 @@ GET  /api/case?id=<id>               case detail: card, state, facts, actions, d
 GET  /api/coverage                   domain x canton grid of the procedure catalogue
 GET  /api/calendar.ics?subject=<id>  deadlines as iCalendar (ordner.rules.to_ics)
 POST /api/actions/validate           {case_id, action_id} -> records the validation, never sends anything
+GET  /api/actions/eml?case_id=&action_id=   .eml draft of a validated request (X-Unsent, never sent by Ordner)
 POST /api/ask                        {subject, question} -> ordner.agent.coordinator.run (live mode only)
 POST /api/review                     {subject} -> deterministic review: opens expected cases, deadlines, missing pieces
 """
@@ -58,7 +60,8 @@ def ident(value):
 def health():
     llm, reason = cockpit.llm_client()
     return {"ok": True, "llm_name": os.environ.get("LLM_NAME") or None, "llm_configured": bool(os.environ.get("LLM_BASE_URL")),
-            "modules": cockpit.modules(), "agent_live": llm is not None, "agent_reason": reason}
+            "modules": cockpit.modules(), "agent_live": llm is not None, "agent_reason": reason,
+            "today": cockpit.today_().isoformat(), "simulated": bool(cockpit.SIMULATED)}
 
 
 def ask(body):
@@ -79,6 +82,7 @@ GET_API = {
     "/api/case": lambda q: cockpit.case_detail(ident(q.get("id"))),
     "/api/coverage": lambda q: cockpit.coverage_map(),
     "/api/calendar.ics": lambda q: calendar(ident(q.get("subject"))),
+    "/api/actions/eml": lambda q: cockpit.eml(ident(q.get("case_id")), ident(q.get("action_id"))),
 }
 POST_API = {
     "/api/deductions": lambda b: deductions.evaluate(b, RULES),
