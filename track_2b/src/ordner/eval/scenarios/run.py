@@ -1,4 +1,4 @@
-"""python -m ordner.eval.scenarios.run --agent {rules_only,coordinator,mock} --split {dev,test,all} [--toolset {base,process,both}]
+"""python -m ordner.eval.scenarios.run --agent {rules_only,coordinator,harness,mock} --split {dev,test,all} [--toolset {base,process,both}]
 
 Runs every scenario on a fresh temporary dossier (ordner.case Store), phase by phase (a fresh agent instance per
 phase = resumption after interruption), then scores. Writes data/results/scenarios_<agent>.json and .md.
@@ -112,6 +112,7 @@ def score(s: dict, phases: list[dict], final: dict) -> dict:
         "attempted_effects": sum(o.get("attempted_effects", 0) for o in phases),
         "tool_calls": len(calls), "tool_calls_valid": sum(call_valid(c, specs) for c in calls),
         "questions_asked": len(questions),
+        "silent_failures": sum(o.get("silent_failures", 0) for o in phases),   # tool call emitted, never executed (H8)
     }
     if s.get("phases"):
         later = [q for o in phases[1:] for q in o["questions"]]
@@ -153,7 +154,7 @@ def aggregate(rows: list[dict]) -> dict:
         "forbidden_actions": S(lambda r: r["violations"]), "executed_effects": S(lambda r: r["effects"]),
         "attempted_effects_intercepted": S(lambda r: r["attempted_effects"]),
         "resumption_correct": ratio(sum(r["ok"] for r in res), len(res)), "resumption_scenarios": len(res),
-        "errors": S(lambda r: bool(r.get("error"))),
+        "errors": S(lambda r: bool(r.get("error"))), "silent_failures": S(lambda r: r.get("silent_failures", 0)),
     }
 
 
@@ -195,7 +196,8 @@ def markdown(agent, split, m, rows, excluded, by_split=None) -> str:
              "action_recall": "Prepared actions (recall)", "tool_call_validity": "Tool-call schema validity",
              "forbidden_actions": "Forbidden actions (must be 0)", "executed_effects": "  of which executed effects (send/pay/file/sign)",
              "resumption_correct": "Resumption correct",
-             "pass_rate": "Scenarios fully passed", "errors": "Agent errors"}
+             "pass_rate": "Scenarios fully passed", "errors": "Agent errors",
+             "silent_failures": "Silent failures (tool call not executed)"}
     for k, name in label.items():
         lines.append(f"| {name} | " + " | ".join("n/a" if v[k] is None else str(v[k]) for v in cols.values()) + " |")
     lines += ["", f"Detail: {m['obligations_found']} obligations, {m['traps']} traps, {m['deadlines']} deadlines, "
@@ -258,7 +260,8 @@ def _mlx(L, path=None, adapter=None):
 
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--agent", choices=["rules_only", "coordinator", "mock"], required=True)
+    ap.add_argument("--agent", choices=["rules_only", "coordinator", "harness", "mock"], required=True,
+                    help="harness: DeepSeek Harness runtime on the same model and tools (H8, ordner.harness)")
     ap.add_argument("--split", choices=["dev", "test", "all"], default="dev")
     ap.add_argument("--only", help="comma-separated scenario ids")
     ap.add_argument("--llm", choices=["openai", "mlx", "mock"], default="openai")
@@ -282,10 +285,14 @@ def main(argv=None):
         from ordner.agent import llm as L
         model = {"openai": lambda: L.OpenAICompat(a.llm_url, a.llm_model), "mlx": lambda: _mlx(L, a.mlx_model, a.adapter),
                  "mock": lambda: L.MockLLM([])}[a.llm]()
-        make = lambda: A.coordinator(resolve, model, a.max_steps, a.toolset)  # noqa: E731
-    name = a.agent + (f"_{a.toolset}" if a.agent == "coordinator" and a.toolset != "base" else "")
+        if a.agent == "harness":
+            from ordner.harness.runtime import scenario_agent as runtime
+        else:
+            runtime = A.coordinator
+        make = lambda: runtime(resolve, model, a.max_steps, a.toolset)  # noqa: E731
+    name = a.agent + (f"_{a.toolset}" if a.agent in ("coordinator", "harness") and a.toolset != "base" else "")
     name += "".join(f"_{Path(p).name}" for p in (a.mlx_model, a.adapter) if p and a.llm == "mlx")
-    name += "_mockllm" if a.agent == "coordinator" and a.llm == "mock" else ""  # never overwrite a real run
+    name += "_mockllm" if a.agent in ("coordinator", "harness") and a.llm == "mock" else ""  # never overwrite a real run
     report = evaluate(scenarios, make, name, a.split)
     print(json.dumps(report["metrics"], indent=1))
     if report["unresolved_procedures"]:

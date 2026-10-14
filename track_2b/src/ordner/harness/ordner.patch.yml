@@ -1,0 +1,109 @@
+# DeepSeek Harness overlay for Ordner (headless profile, 0.2.1-alpha.2). Dynamic values come from the environment set
+# by ordner.harness.runtime: ORDNER_PROXY_URL, ORDNER_PY, ORDNER_SRC, ORDNER_MCP_ARGS (JSON list), ORDNER_SYSTEM.
+
+# Model: Apertus behind ordner.harness.proxy (tool-call translation, turn control, fail-closed tool check).
+- id: llm-pi-ai
+  config:
+    providers:
+      ordner-local:
+        displayName: Ordner (Apertus via ordner.harness.proxy)
+        api: openai-completions
+        baseURL: !!js process.env.ORDNER_PROXY_URL
+        apiKeyEnv: ORDNER_LOCAL_KEY # pi-ai wants a key even for a keyless local server
+        compat:
+          supportsDeveloperRole: false
+          supportsStore: false
+          supportsReasoningEffort: false
+        models:
+          - id: apertus
+            name: Apertus 1.5 8B
+            contextWindow: 65536
+            maxTokens: 768
+            reasoningEfforts: false
+
+- id: agent-default-model
+  config:
+    provider: ordner-local
+    model: apertus
+
+# Persona: the coordinator's system prompt and nothing else (no harness identity, no runtime-context snapshot).
+# (dsh-persona with complete: true cannot be mounted at the root: "deployment:persona-prefix is already registered".)
+# The working directory stays as a *required* runtime-context user message; the proxy drops it (see proxy.py).
+- id: system-prompt
+  config:
+    includeHarnessIdentity: false
+    includeRuntimeContext: false
+    personaPrefix: !!js process.env.ORDNER_SYSTEM
+
+- insert:
+    # Tools: the real Ordner registry + ask_user + prepare_action (ordner.harness.mcp_server).
+    - id: mcp-ordner
+      name: '@deepseek-ai/dsh-mcp-client'
+      config:
+        serverName: ordner
+        transport: stdio
+        command: !!js process.env.ORDNER_PY
+        args: !!js JSON.parse(process.env.ORDNER_MCP_ARGS)
+        env:
+          PYTHONPATH: !!js process.env.ORDNER_SRC
+        failOnStartupError: true
+        toolCallTimeoutMs: 600000
+        reconnect:
+          enabled: false # a restarted server would lose the run state (duplicates, questions)
+
+# Fail closed: no built-in tool (shell, files, web, subagents, workflows, skills, todo, goal, plan, resources...).
+# The proxy also refuses any request whose tool list is not Ordner's, and no hook plugin is mounted (a crashing
+# Claude-Code-style hook is recorded as "pass", i.e. fails open).
+- id: tool-bash
+  disabled: true
+- id: tool-pwsh
+  disabled: true
+- id: tool-jobs
+  disabled: true
+- id: tool-fs
+  disabled: true
+- id: tool-fs-search
+  disabled: true
+- id: tool-skill
+  disabled: true
+- id: tool-goal
+  disabled: true
+- id: tool-todo
+  disabled: true
+- id: tool-web
+  disabled: true
+- id: tool-subagent
+  disabled: true
+- id: tool-subagent-fork
+  disabled: true
+- id: tool-subagent-control
+  disabled: true
+- id: tool-subagent-list-agents
+  disabled: true
+- id: tool-workflow
+  disabled: true
+- id: tool-working-directory
+  disabled: true
+- id: tool-plugin-manager
+  disabled: true
+- id: plan-mode
+  disabled: true
+- id: mcp-resources
+  disabled: true
+
+# Same model input as the coordinator: no extra LLM call, no injected reminders, no rewriting of earlier tool results,
+# no workspace instructions (AGENTS.md); no network providers.
+- id: session-title-llm
+  disabled: true
+- id: repeat-tool-reminder
+  disabled: true
+- id: tool-result-pruner
+  disabled: true
+- id: agent-instructions
+  disabled: true
+- id: web
+  disabled: true
+- id: web-search-deepseek
+  disabled: true
+- id: web-fetch-http
+  disabled: true
