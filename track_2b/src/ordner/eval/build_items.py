@@ -80,13 +80,15 @@ def build(work, data):
             fields = r.get("fields") or {}
             text = ocr[pid]["text"] if pid in ocr else None
             log[(system, "pages without OCR text (rule_ok on fields only)")] += text is None
+            log[(system, "extraction error rows (all fields wrong)")] += bool(r.get("error"))
             ok = rules.check(fields, text)
             for f in FIELDS:
                 doubt = (r.get("doubt") or {}).get(f) or {}
                 item = {"page_id": pid, "stmt_id": p["stmt_id"], "split": p["split"], "layout": p["layout"],
                         "degradation": p["degradation"], "language": doc["language"], "system": system, "field": f,
                         "pred": fields.get(f), "gold": gold[f], "correct": field_correct(f, fields.get(f), gold[f]),
-                        **{k: doubt.get(k) for k in DOUBT_KEYS}, "d1_p_yes": d1.get((pid, f)), "rule_ok": ok[f]}
+                        **{k: doubt.get(k) for k in DOUBT_KEYS}, "d1_p_yes": d1.get((pid, f)), "rule_ok": ok[f],
+                        "error": r.get("error")}
                 items.append(item)
                 log[(system, f"items {p['split']}")] += 1
                 log[(system, "items without lp_min")] += item["lp_min"] is None

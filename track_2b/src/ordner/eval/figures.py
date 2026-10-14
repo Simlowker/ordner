@@ -99,6 +99,35 @@ def accuracy_by_field(res, out):
     plt.close(fig)
 
 
+def accuracy_by_layout(res, out):
+    br = res.get("breakdown", {})
+    if not br:
+        return
+    unseen = sorted({lay for b in br.values() for lay in b["layout"] if lay != "A"})
+    cats = [("A (seen)", "layout", "A")] + [(lay, "layout", lay) for lay in unseen]
+    if len(unseen) > 1:
+        cats.append((" ∪ ".join(unseen) + " (unseen)", "layout_group", "unseen"))
+    systems = list(br)
+    fig, (ax,) = _fig(1.6 * len(cats) + 2.2, 3.6)
+    w = 0.8 / len(systems)
+    for i, s in enumerate(systems):
+        ds = [br[s][by].get(k) for _, by, k in cats]
+        xs = [j + (i - (len(systems) - 1) / 2) * w for j in range(len(cats))]
+        ax.bar(xs, [d["acc"] if d else 0 for d in ds], width=w - 0.03, color=SYSTEM_COLOR.get(s, INK2),
+               yerr=list(zip(*[_err(d) if d else (0, 0) for d in ds])), label=NAMES.get(s, s),
+               error_kw={"ecolor": INK2, "elinewidth": 1, "capsize": 2})
+    ax.set_xticks(range(len(cats)))
+    ax.set_xticklabels([c[0] for c in cats])
+    ax.set_ylim(0, 1.0)
+    ax.set_ylabel("Field accuracy (test)")
+    ax.set_xlabel("Layout")
+    ax.legend(frameon=False, fontsize=8, labelcolor=INK, loc="lower center", bbox_to_anchor=(0.5, 1.0),
+              ncol=len(systems))
+    fig.tight_layout()
+    fig.savefig(out / "accuracy_by_layout.png", dpi=160, facecolor=SURFACE)
+    plt.close(fig)
+
+
 def triage_curves(res, out):
     curves = res.get("curves", {})
     names = [n for n in CURVE_SIGNALS if n in curves]
@@ -126,6 +155,7 @@ def triage_curves(res, out):
 def plot(res, out):
     out = Path(out)
     accuracy_by_degradation(res, out)
+    accuracy_by_layout(res, out)
     accuracy_by_field(res, out)
     triage_curves(res, out)
 

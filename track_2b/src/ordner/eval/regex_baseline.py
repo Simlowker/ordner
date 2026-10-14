@@ -20,7 +20,10 @@ HOMOGLYPHS = str.maketrans("аеорсухіјѕԁАВЕКМНОРСТХІЈЅΑ
                            "aeopcyxijsdABEKMHOPCTXIJSABEZHIKMNOPTYXo")
 
 OCR_DIGITS = str.maketrans("10", "IO")
-NUM_RE = re.compile(r"(?<![\w.,'’`´-])(-?\d{1,3}(?:['’`´]\d{3})+(?:[.,]\d{1,2})?|-?\d+(?:[.,]\d{1,2})?)"
+# generic number formats added before the frozen test run (layout-independent): thousands separators
+# ' ’ ` ´ space U+00A0 U+202F U+2009 or none, decimal point or comma
+SEP = "['’`´ \u00a0\u202f\u2009]"
+NUM_RE = re.compile(rf"(?<![\w.,'’`´-])(-?\d{{1,3}}(?:{SEP}\d{{3}})+(?:[.,]\d{{1,2}})?|-?\d+(?:[.,]\d{{1,2}})?)"
                     r"(?![\w'’`´]|[.,]\d)(?!\s*%)")
 
 # Layout B (test only) is unknown here: labels come from layout-A train/dev OCR pages, the rest is generic.
@@ -61,7 +64,7 @@ def key(s):
 
 
 def to_number(s):
-    s = re.sub(r"['’`´]", "", s)
+    s = re.sub(SEP, "", s)
     return str(Decimal(s.replace(",", ".")))
 
 

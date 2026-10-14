@@ -97,8 +97,9 @@ def check_regex():
 
 
 def make_fixtures(root, n_stmt=600, hidden=64, seed=0):
-    """Synthetic docs/pages/extract/d1/acts with the real split design. Planted doubt signals: ent_mean (strong),
-    lp_mean and ent_first (pure noise), probe position A at layer 16 (strong), position B (noise)."""
+    """Synthetic docs/pages/extract/d1/acts with the real split design (test: layouts A, B at levels 0-3, C at 0 and 2).
+    Planted doubt signals: ent_mean (strong), lp_mean and ent_first (pure noise), probe position A at layer 16
+    (strong), position B (noise). Every 97th apertus-base page is a failed extraction (`error`, empty fields)."""
     rng = np.random.default_rng(seed)
     root = Path(root)
     shutil.rmtree(root, ignore_errors=True)
@@ -114,13 +115,14 @@ def make_fixtures(root, n_stmt=600, hidden=64, seed=0):
         text = {"institution": f"Bank {i} AG", "canton": str(rng.choice(["ZH", "VD", "TI"])), "taxPeriod": "2025",
                 "client_last_name": f"Name{i}"}
         lang = str(rng.choice(["de", "fr", "it"]))
-        for layout in (["A", "B"] if split[i] == "test" else ["A"]):
-            prec = {k: (2 if layout == "B" or k == "totalWithHoldingTaxClaim" else 0) for k in NUMERIC_FIELDS}
+        for layout in (["A", "B", "C"] if split[i] == "test" else ["A"]):
+            prec = {k: (2 if layout != "A" or k == "totalWithHoldingTaxClaim" else 0) for k in NUMERIC_FIELDS}
             doc_id = f"{sid}-{layout}"
             docs.append({"doc_id": doc_id, "stmt_id": sid, "split": split[i], "layout": layout, "language": lang,
                          "oracle": {**{k: str(v) for k, v in vals.items()}, **text},
                          "oracle_page": {k: f"{vals[k]:.{prec[k]}f}" for k in NUMERIC_FIELDS}})
-            for lvl in ([0, 1, 2, 3] if split[i] == "test" else [int(rng.integers(0, 4))]):
+            levels = [0, 2] if layout == "C" else [0, 1, 2, 3] if split[i] == "test" else [int(rng.integers(0, 4))]
+            for lvl in levels:
                 pages.append({"page_id": f"{doc_id}-p1-d{lvl}", "doc_id": doc_id, "stmt_id": sid, "split": split[i],
                               "layout": layout, "page_no": 1, "png_path": "", "degradation": lvl})
     dump = lambda name, rows: (root / name).write_text("".join(json.dumps(r) + "\n" for r in rows))  # noqa: E731
@@ -132,11 +134,11 @@ def make_fixtures(root, n_stmt=600, hidden=64, seed=0):
     truth = {}
     for system, (e0, e_lvl, e_b) in err.items():
         ext, d1 = [], []
-        for p in pages:
+        for n, p in enumerate(pages):
             g = gold[p["doc_id"]]
             fields, doubt, acts = {}, {}, {}
             for f in FIELDS:
-                wrong = rng.random() < e0 + e_lvl * p["degradation"] + (e_b if p["layout"] == "B" else 0)
+                wrong = rng.random() < e0 + e_lvl * p["degradation"] + (e_b if p["layout"] != "A" else 0)
                 truth[(system, p["page_id"], f)] = wrong
                 v = g[f]
                 if f in NUMERIC_FIELDS:
@@ -152,9 +154,14 @@ def make_fixtures(root, n_stmt=600, hidden=64, seed=0):
                     xa[LAYERS.index(PLANTED_LAYER), :4] += 1.5 * wrong
                     acts[f"{f}_A"] = xa.astype(np.float16)
                     acts[f"{f}_B"] = rng.normal(size=(len(LAYERS), hidden)).astype(np.float16)
-            ext.append({"page_id": p["page_id"], "model": system, "fields": fields, "raw": None,
-                        "doubt": None if system == "regex" else doubt, "seconds": 1.0,
-                        **({"seconds_hidden": 0.25} if system == "apertus-base" else {})})
+            row = {"page_id": p["page_id"], "model": system, "fields": fields, "raw": None,
+                   "doubt": None if system == "regex" else doubt, "seconds": 1.0,
+                   **({"seconds_hidden": 0.25} if system == "apertus-base" else {})}
+            if system == "apertus-base" and n % 97 == 0:
+                row.update(fields={}, doubt=None, error="generation failed")
+                truth.update({(system, p["page_id"], f): True for f in FIELDS})
+                acts = {}
+            ext.append(row)
             if acts:
                 np.savez(root / "acts" / "apertus-base" / f"{p['page_id']}.npz", layers=np.array(LAYERS), **acts)
         dump(f"extract.{system}.jsonl", ext)
@@ -172,6 +179,7 @@ def main():
     assert len(items) == len(pages) * len(FIELDS) * 3, (len(items), len(pages))
     assert all(it["correct"] == (not truth[(it["system"], it["page_id"], it["field"])]) for it in items)
 
+    (data / "explain_eval.json").write_text(json.dumps({"generator": "fixture", "n_pages": 3, "rows": []}))
     cost = json.loads((data / "costs.json").read_text())["stages"]
     assert cost["apertus-base"] == {"n_pages": len(pages), "mean": 1.0, "median": 1.0, "p95": 1.0}, cost
     assert cost["d1 (apertus-base)"]["mean"] == 0.5 and cost["apertus-base hidden-state pass"]["mean"] == 0.25, cost
@@ -208,6 +216,18 @@ def main():
     assert res["h1"]["supported"] and res["h1"]["diff"] > 0
     assert res["breakdown"]["regex"]["layout"]["B"]["acc"] < res["breakdown"]["regex"]["layout"]["A"]["acc"]
     assert res["costs"]["stages"]["apertus-lora"]["n_pages"] == len(pages)
+    assert res["explain"]["n_pages"] == 3
+    failed_test = sum(p["split"] == "test" for n, p in enumerate(pages) if n % 97 == 0)
+    assert res["n_error_pages"]["apertus-base"]["test"] == failed_test > 0, res["n_error_pages"]
+    for s in ("regex", "apertus-base"):
+        g = res["breakdown"][s]["layout_group"]
+        unseen = [not truth[(s, p["page_id"], f)] for p in pages if p["split"] == "test" and p["layout"] != "A"
+                  for f in FIELDS]
+        assert g["unseen"]["layouts"] == ["B", "C"] and abs(g["unseen"]["acc"] - np.mean(unseen)) < 1e-9, g
+        assert set(res["breakdown"][s]["layout"]) == {"A", "B", "C"}
+    assert set(res["breakdown"]["apertus-base"]["layout_degradation"]) >= {"C0", "C2"}
+    assert not {"C1", "C3"} & set(res["breakdown"]["apertus-base"]["layout_degradation"])
+    assert (data / "results" / "accuracy_by_layout.png").exists()
     assert runtime < 120, runtime
     print(f"eval selfcheck ok (run.py {runtime:.1f} s on {len(items)} items, {res['bootstrap']['resamples']} resamples)")
 

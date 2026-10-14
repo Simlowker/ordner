@@ -38,6 +38,7 @@ def load(data):
            ("system", "split", "stmt_id", "page_id", "field", "layout", "degradation", "language")}
     col["degradation"] = col["degradation"].astype(int)
     col["correct"] = np.array([bool(it["correct"]) for it in items])
+    col["error"] = np.array([bool(it.get("error")) for it in items])
     for k in ("lp_min", "lp_mean", "ent_mean", "ent_first", "d1_p_yes"):
         v = np.array([np.nan if it[k] is None else float(it[k]) for it in items])
         col[k] = np.where(np.isfinite(v), v, np.nan)  # non-finite (e.g. -inf log-prob) counted as missing
@@ -154,13 +155,20 @@ def evaluate(data, n_boot=10_000):
     res = {"n_items": {s: {sp: int(((col["system"] == s) & (col["split"] == sp)).sum())
                            for sp in ("train", "dev", "test")} for s in systems},
            "bootstrap": {"resamples": n_boot, "cluster": "stmt_id", "seed": 0}}
-    if (data / "costs.json").exists():
-        res["costs"] = json.loads((data / "costs.json").read_text())
+    for name, key in (("costs.json", "costs"), ("explain_eval.json", "explain")):
+        if (data / name).exists():
+            res[key] = json.loads((data / name).read_text())
+    res["n_error_pages"] = {s: {sp: len(set(col["page_id"][(col["system"] == s) & (col["split"] == sp) & col["error"]]))
+                                for sp in ("train", "dev", "test")} for s in systems}
     if not test.any():
         res["note"] = "no test items"
         return res, col
     boot = Boot(col["stmt_id"][test], n=n_boot)
     res["bootstrap"]["clusters"] = len(boot.keys)
+
+    def group(mg):
+        return {"acc": float(col["correct"][mg].mean()), "n": int(mg.sum()),
+                "ci": ci(boot.ratio(col["stmt_id"][mg], col["correct"][mg]))}
 
     # Extraction accuracy (H1 and breakdowns)
     res["accuracy"], res["breakdown"] = {}, {}
@@ -180,17 +188,18 @@ def evaluate(data, n_boot=10_000):
         for by in ("degradation", "layout", "field", "language"):
             br[by] = {}
             for g in sorted(set(col[by][m])):
-                mg = m & (col[by] == g)
-                br[by][str(g)] = {"acc": float(col["correct"][mg].mean()), "n": int(mg.sum()),
-                                  "ci": ci(boot.ratio(col["stmt_id"][mg], col["correct"][mg]))}
+                br[by][str(g)] = group(m & (col[by] == g))
+        # seen layout (A, in train) vs every layout never seen in training, pooled (B and C)
+        br["layout_group"] = {}
+        for name, mg in (("seen", m & (col["layout"] == "A")), ("unseen", m & (col["layout"] != "A"))):
+            if mg.any():
+                br["layout_group"][name] = {**group(mg), "layouts": sorted(set(col["layout"][mg]))}
         br["layout_degradation"] = {}
         for lay in sorted(set(col["layout"][m])):
             for d in sorted(set(col["degradation"][m])):
                 mg = m & (col["layout"] == lay) & (col["degradation"] == d)
                 if mg.any():
-                    br["layout_degradation"][f"{lay}{d}"] = {
-                        "acc": float(col["correct"][mg].mean()), "n": int(mg.sum()),
-                        "ci": ci(boot.ratio(col["stmt_id"][mg], col["correct"][mg]))}
+                    br["layout_degradation"][f"{lay}{d}"] = group(mg)
         res["breakdown"][s] = br
 
     res["h1"] = None
@@ -297,15 +306,20 @@ def table(res):
            f"{res['bootstrap'].get('clusters', 0)} statements.", ""]
     acc = res.get("accuracy", {})
     if acc:
+        unseen = sorted({lay for br in res["breakdown"].values() for lay in br["layout"] if lay != "A"})
+        cell = lambda d, k: fmt_ci(d[k]) if k in d else "-"  # noqa: E731
         out += ["## Extraction: field-level exact match", "",
-                "| System | Field accuracy | Page fully correct | Layout A (seen) | Layout B (unseen) | Items |",
-                "|---|---|---|---|---|---|"]
+                f"| System | Field accuracy | Page fully correct | Seen layout (A) | Unseen layouts ({', '.join(unseen)}) | "
+                + "".join(f"Layout {lay} | " for lay in unseen) + "Items |",
+                "|---|---|---|---|---|" + "---|" * len(unseen) + "---|"]
         for s, a in acc.items():
-            lay = res["breakdown"][s]["layout"]
+            br = res["breakdown"][s]
             out.append(f"| {NAMES.get(s, s)} | {fmt_ci(a)} | {a['page_all_ok']:.3f} [{a['page_all_ok_ci'][0]:.3f}, "
-                       f"{a['page_all_ok_ci'][1]:.3f}] | {fmt_ci(lay['A']) if 'A' in lay else '-'} | "
-                       f"{fmt_ci(lay['B']) if 'B' in lay else '-'} | {a['n_items']} |")
-        out.append("")
+                       f"{a['page_all_ok_ci'][1]:.3f}] | {cell(br['layout_group'], 'seen')} | "
+                       f"{cell(br['layout_group'], 'unseen')} | " + "".join(f"{cell(br['layout'], lay)} | " for lay in unseen)
+                       + f"{a['n_items']} |")
+        out += ["", "Pages whose extraction failed (`error`, all fields counted wrong), test split: "
+                + ", ".join(f"{NAMES.get(s, s)} {n['test']}" for s, n in res.get("n_error_pages", {}).items()), ""]
         if res.get("h1"):
             h = res["h1"]
             out += [f"**H1** LoRA − zero-shot accuracy: {h['diff']:+.3f} [{h['ci'][0]:+.3f}, {h['ci'][1]:+.3f}] "
@@ -341,10 +355,15 @@ def table(res):
             if d.get("n_pages"):
                 name = f"**{stage}** ({' + '.join(d['components'])})" if "components" in d else stage
                 out.append(f"| {name} | {d['n_pages']} | {d['mean']:.3f} | {d['median']:.3f} | {d['p95']:.3f} |")
+    if res.get("explain"):
+        e = res["explain"]
+        out += ["", "**Explanations**: " + ", ".join(f"{k} {v:.3f}" if isinstance(v, float) else f"{k} {v}"
+                                                   for k, v in e.items() if isinstance(v, (str, int, float)))]
     for s, br in res.get("breakdown", {}).items():
         out += ["", f"## Breakdown, {NAMES.get(s, s)}", "", "| Group | Value | Accuracy [95 % CI] | Items |", "|---|---|---|---|"]
-        for by in ("degradation", "layout", "language", "field"):
+        for by in ("degradation", "layout", "layout_group", "language", "field"):
             for g, d in br[by].items():
+                g = f"{g} ({', '.join(d['layouts'])})" if "layouts" in d else g
                 out.append(f"| {by} | {g} | {fmt_ci(d)} | {d['n']} |")
     return "\n".join(out) + "\n"
 

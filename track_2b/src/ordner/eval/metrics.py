@@ -24,7 +24,7 @@ def gold_fields(doc):
 def norm_number(v):
     if v is None:
         return None
-    s = str(v).strip().replace("'", "").replace("’", "").replace(" ", "").replace(" ", "")
+    s = str(v).strip().replace("'", "").replace("’", "").replace(" ", "").replace(" ", "").replace(" ", "")
     if s.count(",") == 1 and "." not in s:
         s = s.replace(",", ".")
     s = s.replace(",", "")
