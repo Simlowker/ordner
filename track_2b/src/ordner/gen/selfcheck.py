@@ -11,7 +11,7 @@ from opensteuerauszug.calculate.total import TotalCalculator
 from opensteuerauszug.model.ech0196 import TaxStatement
 from PIL import Image
 
-from . import build, oracle, synth
+from . import build, build_c, oracle, synth
 from .degrade import degrade
 
 
@@ -49,6 +49,19 @@ def main():
         assert all(Path(p["png_path"]).exists() for p in pages)
         assert not any(d["oracle_mismatches"] for d in docs)
         assert all(all(d["page_check"].values()) for d in docs)
+
+        # layout C: appended after the existing lines, idempotent, test split only, levels 0 and 2
+        w = Path(tmp) / "w"
+        before = (w / "docs.jsonl").read_text(), (w / "pages.jsonl").read_text()
+        build_c.main(["--out", str(w), "--workers", "4"])
+        c_docs, c_pages = build_c.main(["--out", str(w), "--workers", "4"])
+        after = (w / "docs.jsonl").read_text(), (w / "pages.jsonl").read_text()
+        assert all(a.startswith(b) for a, b in zip(after, before))
+        assert len(after[1].splitlines()) == len(before[1].splitlines()) + 2 * stmts["test"]
+        assert len(c_docs) == stmts["test"] and {d["split"] for d in c_docs} == {"test"}
+        assert sorted(p["degradation"] for p in c_pages) == sorted([0, 2] * stmts["test"])
+        assert all(Path(p["png_path"]).exists() for p in c_pages)
+        assert all(all(d["page_check"].values()) for d in c_docs)
     print("gen selfcheck ok")
 
 

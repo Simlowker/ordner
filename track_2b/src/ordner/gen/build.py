@@ -22,7 +22,7 @@ from .degrade import degrade
 DPI = 200
 # Decimals shown on the summary page for each layout (OSA rounds the totals to whole francs).
 PREC = {"A": {"totalTaxValue": 0, "totalGrossRevenueA": 0, "totalGrossRevenueB": 0, "totalWithHoldingTaxClaim": 2},
-        "B": dict.fromkeys(synth.NUMERIC, 2)}
+        "B": dict.fromkeys(synth.NUMERIC, 2), "C": dict.fromkeys(synth.NUMERIC, 2)}
 
 
 def render_a(xml_path, pdf_path, lang):

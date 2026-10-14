@@ -12,8 +12,9 @@ clean PDF, cross-checked against the generator).
 ## Data and splits
 
 - Synthetic statements generated with a fixed seed (7). Split by document: train 70 % / dev 10 % / test 20 %.
-- Layout A (OpenSteuerAuszug renderer) in all splits; layout B (our own renderer) **only in test**.
-- Train/dev pages: one degradation level each (0-3). Test: every document at all 4 levels, layouts A and B.
+- Layout A (OpenSteuerAuszug renderer) in all splits; layouts B and C (our own renderers, B a compact table, C a bank
+  letter with side box, bottom box and distractor subtotals) **only in test**, never seen by any system or rule.
+- Train/dev pages: one degradation level each (0-3). Test: layouts A and B at all 4 levels, layout C at levels 0 and 2.
 - Test labels are not inspected before the frozen run, except automated integrity checks (counts, oracle round-trip).
 
 ## Systems compared
@@ -39,7 +40,7 @@ signals without the probe are calibrated on dev (secondary analysis).
 - **H3**: the hidden-state probe (position A) has AUROC > 0.5 on test (bootstrap CI lower bound > 0.5).
 
 Secondary (reported, not tested): accuracy per degradation level and per layout (seen A vs unseen B); triage curve
-(share of fields to review to catch 80/90/95 % of errors); per-field accuracy; position B vs A; seconds and memory per page
+(share of fields to review to catch 80/90/95 % of errors); per-field accuracy; seen layout (A) vs unseen layouts (B, C); position B vs A; seconds and memory per page
 per model on an Apple M4 Max 36 GB.
 
 ## Reading rules

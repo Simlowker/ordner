@@ -15,13 +15,16 @@ def main():
     ap.add_argument("--work", default="work")
     ap.add_argument("--longest-edge", type=int, default=1280)
     ap.add_argument("--shard", default="0/1", help="i/n: process every n-th page starting at i")
+    ap.add_argument("--layout", default=None, help="only this layout (A/B/C); output gets the layout in its name")
     args = ap.parse_args()
     work = Path(args.work)
     i, n = map(int, args.shard.split("/"))
     pages = [json.loads(l) for l in open(work / "pages.jsonl")]
+    if args.layout:
+        pages = [p for p in pages if p["layout"] == args.layout]
     pages.sort(key=lambda p: (SPLIT_ORDER[p["split"]], p["page_id"]))
     pages = pages[i::n]
-    out = work / f"ocr.{i}of{n}.jsonl"
+    out = work / (f"ocr.{args.layout}{i}of{n}.jsonl" if args.layout else f"ocr.{i}of{n}.jsonl")
     done = {json.loads(l)["page_id"] for l in open(out)} if out.exists() else set()
     ocr.load(dtype=torch.bfloat16, longest_edge=args.longest_edge)
     with open(out, "a") as f:
