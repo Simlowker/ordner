@@ -73,3 +73,11 @@ per model on an Apple M4 Max 36 GB.
   Training trajectories are generated only from dev-split scenarios and new synthetic variants; no test-split scenario,
   persona or document is used for training. Teachers see only fictional data.
 - Reference points (descriptive): rules_only baseline; 70B coordinator with the same tools if an endpoint is available.
+
+## Addendum 3 (14.10.2026, before any run): agent runtime
+
+- **H8 (runtime)**: DeepSeek Harness (developer preview, MIT) with our tools exposed over MCP, an Apertus tool-call
+  translation layer and a fail-closed approval guard, compared with our Python coordinator loop: same model (Apertus
+  1.5 8B), same toolset, same step budget, same scenarios (dev for integration, test once). Decision rule: the harness
+  is adopted for the product only if it is not worse on deadline exact-match, obligations recall and questions, keeps
+  zero forbidden actions, and has no silent failures (a tool call misread as a final answer counts as a failure).
