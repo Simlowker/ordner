@@ -45,8 +45,15 @@ def main():
     t0 = time.time()
     with open(out, "a") as f:
         for j, pid in enumerate(todo, 1):
-            ex = am.extract(ocr[pid])
-            hs = am.hidden_states(ex["prompt_ids"], ex["answer_ids"], ex["spans"])
+            try:
+                ex = am.extract(ocr[pid])
+                hs = am.hidden_states(ex["prompt_ids"], ex["answer_ids"], ex["spans"])
+            except Exception as e:  # never stop the batch on one page; the page counts as wrong for every field
+                print(f"ERROR {pid}: {type(e).__name__}: {e}", flush=True)
+                f.write(json.dumps({"page_id": pid, "model": a.tag, "fields": {}, "raw": None, "doubt": {},
+                                    "error": f"{type(e).__name__}: {e}"}) + "\n")
+                f.flush()
+                continue
             np.savez(acts / f"{pid}.npz", layers=np.array(hs["layers"]),
                      **{f"{k}_{pos}": v[pos] for k, v in hs["fields"].items() for pos in "AB"})
             f.write(json.dumps({"page_id": pid, "model": a.tag, "fields": ex["fields"], "raw": ex["raw"],

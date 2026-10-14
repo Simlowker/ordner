@@ -72,8 +72,22 @@ def _num(v):
         return None
 
 
+_BAD_U = re.compile(r"\\u(?![0-9a-fA-F]{4})[0-9a-fA-F]{0,3}")
+
+
+def _loads_lenient(v):
+    try:
+        return json.loads(v)
+    except json.JSONDecodeError:
+        try:
+            return json.loads(_BAD_U.sub("", v))
+        except json.JSONDecodeError:
+            return v.strip('"')
+
+
 def parse_json(text):
     """Robust parse of the model answer into the 8 fields (missing -> None, numbers -> float)."""
+    text = _BAD_U.sub("", text)  # the model sometimes emits truncated \uXXXX escapes
     raw = {}
     m = re.search(r"\{.*\}", text, re.S)
     if m:
@@ -87,7 +101,7 @@ def parse_json(text):
             mv = re.search(rf'"{k}"\s*:\s*("(?:[^"\\]|\\.)*"|null|-?\d+(?:[.,\'’]\d+)*)', text)
             if mv:
                 v = mv.group(1)
-                raw[k] = json.loads(v) if v[0] in '"n' else v
+                raw[k] = _loads_lenient(v) if v[0] in '"n' else v
     out = {}
     for k in FIELDS:
         v = raw.get(k)
