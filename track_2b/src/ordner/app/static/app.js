@@ -265,9 +265,10 @@ function renderExplain() {
   if (!ex) { $("#explain").innerHTML = ""; return; }
   const text = ex.text?.[state.lang] || "";
   let h = `<div class="explain-text" lang="${state.lang}">${text.split("\n").filter(Boolean).map(l => `<p class="${l.startsWith("•") ? "item" : ""}">${esc(l)}</p>`).join("")}</div>`;
-  if (ex.citations?.length) {
+  const cites = (ex.citations || []).filter(c => !c.lang || c.lang === state.lang);
+  if (cites.length) {
     h += `<h3 class="small muted">${esc(t.sources_cited)}</h3>`;
-    for (const c of ex.citations) {
+    for (const c of cites) {
       const src = c.url ? `<a href="${esc(c.url)}" target="_blank" rel="noopener noreferrer">${esc(c.source)}</a>` : esc(c.source);
       const badge = c.quote == null ? `<span class="badge no">${esc(t.missing_quote)}</span>` : c.verified ? `<span class="badge ok">${esc(t.verified)}</span>` : `<span class="badge no">${esc(t.unverified_quote)}</span>`;
       h += `<div class="cite">${src}${badge}${c.quote ? `<blockquote>${esc(c.quote)}</blockquote>` : ""}</div>`;
