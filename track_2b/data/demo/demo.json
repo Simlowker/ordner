@@ -1,6 +1,6 @@
 {
  "fixture": true,
- "note": "Pipeline export (Apertus 1.5 8B (LoRA)). Pages: one per target [('A', 0, 'de'), ('A', 2, 'fr'), ('A', 3, 'it'), ('B', 2, None)] (layout, degradation, language); layout A from dev, layout B from test; within a target, degradation >= 2 prefers a page with an extraction error, otherwise an error-free page. Doubt = combined model of ordner.eval.run (out-of-fold on its fit rows). Explanations: Apertus 1.5 8B (base, MLX), quotes verified word for word. MISSING: s0004-A-p1-d0: no doubt score for 8 field(s); s0021-A-p1-d2: no doubt score for 8 field(s); s0058-A-p1-d3: no doubt score for 8 field(s); s0003-B-p1-d2: no doubt score for 8 field(s); s0004-A-p1-d0: no explanation (run with --generate); s0021-A-p1-d2: no explanation (run with --generate); s0058-A-p1-d3: no explanation (run with --generate); s0003-B-p1-d2: no explanation (run with --generate)",
+ "note": "Pipeline export (Apertus 1.5 8B (zero-shot)). Pages: one per target [('A', 0, 'de'), ('A', 2, 'fr'), ('A', 3, 'it'), ('B', 2, None)] (layout, degradation, language); layout A from dev, layout B from test; within a target, degradation >= 2 prefers a page with an extraction error, otherwise an error-free page. Doubt = combined model of ordner.eval.run (out-of-fold on its fit rows), or 1 - d1-3B validation where the combined model is not estimable (LoRA). Explanations: Apertus 1.5 8B (base, MLX), quotes verified word for word. MISSING: s0004-A-p1-d0: no explanation (run with --generate); s0021-A-p1-d2: no explanation (run with --generate); s0098-A-p1-d3: no explanation (run with --generate); s0003-B-p1-d2: no explanation (run with --generate)",
  "doubt_levels": {
   "orange": 0.25,
   "red": 0.5
@@ -19,14 +19,14 @@
      "value": "111982",
      "gold": "111982",
      "correct": true,
-     "model": "Apertus 1.5 8B (LoRA)",
-     "doubt": null,
+     "model": "Apertus 1.5 8B (zero-shot)",
+     "doubt": 0.001,
      "signals": {
-      "probe": null,
+      "probe": 0.001,
       "d1_p_yes": 0.856,
       "rule": "consistency",
       "rule_ok": true,
-      "lp_min": -0.0
+      "lp_min": -0.014
      }
     },
     {
@@ -34,10 +34,10 @@
      "value": "589",
      "gold": "589",
      "correct": true,
-     "model": "Apertus 1.5 8B (LoRA)",
-     "doubt": null,
+     "model": "Apertus 1.5 8B (zero-shot)",
+     "doubt": 0.001,
      "signals": {
-      "probe": null,
+      "probe": 0.001,
       "d1_p_yes": 0.579,
       "rule": "consistency",
       "rule_ok": true,
@@ -49,10 +49,10 @@
      "value": "678",
      "gold": "678",
      "correct": true,
-     "model": "Apertus 1.5 8B (LoRA)",
-     "doubt": null,
+     "model": "Apertus 1.5 8B (zero-shot)",
+     "doubt": 0.001,
      "signals": {
-      "probe": null,
+      "probe": 0.005,
       "d1_p_yes": 0.709,
       "rule": "consistency",
       "rule_ok": true,
@@ -64,10 +64,10 @@
      "value": "206.3",
      "gold": "206.30",
      "correct": true,
-     "model": "Apertus 1.5 8B (LoRA)",
-     "doubt": null,
+     "model": "Apertus 1.5 8B (zero-shot)",
+     "doubt": 0.001,
      "signals": {
-      "probe": null,
+      "probe": 0.0,
       "d1_p_yes": 0.773,
       "rule": "consistency",
       "rule_ok": true,
@@ -79,10 +79,10 @@
      "value": "Talmont Vermögensbank AG",
      "gold": "Talmont Vermögensbank AG",
      "correct": true,
-     "model": "Apertus 1.5 8B (LoRA)",
-     "doubt": null,
+     "model": "Apertus 1.5 8B (zero-shot)",
+     "doubt": 0.001,
      "signals": {
-      "probe": null,
+      "probe": 0.004,
       "d1_p_yes": 0.965,
       "rule": "consistency",
       "rule_ok": true,
@@ -94,14 +94,14 @@
      "value": "GR",
      "gold": "GR",
      "correct": true,
-     "model": "Apertus 1.5 8B (LoRA)",
-     "doubt": null,
+     "model": "Apertus 1.5 8B (zero-shot)",
+     "doubt": 0.001,
      "signals": {
-      "probe": null,
+      "probe": 0.0,
       "d1_p_yes": 0.708,
       "rule": "consistency",
       "rule_ok": true,
-      "lp_min": -0.0
+      "lp_min": 0.0
      }
     },
     {
@@ -109,14 +109,14 @@
      "value": "2025",
      "gold": "2025",
      "correct": true,
-     "model": "Apertus 1.5 8B (LoRA)",
-     "doubt": null,
+     "model": "Apertus 1.5 8B (zero-shot)",
+     "doubt": 0.001,
      "signals": {
-      "probe": null,
+      "probe": 0.002,
       "d1_p_yes": 0.983,
       "rule": "consistency",
       "rule_ok": true,
-      "lp_min": -0.0
+      "lp_min": 0.0
      }
     },
     {
@@ -124,14 +124,14 @@
      "value": "Graf",
      "gold": "Graf",
      "correct": true,
-     "model": "Apertus 1.5 8B (LoRA)",
-     "doubt": null,
+     "model": "Apertus 1.5 8B (zero-shot)",
+     "doubt": 0.001,
      "signals": {
-      "probe": null,
+      "probe": 0.023,
       "d1_p_yes": 0.756,
       "rule": "consistency",
       "rule_ok": true,
-      "lp_min": -0.0
+      "lp_min": 0.0
      }
     }
    ],
@@ -155,14 +155,14 @@
      "value": "74306",
      "gold": "74306",
      "correct": true,
-     "model": "Apertus 1.5 8B (LoRA)",
-     "doubt": null,
+     "model": "Apertus 1.5 8B (zero-shot)",
+     "doubt": 0.001,
      "signals": {
-      "probe": null,
+      "probe": 0.002,
       "d1_p_yes": 0.664,
       "rule": "consistency",
       "rule_ok": true,
-      "lp_min": -0.0
+      "lp_min": -0.002
      }
     },
     {
@@ -170,14 +170,14 @@
      "value": "234",
      "gold": "234",
      "correct": true,
-     "model": "Apertus 1.5 8B (LoRA)",
-     "doubt": null,
+     "model": "Apertus 1.5 8B (zero-shot)",
+     "doubt": 0.0,
      "signals": {
-      "probe": null,
+      "probe": 0.01,
       "d1_p_yes": 0.182,
       "rule": "consistency",
       "rule_ok": true,
-      "lp_min": -0.0
+      "lp_min": 0.0
      }
     },
     {
@@ -185,10 +185,10 @@
      "value": "0",
      "gold": "0",
      "correct": true,
-     "model": "Apertus 1.5 8B (LoRA)",
-     "doubt": null,
+     "model": "Apertus 1.5 8B (zero-shot)",
+     "doubt": 0.001,
      "signals": {
-      "probe": null,
+      "probe": 0.019,
       "d1_p_yes": 0.78,
       "rule": "consistency",
       "rule_ok": true,
@@ -200,10 +200,10 @@
      "value": "81.9",
      "gold": "81.90",
      "correct": true,
-     "model": "Apertus 1.5 8B (LoRA)",
-     "doubt": null,
+     "model": "Apertus 1.5 8B (zero-shot)",
+     "doubt": 0.001,
      "signals": {
-      "probe": null,
+      "probe": 0.001,
       "d1_p_yes": 0.785,
       "rule": "consistency",
       "rule_ok": true,
@@ -215,29 +215,29 @@
      "value": "Gravdorn Banque SA",
      "gold": "Gravdorn Banque SA",
      "correct": true,
-     "model": "Apertus 1.5 8B (LoRA)",
-     "doubt": null,
+     "model": "Apertus 1.5 8B (zero-shot)",
+     "doubt": 0.001,
      "signals": {
-      "probe": null,
+      "probe": 0.002,
       "d1_p_yes": 0.898,
       "rule": "consistency",
       "rule_ok": true,
-      "lp_min": -0.001
+      "lp_min": -0.0
      }
     },
     {
      "field": "canton",
-     "value": "FR",
+     "value": "VD",
      "gold": "FR",
-     "correct": true,
-     "model": "Apertus 1.5 8B (LoRA)",
-     "doubt": null,
+     "correct": false,
+     "model": "Apertus 1.5 8B (zero-shot)",
+     "doubt": 0.999,
      "signals": {
-      "probe": null,
-      "d1_p_yes": 0.711,
+      "probe": 0.943,
+      "d1_p_yes": 0.646,
       "rule": "consistency",
-      "rule_ok": true,
-      "lp_min": -0.0
+      "rule_ok": false,
+      "lp_min": -0.003
      }
     },
     {
@@ -245,14 +245,14 @@
      "value": "2025",
      "gold": "2025",
      "correct": true,
-     "model": "Apertus 1.5 8B (LoRA)",
-     "doubt": null,
+     "model": "Apertus 1.5 8B (zero-shot)",
+     "doubt": 0.001,
      "signals": {
-      "probe": null,
+      "probe": 0.001,
       "d1_p_yes": 0.982,
       "rule": "consistency",
       "rule_ok": true,
-      "lp_min": -0.0
+      "lp_min": 0.0
      }
     },
     {
@@ -260,14 +260,14 @@
      "value": "Bonvin",
      "gold": "Bonvin",
      "correct": true,
-     "model": "Apertus 1.5 8B (LoRA)",
-     "doubt": null,
+     "model": "Apertus 1.5 8B (zero-shot)",
+     "doubt": 0.001,
      "signals": {
-      "probe": null,
+      "probe": 0.0,
       "d1_p_yes": 0.902,
       "rule": "consistency",
       "rule_ok": true,
-      "lp_min": -0.0
+      "lp_min": 0.0
      }
     }
    ],
@@ -279,8 +279,8 @@
    }
   },
   {
-   "page_id": "s0058-A-p1-d3",
-   "image": "s0058-A-p1-d3.jpg",
+   "page_id": "s0098-A-p1-d3",
+   "image": "s0098-A-p1-d3.jpg",
    "language": "it",
    "layout": "A",
    "degradation": 3,
@@ -288,29 +288,29 @@
    "fields": [
     {
      "field": "totalTaxValue",
-     "value": "470618",
-     "gold": "470618",
-     "correct": true,
-     "model": "Apertus 1.5 8B (LoRA)",
-     "doubt": null,
+     "value": "192",
+     "gold": "14643",
+     "correct": false,
+     "model": "Apertus 1.5 8B (zero-shot)",
+     "doubt": 1.0,
      "signals": {
-      "probe": null,
-      "d1_p_yes": 0.816,
+      "probe": 0.945,
+      "d1_p_yes": 0.376,
       "rule": "consistency",
-      "rule_ok": true,
-      "lp_min": -0.0
+      "rule_ok": false,
+      "lp_min": -0.206
      }
     },
     {
      "field": "totalGrossRevenueA",
-     "value": "697",
-     "gold": "697",
+     "value": "170",
+     "gold": "170",
      "correct": true,
-     "model": "Apertus 1.5 8B (LoRA)",
-     "doubt": null,
+     "model": "Apertus 1.5 8B (zero-shot)",
+     "doubt": 0.001,
      "signals": {
-      "probe": null,
-      "d1_p_yes": 0.608,
+      "probe": 0.012,
+      "d1_p_yes": 0.71,
       "rule": "consistency",
       "rule_ok": true,
       "lp_min": -0.0
@@ -318,14 +318,14 @@
     },
     {
      "field": "totalGrossRevenueB",
-     "value": "7257",
-     "gold": "7257",
+     "value": "23",
+     "gold": "23",
      "correct": true,
-     "model": "Apertus 1.5 8B (LoRA)",
-     "doubt": null,
+     "model": "Apertus 1.5 8B (zero-shot)",
+     "doubt": 0.001,
      "signals": {
-      "probe": null,
-      "d1_p_yes": 0.458,
+      "probe": 0.002,
+      "d1_p_yes": 0.423,
       "rule": "consistency",
       "rule_ok": true,
       "lp_min": -0.0
@@ -333,32 +333,32 @@
     },
     {
      "field": "totalWithHoldingTaxClaim",
-     "value": "244",
-     "gold": "244.00",
+     "value": "59.34",
+     "gold": "59.34",
      "correct": true,
-     "model": "Apertus 1.5 8B (LoRA)",
-     "doubt": null,
+     "model": "Apertus 1.5 8B (zero-shot)",
+     "doubt": 0.001,
      "signals": {
-      "probe": null,
-      "d1_p_yes": 0.823,
+      "probe": 0.0,
+      "d1_p_yes": 0.769,
       "rule": "consistency",
       "rule_ok": true,
-      "lp_min": -0.001
+      "lp_min": -0.0
      }
     },
     {
      "field": "institution",
-     "value": "Brisaro Banca di Gestione SA",
-     "gold": "Brisaro Banca di Gestione SA",
+     "value": "Quinmont Banca Privata SA",
+     "gold": "Quinmont Banca Privata SA",
      "correct": true,
-     "model": "Apertus 1.5 8B (LoRA)",
-     "doubt": null,
+     "model": "Apertus 1.5 8B (zero-shot)",
+     "doubt": 0.001,
      "signals": {
-      "probe": null,
-      "d1_p_yes": 0.943,
+      "probe": 0.0,
+      "d1_p_yes": 0.833,
       "rule": "consistency",
       "rule_ok": true,
-      "lp_min": -0.0
+      "lp_min": -0.002
      }
     },
     {
@@ -366,11 +366,11 @@
      "value": "TI",
      "gold": "TI",
      "correct": true,
-     "model": "Apertus 1.5 8B (LoRA)",
-     "doubt": null,
+     "model": "Apertus 1.5 8B (zero-shot)",
+     "doubt": 0.001,
      "signals": {
-      "probe": null,
-      "d1_p_yes": 0.951,
+      "probe": 0.001,
+      "d1_p_yes": 0.964,
       "rule": "consistency",
       "rule_ok": true,
       "lp_min": 0.0
@@ -381,29 +381,29 @@
      "value": "2025",
      "gold": "2025",
      "correct": true,
-     "model": "Apertus 1.5 8B (LoRA)",
-     "doubt": null,
+     "model": "Apertus 1.5 8B (zero-shot)",
+     "doubt": 0.001,
      "signals": {
-      "probe": null,
-      "d1_p_yes": 0.98,
+      "probe": 0.001,
+      "d1_p_yes": 0.984,
       "rule": "consistency",
       "rule_ok": true,
-      "lp_min": -0.0
+      "lp_min": 0.0
      }
     },
     {
      "field": "client_last_name",
-     "value": "Cattaneo",
-     "gold": "Cattaneo",
+     "value": "Quadri",
+     "gold": "Quadri",
      "correct": true,
-     "model": "Apertus 1.5 8B (LoRA)",
-     "doubt": null,
+     "model": "Apertus 1.5 8B (zero-shot)",
+     "doubt": 0.001,
      "signals": {
-      "probe": null,
-      "d1_p_yes": 0.867,
+      "probe": 0.002,
+      "d1_p_yes": 0.936,
       "rule": "consistency",
       "rule_ok": true,
-      "lp_min": -0.001
+      "lp_min": 0.0
      }
     }
    ],
@@ -411,7 +411,7 @@
    "route": {
     "model": "d1-3B",
     "label": "swiss_tax_statement_eCH0196",
-    "p": 0.93
+    "p": 0.931
    }
   },
   {
@@ -424,17 +424,17 @@
    "fields": [
     {
      "field": "totalTaxValue",
-     "value": "23805.62",
+     "value": "9.03",
      "gold": "23805.62",
-     "correct": true,
-     "model": "Apertus 1.5 8B (LoRA)",
-     "doubt": null,
+     "correct": false,
+     "model": "Apertus 1.5 8B (zero-shot)",
+     "doubt": 0.002,
      "signals": {
-      "probe": null,
-      "d1_p_yes": 0.439,
+      "probe": 0.005,
+      "d1_p_yes": 0.195,
       "rule": "consistency",
       "rule_ok": true,
-      "lp_min": -0.0
+      "lp_min": -0.132
      }
     },
     {
@@ -442,14 +442,14 @@
      "value": "25.8",
      "gold": "25.80",
      "correct": true,
-     "model": "Apertus 1.5 8B (LoRA)",
-     "doubt": null,
+     "model": "Apertus 1.5 8B (zero-shot)",
+     "doubt": 0.001,
      "signals": {
-      "probe": null,
+      "probe": 0.021,
       "d1_p_yes": 0.251,
       "rule": "consistency",
       "rule_ok": true,
-      "lp_min": -0.043
+      "lp_min": -0.038
      }
     },
     {
@@ -457,14 +457,14 @@
      "value": "183.92",
      "gold": "183.92",
      "correct": true,
-     "model": "Apertus 1.5 8B (LoRA)",
-     "doubt": null,
+     "model": "Apertus 1.5 8B (zero-shot)",
+     "doubt": 0.001,
      "signals": {
-      "probe": null,
+      "probe": 0.0,
       "d1_p_yes": 0.711,
       "rule": "consistency",
       "rule_ok": true,
-      "lp_min": -0.0
+      "lp_min": 0.0
      }
     },
     {
@@ -472,14 +472,14 @@
      "value": "9.03",
      "gold": "9.03",
      "correct": true,
-     "model": "Apertus 1.5 8B (LoRA)",
-     "doubt": null,
+     "model": "Apertus 1.5 8B (zero-shot)",
+     "doubt": 0.005,
      "signals": {
-      "probe": null,
+      "probe": 0.152,
       "d1_p_yes": 0.905,
       "rule": "consistency",
       "rule_ok": true,
-      "lp_min": -0.0
+      "lp_min": 0.0
      }
     },
     {
@@ -487,14 +487,14 @@
      "value": "Talmira Banque de Gestion SA",
      "gold": "Talmira Banque de Gestion SA",
      "correct": true,
-     "model": "Apertus 1.5 8B (LoRA)",
-     "doubt": null,
+     "model": "Apertus 1.5 8B (zero-shot)",
+     "doubt": 0.001,
      "signals": {
-      "probe": null,
+      "probe": 0.004,
       "d1_p_yes": 0.953,
       "rule": "consistency",
       "rule_ok": true,
-      "lp_min": -0.0
+      "lp_min": -0.001
      }
     },
     {
@@ -502,14 +502,14 @@
      "value": "JU",
      "gold": "JU",
      "correct": true,
-     "model": "Apertus 1.5 8B (LoRA)",
-     "doubt": null,
+     "model": "Apertus 1.5 8B (zero-shot)",
+     "doubt": 0.001,
      "signals": {
-      "probe": null,
+      "probe": 0.001,
       "d1_p_yes": 0.973,
       "rule": "consistency",
       "rule_ok": true,
-      "lp_min": -0.001
+      "lp_min": 0.0
      }
     },
     {
@@ -517,14 +517,14 @@
      "value": "2025",
      "gold": "2025",
      "correct": true,
-     "model": "Apertus 1.5 8B (LoRA)",
-     "doubt": null,
+     "model": "Apertus 1.5 8B (zero-shot)",
+     "doubt": 0.001,
      "signals": {
-      "probe": null,
+      "probe": 0.008,
       "d1_p_yes": 0.961,
       "rule": "consistency",
       "rule_ok": true,
-      "lp_min": -0.0
+      "lp_min": 0.0
      }
     },
     {
@@ -532,14 +532,14 @@
      "value": "Bonvin",
      "gold": "Bonvin",
      "correct": true,
-     "model": "Apertus 1.5 8B (LoRA)",
-     "doubt": null,
+     "model": "Apertus 1.5 8B (zero-shot)",
+     "doubt": 0.003,
      "signals": {
-      "probe": null,
+      "probe": 0.116,
       "d1_p_yes": 0.811,
       "rule": "consistency",
       "rule_ok": true,
-      "lp_min": -0.0
+      "lp_min": 0.0
      }
     }
    ],

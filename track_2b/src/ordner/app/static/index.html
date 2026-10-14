@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Ordner — assistant administratif souverain</title>
+<meta name="color-scheme" content="light dark">
 <link rel="stylesheet" href="/static/style.css">
 <script src="/static/app.js" defer></script>
 </head>
@@ -12,23 +13,32 @@
 <header class="top">
   <div class="brand">
     <div class="mark" aria-hidden="true"></div>
-    <h1>Ordner <span class="tagline">— <span data-i18n="tagline">assistant administratif souverain</span></span></h1>
+    <div>
+      <h1>Ordner</h1>
+      <p class="tagline"><strong data-i18n="principle">Ordner prépare, vous décidez.</strong> <span data-i18n="tagline">assistant administratif souverain</span></p>
+    </div>
   </div>
   <div class="tools">
-    <button type="button" id="ask-open" class="btn primary" aria-haspopup="dialog" data-i18n="ask_title">Demander à Ordner</button>
+    <button type="button" id="ask-open" class="btn dark" aria-haspopup="dialog" data-i18n="ask_title">Demander à Ordner</button>
     <div class="langs" role="group" aria-label="Langue · Sprache · Lingua">
       <button type="button" data-lang="fr" aria-pressed="true" lang="fr">FR</button>
       <button type="button" data-lang="de" aria-pressed="false" lang="de">DE</button>
       <button type="button" data-lang="it" aria-pressed="false" lang="it">IT</button>
     </div>
+    <button type="button" id="theme" class="icon-btn" aria-pressed="false" data-i18n-aria="theme_dark" aria-label="Thème sombre">
+      <svg class="ico sun" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="3"/><path d="M8 1v1.5M8 13.5V15M1 8h1.5M13.5 8H15M3 3l1 1M12 12l1 1M3 13l1-1M12 4l1-1"/></svg>
+      <svg class="ico moon" viewBox="0 0 16 16" aria-hidden="true"><path d="M13.5 9.5A5.5 5.5 0 0 1 6.5 2.5a5.5 5.5 0 1 0 7 7z"/></svg>
+    </button>
   </div>
 </header>
 <nav class="tabs" data-i18n-aria="nav_label" aria-label="Sections">
-  <a href="#/home" data-route="home" data-i18n="nav_home">Où j'en suis</a>
-  <a href="#/inbox" data-route="inbox" data-i18n="nav_inbox">Pièces reçues</a>
-  <a href="#/cases" data-route="cases" data-i18n="nav_cases">Démarches</a>
-  <a href="#/coverage" data-route="coverage" data-i18n="nav_coverage">Couverture</a>
-  <a href="#/releve" data-route="releve" data-i18n="nav_releve">Relevé fiscal</a>
+  <div class="tabs-in">
+    <a href="#/home" data-route="home" data-i18n="nav_home">Où j'en suis</a>
+    <a href="#/inbox" data-route="inbox" data-i18n="nav_inbox">Pièces reçues</a>
+    <a href="#/cases" data-route="cases" data-i18n="nav_cases">Démarches</a>
+    <a href="#/coverage" data-route="coverage" data-i18n="nav_coverage">Couverture</a>
+    <a href="#/releve" data-route="releve" data-i18n="nav_releve">Relevé fiscal</a>
+  </div>
 </nav>
 
 <main id="main">

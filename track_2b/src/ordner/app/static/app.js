@@ -20,7 +20,7 @@ const I18N = {
     fs_family: "Famille", married: "Marié·e", both_earn: "Les deux conjoints ont un revenu", children: "Enfants à charge", childcare: "Garde d'enfants payée à des tiers",
     footer_models: "Modèles : Apertus 1.5 8B (extraction, explication), LightOnOCR-3 (lecture), d1-3B (routage, validation), EmbeddingGemma 2 (recherche dans les guides).",
     footer_note: "Documents fictifs générés pour l'évaluation. Information générale, pas un conseil fiscal.",
-    fixture_demo: "Fixture : les champs, doutes et explications des documents sont des valeurs de démonstration écrites à la main, en attendant les sorties du pipeline.",
+    fixture_demo: "Démo partielle : valeurs et doutes issus du vrai pipeline ; certaines explications ne sont pas encore générées.",
     fixture_results: "Fixture : la courbe de tri vient de chiffres synthétiques, pas de l'évaluation.",
     fields: { totalTaxValue: "Valeur fiscale totale", totalGrossRevenueA: "Revenus bruts A (avec impôt anticipé)", totalGrossRevenueB: "Revenus bruts B (sans impôt anticipé)",
       totalWithHoldingTaxClaim: "Impôt anticipé à récupérer", institution: "Établissement", canton: "Canton", taxPeriod: "Période fiscale", client_last_name: "Nom du client" },
@@ -62,7 +62,7 @@ const I18N = {
     fs_family: "Familie", married: "Verheiratet", both_earn: "Beide Ehegatten haben ein Einkommen", children: "Kinder", childcare: "Kinderbetreuung durch Dritte bezahlt",
     footer_models: "Modelle: Apertus 1.5 8B (Extraktion, Erklärung), LightOnOCR-3 (Lesen), d1-3B (Routing, Prüfung), EmbeddingGemma 2 (Suche in den Wegleitungen).",
     footer_note: "Für die Evaluation generierte fiktive Dokumente. Allgemeine Information, keine Steuerberatung.",
-    fixture_demo: "Fixture: Felder, Zweifel und Erklärungen der Dokumente sind von Hand geschriebene Demowerte, bis die Pipeline-Ausgaben vorliegen.",
+    fixture_demo: "Teilweise Demo: Werte und Zweifel aus der echten Pipeline; einige Erklärungen sind noch nicht erzeugt.",
     fixture_results: "Fixture: Die Triage-Kurve beruht auf synthetischen Zahlen, nicht auf der Evaluation.",
     fields: { totalTaxValue: "Steuerwert total", totalGrossRevenueA: "Bruttoerträge A (mit Verrechnungssteuer)", totalGrossRevenueB: "Bruttoerträge B (ohne Verrechnungssteuer)",
       totalWithHoldingTaxClaim: "Rückforderbare Verrechnungssteuer", institution: "Institut", canton: "Kanton", taxPeriod: "Steuerperiode", client_last_name: "Name Kunde/Kundin" },
@@ -104,7 +104,7 @@ const I18N = {
     fs_family: "Famiglia", married: "Coniugato/a", both_earn: "Entrambi i coniugi hanno un reddito", children: "Figli a carico", childcare: "Custodia dei figli pagata a terzi",
     footer_models: "Modelli: Apertus 1.5 8B (estrazione, spiegazione), LightOnOCR-3 (lettura), d1-3B (instradamento, verifica), EmbeddingGemma 2 (ricerca nelle guide).",
     footer_note: "Documenti fittizi generati per la valutazione. Informazione generale, non una consulenza fiscale.",
-    fixture_demo: "Fixture: campi, dubbi e spiegazioni dei documenti sono valori dimostrativi scritti a mano, in attesa degli output della pipeline.",
+    fixture_demo: "Demo parziale: valori e dubbi dalla vera pipeline; alcune spiegazioni non sono ancora generate.",
     fixture_results: "Fixture: la curva di triage proviene da cifre sintetiche, non dalla valutazione.",
     fields: { totalTaxValue: "Valore fiscale totale", totalGrossRevenueA: "Redditi lordi A (con imposta preventiva)", totalGrossRevenueB: "Redditi lordi B (senza imposta preventiva)",
       totalWithHoldingTaxClaim: "Imposta preventiva da recuperare", institution: "Istituto", canton: "Cantone", taxPeriod: "Periodo fiscale", client_last_name: "Cognome cliente" },
@@ -362,6 +362,41 @@ Object.assign(I18N.it.doc_types, { salary_certificate: "certificato di salario",
   tax_assessment_decision: "decisione di tassazione", camt053: "estratto bancario camt.053", identity_document: "documento d'identità", health_insurance_policy: "polizza cassa malati",
   study_certificate: "attestato di studio", tax_instalment_bill: "fattura degli acconti" });
 
+/* Swiss-clear cockpit: header principle, home cards, provenance, action lifecycle. */
+const D18N = {
+  fr: {
+    principle: "Ordner prépare, vous décidez.", theme_dark: "Thème sombre",
+    k_all_cases: "Toutes les démarches", k_urgent: "Urgent", k_urgent_sub: n => `échéance${n > 1 ? "s" : ""} dans les 30 jours`,
+    k_verify: "À vérifier", k_verify_sub: n => `point${n > 1 ? "s" : ""} à relire (doute élevé, alerte de paiement)`,
+    k_watch: n => `Doute moyen : ${n} valeur${n > 1 ? "s" : ""} à surveiller`,
+    cov_more: "Ce que « couvert » veut dire", col_measure: "Montant", col_total: "Total", col_piece: "Pièce", col_prov: "Provenance",
+    s_state: "État", s_next_due: "Prochaine échéance", s_verified: (v, n) => `${v} sur ${n} vérifiées mot pour mot`,
+    no_explain: "Pas d'explication enregistrée pour ce document.", quote: "Citation", lifecycle: "Cycle de l'action", ext_l: "Prolongations possibles :",
+    fields: { employer: "Employeur", period: "Période", role: "Fonction", gross: "Salaire brut", lpp_employee: "Cotisations LPP (salarié·e)", activity_rate: "Taux d'activité" }
+  },
+  de: {
+    principle: "Ordner bereitet vor, Sie entscheiden.", theme_dark: "Dunkles Design",
+    k_all_cases: "Alle Verfahren", k_urgent: "Dringend", k_urgent_sub: n => `Frist${n === 1 ? "" : "en"} in den nächsten 30 Tagen`,
+    k_verify: "Zu prüfen", k_verify_sub: n => `Punkt${n === 1 ? "" : "e"} zum Nachlesen (hoher Zweifel, Zahlungswarnung)`,
+    k_watch: n => `Mittlerer Zweifel: ${n} Wert${n === 1 ? "" : "e"} im Auge behalten`,
+    cov_more: "Was «abgedeckt» heisst", col_measure: "Betrag", col_total: "Total", col_piece: "Unterlage", col_prov: "Herkunft",
+    s_state: "Status", s_next_due: "Nächste Frist", s_verified: (v, n) => `${v} von ${n} wörtlich geprüft`,
+    no_explain: "Für dieses Dokument ist keine Erklärung gespeichert.", quote: "Zitat", lifecycle: "Ablauf des Schritts", ext_l: "Mögliche Verlängerungen:",
+    fields: { employer: "Arbeitgeber", period: "Periode", role: "Funktion", gross: "Bruttolohn", lpp_employee: "BVG-Beiträge (Arbeitnehmende)", activity_rate: "Beschäftigungsgrad" }
+  },
+  it: {
+    principle: "Ordner prepara, lei decide.", theme_dark: "Tema scuro",
+    k_all_cases: "Tutte le pratiche", k_urgent: "Urgente", k_urgent_sub: n => `scadenz${n === 1 ? "a" : "e"} entro 30 giorni`,
+    k_verify: "Da verificare", k_verify_sub: n => `punt${n === 1 ? "o" : "i"} da rileggere (dubbio alto, allerta di pagamento)`,
+    k_watch: n => `Dubbio medio: ${n} valor${n === 1 ? "e" : "i"} da tenere d'occhio`,
+    cov_more: "Cosa significa «coperto»", col_measure: "Importo", col_total: "Totale", col_piece: "Documento", col_prov: "Provenienza",
+    s_state: "Stato", s_next_due: "Prossima scadenza", s_verified: (v, n) => `${v} su ${n} verificate alla lettera`,
+    no_explain: "Nessuna spiegazione registrata per questo documento.", quote: "Citazione", lifecycle: "Ciclo dell'azione", ext_l: "Proroghe possibili:",
+    fields: { employer: "Datore di lavoro", period: "Periodo", role: "Funzione", gross: "Salario lordo", lpp_employee: "Contributi LPP (dipendente)", activity_rate: "Grado di occupazione" }
+  }
+};
+for (const l in D18N) { const { fields, ...rest } = D18N[l]; Object.assign(I18N[l], rest); Object.assign(I18N[l].fields, fields); }
+
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const pct = x => Math.round(x * 100);
@@ -372,6 +407,10 @@ const state = { lang: "fr", demo: null, results: null, doc: 0, deductions: null 
 try { state.lang = localStorage.getItem("ordner.lang") || "fr"; } catch (e) { /* storage blocked */ }
 if (!I18N[state.lang]) state.lang = "fr";
 const T = () => I18N[state.lang];
+const darkMq = matchMedia("(prefers-color-scheme: dark)");
+try { const th = localStorage.getItem("ordner.theme"); if (th === "dark" || th === "light") document.documentElement.dataset.theme = th; } catch (e) { /* storage blocked */ }
+const isDark = () => (document.documentElement.dataset.theme || (darkMq.matches ? "dark" : "light")) === "dark";
+const syncTheme = () => $("#theme").setAttribute("aria-pressed", String(isDark()));
 
 async function getJSON(url, opts) {
   const r = await fetch(url, opts);
@@ -440,7 +479,7 @@ function renderDoc() {
     return `<tr class="lv-${lv}">
       <th scope="row">${esc(t.fields[f.field] || f.field)}</th>
       <td><span class="value">${esc(f.value ?? "–")}</span><span class="model">${esc(f.model || "")}</span></td>
-      <td><span class="chip ${lv}">${esc(t.lv[lv])}${f.doubt != null ? " · " + num(f.doubt) : ""}</span></td>
+      <td>${doubtChip(f.doubt)}</td>
       <td class="why">${why}${all}</td>
       <td>${oracle}</td>
     </tr>`;
@@ -495,7 +534,7 @@ function renderTriage() {
 
 function renderExplain() {
   const t = T(), ex = state.demo.documents[state.doc].explanation;
-  if (!ex) { $("#explain").innerHTML = ""; return; }
+  if (!ex) { $("#explain").innerHTML = `<p class="muted">${esc(t.no_explain)}</p>`; return; }
   const text = ex.text?.[state.lang] || "";
   let h = `<div class="explain-text" lang="${state.lang}">${text.split("\n").filter(Boolean).map(l => `<p class="${l.startsWith("•") ? "item" : ""}">${esc(l)}</p>`).join("")}</div>`;
   const cites = (ex.citations || []).filter(c => !c.lang || c.lang === state.lang);
@@ -596,15 +635,47 @@ function value(v, unit) {
   return String(v ?? "–") + (unit ? ` ${unit}` : "");
 }
 
+const ico = d => `<svg class="ico" viewBox="0 0 16 16" aria-hidden="true">${d}</svg>`;
+const ICON = {
+  barcode: ico('<path d="M2 3v10M4.5 3v10M6 3v10M8.5 3v10M11 3v10M12.5 3v10M14 3v10"/>'),
+  ai: ico('<path d="M8 1.5l1.6 4.9 4.9 1.6-4.9 1.6L8 14.5l-1.6-4.9L1.5 8l4.9-1.6z"/>'),
+  rule: ico('<path d="M3.5 2h6l3 3v9h-9z"/><path d="M5.5 7.5h5M5.5 10.5h5"/>'),
+  user: ico('<circle cx="8" cy="5.5" r="2.5"/><path d="M3 14c.6-2.8 2.6-4.2 5-4.2s4.4 1.4 5 4.2"/>'),
+  lock: ico('<rect x="3" y="7" width="10" height="7" rx="1.5"/><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2"/>'),
+  ext: ico('<path d="M6.5 3H3v10h10V9.5M9.5 3H13v3.5M13 3L7.5 8.5"/>'),
+  clock: ico('<circle cx="8" cy="8" r="6"/><path d="M8 4.5V8l2.5 1.5"/>'),
+  arrow: ico('<path d="M3 8h10M9 4l4 4-4 4"/>'),
+  check: ico('<path d="M3 8.5l3 3 7-7"/>'),
+  cal: ico('<rect x="2.5" y="3.5" width="11" height="10" rx="1.5"/><path d="M2.5 7h11M5.5 2v3M10.5 2v3"/>'),
+  refresh: ico('<path d="M13 8a5 5 0 1 1-1.5-3.5M13 2.5v3h-3"/>')
+};
+const STATEMENT = "swiss_tax_statement_eCH0196";
+const MEASURE_FIELD = { total_tax_value: "totalTaxValue", gross_revenue_a: "totalGrossRevenueA", gross_revenue_b: "totalGrossRevenueB", withholding_tax_claim: "totalWithHoldingTaxClaim" };
+const LIFE = ["prepared", "validated", "done_by_user", "verified"];
+const fieldLabel = f => esc(T().fields[f] || f);
+const host = u => { try { return new URL(u).hostname.replace(/^www\./, ""); } catch (e) { return u; } };
+const docName = d => esc([T().doc_types[d.kind] || d.kind, d.issuer, d.year].filter(Boolean).join(" · "));
+
+/* Where a value comes from: barcode (exact), AI (OCR + Apertus), or an actor (rule, user, Ordner, connector). */
+function prov(kind) {
+  const t = T(), k = kind === "model" ? "ai" : kind;
+  if (!k) return "";
+  const text = k === "barcode" ? t.read.barcode : k === "ai" ? t.read.ai : t.actors[k] || k;
+  const icon = k === "barcode" ? ICON.barcode : k === "ai" ? ICON.ai : k === "user" ? ICON.user : ICON.rule;
+  return `<span class="prov ${k === "barcode" ? "exact" : esc(k)}">${icon}${esc(text)}</span>`;
+}
+
 function daysChip(n) {
   const cls = n == null ? "na" : n < 0 || n <= 7 ? "high" : n <= 30 ? "medium" : "low";
   return n == null ? "" : `<span class="chip ${cls}">${esc(T().days(n))}</span>`;
 }
 
+/* Doubt = P(wrong) of a value read by the model, as a small gauge coloured by level. */
 function doubtChip(p) {
-  if (p < 0) return `<span class="chip na">${esc(T().lv.na)}</span>`;
-  const lv = level(p);
-  return `<span class="chip ${lv}">${esc(T().lv[lv])} · ${num(p)}</span>`;
+  const t = T();
+  if (p == null || p < 0) return `<span class="chip na">${esc(t.lv.na)}</span>`;
+  const lv = level(p), w = Math.max(3, Math.round(Math.min(1, p) * 40));
+  return `<span class="doubt ${lv}"><svg class="gauge" viewBox="0 0 40 6" aria-hidden="true"><rect class="track" width="40" height="6" rx="3"/><rect class="fill" width="${w}" height="6" rx="3"/></svg><span class="sr-only">${esc(t.col_doubt)} </span>${esc(t.lv[lv])} · ${num(p)}</span>`;
 }
 
 function parseRoute() {
@@ -667,10 +738,10 @@ function renderSubjectBar() {
     ? `<label class="small muted" for="subject-pick">${esc(t.subject_pick)}</label> <select id="subject-pick">${list.map(x => `<option value="${esc(x.id)}"${x.id === cur.id ? " selected" : ""}>${esc(x.name)}</option>`).join("")}</select>`
     : `<strong>${esc(cur.name)}</strong>`;
   const ics = health?.modules?.rules
-    ? `<a class="btn" href="/api/calendar.ics?subject=${encodeURIComponent(cur.id)}" download>${esc(t.ics)}</a>`
+    ? `<a class="btn" href="/api/calendar.ics?subject=${encodeURIComponent(cur.id)}" download>${ICON.cal}${esc(t.ics)}</a>`
     : `<span class="small muted">${esc(t.ics_off)}</span>`;
-  const sim = health?.simulated ? ` <span class="chip medium">${esc(t.sim_date(day(health.today)))}</span>` : "";
-  $("#subject-bar").innerHTML = `<div class="who">${who}${where ? ` <span class="muted">· ${esc(where)}</span>` : ""}${cur.attrs?.fictional ? ` <span class="chip na">${esc(t.fictional)}</span>` : ""}${sim}</div>${ics}`;
+  const sim = health?.simulated ? `<span class="chip medium">${ICON.clock}${esc(t.sim_date(day(health.today)))}</span>` : "";
+  $("#subject-bar").innerHTML = `<div class="who">${who}${where ? `<span class="muted">· ${esc(where)}</span>` : ""}${cur.attrs?.fictional ? `<span class="chip na">${esc(t.fictional)}</span>` : ""}${sim}</div>${ics}`;
   $("#subject-pick")?.addEventListener("change", async e => {
     state.subject = e.target.value;
     try { localStorage.setItem("ordner.subject", state.subject); } catch (err) { /* storage blocked */ }
@@ -689,45 +760,68 @@ function overviewOr(el, title) {
   return o.data;
 }
 
-function coverageBanner(c) {
+/* Coverage as one compact line; the honest caveat and the detail are one click away. */
+function coverageBanner(c, open = false) {
   const t = T();
   if (!c) return "";
   if (!c.available) return unavail(c.module);
-  const k = c.counts, nodom = c.domains_without_card.map(d => t.domains[d] || d).join(", ");
+  const k = c.counts, total = k.covered + k.to_verify + k.not_applicable || 1, nodom = c.domains_without_card.map(d => t.domains[d] || d).join(", ");
+  let x = 0;
+  const bar = [["covered", "ok"], ["to_verify", "warn"], ["not_applicable", "na"]].map(([v, cls]) => {
+    const w = (k[v] / total) * 100, r = `<rect class="${cls}" x="${x.toFixed(2)}" width="${w.toFixed(2)}" height="8"/>`;
+    x += w; return r;
+  }).join("");
   const items = c.items.map(i => `<li><span class="chip ${i.verdict === "covered" ? "low" : i.verdict === "to_verify" ? "medium" : "na"}">${lbl("verdict", i.verdict)}</span>
       <a href="#/coverage">${cardName(i)}</a> <span class="muted small">· ${lbl("nature", i.nature)} · ${lbl("qual", i.qualification)} · ${lbl("app", i.applicability)}${i.missing.length ? ` (${i.missing.map(itemLabel).join(", ")})` : ""}</span></li>`).join("");
-  return `<div class="banner cov" role="note">
-    <p><strong>${esc(t.cov_banner(k.covered, k.to_verify, k.not_applicable, t.cov_where(c.canton || "?")))}</strong> ${esc(t.cov_claim)}</p>
-    ${!c.rules ? `<p>${esc(t.cov_norules)}</p>` : ""}${nodom ? `<p class="small">${esc(t.cov_nodomain(nodom))}</p>` : ""}
-    ${items ? `<details><summary>${esc(t.cov_details)}</summary><ul class="plain">${items}</ul></details>` : ""}
-    <p class="small"><a href="#/coverage">${esc(t.cov_map_link)} →</a></p></div>`;
+  return `<details class="cov-ind"${open ? " open" : ""}><summary>
+      <svg class="cov-bar" viewBox="0 0 100 8" preserveAspectRatio="none" aria-hidden="true">${bar}</svg>
+      <span class="counts">${esc(t.cov_banner(k.covered, k.to_verify, k.not_applicable, t.cov_where(c.canton || "?")))}</span>
+      <span class="more">${esc(t.cov_more)}</span></summary>
+    <div class="body">
+      <p class="claim">${esc(t.cov_claim)}</p>
+      ${!c.rules ? `<p>${esc(t.cov_norules)}</p>` : ""}${nodom ? `<p class="small">${esc(t.cov_nodomain(nodom))}</p>` : ""}
+      ${items ? `<p class="small muted">${esc(t.cov_details)}</p><ul class="plain">${items}</ul>` : ""}
+      <p class="small"><a href="#/coverage">${esc(t.cov_map_link)} →</a></p></div></details>`;
 }
 
 function nextStepHtml(n) {
   const t = T();
   if (!n) return `<p class="what">${esc(t.none_next)}</p>`;
   const c = n.card ? (pick(n.card.name) || n.card.id) : "";
-  const due = n.due ? ` <span class="muted">· ${esc(t.due_on(day(n.due)))}</span>` : "";
+  const due = n.due ? `<p class="kpi-row small">${ICON.clock}<span>${esc(t.due_on(day(n.due)))}</span></p>` : "";
   if (n.kind === "review") {
     const d = n.document, what = [t.doc_types[d.kind] || d.kind, d.issuer, d.year].filter(Boolean).join(" · ");
-    return `<p class="what">${esc(t.next_review(what, d.fields.join(", ")))}</p><p><a class="btn primary" href="#/inbox">${esc(t.open_inbox)}</a></p>`;
+    return `<p class="what">${esc(t.next_review(what, d.fields.map(f => t.fields[f] || f).join(", ")))}</p><div class="btn-row"><a class="btn primary" href="#/inbox">${esc(t.open_inbox)}${ICON.arrow}</a></div>`;
   }
   const text = n.kind === "validate" ? t.next_validate(pick(n.summary) || t.kinds[n.action_kind] || n.action_kind, c)
     : n.kind === "provide" ? t.next_provide(n.items.map(itemText).join(", "), c) : t.next_qualify(c);
-  return `<p class="what">${esc(text)}${due}</p><p><a class="btn primary" href="#/case/${encodeURIComponent(n.case_id)}">${esc(t.open_case)}</a></p>`;
+  const lock = n.kind === "validate" ? `<p class="lock">${ICON.lock}<span>${esc(t.send_note)}</span></p>` : "";
+  return `<p class="what">${esc(text)}</p>${due}${lock}<div class="btn-row"><a class="btn primary" href="#/case/${encodeURIComponent(n.case_id)}">${esc(t.open_case)}${ICON.arrow}</a></div>`;
 }
 
-function wealthHtml(w) {
+/* Consolidated statements: one column per institution, with where each value comes from. */
+function wealthHtml(w, docs) {
   const t = T();
   if (!w) return "";
   if (!w.available) return `<section>${unavail(w.module)}</section>`;
   const chip = st => `<span class="chip ${st === "confirmed" || st === "final" ? "low" : st === "missing" || st === "incomplete" ? "high" : "medium"}">${esc(t.m_status[st] || t.wealth_status[st] || st)}</span>`;
-  const rows = Object.entries(w.totals).map(([m, v]) => `<tr><th scope="row">${lbl("measures", m)}</th>
-      <td class="value num">${v.total == null ? "–" : esc(chf(v.total))}</td><td>${chip(v.status)}</td></tr>`).join("");
-  return `<section aria-labelledby="h-wealth"><h3 id="h-wealth" class="block">${esc(t.h_wealth(w.period))} ${chip(w.status)}</h3>
-    <div class="table-wrap"><table class="compact"><tbody>${rows}</tbody></table></div>
-    <p class="small"><span class="muted">${esc(t.inst_in)}</span> ${w.institutions_included.map(esc).join(", ") || "–"}</p>
-    ${w.institutions_missing?.length ? `<p class="small"><span class="muted">${esc(t.inst_missing)}</span> ${w.institutions_missing.map(i => `<span class="chip high">${esc(i)}</span>`).join(" ")}</p>` : ""}
+  const missing = new Set(w.institutions_missing || []), insts = [...w.institutions_included, ...missing];
+  const docOf = i => docs.find(d => d.kind === STATEMENT && d.issuer === i && String(d.year) === String(w.period));
+  const head = insts.map(i => {
+    const d = docOf(i);
+    return `<th scope="col" class="num">${esc(i)}<br>${missing.has(i) ? `<span class="chip high">${esc(t.m_status.missing)}</span>` : d?.read_path ? prov(d.read_path) : ""}</th>`;
+  }).join("");
+  const rows = Object.entries(w.totals).map(([m, v]) => {
+    const cells = insts.map(i => {
+      const b = v.by_institution?.[i], d = docOf(i);
+      if (!b) return `<td class="num muted" data-label="${esc(i)}">${missing.has(i) ? `<span class="m-only"><span class="chip high">${esc(t.m_status.missing)}</span></span><span class="d-only">–</span>` : "–"}</td>`;
+      const p = d?.read_path === "ai" ? d.doubt?.[MEASURE_FIELD[m]] : null;
+      return `<td class="num" data-label="${esc(i)}"><div class="cell"><span class="m-only">${prov(d?.read_path)}</span><span class="value">${esc(chf(b.value))}</span>${p != null ? doubtChip(p) : ""}<span class="chip ${b.status === "confirmed" ? "low" : "medium"}">${lbl("fstatus", b.status)}</span></div></td>`;
+    }).join("");
+    return `<tr><th scope="row">${lbl("measures", m)}</th>${cells}<td class="num total" data-label="${esc(t.col_total)}"><div class="cell"><span class="value">${v.total == null ? "–" : esc(chf(v.total))}</span>${chip(v.status)}</div></td></tr>`;
+  }).join("");
+  return `<section aria-labelledby="h-wealth" class="wealth"><h3 id="h-wealth" class="block">${esc(t.h_wealth(w.period))} ${chip(w.status)}</h3>
+    <div class="table-wrap"><table class="wtable"><thead><tr><th scope="col">${esc(t.col_measure)}</th>${head}<th scope="col" class="num total">${esc(t.col_total)}</th></tr></thead><tbody>${rows}</tbody></table></div>
     <p class="muted small">${esc(t.wealth_note)}</p></section>`;
 }
 
@@ -735,27 +829,50 @@ function renderHome() {
   const t = T(), el = $("#v-home"), o = overviewOr(el, t.nav_home);
   if (!o) return;
   const caseLink = (id, card) => `<a href="#/case/${encodeURIComponent(id)}">${cardName(card)}</a>`;
-  const urgent = o.urgent.map(u => `<li><span class="due">${esc(day(u.due))}</span> ${daysChip(u.days)} ${caseLink(u.case_id, u.card)}
-      ${u.reminders.length ? `<span class="small muted">· ${esc(t.reminders)} ${u.reminders.map(day).join(", ")}</span>` : ""}</li>`).join("");
+  const urgent = o.urgent.slice(0, 3).map(u => `<li><div class="kpi-row"><span class="kpi-date">${esc(day(u.due))}</span>${daysChip(u.days)}</div>${caseLink(u.case_id, u.card)}
+      ${u.reminders.length ? `<span class="small muted">${esc(t.reminders)} ${u.reminders.map(day).join(", ")}</span>` : ""}</li>`).join("")
+    + (o.urgent.length > 3 ? `<li class="small"><a href="#/cases">${esc(t.more(o.urgent.length - 3))}</a></li>` : "");
+  const docById = Object.fromEntries(o.documents.map(d => [d.id, d]));
+  const alerts = (o.payment_alerts || []).map(a => `<li><span class="chip high">⚠ ${esc(pick(a.warning))}</span><strong>${itemLabel(a.kind || "?")}</strong> <span class="muted">${esc([a.issuer, a.year].filter(Boolean).join(" · "))}</span>
+      <ul class="small">${a.reasons.map(r => `<li>${esc(r)}</li>`).join("")}</ul></li>`).join("");
+  const review = o.review.map(r => `<li><div><strong>${esc(t.doc_types[r.kind] || r.kind || "?")}</strong> <span class="muted">${esc([r.issuer, r.year].filter(Boolean).join(" · "))}</span></div>
+      ${r.fields.map(f => `<div class="kpi-row">${fieldLabel(f)} ${prov(docById[r.id]?.read_path)} ${doubtChip(docById[r.id]?.doubt?.[f])}</div>`).join("")}</li>`).join("");
+  const flagged = (o.payment_alerts || []).length + o.review.reduce((n, r) => n + r.fields.length, 0);
+  const watch = o.documents.filter(d => d.read_path !== "barcode").flatMap(d => Object.entries(d.doubt || {})
+    .filter(([, p]) => p != null && level(p) === "medium").map(([f, p]) => ({ d, f, p }))).sort((a, b) => b.p - a.p);
+  const watchList = watch.map(({ d, f, p }) => `<li><div><strong>${fieldLabel(f)}</strong> <span class="muted">· ${esc(d.issuer || t.doc_types[d.kind] || d.kind)}</span></div>
+      <div class="kpi-row">${prov(d.read_path)}${doubtChip(p)}</div></li>`).join("");
   const missing = o.missing.map(m => `<li>${caseLink(m.case_id, m.card)}${chipList(m.items)}</li>`).join("");
   const qualify = (o.to_qualify || []).map(m => `<li>${caseLink(m.case_id, m.card)} <span class="chip na">${esc(t.qualify_n(m.questions.length))}</span>${chipList(m.questions)}
       ${m.items.length ? `<details><summary class="small">${esc(t.then_items(m.items.length))}</summary>${chipList(m.items, "na", 99)}</details>` : ""}</li>`).join("");
-  const alerts = (o.payment_alerts || []).map(a => `<li><span class="chip high">⚠ ${esc(pick(a.warning))}</span> <strong>${itemLabel(a.kind || "?")}</strong> ${esc([a.issuer, a.year].filter(Boolean).join(" · "))}
-      <ul class="small">${a.reasons.map(r => `<li>${esc(r)}</li>`).join("")}</ul></li>`).join("");
-  const review = o.review.map(r => `<li><strong>${esc(t.doc_types[r.kind] || r.kind || "?")}</strong> ${esc([r.issuer, r.year].filter(Boolean).join(" · "))}
-      <div class="small">${esc(t.red_fields)} ${r.fields.map(f => `<span class="chip high">${esc(t.fields[f] || f)}</span>`).join(" ")}</div></li>`).join("");
-  el.innerHTML = `<h2 class="view-title" tabindex="-1">${esc(t.nav_home)}</h2>
+  el.innerHTML = `<div class="view-head"><h2 class="view-title" tabindex="-1">${esc(t.nav_home)}</h2>
+      <button type="button" class="btn" id="review-btn">${ICON.refresh}${esc(t.review_btn)}</button></div>
     ${coverageBanner(o.coverage)}
-    <p><button type="button" class="btn" id="review-btn">${esc(t.review_btn)}</button></p>
-    <section class="next" aria-labelledby="h-next"><h3 id="h-next" class="block">${esc(t.h_next)}</h3>${nextStepHtml(o.next_step)}</section>
-    ${o.cases.length ? "" : notice(esc(t.no_cases))}
-    ${wealthHtml(o.wealth)}
-    <div class="two">
-      <section aria-labelledby="h-urgent"><h3 id="h-urgent" class="block">${esc(t.h_urgent)}</h3>${urgent ? `<ul class="list">${urgent}</ul>` : `<p class="muted">${esc(t.none_urgent)}</p>`}</section>
-      <section aria-labelledby="h-review"><h3 id="h-review" class="block">${esc(t.h_review)}</h3>${alerts || review ? `<ul class="list">${alerts}${review}</ul>` : `<p class="muted">${esc(t.none_review)}</p>`}</section>
+    <div class="kpis">
+      <article class="kpi${o.urgent.length ? " is-urgent" : " is-calm"}" aria-labelledby="k-urgent">
+        <h3 id="k-urgent" class="kpi-label">${ICON.clock}${esc(t.k_urgent)}</h3>
+        <div class="kpi-big"><p class="kpi-num">${o.urgent.length}</p><p class="kpi-sub">${esc(t.k_urgent_sub(o.urgent.length))}</p></div>
+        ${urgent ? `<ul class="kpi-list">${urgent}</ul>` : `<p class="empty">${esc(t.none_urgent)}</p>`}
+        <div class="btn-row"><a class="btn" href="#/cases">${esc(t.k_all_cases)}</a></div>
+      </article>
+      <article class="kpi${flagged ? " is-warn" : " is-calm"}" aria-labelledby="k-verify">
+        <h3 id="k-verify" class="kpi-label">${ICON.ai}${esc(t.k_verify)}</h3>
+        <div class="kpi-big"><p class="kpi-num">${flagged}</p><p class="kpi-sub">${esc(t.k_verify_sub(flagged))}</p></div>
+        ${alerts || review ? `<ul class="kpi-list">${alerts}${review}</ul>` : `<p class="empty">${esc(t.none_review)}</p>`}
+        ${watchList ? `<p class="kpi-note">${esc(t.k_watch(watch.length))}</p><ul class="kpi-list">${watchList}</ul>` : ""}
+        <div class="btn-row"><a class="btn" href="#/inbox">${esc(t.open_inbox)}</a></div>
+      </article>
+      <article class="kpi next" aria-labelledby="h-next">
+        <h3 id="h-next" class="kpi-label">${ICON.arrow}${esc(t.h_next)}</h3>
+        ${nextStepHtml(o.next_step)}
+      </article>
     </div>
-    <section aria-labelledby="h-missing"><h3 id="h-missing" class="block">${esc(t.h_missing)}</h3>${missing ? `<ul class="list">${missing}</ul>` : `<p class="muted">${esc(t.none_missing)}</p>`}</section>
-    ${qualify ? `<section aria-labelledby="h-qualify"><h3 id="h-qualify" class="block">${esc(t.h_qualify)}</h3><ul class="list">${qualify}</ul></section>` : ""}`;
+    ${o.cases.length ? "" : notice(esc(t.no_cases))}
+    ${wealthHtml(o.wealth, o.documents)}
+    <div class="two">
+      <section aria-labelledby="h-missing"><h3 id="h-missing" class="block">${esc(t.h_missing)}</h3>${missing ? `<ul class="list">${missing}</ul>` : `<p class="muted">${esc(t.none_missing)}</p>`}</section>
+      ${qualify ? `<section aria-labelledby="h-qualify"><h3 id="h-qualify" class="block">${esc(t.h_qualify)}</h3><ul class="list">${qualify}</ul></section>` : ""}
+    </div>`;
 }
 
 function renderInbox() {
@@ -763,28 +880,30 @@ function renderInbox() {
   if (!o) return;
   const rows = o.documents.slice().sort((a, b) => (b.received_at || "").localeCompare(a.received_at || "")).map(d => {
     const p = maxDoubt(d), red = Object.entries(d.doubt || {}).filter(([, v]) => v >= RED).map(([f]) => t.fields[f] || f);
-    const read = d.read_path ? `<span class="chip ${d.read_path === "barcode" ? "low" : "na"}">${lbl("read", d.read_path)}</span>` : "–";
     return `<tr class="lv-${p < 0 ? "na" : level(p)}">
-      <td>${esc(day((d.received_at || "").slice(0, 10)))}</td>
-      <th scope="row">${esc(t.doc_types[d.kind] || d.kind || "?")}</th>
-      <td>${esc(d.year ?? "–")}</td><td>${esc(d.issuer || "–")}</td><td>${lbl("channels", d.channel)}</td><td>${read}</td>
-      <td>${d.read_path === "barcode" && p <= 0 ? "–" : doubtChip(p)}${red.length ? `<div class="small">${esc(t.red_fields)} ${esc(red.join(", "))}</div>` : ""}</td></tr>`;
+      <th scope="row" class="doc-cell wide"><strong>${esc(t.doc_types[d.kind] || d.kind || "?")}</strong><span>${esc([d.issuer, d.year].filter(Boolean).join(" · ") || "–")}</span></th>
+      <td data-label="${esc(t.col_received)}" class="num">${esc(day((d.received_at || "").slice(0, 10)))}</td>
+      <td data-label="${esc(t.col_channel)}">${lbl("channels", d.channel)}</td>
+      <td data-label="${esc(t.col_read)}">${d.read_path ? prov(d.read_path) : "–"}</td>
+      <td data-label="${esc(t.col_doubt)}">${d.read_path === "barcode" && p <= 0 ? "–" : doubtChip(p)}${red.length ? `<div class="small">${esc(t.red_fields)} ${esc(red.join(", "))}</div>` : ""}</td></tr>`;
   }).join("");
   el.innerHTML = `<h2 class="view-title" tabindex="-1">${esc(t.nav_inbox)}</h2>
-    <section>${rows ? `<div class="table-wrap"><table><caption class="sr-only">${esc(t.inbox_caption)}</caption>
-      <thead><tr><th scope="col">${esc(t.col_received)}</th><th scope="col">${esc(t.col_type)}</th><th scope="col">${esc(t.col_year)}</th><th scope="col">${esc(t.col_issuer)}</th>
+    <section>${rows ? `<div class="table-wrap"><table class="rtable"><caption class="sr-only">${esc(t.inbox_caption)}</caption>
+      <thead><tr><th scope="col">${esc(t.col_piece)}</th><th scope="col">${esc(t.col_received)}</th>
       <th scope="col">${esc(t.col_channel)}</th><th scope="col">${esc(t.col_read)}</th><th scope="col">${esc(t.col_doubt)}</th></tr></thead><tbody>${rows}</tbody></table></div>`
       : `<p class="muted">${esc(t.no_docs)}</p>`}
-    <p class="muted small">${esc(t.inbox_legend)}</p></section>`;
+    <div class="legend-row"><span>${prov("barcode")}${prov("ai")}</span><span>${esc(t.inbox_legend)}</span></div></section>`;
 }
 
 function caseChips(c, card) {
   const t = T();
-  return `<div class="chips">${card.nature ? `<span class="chip na">${lbl("nature", card.nature)}</span>` : ""}
+  return `<div class="chips">${card.nature ? `<span class="chip outline">${lbl("nature", card.nature)}</span>` : ""}
     <span class="chip ${c.state === "ready_to_validate" ? "medium" : c.state === "closed" || c.state === "result_verified" ? "low" : "na"}">${lbl("states", c.state)}</span>
     <span class="chip ${card.qualification === "qualified" ? "low" : "medium"}">${card.unknown_card ? esc(t.unknown_card) : lbl("qual", card.qualification)}</span>
     ${card.domain ? `<span class="chip na">${lbl("domains", card.domain)}</span>` : ""}</div>`;
 }
+
+const progressBar = (states, cur) => `<div class="progress" aria-hidden="true">${states.map((s, i) => `<i class="${i < cur ? "on" : i === cur ? "cur" : ""}"></i>`).join("")}</div>`;
 
 function renderCases() {
   const t = T(), el = $("#v-cases"), o = overviewOr(el, t.nav_cases);
@@ -792,12 +911,13 @@ function renderCases() {
   const states = Object.keys(t.states), today = o.today;
   const items = o.cases.map(c => {
     const dues = (c.deadlines || []).map(d => d.due).sort(), next = dues.find(d => d >= today) || dues[dues.length - 1];
-    const days = next ? Math.round((Date.parse(next) - Date.parse(today)) / 864e5) : null;
-    return `<li><h3><a href="#/case/${encodeURIComponent(c.id)}">${cardName(c.card)}</a>${c.period ? ` <span class="muted small">${esc(t.period(c.period))}</span>` : ""}</h3>
+    const days = next ? Math.round((Date.parse(next) - Date.parse(today)) / 864e5) : null, cur = states.indexOf(c.state);
+    return `<li class="case-card"><h3><a href="#/case/${encodeURIComponent(c.id)}">${cardName(c.card)}</a></h3>
       ${caseChips(c, c.card)}
-      <p class="small"><span class="muted">${esc(t.progress(states.indexOf(c.state) + 1, states.length))}</span>
-      ${next ? ` · ${esc(t.next_due(day(next)))} ${daysChip(days)}` : ""}</p>
-      ${c.missing?.length ? `<p class="small">${esc(t.missing_l)} ${c.missing.map(itemLabel).join(", ")}</p>` : ""}</li>`;
+      ${progressBar(states, cur)}
+      <p class="case-meta"><span class="muted">${esc(t.progress(cur + 1, states.length))}</span>${c.period ? `<span class="muted">· ${esc(t.period(c.period))}</span>` : ""}</p>
+      ${next ? `<p class="case-meta">${ICON.clock}<span class="num">${esc(t.next_due(day(next)))}</span>${daysChip(days)}</p>` : ""}
+      ${c.missing?.length ? `<div class="small"><span class="muted">${esc(t.missing_l)}</span>${chipList(c.missing, "medium", 3)}</div>` : ""}</li>`;
   }).join("");
   el.innerHTML = `<h2 class="view-title" tabindex="-1">${esc(t.nav_cases)}</h2>${items ? `<ul class="case-list">${items}</ul>` : notice(esc(t.no_cases))}`;
 }
@@ -814,65 +934,90 @@ function payloadHtml(a) {
   return `${title ? `<p><strong>${esc(pick(title))}</strong></p>` : ""}${kv ? `<dl class="kv">${kv}</dl>` : ""}${steps}${longText ? `<pre class="letter">${esc(longText)}</pre>` : ""}`;
 }
 
+/* prepared -> validated -> done by the person -> verified; Ordner never sends anything itself. */
+function lifecycle(a) {
+  const t = T(), cur = LIFE.indexOf(a.status);
+  if (cur < 0) return `<span class="chip na">${lbl("astatus", a.status)}</span>`;
+  return `<ol class="astep" aria-label="${esc(t.lifecycle)}">${LIFE.map((s, i) => `<li class="${i < cur ? "done" : ""}"${i === cur ? ' aria-current="step"' : ""}>${i < cur ? ICON.check : ""}${lbl("astatus", s)}</li>`).join("")}</ol>`;
+}
+
 function renderCase() {
   const t = T(), el = $("#v-case"), r = state.caseDetail;
-  const back = `<p><a href="#/cases">${esc(t.back)}</a></p>`;
+  const back = `<a class="back" href="#/cases">${esc(t.back)}</a>`;
   if (!r) { el.innerHTML = back + `<h2 class="view-title" tabindex="-1">${esc(t.loading)}</h2>`; return; }
   if (r.unavailable || r.error) { el.innerHTML = back + `<h2 class="view-title" tabindex="-1">${esc(t.nav_cases)}</h2>` + (r.unavailable ? unavail(r.unavailable) : notice(esc(`${t.err} ${r.error}`))); return; }
   const { case: c, card, facts, documents, events, states, rule_sources: rs = {}, completeness: comp } = r.data;
+  const sources = card.sources || [];
+  const srcChip = i => sources[i] ? `<a class="src-chip" href="${esc(sources[i].url)}" target="_blank" rel="noopener noreferrer" title="${esc(sources[i].title)}"><b>[${i + 1}]</b><span>${esc(host(sources[i].url))}</span>${ICON.ext}</a>` : "";
   const check = comp && (comp.wrong_year.length || comp.duplicates.length || comp.why.length)
     ? `${comp.wrong_year.length ? `<p class="small">${esc(t.wrong_year)} ${comp.wrong_year.map(w => `<span class="chip high">${esc(`${T().doc_types[w.kind] || w.kind} ${w.year} ≠ ${w.expected}`)}</span>`).join(" ")}</p>` : ""}
        ${comp.duplicates.length ? `<p class="small">${esc(t.duplicates)} ${comp.duplicates.map(d => `<span class="chip medium">${esc(d.reason)}</span>`).join(" ")}</p>` : ""}
        <details><summary>${esc(t.check_why)}</summary><ul>${comp.why.map(w => `<li>${esc(w)}</li>`).join("")}</ul></details>` : "";
   const cur = states.indexOf(c.state);
-  const stepper = states.map((s, i) => `<li class="${i === cur ? "" : s === "complement_requested" ? "branch" : i < cur ? "done" : ""}"${i === cur ? ' aria-current="step"' : ""}>${i < cur && s !== "complement_requested" ? "✓ " : ""}${lbl("states", s)}</li>`).join("");
-  const deadlines = (c.deadlines || []).map(d => {
+  const stepper = states.map((s, i) => `<li class="${i === cur ? "" : s === "complement_requested" ? "branch" : i < cur ? "done" : ""}"${i === cur ? ' aria-current="step"' : ""}>${lbl("states", s)}</li>`).join("");
+  const dls = (c.deadlines || []).slice().sort((a, b) => String(a.due).localeCompare(String(b.due)));
+  const nextDl = dls.find(d => d.days == null || d.days >= 0) || dls[dls.length - 1];
+  const verified = sources.filter(s => s.verified).length;
+  const strip = `<div class="facts-strip">
+      <div><p class="eyebrow">${esc(t.s_state)}</p><p class="big">${lbl("states", c.state)}</p><p class="small muted">${esc(t.progress(cur + 1, states.length))}</p></div>
+      <div><p class="eyebrow">${esc(t.s_next_due)}</p>${nextDl ? `<p class="big num${nextDl.days != null && nextDl.days <= 30 ? " urgent" : ""}">${esc(day(nextDl.due))}</p>${daysChip(nextDl.days)}` : `<p class="big muted">–</p>`}</div>
+      <div><p class="eyebrow">${esc(t.h_case_missing)}</p><p class="big num">${(c.missing || []).length}</p></div>
+      <div><p class="eyebrow">${esc(t.h_sources)}</p><p class="big num">${sources.length}</p>${sources.length ? `<p class="small muted">${esc(t.s_verified(verified, sources.length))}</p>` : ""}</div></div>`;
+  const deadlines = dls.map(d => {
     const cf = d.computed_from || {};
-    const basis = (cf.legal_basis || []).map(k => rs[k] ? `<a href="${esc(rs[k].url)}" target="_blank" rel="noopener noreferrer">${esc(rs[k].title)}</a>` : esc(k)).join(", ");
+    const basis = (cf.legal_basis || []).map(k => rs[k] ? `<a class="src-chip" href="${esc(rs[k].url)}" target="_blank" rel="noopener noreferrer"><span>${esc(rs[k].title)}</span>${ICON.ext}</a>` : `<span class="chip outline">${esc(k)}</span>`).join("");
     const steps = [...(cf.steps || []), ...(cf.warnings || []).map(w => `⚠ ${w}`)];
-    return `<li><span class="due">${esc(day(d.due))}</span> ${daysChip(d.days)} ${cf.label ? esc(cf.label) : ""}
-      <div class="small"><span class="muted">${esc(t.rule_l)}</span> ${esc(cf.rule || d.rule_id)}${cf.version ? ` (v${esc(cf.version)})` : ""}${basis ? ` · <span class="muted">${esc(t.basis_l)}</span> ${basis}` : ""}</div>
+    const ext = (cf.extensions || []).map(e => `<li><strong class="num">${esc(day(e.until))}</strong> — ${esc(e.how || "")}</li>`).join("");
+    return `<li class="dl-item"><div class="dl-head"><span class="due">${esc(day(d.due))}</span>${daysChip(d.days)}${cf.label ? `<span>${esc(cf.label)}</span>` : ""}</div>
+      ${cf.send_by ? `<p class="kpi-row small">${ICON.clock}<span>${esc(t.send_by(day(cf.send_by)))}</span></p>` : ""}
+      <div class="chips"><span class="prov rule">${ICON.rule}${esc(t.rule_l)} ${esc(cf.rule || d.rule_id)}${cf.version ? ` · v${esc(cf.version)}` : ""}</span>${(cf.card_sources || []).map(srcChip).join("")}${basis}</div>
       ${d.reminders?.length ? `<div class="small"><span class="muted">${esc(t.reminders)}</span> ${d.reminders.map(day).join(", ")}</div>` : ""}
-      ${steps.length ? `<details><summary>${esc(t.computed_l)}</summary><ul>${steps.map(s => `<li>${esc(s)}</li>`).join("")}</ul></details>` : ""}
+      ${steps.length ? `<details><summary>${esc(t.computed_l)}</summary><ul>${steps.map(s => `<li>${esc(s)}</li>`).join("")}</ul>${ext ? `<p>${esc(t.ext_l)}</p><ul>${ext}</ul>` : ""}</details>` : ""}
       ${!cf.steps && Object.keys(cf).length ? `<details><summary>${esc(t.computed_l)}</summary><dl class="kv">${Object.entries(cf).map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(value(v))}</dd>`).join("")}</dl></details>` : ""}</li>`;
   }).join("");
-  const actions = (c.actions || []).map(a => `<li id="act-${esc(a.id)}" tabindex="-1">
-      <h4>${lbl("kinds", a.kind)} <span class="chip ${a.status === "prepared" ? "medium" : a.status === "cancelled" ? "na" : "low"}">${lbl("astatus", a.status)}</span></h4>
+  const actions = (c.actions || []).map(a => `<li id="act-${esc(a.id)}" tabindex="-1" class="action-card">
+      <h4>${lbl("kinds", a.kind)}</h4>
+      ${lifecycle(a)}
       ${a.payload?.warning ? `<p class="notice bad"><strong>⚠ ${esc(pick(a.payload.warning))}</strong>${(a.payload.phishing || []).map(r => `<br><span class="small">${esc(r)}</span>`).join("")}</p>` : ""}
       ${payloadHtml(a)}
       ${a.payload?.missing_vars?.length ? `<p class="small">${esc(t.missing_vars)} ${a.payload.missing_vars.map(v => `<code>${esc(v)}</code>`).join(", ")}</p>` : ""}
-      <p class="small muted">${esc(a.kind === "payment" ? t.pay_note : t.send_note)}</p>
-      ${a.status === "prepared" && a.requires_validation ? `<button type="button" class="btn primary" data-validate="${esc(a.id)}">${esc(t.validate)}</button>` : ""}
-      ${a.payload?.template && !["prepared", "cancelled"].includes(a.status) ? `<a class="btn" href="/api/actions/eml?case_id=${encodeURIComponent(c.id)}&action_id=${encodeURIComponent(a.id)}" download>${esc(t.eml)}</a>` : ""}</li>`).join("");
+      <p class="lock-box">${ICON.lock}<span>${esc(a.kind === "payment" ? t.pay_note : t.send_note)}</span></p>
+      ${(a.status === "prepared" && a.requires_validation) || (a.payload?.template && !["prepared", "cancelled"].includes(a.status)) ? `<div class="btn-row">
+      ${a.status === "prepared" && a.requires_validation ? `<button type="button" class="btn primary" data-validate="${esc(a.id)}">${ICON.check}${esc(t.validate)}</button>` : ""}
+      ${a.payload?.template && !["prepared", "cancelled"].includes(a.status) ? `<a class="btn" href="/api/actions/eml?case_id=${encodeURIComponent(c.id)}&action_id=${encodeURIComponent(a.id)}" download>${esc(t.eml)}</a>` : ""}</div>` : ""}</li>`).join("");
   const order = { confirmed: 0, proposed: 1, superseded: 2, rejected: 3 };
   const factRows = facts.slice().sort((a, b) => a.key.localeCompare(b.key) || order[a.status] - order[b.status]).map(f => {
     const doc = documents[f.source_doc];
-    const src = doc ? `${esc(t.doc_types[doc.kind] || doc.kind || "?")}${doc.issuer ? ` · ${esc(doc.issuer)}` : ""}${doc.read_path ? ` <span class="chip ${doc.read_path === "barcode" ? "low" : "na"}">${lbl("read", doc.read_path)}</span>` : ""}` : lbl("actors", f.actor);
+    const src = `<div class="prov-cell">${prov(doc?.read_path || f.actor)}${doc ? `<span class="small muted">${docName(doc)}</span>` : ""}</div>`;
     const cls = { confirmed: "low", proposed: "medium", rejected: "high", superseded: "na" }[f.status] || "na";
-    return `<tr class="fact-${esc(f.status)}"><th scope="row">${LBL()[f.key] ? `${itemLabel(f.key)} <code class="small muted">${esc(f.key)}</code>` : `<code>${esc(f.key)}</code>`}</th><td class="value">${esc(value(f.value, f.unit))}</td><td>${esc(f.period || "–")}</td>
-      <td><span class="chip ${cls}">${lbl("fstatus", f.status)}</span></td><td class="small">${src}</td><td>${f.doubt != null ? doubtChip(f.doubt) : "–"}</td></tr>`;
+    return `<tr class="fact-${esc(f.status)}"><th scope="row" class="wide">${LBL()[f.key] ? `${itemLabel(f.key)} <code class="small muted">${esc(f.key)}</code>` : `<code>${esc(f.key)}</code>`}</th>
+      <td data-label="${esc(t.col_value)}" class="value num">${esc(value(f.value, f.unit))}</td><td data-label="${esc(t.col_period)}">${esc(f.period || "–")}</td>
+      <td data-label="${esc(t.col_status)}"><span class="chip ${cls}">${lbl("fstatus", f.status)}</span></td><td data-label="${esc(t.col_prov)}">${src}</td>
+      <td data-label="${esc(t.col_doubt)}">${f.doubt != null && doc?.read_path !== "barcode" ? doubtChip(f.doubt) : "–"}</td></tr>`;
   }).join("");
   const evs = events.slice().reverse().map(e => `<li><time datetime="${esc(e.ts)}">${stamp(e.ts)}</time><strong>${lbl("events", e.type)}</strong> <span class="muted small">· ${lbl("actors", e.actor)}</span>
       <span class="small">${esc(eventDetail(e))}</span></li>`).join("");
-  const srcs = (card.sources || []).map(s => `<div class="cite"><a href="${esc(s.url)}" target="_blank" rel="noopener noreferrer">${esc(s.title)}</a>
-      ${s.verified ? `<span class="badge ok">${esc(t.verified)}</span>` : `<span class="badge no">${esc(t.unverified_quote)}</span>`}${s.quote ? `<blockquote>${esc(s.quote)}</blockquote>` : ""}</div>`).join("");
+  const srcs = sources.map((s, i) => `<li><b class="src-n">[${i + 1}]</b><div><a href="${esc(s.url)}" target="_blank" rel="noopener noreferrer">${esc(s.title)}</a>
+      ${s.verified ? `<span class="badge ok">${esc(t.verified)}</span>` : `<span class="badge no">${esc(t.unverified_quote)}</span>`}
+      ${s.quote ? `<details><summary>${esc(t.quote)}</summary><blockquote>${esc(s.quote)}</blockquote></details>` : ""}</div></li>`).join("");
   const steps = (card.steps || []).map(s => `<li>${esc(pick(s.label) || s.id)} <span class="muted small">· ${lbl("who", s.who)}${s.action ? ` · ${lbl("kinds", s.action)}` : ""}</span></li>`).join("");
   const sec = (id, title, body) => `<section aria-labelledby="h-${id}"><h3 id="h-${id}" class="block">${esc(title)}</h3>${body}</section>`;
   el.innerHTML = back + `<h2 class="view-title" tabindex="-1">${cardName(card)}${c.period ? ` <span class="muted">· ${esc(t.period(c.period))}</span>` : ""}</h2>
     ${caseChips(c, card)}${card.notes ? `<details><summary>${esc(t.notes)}</summary><p>${esc(card.notes)}</p></details>` : ""}
     ${card.domain === "tax" ? `<p class="small"><a href="#/releve">${esc(t.releve_link)} →</a></p>` : ""}
+    ${strip}
     ${sec("prog", t.h_progress, `<ol class="stepper">${stepper}</ol>`)}
     ${c.missing?.length || check ? sec("miss", c.missing?.length ? t.h_case_missing : t.h_check, `${chipList(c.missing || [], "medium", 8)}${check}`) : ""}
     <div class="two">
-      ${sec("dl", t.h_deadlines, deadlines ? `<ul class="list">${deadlines}</ul>` : `<p class="muted">${esc(t.no_deadlines)}</p>`)}
       ${sec("act", t.h_actions, actions ? `<ul class="list">${actions}</ul>` : `<p class="muted">${esc(t.no_actions)}</p>`)}
+      ${sec("dl", t.h_deadlines, deadlines ? `<ul class="list">${deadlines}</ul>` : `<p class="muted">${esc(t.no_deadlines)}</p>`)}
     </div>
-    ${sec("facts", t.h_facts, factRows ? `<div class="table-wrap"><table><caption class="sr-only">${esc(t.facts_caption)}</caption><thead><tr>
+    ${sec("facts", t.h_facts, factRows ? `<div class="table-wrap"><table class="rtable"><caption class="sr-only">${esc(t.facts_caption)}</caption><thead><tr>
       <th scope="col">${esc(t.col_key)}</th><th scope="col">${esc(t.col_value)}</th><th scope="col">${esc(t.col_period)}</th><th scope="col">${esc(t.col_status)}</th>
-      <th scope="col">${esc(t.col_source)}</th><th scope="col">${esc(t.col_doubt)}</th></tr></thead><tbody>${factRows}</tbody></table></div>` : `<p class="muted">${esc(t.no_facts)}</p>`)}
+      <th scope="col">${esc(t.col_prov)}</th><th scope="col">${esc(t.col_doubt)}</th></tr></thead><tbody>${factRows}</tbody></table></div>` : `<p class="muted">${esc(t.no_facts)}</p>`)}
     <div class="two">
+      <div>${sec("src", t.h_sources, srcs ? `<ol class="srcs">${srcs}</ol>` : `<p class="muted">${esc(t.no_sources)}</p>`)}${steps ? sec("steps", t.h_steps, `<ol class="proc">${steps}</ol>`) : ""}</div>
       ${sec("ev", t.h_events, evs ? `<ol class="timeline">${evs}</ol>` : `<p class="muted">${esc(t.no_events)}</p>`)}
-      <div>${steps ? sec("steps", t.h_steps, `<ol>${steps}</ol>`) : ""}${sec("src", t.h_sources, srcs || `<p class="muted">${esc(t.no_sources)}</p>`)}</div>
     </div>`;
 }
 
@@ -919,12 +1064,12 @@ function renderCoverage() {
     return `<td class="cov ${s[0]}${j === here ? " here" : ""}"${names ? ` title="${esc(names)}"` : ""}><span aria-hidden="true">${sym[s]}</span><span class="sr-only">${lbl("cov_status", s)}${names ? ` : ${esc(names)}` : ""}</span></td>`;
   };
   const rows = domains.map(d => `<tr><th scope="row">${lbl("domains", d)}</th>${jurisdictions.map(j => cell(d, j)).join("")}</tr>`).join("");
-  el.innerHTML = head + `<section><p class="small">${esc(t.cov_counts(counts.qualified, counts.draft))}</p>
+  el.innerHTML = head + `<section><div class="legend small"><span class="value">${esc(t.cov_counts(counts.qualified, counts.draft))}</span>
+      <span><span class="cov q">✓</span> ${lbl("cov_status", "qualified")}</span><span><span class="cov d">◐</span> ${lbl("cov_status", "draft")}</span><span><span class="cov n">·</span> ${lbl("cov_status", "none")}</span></div>
     <div class="table-wrap"><table class="cov-table"><caption class="sr-only">${esc(t.cov_caption)}</caption>
       <thead><tr><th scope="col">${esc(t.cov_domain)}</th>${jurisdictions.map(j => `<th scope="col"${j === here ? ' class="here"' : ""}>${esc(j)}${j === here ? `<span class="sr-only"> (${esc(t.you_here)})</span>` : ""}</th>`).join("")}</tr></thead>
-      <tbody>${rows}</tbody></table></div>
-    <p class="legend small"><span class="cov q">✓</span> ${lbl("cov_status", "qualified")} &nbsp; <span class="cov d">◐</span> ${lbl("cov_status", "draft")} &nbsp; <span class="cov n">·</span> ${lbl("cov_status", "none")}</p></section>
-    ${mine ? `<section aria-labelledby="h-yours"><h3 id="h-yours" class="block">${esc(t.cov_yours)}</h3>${coverageBanner(mine)}</section>` : ""}`;
+      <tbody>${rows}</tbody></table></div></section>
+    ${mine ? `<section aria-labelledby="h-yours"><h3 id="h-yours" class="block">${esc(t.cov_yours)}</h3>${coverageBanner(mine, true)}</section>` : ""}`;
 }
 
 /* ---------- chat panel ---------- */
@@ -1036,6 +1181,14 @@ async function init() {
     } catch (err) { announce(`${T().err} ${err.message}`); e.target.disabled = false; }
   });
   $("#v-case").addEventListener("click", e => { const b = e.target.closest("button[data-validate]"); if (b) { b.disabled = true; validateAction(b.dataset.validate); } });
+  $("#theme").onclick = () => {
+    const next = isDark() ? "light" : "dark";
+    document.documentElement.dataset.theme = next;
+    try { localStorage.setItem("ordner.theme", next); } catch (e) { /* storage blocked */ }
+    syncTheme();
+  };
+  darkMq.addEventListener("change", syncTheme);
+  syncTheme();
   $("#ask-open").onclick = openAsk;
   $("#ask-close").onclick = () => $("#ask").close();
   $("#ask-form").addEventListener("submit", submitAsk);

@@ -48,8 +48,10 @@ def doubt_scores(data, system):
         combined[fit] = cross_val_predict(combo_model(C), X[fit], y, groups=groups, cv=cv, method="predict_proba")[:, 1]
         if test.any():
             combined[test] = model.predict_proba(X[test])[:, 1]
-    except ValueError as e:  # too few rows/errors (some CV fold has a single class): no doubt score
+    except ValueError as e:  # too few rows/errors (some CV fold has a single class): no combined model
         print(f"no combined doubt for {system}: {e}")
+    if np.isnan(combined[sysm]).all():  # LoRA: 2 errors on dev, so d1-3B validation (best triage signal on test)
+        combined = np.where(sysm, 1 - col["d1_p_yes"], np.nan)
     return combined, probe
 
 
@@ -197,7 +199,8 @@ def build(data, work, out, system="auto", generate=False):
     note = (f"Pipeline export ({MODEL_NAME.get(system, system)}). Pages: one per target {TARGETS} (layout, "
             "degradation, language); layout A from dev, layout B from test; within a target, degradation >= 2 prefers a "
             "page with an extraction error, otherwise an error-free page. Doubt = combined model of ordner.eval.run "
-            "(out-of-fold on its fit rows). Explanations: Apertus 1.5 8B (base, MLX), quotes verified word for word.")
+            "(out-of-fold on its fit rows), or 1 - d1-3B validation where the combined model is not estimable (LoRA). "
+            "Explanations: Apertus 1.5 8B (base, MLX), quotes verified word for word.")
     demo = {**({"fixture": True} if missing else {}), "note": note + (" MISSING: " + "; ".join(missing) if missing else ""),
             "doubt_levels": explain.DOUBT_LEVELS, "documents": docs}
     out.mkdir(parents=True, exist_ok=True)
