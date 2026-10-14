@@ -46,7 +46,7 @@ def refused(name, args, ctx, needle):
 
 def check_registry():
     names = [s.name for s in SPECS]
-    assert len(names) == len(set(names)) == 10, names
+    assert len(names) == len(set(names)) == 11, names
     for t in openai_tools():
         assert re.fullmatch(r"[a-zA-Z0-9_-]{1,64}", t["function"]["name"]) and t["function"]["parameters"]["type"] == "object"
     assert not any(s.side_effect for s in SPECS), "no tool may execute an external effect"
@@ -143,7 +143,15 @@ def check_rules_case(ctx, tmp):
     if available("ordner.procedures.catalog"):
         r = ok("rules.evaluate", {"card_id": "tax.return.ZH", "subject_id": sid, "period": "2025"}, ctx)["data"]
         assert r["status"] == "not_applicable" and r["sources"]  # Noa lives in VD
+        assert r["evaluated_on"] == ctx["today"]  # scenario date, not the machine clock
         refused("rules.evaluate", {"card_id": "tax.return.XX", "subject_id": sid}, ctx, "unknown procedure card")
+        r = ok("dossier.check", {"subject_id": sid, "period": "2025", "card_id": "tax.return.VD"}, ctx)
+        c, t = r["data"]["completeness"], r["data"]["consolidation"]
+        assert c["status"] == "incomplete" and [d["issuer"] for d in c["missing_documents"]] == ["Talbruck Banque Privée SA"]
+        assert t["status"] != "final" and "Talbruck Banque Privée SA" in t["institutions_missing"]
+        assert any("Talbruck" in w for w in r["warnings"])
+        r = ok("dossier.check", {"subject_id": sid, "period": "2025"}, ctx)["data"]
+        assert r["completeness"] is None and r["consolidation"]["totals"]["total_tax_value"]["total"]
 
     rec = lambda op, **p: call("case.record", {"subject_id": sid, "op": op, **p}, ctx)
     case_id = rec("open_case", card_id="tax.return.ZH", period="2025")["data"]["recorded"]["id"]
@@ -169,7 +177,8 @@ def check_rules_case(ctx, tmp):
     assert v["status"] == "established" and v["proof"][0]["actor"] == "connector"
     assert rec("set_state", case_id=case_id, state="result_verified")["ok"]
     refused("receipt.verify", {"action_id": "act_nope"}, ctx, "no action")
-    print("rules/case ok: schedule, applicability, dossier writes, person-only confirmation, proof before verified")
+    print("rules/case ok: schedule, dated applicability, completeness + consolidation, dossier writes, person-only "
+          "confirmation, proof before verified")
 
 
 def main():

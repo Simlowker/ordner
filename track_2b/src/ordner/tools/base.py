@@ -9,9 +9,10 @@ ctx keys read by the tools (all optional):
     llm_model     model name sent to that endpoint (default "apertus")
     apertus_mlx   True or an adapter path: run expert.run in-process with models/apertus_mlx.py
     expert_tags   replay tags for expert.run (default ["apertus-lora", "apertus-base"])
-    today         ISO date used by schedule.plan (default: today)
+    today         ISO reference date of the scenario: ages, card validity, deadlines, reminders (default: today)
 """
 import importlib
+from datetime import date
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]  # track_2b/
@@ -23,6 +24,13 @@ class ToolError(Exception):
 
 def mode(ctx) -> str:
     return ctx.get("mode", "replay")
+
+
+def today(ctx) -> date:
+    try:
+        return date.fromisoformat(ctx.get("today") or date.today().isoformat())
+    except ValueError as e:
+        raise ToolError(f"ctx today must be YYYY-MM-DD ({e})") from None
 
 
 def work(ctx) -> Path:
