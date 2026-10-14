@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ordner — assistant administratif souverain</title>
+<link rel="stylesheet" href="/static/style.css">
+<script src="/static/app.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main" data-i18n="skip">Aller au contenu</a>
+<header class="top">
+  <div class="brand">
+    <div class="mark" aria-hidden="true"></div>
+    <h1>Ordner <span class="tagline">— <span data-i18n="tagline">assistant administratif souverain</span></span></h1>
+  </div>
+  <div class="langs" role="group" aria-label="Langue · Sprache · Lingua">
+    <button type="button" data-lang="fr" aria-pressed="true" lang="fr">FR</button>
+    <button type="button" data-lang="de" aria-pressed="false" lang="de">DE</button>
+    <button type="button" data-lang="it" aria-pressed="false" lang="it">IT</button>
+  </div>
+</header>
+
+<main id="main">
+  <p class="lead" data-i18n="lead">Lit un relevé fiscal bancaire, extrait les montants à reporter, signale ce dont il n'est pas sûr et l'explique dans votre langue. Tout tourne en local : aucun appel réseau.</p>
+  <p id="fixture-banner" class="banner" role="note" hidden></p>
+
+  <section aria-labelledby="h-doc">
+    <h2 id="h-doc"><span class="step" aria-hidden="true">1</span><span data-i18n="h_doc">Document et champs extraits</span></h2>
+    <div id="thumbs" class="thumbs" role="group" data-i18n-aria="pick_doc" aria-label="Choisir un document"></div>
+    <div class="doc">
+      <figure class="page">
+        <img id="page-img" alt="">
+        <figcaption id="page-meta"></figcaption>
+      </figure>
+      <div class="fields">
+        <p id="route" class="muted"></p>
+        <div class="table-wrap">
+          <table id="fields">
+            <caption class="sr-only" data-i18n="fields_caption">Champs extraits avec leur niveau de doute</caption>
+            <thead>
+              <tr>
+                <th scope="col" data-i18n="col_field">Champ</th>
+                <th scope="col" data-i18n="col_value">Valeur</th>
+                <th scope="col" data-i18n="col_doubt">Doute</th>
+                <th scope="col" data-i18n="col_why">Pourquoi</th>
+                <th scope="col" data-i18n="col_oracle">Corrigé</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <p class="muted small" data-i18n="legend">Doute : score combiné (sonde sur les états internes d'Apertus, validation d1-3B, règles, probabilité des tokens). Corrigé : valeur lue dans les codes-barres du relevé.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="two">
+    <section aria-labelledby="h-triage">
+      <h2 id="h-triage"><span class="step" aria-hidden="true">2</span><span data-i18n="h_triage">Tri : que relire ?</span></h2>
+      <div id="triage">
+        <label for="thr"><span data-i18n="thr_label">Part des champs relus, les plus douteux d'abord :</span> <strong id="thr-val"></strong></label>
+        <input id="thr" type="range" min="0" max="1" step="0.01" value="0.2">
+        <div class="scale small muted" aria-hidden="true"><span data-i18n="thr_low">relire moins</span><span data-i18n="thr_high">relire plus</span></div>
+        <output id="triage-out" for="thr" aria-live="polite"></output>
+        <svg id="curve" viewBox="0 0 340 230" role="img"></svg>
+        <p id="triage-meta" class="muted small"></p>
+      </div>
+      <p id="triage-missing" class="muted" hidden data-i18n="triage_missing">Pas encore de résultats : lancez « make eval » (ou « make run ») pour calculer la courbe de tri.</p>
+    </section>
+
+    <section aria-labelledby="h-explain">
+      <h2 id="h-explain"><span class="step" aria-hidden="true">3</span><span data-i18n="h_explain">Explication</span></h2>
+      <div id="explain"></div>
+    </section>
+  </div>
+
+  <section aria-labelledby="h-ded">
+    <h2 id="h-ded"><span class="step" aria-hidden="true">4</span><span data-i18n="h_ded">Déductions à vérifier</span></h2>
+    <div class="ded">
+      <form id="profile">
+        <fieldset>
+          <legend data-i18n="fs_work">Activité</legend>
+          <label for="income_type" data-i18n="income_type">Revenu d'activité</label>
+          <select id="income_type" name="income_type">
+            <option value="employee" data-i18n="opt_employee">Salarié·e</option>
+            <option value="self_employed" data-i18n="opt_self">Indépendant·e</option>
+            <option value="none" data-i18n="opt_none">Sans revenu d'activité</option>
+          </select>
+          <label for="net_income" data-i18n="net_income">Revenu net d'activité (CHF/an, facultatif)</label>
+          <input id="net_income" name="net_income" type="number" min="0" step="100" inputmode="numeric">
+          <label class="check"><input type="checkbox" name="pension_fund" checked> <span data-i18n="pension_fund">Affilié·e à une caisse de pension (2e pilier)</span></label>
+          <label class="check"><input type="checkbox" name="pays_3a"> <span data-i18n="pays_3a">Je verse sur un pilier 3a</span></label>
+          <label class="check"><input type="checkbox" name="gap_3a_2025"> <span data-i18n="gap_3a_2025">Je n'ai pas versé le maximum 3a en 2025</span></label>
+          <label class="check"><input type="checkbox" name="lpp_buyin"> <span data-i18n="lpp_buyin">J'envisage un rachat dans ma caisse de pension</span></label>
+        </fieldset>
+        <fieldset>
+          <legend data-i18n="fs_commute">Trajets, repas, formation</legend>
+          <label for="commute_km" data-i18n="commute_km">Trajet domicile-travail (km, aller simple)</label>
+          <input id="commute_km" name="commute_km" type="number" min="0" step="1" inputmode="numeric">
+          <label for="commute_mode" data-i18n="commute_mode">Moyen de transport</label>
+          <select id="commute_mode" name="commute_mode">
+            <option value="public" data-i18n="opt_public">Transports publics</option>
+            <option value="car" data-i18n="opt_car">Voiture</option>
+            <option value="moto" data-i18n="opt_moto">Moto</option>
+            <option value="bike" data-i18n="opt_bike">Vélo, vélomoteur</option>
+          </select>
+          <label for="meals" data-i18n="meals">Repas de midi</label>
+          <select id="meals" name="meals">
+            <option value="none" data-i18n="opt_meals_none">À la maison</option>
+            <option value="out" data-i18n="opt_meals_out">À l'extérieur (travail)</option>
+            <option value="canteen" data-i18n="opt_meals_canteen">Cantine subventionnée</option>
+          </select>
+          <label class="check"><input type="checkbox" name="training"> <span data-i18n="training">Je paie moi-même une formation continue professionnelle</span></label>
+        </fieldset>
+        <fieldset>
+          <legend data-i18n="fs_family">Famille</legend>
+          <label class="check"><input type="checkbox" name="married"> <span data-i18n="married">Marié·e</span></label>
+          <label class="check"><input type="checkbox" name="both_earn"> <span data-i18n="both_earn">Les deux conjoints ont un revenu</span></label>
+          <label for="children" data-i18n="children">Enfants à charge</label>
+          <input id="children" name="children" type="number" min="0" max="20" step="1" value="0" inputmode="numeric">
+          <label class="check"><input type="checkbox" name="childcare"> <span data-i18n="childcare">Garde d'enfants payée à des tiers</span></label>
+        </fieldset>
+      </form>
+      <div>
+        <p id="ded-scope" class="muted small"></p>
+        <ul id="ded-list" class="ded-list" aria-live="polite"></ul>
+        <p id="ded-disclaimer" class="disclaimer small"></p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <p><span data-i18n="footer_models">Modèles : Apertus 1.5 8B (extraction, explication), LightOnOCR-3 (lecture), d1-3B (routage, validation), EmbeddingGemma 2 (recherche dans les guides).</span> <span id="mode"></span></p>
+  <p data-i18n="footer_note">Documents fictifs générés pour l'évaluation. Information générale, pas un conseil fiscal.</p>
+</footer>
+</body>
+</html>

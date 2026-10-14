@@ -1,0 +1,350 @@
+{
+  "tax_year": 2026,
+  "scope": {
+    "fr": "Impôt fédéral direct (IFD) et pilier 3a uniquement. Les montants cantonaux diffèrent : consultez le guide officiel de votre canton.",
+    "de": "Nur direkte Bundessteuer (DBST) und Säule 3a. Kantonale Beträge weichen ab: Konsultieren Sie die offizielle Wegleitung Ihres Kantons.",
+    "it": "Solo imposta federale diretta (IFD) e pilastro 3a. Gli importi cantonali sono diversi: consulti la guida ufficiale del suo Cantone."
+  },
+  "disclaimer": {
+    "fr": "Information générale tirée de sources officielles, pas un conseil fiscal personnalisé. Les montants indicatifs dépendent de vos réponses et d'hypothèses signalées.",
+    "de": "Allgemeine Information aus offiziellen Quellen, keine persönliche Steuerberatung. Richtbeträge hängen von Ihren Angaben und von gekennzeichneten Annahmen ab.",
+    "it": "Informazione generale tratta da fonti ufficiali, non una consulenza fiscale personalizzata. Gli importi indicativi dipendono dalle sue risposte e da ipotesi segnalate."
+  },
+  "sources": {
+    "estv_2_215": {
+      "title": "AFC/ESTV, circulaire 2-215-D-2025 du 11.09.2025 (montants IFD 2026)",
+      "url": "https://www.estv.admin.ch/dam/de/sd-web/vFK3ntWLQ4s4/2-215-D-2025-d.pdf",
+      "official": true,
+      "verification": "primary"
+    },
+    "lifd": {
+      "title": "LIFD/DBG (RS 642.11), Fedlex",
+      "url": "https://www.fedlex.admin.ch/eli/cc/1991/1184_1184_1184/fr",
+      "official": true,
+      "verification": "unverified"
+    },
+    "opp3": {
+      "title": "OPP 3/BVV 3 (RS 831.461.3), Fedlex",
+      "url": "https://www.fedlex.admin.ch/eli/cc/1985/1778_1778_1778/fr",
+      "official": true,
+      "verification": "unverified"
+    },
+    "ofas_3a": {
+      "title": "OFAS/BSV, 3e pilier (URL non vérifiée)",
+      "url": "https://www.bsv.admin.ch/fr/le-troisieme-pilier",
+      "official": true,
+      "verification": "unverified"
+    },
+    "ubs_3a": {
+      "title": "UBS, cotisation maximale 3a 2026 (source secondaire)",
+      "url": "https://www.ubs.com/ch/fr/help/pension/maximal-contribution-2026.html",
+      "official": false,
+      "verification": "secondary"
+    },
+    "zkb_3a_buyin": {
+      "title": "ZKB, Einkauf in die Säule 3a (source secondaire)",
+      "url": "https://www.zkb.ch/de/private/vorsorge/wissenswertes/einkauf-3a.html",
+      "official": false,
+      "verification": "secondary"
+    },
+    "bdo_3a_buyin": {
+      "title": "BDO, Einkäufe in die Säule 3a ab 2025 (source secondaire)",
+      "url": "https://www.bdo.ch/de-ch/publikationen/ab-2025-sind-einkaufe-in-die-saule-3a-moglich",
+      "official": false,
+      "verification": "secondary"
+    }
+  },
+  "profile": {
+    "income_type": ["employee", "self_employed", "none"],
+    "net_income": "number, CHF per year, optional",
+    "pension_fund": "bool",
+    "pays_3a": "bool",
+    "gap_3a_2025": "bool",
+    "lpp_buyin": "bool",
+    "commute_km": "number, one way, per working day",
+    "commute_mode": ["public", "car", "moto", "bike"],
+    "meals": ["none", "out", "canteen"],
+    "training": "bool",
+    "married": "bool",
+    "both_earn": "bool",
+    "children": "integer",
+    "childcare": "bool",
+    "contributes_2_3a": "derived: pension_fund or pays_3a"
+  },
+  "rules": [
+    {
+      "id": "pillar_3a_lpp",
+      "when": ["income_type!=none", "pension_fund"],
+      "title": {"fr": "Pilier 3a (avec caisse de pension)", "de": "Säule 3a (mit Pensionskasse)", "it": "Pilastro 3a (con cassa pensioni)"},
+      "amount": {"fr": "max. 7'258 CHF par an", "de": "max. CHF 7'258 pro Jahr", "it": "max. CHF 7'258 all'anno"},
+      "condition": {
+        "fr": "Revenu d'activité soumis à l'AVS et affiliation à une caisse de pension (2e pilier). Versement au plus tard le 31.12.2026.",
+        "de": "AHV-pflichtiges Erwerbseinkommen und Anschluss an eine Pensionskasse (2. Säule). Einzahlung bis spätestens 31.12.2026.",
+        "it": "Reddito da attività soggetto all'AVS e affiliazione a una cassa pensioni (2° pilastro). Versamento entro il 31.12.2026."
+      },
+      "legal_basis": {"fr": "LIFD art. 33 al. 1 let. e ; OPP 3 art. 7", "de": "DBG Art. 33 Abs. 1 Bst. e; BVV 3 Art. 7", "it": "LIFD art. 33 cpv. 1 lett. e; OPP 3 art. 7"},
+      "sources": ["ofas_3a", "opp3", "ubs_3a"],
+      "verification": "secondary",
+      "unverified_note": {
+        "fr": "Montant 2026 repris de sources secondaires (UBS, Zurich), pas encore relu dans une source officielle.",
+        "de": "Betrag 2026 aus Sekundärquellen (UBS, Zurich), noch nicht in einer offiziellen Quelle geprüft.",
+        "it": "Importo 2026 ripreso da fonti secondarie (UBS, Zurich), non ancora verificato in una fonte ufficiale."
+      }
+    },
+    {
+      "id": "pillar_3a_no_lpp",
+      "when": ["income_type!=none", "!pension_fund"],
+      "title": {"fr": "Pilier 3a (sans caisse de pension)", "de": "Säule 3a (ohne Pensionskasse)", "it": "Pilastro 3a (senza cassa pensioni)"},
+      "amount": {"fr": "20 % du revenu net d'activité, max. 36'288 CHF", "de": "20 % des Nettoerwerbseinkommens, max. CHF 36'288", "it": "20 % del reddito netto da attività, max. CHF 36'288"},
+      "condition": {
+        "fr": "Revenu d'activité soumis à l'AVS, sans caisse de pension (typiquement indépendant·e). Versement au plus tard le 31.12.2026.",
+        "de": "AHV-pflichtiges Erwerbseinkommen ohne Pensionskasse (typischerweise Selbständige). Einzahlung bis spätestens 31.12.2026.",
+        "it": "Reddito da attività soggetto all'AVS, senza cassa pensioni (tipicamente indipendenti). Versamento entro il 31.12.2026."
+      },
+      "legal_basis": {"fr": "LIFD art. 33 al. 1 let. e ; OPP 3 art. 7", "de": "DBG Art. 33 Abs. 1 Bst. e; BVV 3 Art. 7", "it": "LIFD art. 33 cpv. 1 lett. e; OPP 3 art. 7"},
+      "sources": ["ofas_3a", "opp3", "ubs_3a"],
+      "verification": "secondary",
+      "unverified_note": {
+        "fr": "Montant 2026 repris de sources secondaires (UBS, Zurich), pas encore relu dans une source officielle.",
+        "de": "Betrag 2026 aus Sekundärquellen (UBS, Zurich), noch nicht in einer offiziellen Quelle geprüft.",
+        "it": "Importo 2026 ripreso da fonti secondarie (UBS, Zurich), non ancora verificato in una fonte ufficiale."
+      },
+      "estimate": {"base": "net_income", "factors": [0.2], "max": 36288}
+    },
+    {
+      "id": "pillar_3a_buyin",
+      "when": ["income_type!=none", "gap_3a_2025"],
+      "title": {"fr": "Rachat 3a (années manquées depuis 2025)", "de": "Einkauf in die Säule 3a (Lücken ab 2025)", "it": "Riscatto 3a (lacune dal 2025)"},
+      "amount": {"fr": "max. 7'258 CHF par an, en plus de la cotisation ordinaire", "de": "max. CHF 7'258 pro Jahr, zusätzlich zum ordentlichen Beitrag", "it": "max. CHF 7'258 all'anno, in aggiunta al contributo ordinario"},
+      "condition": {
+        "fr": "Revenu soumis à l'AVS l'année de la lacune et l'année du rachat ; cotisation ordinaire 2026 d'abord versée en entier. Seules les lacunes dès 2025 sont rattrapables.",
+        "de": "AHV-pflichtiges Einkommen im Jahr der Lücke und im Jahr des Einkaufs; ordentlicher Beitrag 2026 zuerst vollständig einbezahlt. Nur Lücken ab 2025 können nachgeholt werden.",
+        "it": "Reddito soggetto all'AVS nell'anno della lacuna e nell'anno del riscatto; contributo ordinario 2026 versato prima per intero. Solo le lacune dal 2025 possono essere colmate."
+      },
+      "legal_basis": {"fr": "OPP 3 art. 7a (en vigueur depuis le 1.1.2025)", "de": "BVV 3 Art. 7a (in Kraft seit 1.1.2025)", "it": "OPP 3 art. 7a (in vigore dal 1.1.2025)"},
+      "sources": ["opp3", "zkb_3a_buyin", "bdo_3a_buyin"],
+      "verification": "secondary",
+      "unverified_note": {
+        "fr": "Sources secondaires concordantes (ZKB, BDO). Texte de l'OPP 3 (art. 7a) et rattrapage sur 10 ans non relus.",
+        "de": "Übereinstimmende Sekundärquellen (ZKB, BDO). Text der BVV 3 (Art. 7a) und 10-jährige Nachholfrist nicht geprüft.",
+        "it": "Fonti secondarie concordanti (ZKB, BDO). Testo dell'OPP 3 (art. 7a) e recupero su 10 anni non verificati."
+      }
+    },
+    {
+      "id": "commuting_public",
+      "when": ["income_type=employee", "commute_km>0", "commute_mode=public"],
+      "title": {"fr": "Frais de déplacement (transports publics)", "de": "Fahrkosten (öffentlicher Verkehr)", "it": "Spese di trasporto (mezzi pubblici)"},
+      "amount": {"fr": "frais effectifs, max. 3'300 CHF", "de": "effektive Kosten, max. CHF 3'300", "it": "costi effettivi, max. CHF 3'300"},
+      "condition": {"fr": "Trajet entre domicile et lieu de travail, activité salariée.", "de": "Arbeitsweg zwischen Wohn- und Arbeitsort, unselbständige Erwerbstätigkeit.", "it": "Tragitto tra domicilio e luogo di lavoro, attività dipendente."},
+      "legal_basis": {"fr": "LIFD art. 26 al. 1 let. a", "de": "DBG Art. 26 Abs. 1 Bst. a", "it": "LIFD art. 26 cpv. 1 lett. a"},
+      "sources": ["estv_2_215", "lifd"],
+      "verification": "primary"
+    },
+    {
+      "id": "commuting_car",
+      "when": ["income_type=employee", "commute_km>0", "commute_mode=car"],
+      "title": {"fr": "Frais de déplacement (voiture)", "de": "Fahrkosten (Auto)", "it": "Spese di trasporto (automobile)"},
+      "amount": {"fr": "0.75 CHF/km, max. 3'300 CHF", "de": "CHF 0.75/km, max. CHF 3'300", "it": "CHF 0.75/km, max. CHF 3'300"},
+      "condition": {"fr": "Trajet domicile-travail en véhicule privé, activité salariée.", "de": "Arbeitsweg mit privatem Fahrzeug, unselbständige Erwerbstätigkeit.", "it": "Tragitto casa-lavoro con veicolo privato, attività dipendente."},
+      "legal_basis": {"fr": "LIFD art. 26 al. 1 let. a", "de": "DBG Art. 26 Abs. 1 Bst. a", "it": "LIFD art. 26 cpv. 1 lett. a"},
+      "sources": ["estv_2_215", "lifd"],
+      "verification": "primary",
+      "unverified_note": {
+        "fr": "Montant indicatif calculé avec 2 trajets par jour et 220 jours de travail par an : hypothèse de calcul, non vérifiée.",
+        "de": "Richtbetrag mit 2 Fahrten pro Tag und 220 Arbeitstagen pro Jahr berechnet: Rechenannahme, nicht geprüft.",
+        "it": "Importo indicativo calcolato con 2 tragitti al giorno e 220 giorni lavorativi all'anno: ipotesi di calcolo, non verificata."
+      },
+      "estimate": {"base": "commute_km", "factors": [0.75, 2, 220], "max": 3300}
+    },
+    {
+      "id": "commuting_moto",
+      "when": ["income_type=employee", "commute_km>0", "commute_mode=moto"],
+      "title": {"fr": "Frais de déplacement (moto)", "de": "Fahrkosten (Motorrad)", "it": "Spese di trasporto (motocicletta)"},
+      "amount": {"fr": "0.40 CHF/km, max. 3'300 CHF", "de": "CHF 0.40/km, max. CHF 3'300", "it": "CHF 0.40/km, max. CHF 3'300"},
+      "condition": {"fr": "Trajet domicile-travail en moto, activité salariée.", "de": "Arbeitsweg mit dem Motorrad, unselbständige Erwerbstätigkeit.", "it": "Tragitto casa-lavoro in motocicletta, attività dipendente."},
+      "legal_basis": {"fr": "LIFD art. 26 al. 1 let. a", "de": "DBG Art. 26 Abs. 1 Bst. a", "it": "LIFD art. 26 cpv. 1 lett. a"},
+      "sources": ["estv_2_215", "lifd"],
+      "verification": "primary",
+      "unverified_note": {
+        "fr": "Montant indicatif calculé avec 2 trajets par jour et 220 jours de travail par an : hypothèse de calcul, non vérifiée.",
+        "de": "Richtbetrag mit 2 Fahrten pro Tag und 220 Arbeitstagen pro Jahr berechnet: Rechenannahme, nicht geprüft.",
+        "it": "Importo indicativo calcolato con 2 tragitti al giorno e 220 giorni lavorativi all'anno: ipotesi di calcolo, non verificata."
+      },
+      "estimate": {"base": "commute_km", "factors": [0.4, 2, 220], "max": 3300}
+    },
+    {
+      "id": "commuting_bike",
+      "when": ["income_type=employee", "commute_km>0", "commute_mode=bike"],
+      "title": {"fr": "Frais de déplacement (vélo, vélomoteur)", "de": "Fahrkosten (Velo, Motorfahrrad)", "it": "Spese di trasporto (bicicletta, ciclomotore)"},
+      "amount": {"fr": "forfait 700 CHF", "de": "Pauschale CHF 700", "it": "forfait CHF 700"},
+      "condition": {"fr": "Trajet domicile-travail à vélo ou en vélomoteur, activité salariée.", "de": "Arbeitsweg mit Velo oder Motorfahrrad, unselbständige Erwerbstätigkeit.", "it": "Tragitto casa-lavoro in bicicletta o ciclomotore, attività dipendente."},
+      "legal_basis": {"fr": "LIFD art. 26 al. 1 let. a", "de": "DBG Art. 26 Abs. 1 Bst. a", "it": "LIFD art. 26 cpv. 1 lett. a"},
+      "sources": ["estv_2_215", "lifd"],
+      "verification": "primary",
+      "estimate": {"fixed": 700}
+    },
+    {
+      "id": "professional_flat",
+      "when": ["income_type=employee"],
+      "title": {"fr": "Autres frais professionnels (forfait)", "de": "Übrige Berufskosten (Pauschale)", "it": "Altre spese professionali (forfait)"},
+      "amount": {"fr": "3 % du salaire net, min. 2'000, max. 4'000 CHF", "de": "3 % des Nettolohns, min. CHF 2'000, max. CHF 4'000", "it": "3 % del salario netto, min. CHF 2'000, max. CHF 4'000"},
+      "condition": {"fr": "Activité salariée. Alternative : frais effectifs plus élevés, avec justificatifs.", "de": "Unselbständige Erwerbstätigkeit. Alternative: höhere, belegte effektive Kosten.", "it": "Attività dipendente. Alternativa: costi effettivi più elevati, giustificati."},
+      "legal_basis": {"fr": "LIFD art. 26 al. 1 let. c", "de": "DBG Art. 26 Abs. 1 Bst. c", "it": "LIFD art. 26 cpv. 1 lett. c"},
+      "sources": ["estv_2_215", "lifd"],
+      "verification": "primary",
+      "estimate": {"base": "net_income", "factors": [0.03], "min": 2000, "max": 4000}
+    },
+    {
+      "id": "meals_out",
+      "when": ["income_type=employee", "meals=out"],
+      "title": {"fr": "Repas hors domicile", "de": "Mehrkosten für auswärtige Verpflegung", "it": "Pasti fuori casa"},
+      "amount": {"fr": "15 CHF par jour, max. 3'200 CHF par an", "de": "CHF 15 pro Tag, max. CHF 3'200 pro Jahr", "it": "CHF 15 al giorno, max. CHF 3'200 all'anno"},
+      "condition": {"fr": "Activité salariée, repas de midi pris à l'extérieur pour raisons professionnelles.", "de": "Unselbständige Erwerbstätigkeit, Mittagessen beruflich bedingt auswärts.", "it": "Attività dipendente, pranzo fuori casa per motivi professionali."},
+      "legal_basis": {"fr": "LIFD art. 26 al. 1 let. b", "de": "DBG Art. 26 Abs. 1 Bst. b", "it": "LIFD art. 26 cpv. 1 lett. b"},
+      "sources": ["estv_2_215", "lifd"],
+      "verification": "primary"
+    },
+    {
+      "id": "meals_canteen",
+      "when": ["income_type=employee", "meals=canteen"],
+      "title": {"fr": "Repas hors domicile (cantine subventionnée)", "de": "Auswärtige Verpflegung (verbilligte Kantine)", "it": "Pasti fuori casa (mensa sovvenzionata)"},
+      "amount": {"fr": "7.50 CHF par jour, max. 1'600 CHF par an", "de": "CHF 7.50 pro Tag, max. CHF 1'600 pro Jahr", "it": "CHF 7.50 al giorno, max. CHF 1'600 all'anno"},
+      "condition": {"fr": "Activité salariée, repas pris dans une cantine subventionnée par l'employeur.", "de": "Unselbständige Erwerbstätigkeit, Verpflegung in einer vom Arbeitgeber verbilligten Kantine.", "it": "Attività dipendente, pasti in una mensa sovvenzionata dal datore di lavoro."},
+      "legal_basis": {"fr": "LIFD art. 26 al. 1 let. b", "de": "DBG Art. 26 Abs. 1 Bst. b", "it": "LIFD art. 26 cpv. 1 lett. b"},
+      "sources": ["estv_2_215", "lifd"],
+      "verification": "primary"
+    },
+    {
+      "id": "training",
+      "when": ["training"],
+      "title": {"fr": "Formation et perfectionnement à des fins professionnelles", "de": "Berufsorientierte Aus- und Weiterbildung", "it": "Formazione e perfezionamento professionali"},
+      "amount": {"fr": "frais effectifs, max. 13'000 CHF", "de": "effektive Kosten, max. CHF 13'000", "it": "costi effettivi, max. CHF 13'000"},
+      "condition": {
+        "fr": "Frais payés soi-même. Seulement après un premier diplôme du degré secondaire II ou dès 20 ans ; la formation initiale n'est pas déductible.",
+        "de": "Selbst bezahlte Kosten. Erst nach einem ersten Abschluss auf Sekundarstufe II oder ab 20 Jahren; die Erstausbildung ist nicht abziehbar.",
+        "it": "Costi pagati personalmente. Solo dopo un primo diploma di livello secondario II o dai 20 anni; la formazione iniziale non è deducibile."
+      },
+      "legal_basis": {"fr": "LIFD art. 33 al. 1 let. j", "de": "DBG Art. 33 Abs. 1 Bst. j", "it": "LIFD art. 33 cpv. 1 lett. j"},
+      "sources": ["estv_2_215", "lifd"],
+      "verification": "primary",
+      "unverified_note": {
+        "fr": "Montant vérifié (circulaire AFC) ; condition d'âge et de diplôme non relue dans la loi.",
+        "de": "Betrag geprüft (ESTV-Kreisschreiben); Alters- und Abschlussbedingung nicht im Gesetz geprüft.",
+        "it": "Importo verificato (circolare AFC); condizione di età e di diploma non verificata nella legge."
+      }
+    },
+    {
+      "id": "insurance_single_with",
+      "when": ["!married", "contributes_2_3a"],
+      "title": {"fr": "Primes d'assurance et intérêts de capitaux d'épargne", "de": "Versicherungsprämien und Zinsen von Sparkapitalien", "it": "Premi assicurativi e interessi di capitali a risparmio"},
+      "amount": {"fr": "max. 1'800 CHF (personne seule avec 2e pilier ou 3a), +700 CHF par enfant", "de": "max. CHF 1'800 (Alleinstehende mit 2. Säule oder 3a), +CHF 700 pro Kind", "it": "max. CHF 1'800 (persona sola con 2° pilastro o 3a), +CHF 700 per figlio"},
+      "condition": {"fr": "Primes maladie, accident et vie, intérêts d'épargne. Le plafond est souvent déjà atteint par les seules primes LAMal.", "de": "Kranken-, Unfall- und Lebensversicherungsprämien, Sparzinsen. Die Obergrenze wird oft schon mit den KVG-Prämien erreicht.", "it": "Premi malattia, infortuni e vita, interessi di risparmio. Il limite è spesso già raggiunto con i soli premi LAMal."},
+      "legal_basis": {"fr": "LIFD art. 33 al. 1 let. g et al. 1bis", "de": "DBG Art. 33 Abs. 1 Bst. g und Abs. 1bis", "it": "LIFD art. 33 cpv. 1 lett. g e cpv. 1bis"},
+      "sources": ["estv_2_215", "lifd"],
+      "verification": "primary",
+      "estimate": {"fixed": 1800, "base": "children", "factors": [700]}
+    },
+    {
+      "id": "insurance_single_without",
+      "when": ["!married", "!contributes_2_3a"],
+      "title": {"fr": "Primes d'assurance et intérêts de capitaux d'épargne", "de": "Versicherungsprämien und Zinsen von Sparkapitalien", "it": "Premi assicurativi e interessi di capitali a risparmio"},
+      "amount": {"fr": "max. 2'700 CHF (personne seule sans 2e pilier ni 3a), +700 CHF par enfant", "de": "max. CHF 2'700 (Alleinstehende ohne 2. Säule und 3a), +CHF 700 pro Kind", "it": "max. CHF 2'700 (persona sola senza 2° pilastro né 3a), +CHF 700 per figlio"},
+      "condition": {"fr": "Primes maladie, accident et vie, intérêts d'épargne.", "de": "Kranken-, Unfall- und Lebensversicherungsprämien, Sparzinsen.", "it": "Premi malattia, infortuni e vita, interessi di risparmio."},
+      "legal_basis": {"fr": "LIFD art. 33 al. 1 let. g et al. 1bis", "de": "DBG Art. 33 Abs. 1 Bst. g und Abs. 1bis", "it": "LIFD art. 33 cpv. 1 lett. g e cpv. 1bis"},
+      "sources": ["estv_2_215", "lifd"],
+      "verification": "primary",
+      "estimate": {"fixed": 2700, "base": "children", "factors": [700]}
+    },
+    {
+      "id": "insurance_married_with",
+      "when": ["married", "contributes_2_3a"],
+      "title": {"fr": "Primes d'assurance et intérêts de capitaux d'épargne", "de": "Versicherungsprämien und Zinsen von Sparkapitalien", "it": "Premi assicurativi e interessi di capitali a risparmio"},
+      "amount": {"fr": "max. 3'700 CHF (couple marié avec 2e pilier ou 3a), +700 CHF par enfant", "de": "max. CHF 3'700 (Ehepaar mit 2. Säule oder 3a), +CHF 700 pro Kind", "it": "max. CHF 3'700 (coniugi con 2° pilastro o 3a), +CHF 700 per figlio"},
+      "condition": {"fr": "Primes maladie, accident et vie, intérêts d'épargne.", "de": "Kranken-, Unfall- und Lebensversicherungsprämien, Sparzinsen.", "it": "Premi malattia, infortuni e vita, interessi di risparmio."},
+      "legal_basis": {"fr": "LIFD art. 33 al. 1 let. g et al. 1bis", "de": "DBG Art. 33 Abs. 1 Bst. g und Abs. 1bis", "it": "LIFD art. 33 cpv. 1 lett. g e cpv. 1bis"},
+      "sources": ["estv_2_215", "lifd"],
+      "verification": "primary",
+      "estimate": {"fixed": 3700, "base": "children", "factors": [700]}
+    },
+    {
+      "id": "insurance_married_without",
+      "when": ["married", "!contributes_2_3a"],
+      "title": {"fr": "Primes d'assurance et intérêts de capitaux d'épargne", "de": "Versicherungsprämien und Zinsen von Sparkapitalien", "it": "Premi assicurativi e interessi di capitali a risparmio"},
+      "amount": {"fr": "max. 5'550 CHF (couple marié sans 2e pilier ni 3a), +700 CHF par enfant", "de": "max. CHF 5'550 (Ehepaar ohne 2. Säule und 3a), +CHF 700 pro Kind", "it": "max. CHF 5'550 (coniugi senza 2° pilastro né 3a), +CHF 700 per figlio"},
+      "condition": {"fr": "Primes maladie, accident et vie, intérêts d'épargne.", "de": "Kranken-, Unfall- und Lebensversicherungsprämien, Sparzinsen.", "it": "Premi malattia, infortuni e vita, interessi di risparmio."},
+      "legal_basis": {"fr": "LIFD art. 33 al. 1 let. g et al. 1bis", "de": "DBG Art. 33 Abs. 1 Bst. g und Abs. 1bis", "it": "LIFD art. 33 cpv. 1 lett. g e cpv. 1bis"},
+      "sources": ["estv_2_215", "lifd"],
+      "verification": "primary",
+      "estimate": {"fixed": 5550, "base": "children", "factors": [700]}
+    },
+    {
+      "id": "child",
+      "when": ["children>0"],
+      "title": {"fr": "Déduction pour enfant", "de": "Kinderabzug", "it": "Deduzione per figli"},
+      "amount": {"fr": "6'800 CHF par enfant ; en plus, réduction de 263 CHF par enfant sur le montant de l'impôt", "de": "CHF 6'800 pro Kind; zusätzlich Ermässigung von CHF 263 pro Kind auf dem Steuerbetrag", "it": "CHF 6'800 per figlio; inoltre riduzione di CHF 263 per figlio sull'importo dell'imposta"},
+      "condition": {"fr": "Enfant à votre charge (mineur, ou en formation).", "de": "Kind, für dessen Unterhalt Sie sorgen (minderjährig oder in Ausbildung).", "it": "Figlio a suo carico (minorenne o in formazione)."},
+      "legal_basis": {"fr": "LIFD art. 35 al. 1 let. a ; art. 36 al. 2bis", "de": "DBG Art. 35 Abs. 1 Bst. a; Art. 36 Abs. 2bis", "it": "LIFD art. 35 cpv. 1 lett. a; art. 36 cpv. 2bis"},
+      "sources": ["estv_2_215", "lifd"],
+      "verification": "primary",
+      "estimate": {"base": "children", "factors": [6800]}
+    },
+    {
+      "id": "childcare",
+      "when": ["children>0", "childcare"],
+      "title": {"fr": "Frais de garde des enfants par des tiers", "de": "Kinderdrittbetreuungskosten", "it": "Spese per la cura dei figli da parte di terzi"},
+      "amount": {"fr": "frais effectifs, max. 25'800 CHF par enfant", "de": "effektive Kosten, max. CHF 25'800 pro Kind", "it": "costi effettivi, max. CHF 25'800 per figlio"},
+      "condition": {
+        "fr": "Enfant de moins de 14 ans vivant dans le ménage ; frais liés au travail, à la formation ou à l'incapacité de gain du parent.",
+        "de": "Kind unter 14 Jahren im gleichen Haushalt; Kosten wegen Erwerbstätigkeit, Ausbildung oder Erwerbsunfähigkeit des Elternteils.",
+        "it": "Figlio di meno di 14 anni nella stessa economia domestica; costi legati al lavoro, alla formazione o all'incapacità di guadagno del genitore."
+      },
+      "legal_basis": {"fr": "LIFD art. 33 al. 3", "de": "DBG Art. 33 Abs. 3", "it": "LIFD art. 33 cpv. 3"},
+      "sources": ["estv_2_215", "lifd"],
+      "verification": "primary",
+      "unverified_note": {
+        "fr": "Montant vérifié (circulaire AFC) ; conditions (âge, ménage, motif) non relues dans la loi.",
+        "de": "Betrag geprüft (ESTV-Kreisschreiben); Bedingungen (Alter, Haushalt, Grund) nicht im Gesetz geprüft.",
+        "it": "Importo verificato (circolare AFC); condizioni (età, economia domestica, motivo) non verificate nella legge."
+      }
+    },
+    {
+      "id": "dual_income",
+      "when": ["married", "both_earn"],
+      "title": {"fr": "Déduction pour double revenu", "de": "Zweiverdienerabzug", "it": "Deduzione per doppio reddito"},
+      "amount": {"fr": "50 % du revenu le plus bas, min. 8'600, max. 14'100 CHF", "de": "50 % des niedrigeren Einkommens, min. CHF 8'600, max. CHF 14'100", "it": "50 % del reddito più basso, min. CHF 8'600, max. CHF 14'100"},
+      "condition": {"fr": "Couple marié dont les deux conjoints ont un revenu d'activité.", "de": "Ehepaar, bei dem beide ein Erwerbseinkommen haben.", "it": "Coniugi che hanno entrambi un reddito da attività."},
+      "legal_basis": {"fr": "LIFD art. 33 al. 2", "de": "DBG Art. 33 Abs. 2", "it": "LIFD art. 33 cpv. 2"},
+      "sources": ["estv_2_215", "lifd"],
+      "verification": "primary"
+    },
+    {
+      "id": "married",
+      "when": ["married"],
+      "title": {"fr": "Déduction pour couple marié", "de": "Verheiratetenabzug", "it": "Deduzione per coniugi"},
+      "amount": {"fr": "2'800 CHF", "de": "CHF 2'800", "it": "CHF 2'800"},
+      "condition": {"fr": "Couple marié vivant en ménage commun.", "de": "Verheiratete, die in ungetrennter Ehe leben.", "it": "Coniugi che vivono in comunione domestica."},
+      "legal_basis": {"fr": "LIFD art. 35 al. 1 let. c", "de": "DBG Art. 35 Abs. 1 Bst. c", "it": "LIFD art. 35 cpv. 1 lett. c"},
+      "sources": ["estv_2_215", "lifd"],
+      "verification": "primary"
+    },
+    {
+      "id": "lpp_buyin",
+      "when": ["pension_fund", "lpp_buyin"],
+      "title": {"fr": "Rachat dans la caisse de pension (2e pilier)", "de": "Einkauf in die Pensionskasse (2. Säule)", "it": "Riscatto nella cassa pensioni (2° pilastro)"},
+      "amount": {"fr": "montant du rachat, entièrement déductible", "de": "Einkaufsbetrag, vollständig abziehbar", "it": "importo del riscatto, interamente deducibile"},
+      "condition": {
+        "fr": "Rachat possible selon le certificat de prévoyance. Pas de retrait en capital pendant 3 ans après un rachat.",
+        "de": "Einkauf gemäss Vorsorgeausweis möglich. Keine Kapitalauszahlung während 3 Jahren nach einem Einkauf.",
+        "it": "Riscatto possibile secondo il certificato di previdenza. Nessun prelievo di capitale per 3 anni dopo un riscatto."
+      },
+      "legal_basis": {"fr": "LIFD art. 33 al. 1 let. d ; LPP art. 79b al. 3", "de": "DBG Art. 33 Abs. 1 Bst. d; BVG Art. 79b Abs. 3", "it": "LIFD art. 33 cpv. 1 lett. d; LPP art. 79b cpv. 3"},
+      "sources": ["lifd"],
+      "verification": "unverified",
+      "unverified_note": {
+        "fr": "Règle connue, non relue dans le texte de la LIFD et de la LPP (art. 79b al. 3 à relire).",
+        "de": "Bekannte Regel, im Text von DBG und BVG nicht geprüft (Art. 79b Abs. 3 BVG zu prüfen).",
+        "it": "Regola nota, non verificata nel testo della LIFD e della LPP (art. 79b cpv. 3 da verificare)."
+      }
+    }
+  ]
+}

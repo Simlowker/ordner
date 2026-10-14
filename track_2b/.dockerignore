@@ -1,0 +1,10 @@
+# Build context = track_2b/. Only src/ and data/ are copied into the image.
+work/
+.venv/
+**/__pycache__/
+**/*.py[cod]
+data/results/
+.env
+.env.*
+.git
+**/.DS_Store
