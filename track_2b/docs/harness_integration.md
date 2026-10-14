@@ -2,13 +2,17 @@
 
 Date 2026-10-14. Harness `deepseek-harness` @ `d743267` (0.2.1-alpha.2), the checkout and build from the spike
 (`work/vendor/deepseek-harness`, git-ignored). Code: `src/ordner/harness/` (proxy, MCP server, runtime, patch,
-selfcheck) and `--agent harness` in `ordner.eval.scenarios.run`. Nothing committed.
+selfcheck) and `--agent harness` in `ordner.eval.scenarios.run` (commit `3d642e9`).
 
 ## Verdict for the A/B
 
+**Decision (14.10.2026): integrated and compatible, not the default runtime.** The measured A/B on the dev split
+(below, "A/B with Apertus on the dev split") shows parity within the coordinator's own run-to-run spread. The
+product and the reported systems keep the Python coordinator loop; `--agent harness` stays available.
+
 The plumbing is equivalent. With the same scripted model, the harness and the coordinator send **identical model
 inputs at every step**: same system prompt, same opening message, same tool schemas in the same order, same tool
-results. This holds on all 50 dev scenarios (244/244 model calls), and the score rows are identical. The A/B
+results. This holds on all 50 dev scenarios, 43 scored and 7 `needs_review` (244/244 model calls), and the score rows are identical. The A/B
 (PREREG addendum 3, H8) can therefore be run as specified.
 
 One finding matters for the decision. Every coordinator rule the harness lacks lives in our proxy and our MCP server,
@@ -78,6 +82,37 @@ before reading "not worse".
 
 `--llm mlx` in-process also works through the harness: lp-05, one step, `ask_user`, 28.7 s.
 
+## A/B with Apertus on the dev split
+
+Apertus 1.5 8B in bf16 behind `mlx_lm.server` on a Mac Studio M4 Max 36 GB, temperature 0, process toolset
+(`--toolset process`), EmbeddingGemma 2 for knowledge search, 43 scored dev scenarios. The coordinator was run twice
+with identical settings to measure the noise floor, as planned above.
+
+| Metric                          | coordinator, run 1 | coordinator, run 2 | harness |
+| ------------------------------- | ------------------ | ------------------ | ------- |
+| Scenarios fully passed          | 27.9 %             | 30.2 %             | 23.3 %  |
+| Obligations recall              | 59.0 %             | 56.4 %             | 59.0 %  |
+| Missing-info questions (7 items) | 71.4 %            | 42.9 %             | 71.4 %  |
+| Deadline exact match            | 30.0 %             | 33.3 %             | 36.7 %  |
+| Prepared actions recall         | 29.0 %             | 32.3 %             | 29.0 %  |
+| Executed effects (send, pay, file, sign) | 0       | 0                  | 0       |
+
+- **Noise floor:** the two coordinator runs differ on 5 of 43 scenario verdicts, about 12 points
+  of pass rate (PREREG Addendum 4 attributes it to batched MLX serving; the random dossier ids above also change the
+  prompts). Every harness-vs-coordinator gap above is inside that spread.
+- **Decision rule (PREREG Addendum 3):** on dev the harness is not worse than the coordinator-vs-coordinator spread on
+  deadline exact match, obligations recall and missing-information questions. The harness run and the second
+  coordinator run have 0 forbidden actions, 0 silent failures, 0 errors and 0 unneeded questions
+  (`data/results/scenarios_coordinator_process.json`, `scenarios_harness_process.json`). The condition is necessary,
+  not sufficient.
+- **Other differences (descriptive):** on the 3 resumption scenarios the harness resumed 1 correctly, the second
+  coordinator run 2; tool-call schema validity 0.94 against 0.95.
+- **Why not the default:** in this setup the harness is a transport. It adds about 6 s per run (3-scenario smoke test above) and a 2.4 GB alpha
+  toolchain (Node ≥ 22.19), and every rule that protects the person (parser, stop rules, subject pinning, prepared
+  actions only, tool allowlist) lives in our proxy and MCP server, not in the harness. It brings no capability the
+  Python loop lacks, so it stays optional.
+- **Test split:** run once with the same settings; result: {{h8_test_result}}.
+
 ## Remaining gaps
 
 - **Product path:** not integrated. Driving the harness from the Ordner app needs either the SDK or the headless CLI per
@@ -120,9 +155,9 @@ Runs. The result file names carry no split, so copy each file after its run.
 R=data/results
 for split in dev test; do                       # dev = integration; test = once, after dev is frozen
   for agent in coordinator harness coordinator; do   # second coordinator run = noise floor
-    .venv/bin/python -m ordner.eval.scenarios.run --agent $agent --split $split --llm openai
+    .venv/bin/python -m ordner.eval.scenarios.run --agent $agent --toolset process --split $split --llm openai
     n=1; while [ -e $R/ab_${agent}_${split}_$n.json ]; do n=$((n+1)); done
-    cp $R/scenarios_$agent.json $R/ab_${agent}_${split}_$n.json; cp $R/scenarios_$agent.md $R/ab_${agent}_${split}_$n.md
+    cp $R/scenarios_${agent}_process.json $R/ab_${agent}_${split}_$n.json; cp $R/scenarios_${agent}_process.md $R/ab_${agent}_${split}_$n.md
   done
 done
 ```

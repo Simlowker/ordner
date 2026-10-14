@@ -1,6 +1,7 @@
 # Ordner architecture (hackathon build, 14-15.10.2026)
 
-Vision: `hack-apertus/docs/vision/` (private QG). This file is the shared map for every parallel workstream.
+Product, results and how to run: `README.md` and `technical_report.md`. This file is the shared map for every parallel
+workstream.
 Contracts: `src/ordner/core/schema.py` (do not change without the coordinator).
 
 | Module | Owner | Responsibility |
@@ -8,11 +9,13 @@ Contracts: `src/ordner/core/schema.py` (do not change without the coordinator).
 | `ordner.case` | W1 | Durable local dossier (SQLite, `ORDNER_HOME`, default `~/.ordner`): subjects, documents, facts with provenance and status, cases (procedure instances) with states, actions, deadlines, append-only event log, resume |
 | `ordner.procedures` | W2 | Catalogue of `ProcedureCard`s as JSON in `procedures/cards/`, loader, validator; every source quote verified verbatim |
 | `ordner.rules` | W3 | Applicability evaluation (declarative conditions), deadline rules (cantonal tables, LP holidays, reception-by dates), reminders, `.ics` export |
-| `ordner.tools` | W4 | Tool registry (`ToolSpec` + implementation) wrapping the other modules: document.read/decode, knowledge.search, decision.score, expert.run, rules.evaluate, case.load/record, schedule.plan, receipt.verify |
-| `ordner.agent` | W5 | Apertus coordinator loop over the tool registry (OpenAI-compatible tool calls; local server), DeepSeek Harness spike |
+| `ordner.tools` | W4 | Tool registry (`ToolSpec` + implementation) wrapping the other modules: 16 tools, 11 generic (document.read/decode, knowledge.search, decision.score, expert.run, rules.evaluate, dossier.check, schedule.plan, case.load/record, receipt.verify) and 5 process tools (`tools/processes/`: piece.recevoir, impots.preparer_declaration, lamal.revoir_franchise, poursuite.repondre, demenagement.annoncer) |
+| `ordner.agent` | W5 | Apertus coordinator loop over the tool registry (Apertus tool-call syntax parsed exactly; local OpenAI-compatible server or in-process MLX) |
+| `ordner.harness` | W10 | DeepSeek Harness as an optional runtime for the same loop: MCP server over the coordinator's dispatch, Apertus tool-call proxy, fail-closed tool allowlist (`docs/harness_integration.md`) |
+| `ordner.distill` | — | Distillation: dev-scenario variants, teacher runner (same loop), strict filter, training data in Apertus syntax, QLoRA training |
 | `ordner.connectors` | W6 | Local-first inputs/outputs: watched inbox, PDF share, eCH-0196, QR-bill, camt.053, OFSP premiums + LAMal comparator, email drafts (.eml, never sent) |
 | `ordner.app` | W7 | Cockpit UI (home: urgent, missing documents, next step; cases; timeline; coverage map) on top of the existing console |
-| `ordner.eval.scenarios` | W8 | Scenario suite and metrics for the coordinator (obligations found/missed, wrong triggers, deadlines, schema validity) |
+| `ordner.eval.scenarios` | W8 | Scenario suite and metrics (obligations found/missed, wrong triggers, questions, deadlines, actions, forbidden actions, schema validity); agents `rules_only`, `coordinator`, `hybrid`, `harness` |
 | existing | — | `gen/`, `models/`, `finetune/`, `eval/` (measured eCH-0196 core), `explain/` |
 
 Rules for every workstream: no network at runtime except explicit connectors; nothing is sent, filed, signed or paid
@@ -86,6 +89,7 @@ Self-check: `python -m ordner.case.selfcheck`. Demo persona: `python -m ordner.c
 | `add_document` | same `subject_id` + `sha256` (callers must use the returned `id`, it may differ from the one passed) |
 | `open_case` | same subject + `card_id` + `period` while the case is not `closed` |
 | `add_action` | same case + `kind` + `payload` while pending (`prepared`/`validated`/`done_by_user`) |
+| `add_action` (payment) | double-payment guard: a pending payment of the same case and amount is returned (same case and amount, not a bill identity); a concrete payment cancels the case's generic payment step prepared by the rules engine (event `action_cancelled`) |
 | `add_deadline` | same case + `rule_id` + `due` (active or done). Same rule with another date = recomputation: the active one becomes `superseded` (event `deadline_superseded`) |
 | `set_state` / `set_missing` | same value: no-op |
 
@@ -127,7 +131,7 @@ Self-check: `python -m ordner.tools.selfcheck` (replay, no model, temporary doss
 
 | ctx key | Effect |
 |---|---|
-| `mode` | `replay` (default): cached model outputs from `work/` (OCR `ocr.*.jsonl`, Apertus `extract.*.jsonl`, d1 `route.jsonl`), labelled fallbacks (rule-based extraction, heuristics) otherwise. `live`: LightOnOCR-3, d1-3B, EmbeddingGemma 2, Apertus are loaded/called |
+| `mode` | `replay` (default): cached model outputs from `work/` (OCR `ocr.*.jsonl`, Apertus `extract.*.jsonl`, d1 `route.jsonl`), labelled fallbacks (rule-based extraction, heuristics) otherwise. `live`: LightOnOCR-3, d1-3B, EmbeddingGemma 2, Apertus are loaded on demand and called (not all at once on a 36 GB Mac) |
 | `store`, `subject_id` | Dossier session: `subject_id` args are forced to it, `doc_...` ids resolve through the store (other subjects refused), file paths outside `track_2b/` refused |
 | `actor` | `model` (default) or `user`: `confirm_fact`/`reject_fact` and `result_verified` without proof are refused to the model (the coordinator also hides these ops from the schema it shows) |
 | `llm_url`, `llm_model` / `apertus_mlx` | `expert.run` live: OpenAI-compatible endpoint (warning if not localhost) / in-process MLX (`True` or adapter path) |
@@ -140,9 +144,59 @@ no card: totals per measure, `final`/`provisional`/`incomplete`).
 
 `knowledge.search` indexes the corpus plus the verified quotes of every procedure card; with a dossier in ctx it defaults to
 the subject's canton (+ federal) and language, and boosts the cards of the open cases (or `card_id`).
-It ranks with EmbeddingGemma 2 in `live` mode and BM25 in `replay` mode. On 2 × 36 everyday questions (`python -m ordner.eval.retrieval`, `data/retrieval/`) the right card's source is in the top 3 for 53 % / 39 % of questions with BM25, 81 % / 78 % with EmbeddingGemma 2 and 61 % / 50 % with their RRF fusion, which was therefore dropped: on cross-lingual questions BM25 ranks same-language distractors first (held-out set: 5 % BM25, 70 % embedding, 15 % fusion).
+It ranks with EmbeddingGemma 2 in `live` mode or with `ORDNER_EMBED=1` (every scenario run since 14.10 17:00); BM25 is only the fallback when the weights are absent (Docker replay). On 2 × 36 everyday questions (`python -m ordner.eval.retrieval`, `data/retrieval/`) the right card's source is in the top 3 for 80.6 % / 77.8 % of questions with EmbeddingGemma 2, 52.8 % / 38.9 % with BM25 and 61.1 % / 50.0 % with their RRF fusion, which was therefore dropped: on cross-lingual questions BM25 ranks same-language distractors first (held-out cross-lingual: 70 % embedding, 5 % BM25, 15 % fusion).
 `ordner.rules.payment_check` (phishing guard) runs in the coordinator on every document read and every prepared payment.
 
 No tool has `side_effect=True`: none sends, files or pays; `case.record` writes the local dossier only and actions are
 prepared by the coordinator. `receipt.verify` is `established` only with a proof event (action moved to `verified` by
 the person or a connector, or a `receipt_recorded`/`decision_received`/`payment_confirmed` event), else `unknown`.
+
+## Agent architecture (measured)
+
+**Rules first, Apertus second, same dossier.** The deterministic rules engine runs first: from confirmed facts and
+known events it opens the applicable cases, computes the deadlines it can prove and prepares the card steps. The
+Apertus coordinator then works on the same dossier for what rules cannot do: read free text and documents, ask the
+person for missing information (`ask_user`), explain, and prepare concrete actions (`prepare_action`). It sees the rules'
+cases through `case.load`. In the scenario suite this is the `hybrid` agent (`eval/scenarios/agents.py`: rules output +
+coordinator output, merged); in the console, the deterministic review runs on the dossier and « Demander à Ordner » calls
+the coordinator on it (the console currently exposes all 16 registry tools, not the evaluated process toolset).
+
+**Toolsets.** 16 tools are registered (`len(registry.SPECS)`), 11 generic and 5 process tools; the loop adds `ask_user`
+and `prepare_action`. `--toolset base` shows the 11 generic tools; `--toolset process` shows the 5 process tools plus
+`knowledge.search`, `rules.evaluate`, `case.load` and `case.record` (9); `both` shows all 16. Same system prompt in
+every toolset.
+
+**Dev results** (43 scored dev scenarios; Apertus 1.5 8B bf16 behind `mlx_lm.server`, temperature 0; EmbeddingGemma 2
+for knowledge search; test split not yet run):
+
+| System                                           | Pass    | Obligations | Missing info (7 items) | Deadlines exact | Actions |
+| ------------------------------------------------ | ------- | ----------- | ---------------------- | --------------- | ------- |
+| `rules_only` (no model)                          | 46.5 %  | 76.9 %      | 0 %                    | 50.0 %          | 77.4 %  |
+| `coordinator --toolset base`                     | 14.0 %  | 33.3 %      | 42.9 %                 | 10.0 %          | 9.7 %   |
+| `coordinator --toolset process`, run 1 / run 2   | 27.9 / 30.2 % | 59.0 / 56.4 % | 71.4 / 42.9 %   | 30.0 / 33.3 %   | 29.0 / 32.3 % |
+| `harness --toolset process`                      | 23.3 %  | 59.0 %      | 71.4 %                 | 36.7 %          | 29.0 %  |
+| `hybrid --toolset process`                       | 53.5 %  | 79.5 %      | 71.4 %                 | 53.3 %          | 80.6 %  |
+
+- `rules_only` and `hybrid` trigger none of the 12 traps (precision is computed on traps only). No configuration
+  executed an effect (send, pay, file, sign). Metrics are recall-oriented: extra procedures and dates are not
+  penalised outside the traps, which favours the `hybrid` (union of two outputs); its gain over `rules_only`
+  (+3 scenarios; +5 questions, +1 obligation, +1 deadline, +1 action) is within noise.
+- Two identical `coordinator --toolset process` runs differ on 5 of 43 verdicts: read dev gaps
+  under ~12 points of pass rate as noise.
+- Scoring credits obligations and deadlines found in tool results; process tools return code-computed deadlines, so
+  process vs base measures whether the model calls the right tool with the right arguments.
+- The hybrid was defined after these dev results; on test it is reported as exploratory (PREREG Addendum 4).
+
+**Double-payment guard.** On dev, in 2 scenarios (`inst-02`, `serafe-02`, a bill received by e-mail and by post) the
+hybrid ended with two prepared payments: the rules engine's generic payment step and the coordinator's concrete payment
+(2 forbidden actions, none executed). `Store.add_action` now cancels the case's generic payment step when a concrete
+payment arrives, and returns the pending payment of the same case and amount instead of adding a second one (commit
+`4245539`). The guard applies to every agent; the hybrid is being re-measured. Note for the re-run: the scorer unions
+the dossier read-back with the agents' outputs and `_matches` (`eval/scenarios/run.py`) does not look at the action
+status, so a cancelled generic step may still be counted.
+
+**Runtime.** DeepSeek Harness runs the same loop (MCP server over the coordinator's dispatch, proxy reusing our parser)
+and reaches parity within the run-to-run spread (pass 23.3 % against 27.9 / 30.2 %, obligations 59.0 % against
+59.0 / 56.4 %, deadlines 36.7 % against 30.0 / 33.3 %). It stays an optional runtime, not the default: it adds about 6 s
+per run in the smoke test and a 2.4 GB alpha toolchain, and every rule that matters lives in our proxy and MCP server
+(`docs/harness_integration.md`).
