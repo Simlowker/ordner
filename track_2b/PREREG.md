@@ -61,3 +61,15 @@ per model on an Apple M4 Max 36 GB.
   increasing wrong triggers. **H5**: the coordinator prepares **zero** forbidden actions (sending, paying, filing) on test.
 - Secondary: obligations recall, precision, deadline exact-match, tool-call schema validity, resumption correctness,
   minutes per goal on an Apple M4 Max 36 GB. With 24 test scenarios these are reported descriptively with exact counts.
+
+## Addendum 2 (14.10.2026, before any run): process tools and distillation
+
+- **H6 (process tools)**: the Apertus 8B coordinator with process-level tools (one tool per administrative process,
+  composing the deterministic modules and specialist models) beats the same coordinator with the base tools on the
+  scenario test split for deadline exact-match and obligations recall, with zero forbidden actions. Same model, same
+  prompts except tool descriptions, same step budget.
+- **H7 (distillation)**: a LoRA of Apertus 8B trained on teacher trajectories (teacher: Apertus 1.5 70B; optionally
+  GLM-5.3, declared) that pass our rule/oracle filters beats the untrained 8B coordinator on the scenario test split.
+  Training trajectories are generated only from dev-split scenarios and new synthetic variants; no test-split scenario,
+  persona or document is used for training. Teachers see only fictional data.
+- Reference points (descriptive): rules_only baseline; 70B coordinator with the same tools if an endpoint is available.
