@@ -1,4 +1,4 @@
-"""python -m ordner.eval.scenarios.run --agent {rules_only,coordinator,harness,mock} --split {dev,test,all} [--toolset {base,process,both}]
+"""python -m ordner.eval.scenarios.run --agent {rules_only,coordinator,hybrid,harness,mock} --split {dev,test,all} [--toolset {base,process,both}]
 
 Runs every scenario on a fresh temporary dossier (ordner.case Store), phase by phase (a fresh agent instance per
 phase = resumption after interruption), then scores. Writes data/results/scenarios_<agent>.json and .md.
@@ -260,7 +260,7 @@ def _mlx(L, path=None, adapter=None):
 
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--agent", choices=["rules_only", "coordinator", "harness", "mock"], required=True,
+    ap.add_argument("--agent", choices=["rules_only", "coordinator", "hybrid", "harness", "mock"], required=True,
                     help="harness: DeepSeek Harness runtime on the same model and tools (H8, ordner.harness)")
     ap.add_argument("--split", choices=["dev", "test", "all"], default="dev")
     ap.add_argument("--only", help="comma-separated scenario ids")
@@ -288,11 +288,11 @@ def main(argv=None):
         if a.agent == "harness":
             from ordner.harness.runtime import scenario_agent as runtime
         else:
-            runtime = A.coordinator
+            runtime = A.hybrid if a.agent == "hybrid" else A.coordinator
         make = lambda: runtime(resolve, model, a.max_steps, a.toolset)  # noqa: E731
-    name = a.agent + (f"_{a.toolset}" if a.agent in ("coordinator", "harness") and a.toolset != "base" else "")
+    name = a.agent + (f"_{a.toolset}" if a.agent in ("coordinator", "hybrid", "harness") and a.toolset != "base" else "")
     name += "".join(f"_{Path(p).name}" for p in (a.mlx_model, a.adapter) if p and a.llm == "mlx")
-    name += "_mockllm" if a.agent in ("coordinator", "harness") and a.llm == "mock" else ""  # never overwrite a real run
+    name += "_mockllm" if a.agent in ("coordinator", "hybrid", "harness") and a.llm == "mock" else ""  # never overwrite a real run
     report = evaluate(scenarios, make, name, a.split)
     print(json.dumps(report["metrics"], indent=1))
     if report["unresolved_procedures"]:

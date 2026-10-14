@@ -125,6 +125,20 @@ def rules_only(resolve):
     return agent
 
 
+def hybrid(resolve, llm, max_steps=12, toolset="process"):
+    """Rules engine first on the dossier (deterministic backbone: cases, deadlines, actions from confirmed facts), then
+    the Apertus coordinator on the same dossier for what rules cannot do (free text, documents, missing information).
+    Outputs are merged; the coordinator sees the rules' cases through case.load."""
+    rules_agent, coord_agent = rules_only(resolve), coordinator(resolve, llm, max_steps, toolset)
+
+    def agent(s, store, sid, phase, goal, today):
+        r, c = rules_agent(s, store, sid, phase, goal, today), coord_agent(s, store, sid, phase, goal, today)
+        for k in ("applicable", "deadlines", "actions", "questions"):
+            c[k] = r[k] + c[k]
+        return c
+    return agent
+
+
 class _DatedRegistry:
     """Same API as ordner.tools.registry, with the scenario's date and replay mode in every tool context. `toolset`
     (H6): base | process | both, see ordner.tools.processes.in_toolset; only the selected tools are shown to the model."""
