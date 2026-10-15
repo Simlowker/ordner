@@ -175,12 +175,15 @@ def opening(question, db, subject_id, today=None):
     from ordner.case.store import Store
 
     from .runtime import first_message
+    from ordner.tools.knowledge import lang_of
     st = Store(db)
     try:
-        return first_message(C._Run(question, subject_id, st, C._registry(), {"today": today} if today else {}),
+        text = first_message(C._Run(question, subject_id, st, C._registry(), {"today": today} if today else {}),
                              question, subject_id)
     finally:
         st.close()
+    lang = {"fr": "French (français)", "de": "German (Deutsch)", "it": "Italian (italiano)"}[lang_of(question)]
+    return f"{text}\n\nAnswer the person in {lang}, the language of their question."
 
 
 def asked_question(msgs):
