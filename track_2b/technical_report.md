@@ -85,7 +85,7 @@ Ordner is deployable **b) air-gapped** (primary) and **a) on-premise** (e.g. a d
 
 **Extraction and hidden states.** The prompt asks for one JSON object with the eight fields, trilingual label hints and the OCR text (`src/ordner/models/apertus.py`); thinking off, greedy; a missing or unparseable value is wrong. MLX and transformers (bf16, CPU) agree on a validation page (hidden-state cosine ≥ 0.9996). One teacher-forced pass reads the residual stream after layers 4, 8, …, 32; per field we keep position A (mean over the value's tokens) and B (the token before it). Norms grow about a thousandfold with depth and the BOS token reaches |x| ≈ 1.2 × 10⁵, consistent with [8]; we keep float32, standardise, fit a 256-d PCA on training items, and choose layer and regularisation of the logistic probe by statement-grouped cross-validation on train + dev.
 
-**LoRA for extraction.** mlx-lm, rank 16, scale 2, all 32 blocks, learning rate 10⁻⁴, batch 2, 2 epochs over 420 pages, loss on the answer, seed 7, targets = oracle values as displayed. Dev loss 0.343 → 0.003; final adapter, fused, no checkpoint selection (about 2 h, peak {{lora_peak_gb}} GB).
+**LoRA for extraction.** mlx-lm, rank 16, scale 2, all 32 blocks, learning rate 10⁻⁴, batch 2, 2 epochs over 420 pages, loss on the answer, seed 7, targets = oracle values as displayed. Dev loss 0.343 → 0.003; final adapter, fused, no checkpoint selection (about 2 h, peak 22.6 GB).
 
 **Coordinator.** Thinking off, temperature 0, at most 12 model calls per goal, one toolset-neutral prompt. A malformed tool call is answered as an error, never taken as the answer (silent failures are counted).
 
@@ -103,7 +103,7 @@ Ordner is deployable **b) air-gapped** (primary) and **a) on-premise** (e.g. a d
 
 **Scenarios (Proof 2).** 76 scenarios (`data/scenarios/`): a fictional persona, dossier, events and goal, sometimes in phases (resumption), with expected procedures, traps, questions, deadlines with the quoted official text that fixes them, actions and forbidden actions. 9 marked `needs_review` are excluded; 67 are split by a fixed hash seed into 43 dev and 24 test. Dev: 39 obligations, 12 traps, 30 deadlines, 7 missing-information items, 31 actions, 3 resumption scenarios. **Retrieval:** 2 × 36 everyday questions (fr/de/it), the second set held out.
 
-**Licence and privacy.** All data is fictional (no personal data), generated with MIT-licensed tools and released under CDLA-Permissive-2.0 ({{hf_dataset_url}}). `data/` (< 100 MB) holds replay inputs, demo, scenarios, questions, deduction rules and the 56 redistributable corpus passages; cantonal guides are rebuilt locally.
+**Licence and privacy.** All data is fictional (no personal data), generated with MIT-licensed tools and released under CDLA-Permissive-2.0. `data/` (< 100 MB) holds replay inputs, demo, scenarios, questions, deduction rules and the 56 redistributable corpus passages; cantonal guides are rebuilt locally.
 
 ## 5. Evaluation
 
@@ -174,7 +174,7 @@ The rules engine and the hybrid trigger no trap (12 traps); no configuration exe
 | Runtime     | Process tools, DeepSeek Harness            | 37.5    | 68.2    | 75.0    | 50.0    | 50.0    | 0 / 0   |
 | **Ours**    | **Hybrid (exploratory)**                   | **58.3** | **77.3** | **50.0** | **65.0** | **71.4** | **0 / 0** |
 
-**H4 ({{h4_verdict}}), H5 ({{h5_verdict}}), H6 ({{h6_verdict}}), H7 ({{h7_verdict}}), H8 ({{h8_verdict}}).** H5 counts forbidden actions *prepared*; only executed effects are impossible by construction (no tool can send, pay, file or sign). The distilled adapter has no held-out dev score: its training variants derive from dev scenarios.
+**H4 (supported), H5 (supported), H6 (supported), H7 (not supported), H8 (not supported: the harness was worse on deadline exact-match (50 % vs 60 %), so it is not the product runtime).** H5 counts forbidden actions *prepared*; only executed effects are impossible by construction (no tool can send, pay, file or sign). The distilled adapter has no held-out dev score: its training variants derive from dev scenarios.
 
 **Knowledge search.** The right card's source is in the top 3 for 80.6 % / 77.8 % of development / held-out questions with EmbeddingGemma 2, 52.8 % / 38.9 % with BM25 and 61.1 % / 50.0 % with RRF fusion (`data/retrieval/`). The gain is cross-lingual: BM25 reaches 94.1 % on same-language development questions (embedding 100 %) but 5 % on held-out cross-lingual ones (embedding 70 %, fusion 15 %). We rank with the embedding alone; BM25 is the fallback without weights.
 
@@ -198,7 +198,7 @@ The rules engine and the hybrid trigger no trap (12 traps); no configuration exe
 
 **Live (Apple Silicon, outside Docker).** Python 3.11 with torch 2.14.1, transformers 5.19.0, accelerate 1.15.0, sentence-transformers 6.1.0, mlx 0.32.3, mlx-lm 0.32.0, zxing-cpp 3.1.1, pypdfium2 5.14.0, reportlab 5.0.1, scikit-learn 1.9.1, OpenSteuerAuszug `eeb3b3d` (with the `vroonhof/pdf417-py` fork, `44ce800`). Model revisions (`docs/model_revisions.txt`): Apertus `c0e7eeb`, LightOnOCR-3-1B `23d5440`, EmbeddingGemma 2 `914f7f8`, d1-3B `051bcc4`. Every command (generation, OCR, extraction, d1, LoRA, probe, scenario runs for each system, distillation, retrieval) is listed in `track_2b/README.md`.
 
-**Seeds and checks.** Seeds: generator 7, degradations keyed by page, LoRA 7, PCA 0, bootstrap 0, scenario split by a fixed hash seed, distillation variants 7. Self-checks (`ordner.gen`, `ordner.eval`, `ordner.case`, `ordner.tools`, `ordner.eval.scenarios`, `ordner.harness`) assert generator determinism, the oracle round trip, metric definitions, dossier rules and quote verification. A page whose extraction fails counts as wrong for all fields ({{n_error_pages}} pages). Random dossier identifiers make scenario runs non-reproducible at the token level. Deviations after the freeze (`f52d2c3`): {{prereg_deviations}}.
+**Seeds and checks.** Seeds: generator 7, degradations keyed by page, LoRA 7, PCA 0, bootstrap 0, scenario split by a fixed hash seed, distillation variants 7. Self-checks (`ordner.gen`, `ordner.eval`, `ordner.case`, `ordner.tools`, `ordner.eval.scenarios`, `ordner.harness`) assert generator determinism, the oracle round trip, metric definitions, dossier rules and quote verification. A page whose extraction fails counts as wrong for all fields (0 pages). Random dossier identifiers make scenario runs non-reproducible at the token level. Deviations after the freeze (`f52d2c3`): PREREG.md Addendum 4 (test outputs generated before the freeze but not scored; GLM-5.3 as the only teacher; QLoRA evaluated on bf16; exploratory hybrid; EmbeddingGemma in scenario runs; noise; hardware). After the freeze: the exploratory hybrid + distilled test run was not made (owner's decision, distilled coordinator below base on dev); the domain experts and d1-3B expert routing are exploratory additions; demo documents no longer carry hand-written doubt values.
 
 ## 8. Next steps
 

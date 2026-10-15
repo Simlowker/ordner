@@ -36,6 +36,7 @@ def main(argv=None):
     ap.add_argument("--n", type=int, default=30)
     ap.add_argument("--system", default="auto")
     ap.add_argument("--mock", action="store_true", help="mocked generator (pipeline test, no Apertus)")
+    ap.add_argument("--server", action="store_true", help="Apertus through the OpenAI-compatible server (LLM_BASE_URL)")
     ap.add_argument("--out", default="data/explain_eval.json")
     a = ap.parse_args(argv)
     items = read_jsonl(Path(a.data) / "items.jsonl")
@@ -57,7 +58,7 @@ def main(argv=None):
     passages = [explain.retrieve([{**f, "status": explain.status(f["doubt"])} for f in fields], lang)
                 for _, lang, fields in jobs]
     embed.unload()
-    gen = explain.mock_generate if a.mock else explain.apertus_generate
+    gen = explain.mock_generate if a.mock else explain.server_generate if a.server else explain.apertus_generate
 
     rows = []
     for (pid, lang, fields), ps in zip(jobs, passages):
