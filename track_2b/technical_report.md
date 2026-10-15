@@ -14,7 +14,7 @@ Ordner keeps a person's administrative dossier on their own machine: it reads th
 
 **Proof 1: reading documents without silent errors.** eCH-0196 bank tax statements store their XML in PDF417 barcodes: a free, exact answer key. Apertus extracts eight fields from the readable page (LoRA); a probe on its hidden states, the d1-3B judge and deterministic checks flag values to re-check. On 1,200 frozen test pages (two of three layouts unseen in training, four degradation levels), field exact match is 66.9 % for OCR + rules, 92.1 % for zero-shot Apertus, 98.0 % with LoRA (96.9 % on unseen layouts; H1 supported). Re-reading the most doubtful 30.5 % of fields catches 90 % of zero-shot errors (AUROC 0.922, within-field 0.911; H2 not supported; probe alone 0.840, H3 supported).
 
-**Proof 2: tools and architecture make an 8B model useful as a coordinator.** On 43 dev scenarios grounded in quoted official texts, Apertus passes 14.0 % with generic tools and 27.9-30.2 % with process tools (two identical runs), below the rules engine alone (46.5 %). Rules first, then Apertus on the same dossier passes 53.5 %: the rules supply proven deadlines and steps, Apertus asks what rules cannot see (5 of 7 expected questions, against 0). That gain over rules alone (3 scenarios) is within run-to-run noise. No configuration executed an external effect. Test: {{t_hybrid_pass}} (hybrid, exploratory) vs {{t_rules_pass}} (rules alone).
+**Proof 2: tools and architecture make an 8B model useful as a coordinator.** On 43 dev scenarios grounded in quoted official texts, Apertus passes 14.0 % with generic tools and 27.9-30.2 % with process tools (two identical runs), below the rules engine alone (46.5 %). Rules first, then Apertus on the same dossier passes 53.5 %: the rules supply proven deadlines and steps, Apertus asks what rules cannot see (5 of 7 expected questions, against 0). That gain over rules alone (3 scenarios) is within run-to-run noise. No configuration executed an external effect. Test: 58.3 (hybrid, exploratory) vs 54.2 (rules alone).
 
 ### Problem and motivation
 
@@ -159,7 +159,7 @@ Breakdowns by layout, degradation level, language and field: `data/results/table
 | Runtime     | Same, DeepSeek Harness instead of our loop           | 10 (23.3 %)             | 23 (59.0 %)             | 5 (71.4 %)      | 11 (36.7 %)            | 9 (29.0 %)             |
 | **Ours**    | **Hybrid: rules engine, then coordinator (process)** | **23 (53.5 %)**         | **31 (79.5 %)**         | **5 (71.4 %)**  | **16 (53.3 %)**        | **25 (80.6 %)**        |
 
-The rules engine and the hybrid trigger no trap (12 traps); no configuration executed an effect. In 2 scenarios (a bill received by e-mail and by post) the hybrid ended with two prepared payments, the rules' generic payment step and the coordinator's concrete one (2 forbidden actions). The dossier guard of §2 was added afterwards; the hybrid re-run gives pass {{dev_hybrid2_pass}} with {{dev_hybrid2_forbidden}} forbidden actions. Two identical process runs at temperature 0 disagree on **5 of 43 verdicts**: dev gaps below about 12 points of pass rate are not evidence.
+The rules engine and the hybrid trigger no trap (12 traps); no configuration executed an effect. In 2 scenarios (a bill received by e-mail and by post) the hybrid ended with two prepared payments, the rules' generic payment step and the coordinator's concrete one (2 forbidden actions). The dossier guard of §2 was added afterwards; the hybrid re-run gives pass 53.5 with 1 forbidden actions. Two identical process runs at temperature 0 disagree on **5 of 43 verdicts**: dev gaps below about 12 points of pass rate are not evidence.
 
 **Reading.** Process tools lift Apertus (obligations 33 → 56-59 %, deadlines 10 → 30-33 %), as they lift the teacher (26.3 → 58.5 % on the variants), yet Apertus alone stays below the rules wherever rules can prove. The hybrid matches the rules on what they prove and adds Apertus's questions (5 of 7, against 0); its pass-rate gain over rules alone (+3 scenarios) is within noise. We retain it because it keeps the rules' guarantees and adds what only the model can do. DeepSeek Harness is at parity within the run-to-run spread (pass 23.3 % vs 27.9 / 30.2 %, deadlines 36.7 % vs 30.0 / 33.3 %) but adds about 6 s per run (smoke test), a 2.4 GB alpha toolchain and no capability: optional, not default.
 
@@ -167,12 +167,12 @@ The rules engine and the hybrid trigger no trap (12 traps); no configuration exe
 
 | Setup       | System                                     | Pass                  | Obligations          | Missing info          | Deadlines exact     | Actions              | Forbidden / executed                     |
 | ----------- | ------------------------------------------ | --------------------- | -------------------- | --------------------- | ------------------- | -------------------- | ---------------------------------------- |
-| Baseline    | Rules engine only, no model                | {{t_rules_pass}}      | {{t_rules_obl}}      | {{t_rules_miss}}      | {{t_rules_dl}}      | {{t_rules_act}}      | {{t_rules_forb}} / {{t_rules_eff}}       |
-| Baseline    | Apertus coordinator, generic tools         | {{t_base_pass}}       | {{t_base_obl}}       | {{t_base_miss}}       | {{t_base_dl}}       | {{t_base_act}}       | {{t_base_forb}} / {{t_base_eff}}         |
-| Ours (part) | Apertus coordinator, process tools         | {{t_process_pass}}    | {{t_process_obl}}    | {{t_process_miss}}    | {{t_process_dl}}    | {{t_process_act}}    | {{t_process_forb}} / {{t_process_eff}}   |
-| Ours (part) | Same + distilled QLoRA adapter (bf16 base) | {{t_distill_pass}}    | {{t_distill_obl}}    | {{t_distill_miss}}    | {{t_distill_dl}}    | {{t_distill_act}}    | {{t_distill_forb}} / {{t_distill_eff}}   |
-| Runtime     | Process tools, DeepSeek Harness            | {{t_harness_pass}}    | {{t_harness_obl}}    | {{t_harness_miss}}    | {{t_harness_dl}}    | {{t_harness_act}}    | {{t_harness_forb}} / {{t_harness_eff}}   |
-| **Ours**    | **Hybrid (exploratory)**                   | **{{t_hybrid_pass}}** | **{{t_hybrid_obl}}** | **{{t_hybrid_miss}}** | **{{t_hybrid_dl}}** | **{{t_hybrid_act}}** | **{{t_hybrid_forb}} / {{t_hybrid_eff}}** |
+| Baseline    | Rules engine only, no model                | 54.2      | 77.3      | 0.0      | 65.0      | 71.4      | 0 / 0       |
+| Baseline    | Apertus coordinator, generic tools         | 12.5       | 27.3       | 75.0       | 5.0       | 14.3       | 0 / 0         |
+| Ours (part) | Apertus coordinator, process tools         | 50.0    | 68.2    | 50.0    | 60.0    | 50.0    | 0 / 0   |
+| Ours (part) | Same + distilled QLoRA adapter (bf16 base) | 41.7    | 72.7    | 100.0    | 55.0    | 42.9    | 0 / 0   |
+| Runtime     | Process tools, DeepSeek Harness            | 37.5    | 68.2    | 75.0    | 50.0    | 50.0    | 0 / 0   |
+| **Ours**    | **Hybrid (exploratory)**                   | **58.3** | **77.3** | **50.0** | **65.0** | **71.4** | **0 / 0** |
 
 **H4 ({{h4_verdict}}), H5 ({{h5_verdict}}), H6 ({{h6_verdict}}), H7 ({{h7_verdict}}), H8 ({{h8_verdict}}).** H5 counts forbidden actions *prepared*; only executed effects are impossible by construction (no tool can send, pay, file or sign). The distilled adapter has no held-out dev score: its training variants derive from dev scenarios.
 
@@ -294,8 +294,8 @@ Creative Commons Attribution 4.0 (CC-BY-4.0). All HackApertus projects are open-
 | `{{cost_ocr_mean}}` | `data/results/results.json` | `costs.stages["ocr"].mean` | seconds, 1 decimal |
 | `{{cost_total_lora_mean}}` | `data/results/results.json` | `costs.stages["total apertus-lora"].mean` | seconds, 1 decimal |
 | `{{cost_total_lora_p95}}` | `data/results/results.json` | `costs.stages["total apertus-lora"].p95` | seconds, 1 decimal |
-| `{{dev_hybrid2_forbidden}}` | `data/results/scenarios_hybrid_process.json (dev re-run after 4245539)` | `metrics.forbidden_actions` | integer |
-| `{{dev_hybrid2_pass}}` | `data/results/scenarios_hybrid_process.json (dev re-run after 4245539)` | `metrics.pass_rate` | % |
+| `{{dev_hybrid2_forbidden}}` | `data/agent_runs/dev/dev_hybrid_process_v2.json` | `metrics.forbidden_actions` | integer |
+| `{{dev_hybrid2_pass}}` | `data/agent_runs/dev/dev_hybrid_process_v2.json` | `metrics.pass_rate` | % |
 | `{{explain_fields_mentioned}}` | `data/explain_eval.json` | `amounts_mentioned_share` | % |
 | `{{explain_language_match}}` | `data/explain_eval.json` | `language_match_rate` | % |
 | `{{explain_quotes_total}}` | `data/explain_eval.json` | `quotes_total` | integer |
@@ -324,48 +324,48 @@ Creative Commons Attribution 4.0 (CC-BY-4.0). All HackApertus projects are open-
 | `{{probe_a_layer}}` | `data/results/results.json` | `probe.A.layer` | integer |
 | `{{probe_b_layer}}` | `data/results/results.json` | `probe.B.layer` | integer |
 | `{{runtime_seconds}}` | `data/results/results.json` | `runtime_seconds` | seconds, integer |
-| `{{t_base_act}}` | `data/results/scenarios_coordinator.json (test run)` | `metrics.action_recall` | % |
-| `{{t_base_dl}}` | `data/results/scenarios_coordinator.json (test run)` | `metrics.deadline_exact` | % |
-| `{{t_base_eff}}` | `data/results/scenarios_coordinator.json (test run)` | `metrics.executed_effects` | integer |
-| `{{t_base_forb}}` | `data/results/scenarios_coordinator.json (test run)` | `metrics.forbidden_actions` | integer |
-| `{{t_base_miss}}` | `data/results/scenarios_coordinator.json (test run)` | `metrics.missing_info_recall` | % |
-| `{{t_base_obl}}` | `data/results/scenarios_coordinator.json (test run)` | `metrics.obligations_recall` | % |
-| `{{t_base_pass}}` | `data/results/scenarios_coordinator.json (test run)` | `metrics.pass_rate` | % |
-| `{{t_distill_act}}` | `data/results/scenarios_coordinator_process.json, run against mlx_lm.server --adapter-path (test run)` | `metrics.action_recall` | % |
-| `{{t_distill_dl}}` | `data/results/scenarios_coordinator_process.json, run against mlx_lm.server --adapter-path (test run)` | `metrics.deadline_exact` | % |
-| `{{t_distill_eff}}` | `data/results/scenarios_coordinator_process.json, run against mlx_lm.server --adapter-path (test run)` | `metrics.executed_effects` | integer |
-| `{{t_distill_forb}}` | `data/results/scenarios_coordinator_process.json, run against mlx_lm.server --adapter-path (test run)` | `metrics.forbidden_actions` | integer |
-| `{{t_distill_miss}}` | `data/results/scenarios_coordinator_process.json, run against mlx_lm.server --adapter-path (test run)` | `metrics.missing_info_recall` | % |
-| `{{t_distill_obl}}` | `data/results/scenarios_coordinator_process.json, run against mlx_lm.server --adapter-path (test run)` | `metrics.obligations_recall` | % |
-| `{{t_distill_pass}}` | `data/results/scenarios_coordinator_process.json, run against mlx_lm.server --adapter-path (test run)` | `metrics.pass_rate` | % |
-| `{{t_harness_act}}` | `data/results/scenarios_harness_process.json (test run)` | `metrics.action_recall` | % |
-| `{{t_harness_dl}}` | `data/results/scenarios_harness_process.json (test run)` | `metrics.deadline_exact` | % |
-| `{{t_harness_eff}}` | `data/results/scenarios_harness_process.json (test run)` | `metrics.executed_effects` | integer |
-| `{{t_harness_forb}}` | `data/results/scenarios_harness_process.json (test run)` | `metrics.forbidden_actions` | integer |
-| `{{t_harness_miss}}` | `data/results/scenarios_harness_process.json (test run)` | `metrics.missing_info_recall` | % |
-| `{{t_harness_obl}}` | `data/results/scenarios_harness_process.json (test run)` | `metrics.obligations_recall` | % |
-| `{{t_harness_pass}}` | `data/results/scenarios_harness_process.json (test run)` | `metrics.pass_rate` | % |
-| `{{t_hybrid_act}}` | `data/results/scenarios_hybrid_process.json (test run)` | `metrics.action_recall` | % |
-| `{{t_hybrid_dl}}` | `data/results/scenarios_hybrid_process.json (test run)` | `metrics.deadline_exact` | % |
-| `{{t_hybrid_eff}}` | `data/results/scenarios_hybrid_process.json (test run)` | `metrics.executed_effects` | integer |
-| `{{t_hybrid_forb}}` | `data/results/scenarios_hybrid_process.json (test run)` | `metrics.forbidden_actions` | integer |
-| `{{t_hybrid_miss}}` | `data/results/scenarios_hybrid_process.json (test run)` | `metrics.missing_info_recall` | % |
-| `{{t_hybrid_obl}}` | `data/results/scenarios_hybrid_process.json (test run)` | `metrics.obligations_recall` | % |
-| `{{t_hybrid_pass}}` | `data/results/scenarios_hybrid_process.json (test run)` | `metrics.pass_rate` | % |
-| `{{t_process_act}}` | `data/results/scenarios_coordinator_process.json (test run)` | `metrics.action_recall` | % |
-| `{{t_process_dl}}` | `data/results/scenarios_coordinator_process.json (test run)` | `metrics.deadline_exact` | % |
-| `{{t_process_eff}}` | `data/results/scenarios_coordinator_process.json (test run)` | `metrics.executed_effects` | integer |
-| `{{t_process_forb}}` | `data/results/scenarios_coordinator_process.json (test run)` | `metrics.forbidden_actions` | integer |
-| `{{t_process_miss}}` | `data/results/scenarios_coordinator_process.json (test run)` | `metrics.missing_info_recall` | % |
-| `{{t_process_obl}}` | `data/results/scenarios_coordinator_process.json (test run)` | `metrics.obligations_recall` | % |
-| `{{t_process_pass}}` | `data/results/scenarios_coordinator_process.json (test run)` | `metrics.pass_rate` | % |
-| `{{t_rules_act}}` | `data/results/scenarios_rules_only.json (test run)` | `metrics.action_recall` | % |
-| `{{t_rules_dl}}` | `data/results/scenarios_rules_only.json (test run)` | `metrics.deadline_exact` | % |
-| `{{t_rules_eff}}` | `data/results/scenarios_rules_only.json (test run)` | `metrics.executed_effects` | integer |
-| `{{t_rules_forb}}` | `data/results/scenarios_rules_only.json (test run)` | `metrics.forbidden_actions` | integer |
-| `{{t_rules_miss}}` | `data/results/scenarios_rules_only.json (test run)` | `metrics.missing_info_recall` | % |
-| `{{t_rules_obl}}` | `data/results/scenarios_rules_only.json (test run)` | `metrics.obligations_recall` | % |
-| `{{t_rules_pass}}` | `data/results/scenarios_rules_only.json (test run)` | `metrics.pass_rate` | % |
+| `{{t_base_act}}` | `data/agent_runs/test/coordinator_base.json` | `metrics.action_recall` | % |
+| `{{t_base_dl}}` | `data/agent_runs/test/coordinator_base.json` | `metrics.deadline_exact` | % |
+| `{{t_base_eff}}` | `data/agent_runs/test/coordinator_base.json` | `metrics.executed_effects` | integer |
+| `{{t_base_forb}}` | `data/agent_runs/test/coordinator_base.json` | `metrics.forbidden_actions` | integer |
+| `{{t_base_miss}}` | `data/agent_runs/test/coordinator_base.json` | `metrics.missing_info_recall` | % |
+| `{{t_base_obl}}` | `data/agent_runs/test/coordinator_base.json` | `metrics.obligations_recall` | % |
+| `{{t_base_pass}}` | `data/agent_runs/test/coordinator_base.json` | `metrics.pass_rate` | % |
+| `{{t_distill_act}}` | `data/agent_runs/test/coordinator_process_distill.json` | `metrics.action_recall` | % |
+| `{{t_distill_dl}}` | `data/agent_runs/test/coordinator_process_distill.json` | `metrics.deadline_exact` | % |
+| `{{t_distill_eff}}` | `data/agent_runs/test/coordinator_process_distill.json` | `metrics.executed_effects` | integer |
+| `{{t_distill_forb}}` | `data/agent_runs/test/coordinator_process_distill.json` | `metrics.forbidden_actions` | integer |
+| `{{t_distill_miss}}` | `data/agent_runs/test/coordinator_process_distill.json` | `metrics.missing_info_recall` | % |
+| `{{t_distill_obl}}` | `data/agent_runs/test/coordinator_process_distill.json` | `metrics.obligations_recall` | % |
+| `{{t_distill_pass}}` | `data/agent_runs/test/coordinator_process_distill.json` | `metrics.pass_rate` | % |
+| `{{t_harness_act}}` | `data/agent_runs/test/harness_process.json` | `metrics.action_recall` | % |
+| `{{t_harness_dl}}` | `data/agent_runs/test/harness_process.json` | `metrics.deadline_exact` | % |
+| `{{t_harness_eff}}` | `data/agent_runs/test/harness_process.json` | `metrics.executed_effects` | integer |
+| `{{t_harness_forb}}` | `data/agent_runs/test/harness_process.json` | `metrics.forbidden_actions` | integer |
+| `{{t_harness_miss}}` | `data/agent_runs/test/harness_process.json` | `metrics.missing_info_recall` | % |
+| `{{t_harness_obl}}` | `data/agent_runs/test/harness_process.json` | `metrics.obligations_recall` | % |
+| `{{t_harness_pass}}` | `data/agent_runs/test/harness_process.json` | `metrics.pass_rate` | % |
+| `{{t_hybrid_act}}` | `data/agent_runs/test/hybrid_process.json` | `metrics.action_recall` | % |
+| `{{t_hybrid_dl}}` | `data/agent_runs/test/hybrid_process.json` | `metrics.deadline_exact` | % |
+| `{{t_hybrid_eff}}` | `data/agent_runs/test/hybrid_process.json` | `metrics.executed_effects` | integer |
+| `{{t_hybrid_forb}}` | `data/agent_runs/test/hybrid_process.json` | `metrics.forbidden_actions` | integer |
+| `{{t_hybrid_miss}}` | `data/agent_runs/test/hybrid_process.json` | `metrics.missing_info_recall` | % |
+| `{{t_hybrid_obl}}` | `data/agent_runs/test/hybrid_process.json` | `metrics.obligations_recall` | % |
+| `{{t_hybrid_pass}}` | `data/agent_runs/test/hybrid_process.json` | `metrics.pass_rate` | % |
+| `{{t_process_act}}` | `data/agent_runs/test/coordinator_process.json` | `metrics.action_recall` | % |
+| `{{t_process_dl}}` | `data/agent_runs/test/coordinator_process.json` | `metrics.deadline_exact` | % |
+| `{{t_process_eff}}` | `data/agent_runs/test/coordinator_process.json` | `metrics.executed_effects` | integer |
+| `{{t_process_forb}}` | `data/agent_runs/test/coordinator_process.json` | `metrics.forbidden_actions` | integer |
+| `{{t_process_miss}}` | `data/agent_runs/test/coordinator_process.json` | `metrics.missing_info_recall` | % |
+| `{{t_process_obl}}` | `data/agent_runs/test/coordinator_process.json` | `metrics.obligations_recall` | % |
+| `{{t_process_pass}}` | `data/agent_runs/test/coordinator_process.json` | `metrics.pass_rate` | % |
+| `{{t_rules_act}}` | `data/agent_runs/test/rules_only.json` | `metrics.action_recall` | % |
+| `{{t_rules_dl}}` | `data/agent_runs/test/rules_only.json` | `metrics.deadline_exact` | % |
+| `{{t_rules_eff}}` | `data/agent_runs/test/rules_only.json` | `metrics.executed_effects` | integer |
+| `{{t_rules_forb}}` | `data/agent_runs/test/rules_only.json` | `metrics.forbidden_actions` | integer |
+| `{{t_rules_miss}}` | `data/agent_runs/test/rules_only.json` | `metrics.missing_info_recall` | % |
+| `{{t_rules_obl}}` | `data/agent_runs/test/rules_only.json` | `metrics.obligations_recall` | % |
+| `{{t_rules_pass}}` | `data/agent_runs/test/rules_only.json` | `metrics.pass_rate` | % |
 | `{{triage90_combined}}` | `data/results/results.json` | `doubt["apertus-base"]["combined"].triage["0.9"]` | % |
 | `{{triage90_d1}}` | `data/results/results.json` | `doubt["apertus-base"]["d1 validation"].triage["0.9"]` | % |
 | `{{triage90_entropy}}` | `data/results/results.json` | `doubt["apertus-base"]["mean entropy"].triage["0.9"]` | % |
