@@ -143,9 +143,9 @@ class _DatedRegistry:
     """Same API as ordner.tools.registry, with the scenario's date and replay mode in every tool context. `toolset`
     (H6): base | process | both, see ordner.tools.processes.in_toolset; only the selected tools are shown to the model."""
 
-    def __init__(self, reg, today, toolset="base"):
+    def __init__(self, reg, today, toolset="base", expert=None):
         from ordner.tools.processes import in_toolset
-        self.reg, self.today = reg, today
+        self.reg, self.today, self.expert = reg, today, expert
         keep = (lambda n: n in toolset) if isinstance(toolset, (tuple, list, set, frozenset)) else (
             lambda n: in_toolset(n, toolset))   # an expert's explicit tool names, or a named toolset
         self.SPECS = [s for s in reg.SPECS if keep(s.name)]
@@ -153,17 +153,30 @@ class _DatedRegistry:
     def call(self, name, args, ctx):
         ctx.setdefault("today", self.today)
         ctx.setdefault("mode", "replay")
+        if self.expert:
+            ctx.setdefault("expert", self.expert)   # knowledge.search ranks the expert's own base
         return self.reg.call(name, args, ctx)
 
 
-def coordinator(resolve, llm, max_steps=12, toolset="base", system=None):
+def coordinator(resolve, llm, max_steps=12, toolset="base", system=None, expert=None):
     """ordner.agent.coordinator.run on the seeded dossier; outcome taken from its questions, prepared actions, tool
     calls and the rules/deadline results it obtained."""
     from ordner.agent import coordinator as C
 
     def agent(s, store, sid, phase, goal, today):
-        reg = _DatedRegistry(C._registry(), today, toolset)
         kw = {"system": system} if system else {}   # the harness runtime substitutes C.run and has no expert prompt
+        tools = toolset
+        if expert:   # as the web UI: expert prompt and tools, domain opening with labels, the expert's sources
+            from ordner.harness import experts as E
+            from ordner.harness import proxy as P
+            e = E.EXPERTS[expert]
+            tools, subject = e.tools, store.get_subject(sid)
+            kw = {"system": E.system_prompt(expert),
+                  "opening": P.opening(goal, str(store.path), sid, today, cards=None if "*" in e.cards else e.cards)}
+            found = P.expert_sources(goal, expert, subject.canton)
+            if found:
+                kw["context"] = P.sources_message(found)["content"]
+        reg = _DatedRegistry(C._registry(), today, tools, expert if expert and expert != "coordinateur" else None)
         r = C.run(f"[{today}] {goal}", sid, llm, store, max_steps=max_steps, registry=reg, **kw)
         out = empty()
         out["questions"] = [{"missing": q.get("missing") or "", "question": q.get("question", "")} for q in r["questions"]]

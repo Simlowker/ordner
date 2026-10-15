@@ -30,6 +30,8 @@ TEACHERS = {  # checked 14.10.2026: HF router maps swiss-ai/Apertus-v1.5-70B to 
     "apertus70b": {"base_url": "https://router.huggingface.co/v1", "model": "swiss-ai/Apertus-v1.5-70B", "key": "HF_TOKEN"},
     "glm": {"base_url": "https://openrouter.ai/api/v1", "model": "z-ai/glm-5.3", "key": "OPENROUTER_API_KEY",
             "extra": {"usage": {"include": True}}},
+    "deepseek": {"base_url": "https://openrouter.ai/api/v1", "model": "deepseek/deepseek-v4.1-flash",
+                 "key": "OPENROUTER_API_KEY", "extra": {"usage": {"include": True}}},
 }
 
 
@@ -200,14 +202,22 @@ def backend(name, max_tokens=1024, extra=None, model=None):
     return Teacher(t["base_url"], model or t["model"], key, {**t.get("extra", {}), **(extra or {})}, max_tokens)
 
 
-def run_variant(v, llm, max_steps=12, toolset="base"):
+def expert_for(v):
+    """The variant's domain expert (ordner.harness.experts), "coordinateur" when it spans domains."""
+    from ordner.distill.by_expert import expert_of, procedures
+    from ordner.harness.experts import EXPERTS
+    return expert_of(procedures(v, R.resolve), EXPERTS) or "coordinateur"
+
+
+def run_variant(v, llm, max_steps=12, toolset="base", expert_mode=False):
     rec = Recorder(llm)
+    expert = expert_for(v) if expert_mode else None
     if hasattr(llm, "begin"):
         llm.begin(v)
 
     def make():
         rec.phase += 1
-        return A.coordinator(R.resolve, rec, max_steps, toolset)
+        return A.coordinator(R.resolve, rec, max_steps, toolset, expert=expert)
     t0, err, outs, row = time.perf_counter(), None, [], None
     try:
         outs, final = R.run_one(v, make)
@@ -219,7 +229,8 @@ def run_variant(v, llm, max_steps=12, toolset="base"):
         for k, n in (c.get("usage") or {}).items():
             if isinstance(n, (int, float)):
                 usage[k] = round(usage.get(k, 0) + n, 6)
-    return {"variant_id": v["id"], "source_id": v.get("source_id"), "toolset": toolset, "phases": rec.phases(),
+    return {"variant_id": v["id"], "source_id": v.get("source_id"), "toolset": toolset, "expert": expert,
+            "phases": rec.phases(),
             "outs": [{k: o.get(k) for k in ("applicable", "questions", "deadlines", "actions", "tool_calls", "notes",
                                             "answer", "attempted_effects")} for o in outs],
             "score": row, "error": err, "latency_s": round(time.perf_counter() - t0, 2), "usage": usage,
@@ -238,6 +249,8 @@ def main(argv=None):
     ap.add_argument("--toolset", choices=["base", "process", "both"], default="base",
                     help="same choice as the runner's --toolset (H6); train and evaluate the student with the same one")
     ap.add_argument("--max-tokens", type=int, default=1024)
+    ap.add_argument("--expert-mode", action="store_true",
+                    help="each variant runs as its domain expert, exactly as the web UI (prompt, tools, opening, sources)")
     ap.add_argument("--extra", type=json.loads, default=None, help='extra JSON body fields, e.g. \'{"tool_choice": "auto"}\'')
     a = ap.parse_args(argv)
     out = a.out or str(OUT / f"traj.{a.teacher.replace(':', '-')}{'' if a.toolset == 'base' else '.' + a.toolset}.jsonl")
@@ -254,7 +267,7 @@ def main(argv=None):
         for v in variants:
             if v["id"] in done:
                 continue
-            r = {"teacher": a.teacher, "model": model, **run_variant(v, llm, a.max_steps, a.toolset)}
+            r = {"teacher": a.teacher, "model": model, **run_variant(v, llm, a.max_steps, a.toolset, a.expert_mode)}
             f.write(json.dumps(r, ensure_ascii=False, default=str) + "\n")
             f.flush()
             new.append(r)

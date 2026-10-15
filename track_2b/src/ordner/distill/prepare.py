@@ -124,7 +124,8 @@ def in_valid(variant_id, share, seed="ordner-distill-2026"):
     return int(hashlib.sha256(f"{seed}:{variant_id}".encode()).hexdigest(), 16) % 100 < share
 
 
-def prepare(trajs, tok, out, valid_share=10, max_tokens=8192, allow_drift=False, max_completion=768):
+def prepare(trajs, tok, out, valid_share=10, max_tokens=8192, allow_drift=False, max_completion=768,
+            tool_turns_only=False):
     issues = drift(trajs)
     assert allow_drift or not issues, f"tool/prompt drift since generation: {issues} (regenerate, or --allow-drift)"
     stops = {tok.convert_tokens_to_ids(t) for t in (END, TOOLS_SUFFIX)}
@@ -133,6 +134,8 @@ def prepare(trajs, tok, out, valid_share=10, max_tokens=8192, allow_drift=False,
         exs, d = examples(tok, t, stops, max_completion)
         dropped += d
         for ex, n in exs:
+            if tool_turns_only and ex["kind"] != "tool_call":   # tool-use training: the answer stays the base model's
+                continue
             if n > max_tokens:
                 too_long += 1
                 continue
@@ -161,9 +164,11 @@ def main(argv=None):
     ap.add_argument("--valid-share", type=int, default=10, help="percent of variants")
     ap.add_argument("--max-tokens", type=int, default=8192, help="= max_seq_length of the LoRA config")
     ap.add_argument("--max-completion-tokens", type=int, default=768, help="student budget (MLXLocal max_tokens)")
+    ap.add_argument("--tool-turns-only", action="store_true", help="keep only the tool-call turns (tool-use training)")
     ap.add_argument("--allow-drift", action="store_true")
     a = ap.parse_args(argv)
-    stats = prepare(read_jsonl(a.kept), tokenizer(a.tokenizer), a.out, a.valid_share, a.max_tokens, a.allow_drift, a.max_completion_tokens)
+    stats = prepare(read_jsonl(a.kept), tokenizer(a.tokenizer), a.out, a.valid_share, a.max_tokens, a.allow_drift,
+                    a.max_completion_tokens, a.tool_turns_only)
     print(json.dumps(stats, indent=1))
 
 

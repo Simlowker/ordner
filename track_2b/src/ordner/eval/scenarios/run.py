@@ -258,6 +258,19 @@ def _mlx(L, path=None, adapter=None):
     return llm
 
 
+class _ExpertByScenario:
+    """Scenario agent running the scenario's domain expert ("auto") or a fixed one, as the web UI does."""
+
+    def __init__(self, resolve, model, max_steps, expert):
+        self.args = resolve, model, max_steps, expert
+
+    def __call__(self, s, store, sid, phase, goal, today):
+        from ordner.distill.teacher import expert_for
+        resolve, model, max_steps, expert = self.args
+        e = expert_for(s) if expert == "auto" else expert
+        return A.coordinator(resolve, model, max_steps, expert=e)(s, store, sid, phase, goal, today)
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--agent", choices=["rules_only", "coordinator", "hybrid", "harness", "mock"], required=True,
@@ -284,8 +297,9 @@ def main(argv=None):
     if a.expert:   # exploratory (after the PREREG freeze): one expert on the scenarios of its own cards
         from ordner.distill.by_expert import expert_of, procedures
         from ordner.harness import experts as E
-        scenarios = [s for s in scenarios if expert_of(procedures(s, resolve), E.EXPERTS) == a.expert]
-        toolset, system = E.EXPERTS[a.expert].tools, E.system_prompt(a.expert)
+        if a.expert != "auto":   # "auto": every scenario runs as its domain's expert (perfect routing)
+            scenarios = [s for s in scenarios if expert_of(procedures(s, resolve), E.EXPERTS) == a.expert]
+        toolset, system = (None, None) if a.expert == "auto" else (E.EXPERTS[a.expert].tools, E.system_prompt(a.expert))
     if a.agent == "mock":
         make = lambda: A.mock(resolve)  # noqa: E731
     elif a.agent == "rules_only":
@@ -302,8 +316,11 @@ def main(argv=None):
             path = E.adapter_path(a.expert)
             assert path, f"no trained adapter for expert {a.expert}"
             inner, model = model, type("WithAdapter", (), {"chat": lambda self, m, t=None: inner.chat(m, t, extra={"adapters": path})})()
-        make = (lambda: runtime(resolve, model, a.max_steps, toolset, system)) if a.expert else (  # noqa: E731
-            lambda: runtime(resolve, model, a.max_steps, toolset))
+        if a.expert:   # the web UI's expert: prompt, tools, domain opening, the expert's sources
+            def make():
+                return _ExpertByScenario(resolve, model, a.max_steps, a.expert)
+        else:
+            make = lambda: runtime(resolve, model, a.max_steps, toolset)  # noqa: E731
     name = a.agent + (f"_{a.toolset}" if a.agent in ("coordinator", "hybrid", "harness") and a.toolset != "base" else "")
     name = f"expert_{a.expert}" + ("_adapter" if a.adapter_from_expert else "") if a.expert else name
     name += "".join(f"_{Path(p).name}" for p in (a.mlx_model, a.adapter) if p and a.llm == "mlx")
