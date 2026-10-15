@@ -247,6 +247,10 @@ def check_web_opening():
     call = {"function": {"name": "ask_user", "arguments": json.dumps({"question": "Êtes-vous imposé·e à la source ?"})}}
     assert asked_question([{"role": "assistant", "content": "", "tool_calls": [call]}]) == "Êtes-vous imposé·e à la source ?"
     assert asked_question([{"role": "user", "content": "x"}]) is None
+    from .proxy import ASKED, stop_reason
+    turn1 = [{"role": "user", "content": "q1"}, {"role": "assistant", "content": "", "tool_calls": [call]},
+             {"role": "tool", "content": ASKED + " …"}]
+    assert stop_reason(turn1, 12) == "asked" and stop_reason(turn1 + [{"role": "user", "content": "q2"}], 12) is None
     print("web opening and asked question: ok")
 
 

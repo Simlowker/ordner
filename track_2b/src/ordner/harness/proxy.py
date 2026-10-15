@@ -103,7 +103,10 @@ def to_model(req, prefix=PREFIX, order=None, keep_context=False):
 
 
 def stop_reason(msgs, max_steps):
-    """The coordinator's loop exits, in its order: question asked, repeated duplicates, step budget spent."""
+    """The coordinator's loop exits, in its order: question asked, repeated duplicates, step budget spent; counted in
+    the current turn only (after the person's last message: a web conversation has several turns)."""
+    last_user = max((i for i, m in enumerate(msgs) if m["role"] == "user"), default=-1)
+    msgs = msgs[last_user + 1:]
     results = [m["content"] for m in msgs if m["role"] == "tool"]
     if any(r.startswith(ASKED) for r in results):
         return "asked"
