@@ -146,7 +146,7 @@ def route(messages, adapters_ok, eid=None):
 
 def banner(pick):
     if pick["expert"]:
-        return f"Expert : {E.EXPERTS[pick['expert']].name} — choisi par {pick['by']} ({round(100 * pick['p'][pick['expert']])} %)"
+        return f"Expert : {E.EXPERTS[pick['expert']].name} — choisi par le routeur d’Ordner ({pick['by']})"   # no score: noise for a person
     general = E.EXPERTS["coordinateur"].name
     return f"Expert : {general} — aucun expert assez sûr selon {pick['by']}" if pick["by"] else (
         f"Expert : {general} — routage indisponible")

@@ -435,7 +435,7 @@ def check_general_routing():
             up.reply = "Vous avez 10 jours pour faire opposition."
             second = post(p, req(history))
             msgs, names = model_input(p)
-            assert second["content"] == f"Expert : Poursuites — choisi par d1-3B (97 %)\n\n{up.reply}"
+            assert second["content"] == f"Expert : Poursuites — choisi par le routeur d’Ordner (d1-3B)\n\n{up.reply}"
             assert len(d1.bodies) == 1 and p.log[-1]["expert"] == "poursuites"
             assert [m["content"] for m in msgs if m["role"] == "tool"] == [result]
             # next turn: no banner again, the banner is out of the history the model sees, sources after the new message
@@ -462,7 +462,7 @@ def check_general_routing():
                 pick = p.log[-1]["routing"]
                 assert pick["by"] == "EmbeddingGemma" and pick["expert"] == expert and pick["errors"]
                 if expert:
-                    assert out["content"].startswith("Expert : Logement et ménage — choisi par EmbeddingGemma (80 %)")
+                    assert out["content"].startswith("Expert : Logement et ménage — choisi par le routeur d’Ordner (EmbeddingGemma)")
                     assert up.bodies[-1]["adapters"].endswith("expert-logement-v1")
                 else:
                     assert out["content"].startswith("Expert : Ordner (général) — aucun expert assez sûr selon "

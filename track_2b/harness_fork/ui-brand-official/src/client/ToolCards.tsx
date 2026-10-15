@@ -5,6 +5,7 @@
 // Display only: the tool text the model sees is unchanged.
 import { useState, type CSSProperties } from 'react'
 import { DisclosureRow, IconInspectOutlineRegular, IconSparkleRegular } from '@deepseek-ai/dsh-client-ui-primitives'
+import { CARD_NAMES } from './cards'
 
 /** Cockpit page of the prepared action (the cockpit is the only place where an action is validated). */
 const COCKPIT = 'http://127.0.0.1:8000/'
@@ -105,6 +106,56 @@ function pretty(text: string): string {
 
 const firstLine = (s: string): string => s.split('\n', 1)[0] ?? ''
 
+/** ISO date as the Swiss dd.mm.yyyy. */
+function date(iso: unknown): string | undefined {
+  const m = str(iso)?.match(/^(\d{4})-(\d{2})-(\d{2})/)
+  return m ? `${m[3]}.${m[2]}.${m[1]}` : undefined
+}
+
+const field = (o: unknown, k: string): unknown => typeof o === 'object' && o !== null ? (o as Record<string, unknown>)[k] : undefined
+
+/**
+ * What a settled call found, in the person's words, from its recorded result: the procedure and whether it applies
+ * with its deadline, how many official sources and from where, what was written to the dossier.
+ * @returns the row summary, or undefined to keep the first argument.
+ */
+export function outcome(name: string, args: Record<string, unknown>, output: string, t: (key: string) => string): string | undefined {
+  const env = obj(output)
+  const res = field(env, 'result') ?? env
+  const data = (field(res, 'data') ?? res) as Record<string, unknown>
+  const lang = t('lang') === 'lang' ? 'en' : t('lang')
+  const card = (id: unknown) => { const s = str(id); return s !== undefined ? CARD_NAMES[s]?.[lang] ?? s : undefined }
+  const parts = (...p: (string | undefined)[]) => p.filter(Boolean).join(' · ') || undefined
+  switch (name) {
+    case 'rules_evaluate': {
+      const status = str(data.status), due = date(field(data.deadline, 'due'))
+      return parts(card(data.card_id ?? args.card_id), status !== undefined ? t(`status.${status}`) : undefined,
+        due !== undefined ? `${t('due')} ${due}` : undefined)
+    }
+    case 'knowledge_search': {
+      const ps = Array.isArray(data.passages) ? data.passages as Record<string, unknown>[] : []
+      const hosts = [...new Set(ps.map(p => { try { return new URL(String(p.url)).hostname.replace(/^www\./, '') } catch { return '' } }))]
+      return ps.length > 0 ? parts(`${ps.length} ${t('sources')}`, hosts.filter(Boolean).slice(0, 3).join(', ')) : undefined
+    }
+    case 'case_record': {
+      const op = str(args.op)
+      return op === 'open_case' ? parts(t('case.opened'), card(args.card_id))
+        : op === 'add_deadline' ? parts(t('case.deadline'), date(args.due))
+          : op === 'propose_fact' ? t('case.fact') : undefined
+    }
+    case 'case_load': {
+      const cases = field(data, 'open_cases') ?? field(data, 'cases')
+      return Array.isArray(cases) ? `${cases.length} ${t('dossier.cases')}` : undefined
+    }
+    case 'piece_recevoir': {
+      const u = field(data, 'understood'), warn = field(res, 'warnings')
+      return parts(str(field(u, 'kind_label')), str(field(u, 'issuer')), Array.isArray(warn) ? str(warn[0]) : undefined)
+    }
+    default:
+      return str(data.summary)
+  }
+}
+
 /**
  * The row's view model: tool short name (a call carried by ask_user keeps its own name, see the proxy's CARRIER),
  * state, first string argument other than an id as summary, and the raw input and result for the expanded details.
@@ -165,7 +216,8 @@ export function OrdnerToolRow(props: Props & { toolName: string, inspect?: (() =
   const key = `tool.${m.name}`
   const title = t(key) !== key ? t(key) : m.name
   const expandable = props.phase !== 'preparing'
-  const summary = m.state === 'error' && m.output !== '' ? firstLine(m.output) : m.summary
+  const summary = m.state === 'error' && m.output !== '' ? firstLine(m.output)
+    : (m.state === 'ok' ? outcome(m.name, obj(m.argsRaw), m.output, t) : undefined) ?? m.summary
   const color = m.state === 'error' ? 'var(--dsw-alias-state-error-primary)'
     : m.state === 'stopped' ? 'var(--dsw-alias-state-warn-label)' : undefined
   const section = (label: string, text: string) => (
@@ -201,6 +253,7 @@ export function OrdnerToolRow(props: Props & { toolName: string, inspect?: (() =
  * an OrdnerToolRow (index.ts). */
 export const CARD_DICTS: Record<string, Record<string, string>> = {
   en: {
+    'lang': 'en', 'status.applicable': 'applies', 'status.not_applicable': 'does not apply', 'status.missing_info': 'information missing', 'due': 'deadline', 'sources': 'official sources', 'case.opened': 'Procedure opened', 'case.deadline': 'Deadline recorded', 'case.fact': 'Noted, for you to confirm', 'dossier.cases': 'procedures in the dossier',
     'tool.case_load': 'Reading the dossier', 'tool.knowledge_search': 'Searching the official sources',
     'tool.rules_evaluate': 'Checking the rules', 'tool.case_record': 'Note to the dossier',
     'tool.piece_recevoir': 'Document received', 'tool.document_read': 'Reading a document',
@@ -216,6 +269,7 @@ export const CARD_DICTS: Record<string, Record<string, string>> = {
     'action.notSent': 'Prepared, nothing is sent.', 'action.open': 'Open in Ordner',
   },
   fr: {
+    'lang': 'fr', 'status.applicable': 's’applique', 'status.not_applicable': 'ne s’applique pas', 'status.missing_info': 'informations manquantes', 'due': 'délai', 'sources': 'sources officielles', 'case.opened': 'Démarche ouverte', 'case.deadline': 'Délai enregistré', 'case.fact': 'Noté, à confirmer par vous', 'dossier.cases': 'démarches au dossier',
     'tool.case_load': 'Lecture du dossier', 'tool.knowledge_search': 'Recherche dans les sources officielles',
     'tool.rules_evaluate': 'Vérification des règles', 'tool.case_record': 'Note au dossier',
     'tool.piece_recevoir': 'Pièce reçue', 'tool.document_read': 'Lecture d’un document',
@@ -231,6 +285,7 @@ export const CARD_DICTS: Record<string, Record<string, string>> = {
     'action.notSent': 'Préparée, rien n’est envoyé.', 'action.open': 'Ouvrir dans Ordner',
   },
   de: {
+    'lang': 'de', 'status.applicable': 'trifft zu', 'status.not_applicable': 'trifft nicht zu', 'status.missing_info': 'Angaben fehlen', 'due': 'Frist', 'sources': 'amtliche Quellen', 'case.opened': 'Verfahren eröffnet', 'case.deadline': 'Frist eingetragen', 'case.fact': 'Notiert, von Ihnen zu bestätigen', 'dossier.cases': 'Verfahren im Dossier',
     'tool.case_load': 'Dossier lesen', 'tool.knowledge_search': 'Suche in den amtlichen Quellen',
     'tool.rules_evaluate': 'Prüfung der Regeln', 'tool.case_record': 'Notiz im Dossier',
     'tool.piece_recevoir': 'Unterlage erhalten', 'tool.document_read': 'Dokument lesen',
@@ -246,6 +301,7 @@ export const CARD_DICTS: Record<string, Record<string, string>> = {
     'action.notSent': 'Vorbereitet, nichts wird gesendet.', 'action.open': 'In Ordner öffnen',
   },
   it: {
+    'lang': 'it', 'status.applicable': 'si applica', 'status.not_applicable': 'non si applica', 'status.missing_info': 'informazioni mancanti', 'due': 'termine', 'sources': 'fonti ufficiali', 'case.opened': 'Procedura aperta', 'case.deadline': 'Termine registrato', 'case.fact': 'Annotato, da confermare', 'dossier.cases': 'procedure nel dossier',
     'tool.case_load': 'Lettura del dossier', 'tool.knowledge_search': 'Ricerca nelle fonti ufficiali',
     'tool.rules_evaluate': 'Verifica delle regole', 'tool.case_record': 'Nota nel dossier',
     'tool.piece_recevoir': 'Documento ricevuto', 'tool.document_read': 'Lettura di un documento',
