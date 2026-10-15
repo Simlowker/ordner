@@ -14,7 +14,11 @@ canton would not.
 It keeps the person's dossier on their own machine, reads the papers they receive, works out which of 18 Swiss
 procedures apply (tax return, health insurance, debt collection, pension, unemployment, moving…), computes deadlines
 from official rules quoted word for word, and prepares letters, document requests and payments. The person validates
-and acts. Apertus 1.5 8B (bf16) is its only general-purpose language model. Tested configuration: Apertus served on a
+and acts. Examples: a payment order and its notification date give the opposition deadline (debt-collection holidays
+included) and a prepared opposition letter; a tax return gets the list of documents still missing (e.g. a declared
+bank without its statement); a move or a health-insurance change, once its date and kind are known, gets its
+announcement, deductible or change deadline and the letters. Scope: 18 procedures (11 federal), federal law + VD, ZH,
+BE, GE, TI, cards and sources in fr/de/it; other cantons get the federal procedures only; all data is fictional. Apertus 1.5 8B (bf16) is its only general-purpose language model. Tested configuration: Apertus served on a
 Mac Studio M4 Max 36 GB, clients and UI on a second Mac (M4 Max 36 GB) over the local network; nothing leaves the LAN
 at run time.
 
@@ -25,7 +29,8 @@ at run time.
    probe on its hidden states, the d1-3B judge and rule checks flag the values a person should re-check.
 2. **Process tools make Apertus 8B a usable component, not a replacement for rules.** Process tools (one per
    procedure) against generic tools; a deterministic rules engine first and Apertus for what rules cannot do (the
-   "hybrid"); distillation from a larger teacher. All scored on the same scenario suite.
+   "hybrid"); distillation and tool-use training from larger teachers and a deterministic process teacher; a closed
+   frontier model as context only. All scored on the same scenario suite.
 
 ## Results (frozen test splits; details in the [technical report](technical_report.md))
 
@@ -34,7 +39,8 @@ OCR + rules/regex, 92.1 % for zero-shot Apertus, 98.0 % with LoRA (96.9 % on uns
 the zero-shot outputs (754 errors): first-token entropy AUROC 0.947 (re-reading 19.3 % of fields catches 90 % of
 errors), probe on hidden states 0.840 (H3 supported), combination 0.922 (H2 not supported).
 
-Scenario suite, test split (24 scenarios, one run per system, Apertus 1.5 8B bf16 served by `mlx_lm.server`; counts):
+Scenario suite, test split (24 scenarios, one run per system, Apertus 1.5 8B bf16 served by `mlx_lm.server`, original
+prompt as pre-registered; counts; runs with the current prompt below):
 
 | System                                           | Pass /24 | Obligations /22 | Missing info /4 | Deadlines /20 | Actions /14 | Forbidden / executed |
 | ------------------------------------------------ | -------- | --------------- | --------------- | ------------- | ----------- | -------------------- |
@@ -53,10 +59,42 @@ Scenario suite, test split (24 scenarios, one run per system, Apertus 1.5 8B bf1
   Dev results (43 scenarios): technical report, Table 3.
 - No run executed an effect. On dev, the hybrid prepared a duplicated payment in two scenarios (a double-payment guard
   was added since) and, in its re-run, an action carrying the IBAN of an injected phishing e-mail (`tax-be-03`).
+- Where rules-first is not yet reliable: on test the rules engine has 11 of 14 tax deadlines exact but 1 of 2
+  payment-order, 0 of 2 LAMal and 0 of 1 moving deadlines, whose decisive fact (notification date, kind of change,
+  arrival canton) is only in free text; that is where Apertus has to read.
 - Exploratory: d1-3B routes the conversation's first request to the coordinator or one of four experts, 78.1 % correct
   vs 64.7 % for EmbeddingGemma 2 on 201 requests. Expert adapters are kept only where they beat the base on dev
   (Poursuites, Logement) and are opt-in (`ORDNER_USE_ADAPTERS=1`): `mlx_lm.server` 0.32 reloads the model on each
   adapter change (16 → 35 GB measured).
+
+### Scenario suite with the current prompt (exploratory, after the freeze)
+
+Rule 4 of the coordinator prompt (`ordner.agent.coordinator`) now says to prepare the next step of every applicable
+procedure once nothing blocking is missing; a payment flagged as possible phishing is still prepared, with the warning,
+unless injected instructions were found. It was made explicit after an error analysis on dev: the most frequent failure
+of every frontier teacher was an action not prepared (Claude Code on the 24 pilot variants: 18 → 21 after the fix).
+Test labels untouched; every configuration below took the frozen test once with this prompt. Expert rows pick the
+expert from the scenario's expected procedures (oracle routing, the same for every model). Result files:
+`data/agent_runs/test/*_rule4.json*`.
+
+| System                                                       | Pass /24 | Obligations /22 | Missing info /4 | Deadlines /20 | Actions /14 | Forbidden / executed |
+| ------------------------------------------------------------ | -------- | --------------- | --------------- | ------------- | ----------- | -------------------- |
+| **Ordner: rules, then Apertus 8B (process tools)**           | **13**   | **17**          | **0**           | **13**        | **10**      | **0 / 0**            |
+| Apertus 8B expert alone, base                                | 5        | 8               | 1               | 5             | 2           | 0 / 0                |
+| Apertus 8B expert alone + tools-v1 adapter                   | 7        | 18              | 0               | 12            | 6           | 0 / 0                |
+| Context only: Claude Opus 5.5 expert (closed, not in Ordner) | 19       | 21              | 1               | 20            | 13          | 0 / 0                |
+
+- Rules first stays the reliable configuration: with rule 4 the hybrid passes exactly the rules engine's 13 scenarios
+  (it lost `tax-zh-03` and stopped asking questions, 2 → 0 of 4).
+- Tool-use training (tools-v1: QLoRA on 367 tool-call turns of 126 verified DeepSeek V4.1 Flash trajectories, selected
+  because it beat the base on dev, 8 vs 6 of 43) raised obligations 8 → 18 of 22, but the pass gain (5 → 7) is not
+  significant (McNemar 4–2, p = 0.69) and it asks no question.
+- The frontier reference (six Claude Code agents playing turn by turn through `ordner.distill.manual`, scores hidden)
+  shows where the gap lies: preparing actions and recording deadlines, not finding procedures. It is never training
+  data (`filter.py` drops closed-model trajectories).
+- **Process teacher** (`ordner.distill.process`): plays an ideal expert's method deterministically from tool results
+  only (never from expected outcomes); 328 of 496 dev variants pass the strict filter, at no cost. tools-v2 (572 turns:
+  process teacher + DeepSeek, rule-4 prompt) is being trained; it takes the test only if it beats the base on dev.
 
 ### Knowledge bases per expert (exploratory, added after the PREREG freeze)
 
@@ -116,12 +154,12 @@ Without the conversation layer, « Demander à Ordner » shows hand-written tran
 
 ### Replay vs live
 
-|                       | `make run` (replay, Docker)                                       | Live (Apple Silicon Mac, 36 GB, local weights)                                                  |
-| --------------------- | ----------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| Documents             | recorded OCR, Apertus, d1-3B outputs and hidden-state features    | batch pipeline: LightOnOCR-3 → Apertus (+ LoRA) → probe, d1-3B, checks                          |
-| Procedures            | rules engine on the dossier                                       | same, then the Apertus coordinator on the same dossier                                          |
-| « Demander à Ordner » | conversation with a scripted mock model; else fixture transcripts | Apertus coordinator through `LLM_BASE_URL` (e.g. `mlx_lm.server`); its tools use cached outputs |
-| Knowledge search      | BM25 over the card corpus (no weights in the image); the experts' bases need EmbeddingGemma 2 | EmbeddingGemma 2 (live tools or `ORDNER_EMBED=1`): the expert's own base, else the card corpus |
+|                       | `make run` (replay, Docker)                                                                   | Live (Apple Silicon Mac, 36 GB, local weights)                                                  |
+| --------------------- | --------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| Documents             | recorded OCR, Apertus, d1-3B outputs and hidden-state features                                | batch pipeline: LightOnOCR-3 → Apertus (+ LoRA) → probe, d1-3B, checks                          |
+| Procedures            | rules engine on the dossier                                                                   | same, then the Apertus coordinator on the same dossier                                          |
+| « Demander à Ordner » | conversation with a scripted mock model; else fixture transcripts                             | Apertus coordinator through `LLM_BASE_URL` (e.g. `mlx_lm.server`); its tools use cached outputs |
+| Knowledge search      | BM25 over the card corpus (no weights in the image); the experts' bases need EmbeddingGemma 2 | EmbeddingGemma 2 (live tools or `ORDNER_EMBED=1`): the expert's own base, else the card corpus  |
 
 ### Live commands (Apple Silicon, project venv; Docker cannot use the Mac GPU)
 
@@ -158,6 +196,17 @@ PY=$PY src/ordner/distill/train.sh --model <4-bit base> --num-layers 16 --val-ba
 .venv/bin/mlx_lm.server --model <bf16 base> --adapter-path work/adapters/coordinator-distill-v1 --port 8080 &
 $PY -m ordner.eval.scenarios.run --agent coordinator --toolset process --split dev      # distilled coordinator
 
+# Tool-use adapters, expert mode (each variant runs as its domain's expert, as in the web UI);
+# variants_all.jsonl = 496 variants of the 43 dev scenarios from ordner.distill.variants; the run was sharded (work/distill/full.sh)
+$PY -m ordner.distill.teacher --teacher deepseek --toolset process --expert-mode --max-tokens 4096 --variants work/distill/variants_all.jsonl --out work/distill/traj.deepseek.full.jsonl
+$PY -m ordner.distill.teacher --teacher process --expert-mode --variants work/distill/variants_all.jsonl --out work/distill/traj.process.jsonl  # deterministic, no API
+$PY -m ordner.distill.filter work/distill/traj.deepseek.full.jsonl --out work/distill/tools/kept.jsonl --report work/distill/tools/filter_report.json
+$PY -m ordner.distill.prepare --kept work/distill/tools/kept.jsonl --out work/distill/tools/lora_data --tool-turns-only --allow-drift
+$PY -m ordner.distill.train --config src/ordner/distill/lora_config.yaml --model <4-bit base> --num-layers 16 --val-batches 10 --iters 367 --data work/distill/tools/lora_data --adapter-path work/adapters/tools-v1
+$PY -m ordner.eval.scenarios.run --agent coordinator --expert auto --split dev --max-steps 12   # oracle routing; serve the adapter first
+# Frontier reference without an API: a Claude Code agent plays the teacher turn by turn (never training data)
+$PY -m ordner.distill.manual start <variant_or_scenario_id>   # then: manual send <id> (one reply on stdin), manual collect <name>
+
 # Knowledge search: per-expert bases (data/knowledge/results.json; acts only: results_repo_only.json), then the card corpus
 $PY -m ordner.eval.knowledge_experts && ORDNER_KB_REPO_ONLY=1 $PY -m ordner.eval.knowledge_experts
 $PY -m ordner.eval.retrieval data/retrieval/queries.json && $PY -m ordner.eval.retrieval data/retrieval/queries_heldout.json
@@ -187,13 +236,14 @@ COCKPIT      what concerns me · what is missing · next step · why (quoted sou
 
 ### Models
 
-| Model                                    | Role                                                                                                                                    | When loaded                                          | Licence                                    |
-| ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- | ------------------------------------------ |
-| **Apertus 1.5 8B** (text backbone), bf16 | extracts document fields (LoRA); hidden states feed the doubt probe; coordinator; explanations                                          | live mode                                            | Apache-2.0                                 |
-| LightOnOCR-3-1B                          | photo or scan → text                                                                                                                    | on demand                                            | Apache-2.0                                 |
-| d1-3B                                    | judge: P(the extracted value is right), one doubt signal; routes the conversation's first request to an expert (bf16)                   | on demand (fp32, 14.1 GB: not together with Apertus) | LFM Open License 1.0, **not OSI-approved** |
-| EmbeddingGemma 2                         | knowledge search over each expert's official sources (BM25 only as fallback); routing fallback                                          | on demand                                            | Apache-2.0                                 |
-| GLM-5.3                                  | **development time only**: distillation teacher, via OpenRouter, on fictional scenarios. Not part of the product; no personal data sent | never at runtime                                     | licence not verified here                  |
+| Model                                    | Role                                                                                                                                                             | When loaded                                          | Licence                                    |
+| ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- | ------------------------------------------ |
+| **Apertus 1.5 8B** (text backbone), bf16 | extracts document fields (LoRA); hidden states feed the doubt probe; coordinator; explanations                                                                   | live mode                                            | Apache-2.0                                 |
+| LightOnOCR-3-1B                          | photo or scan → text                                                                                                                                             | on demand                                            | Apache-2.0                                 |
+| d1-3B                                    | judge: P(the extracted value is right), one doubt signal; routes the conversation's first request to an expert (bf16)                                            | on demand (fp32, 14.1 GB: not together with Apertus) | LFM Open License 1.0, **not OSI-approved** |
+| EmbeddingGemma 2                         | knowledge search over each expert's official sources (BM25 only as fallback); routing fallback                                                                   | on demand                                            | Apache-2.0                                 |
+| GLM-5.3, DeepSeek V4.1 Flash             | **development time only**: teachers (distillation, tool-use adapters), via OpenRouter, on fictional dev variants. Not part of the product; no personal data sent | never at runtime                                     | licence not verified here                  |
+| Claude Opus 5.5                          | **development time only**: frontier reference in the same harness (OpenRouter, and Claude Code agents via `ordner.distill.manual`); never training data          | never at runtime                                     | proprietary (closed weights)               |
 
 Apertus (inference, LoRA and QLoRA training) and d1-3B ran on a Mac Studio M4 Max 36 GB, one large model at a time.
 OCR batches ran on it and on the second Mac (a laptop, M4 Max 36 GB), which also ran the evaluation clients and the UI.
@@ -214,19 +264,19 @@ sends, files, signs or pays.
 
 ### Modules (`src/ordner/`)
 
-| Module                                                           | Role                                                                                                                                                              |
-| ---------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `case/`                                                          | Local dossier (`ORDNER_HOME`): facts with provenance and status, cases, actions (double-payment guard), deadlines, append-only events                             |
-| `procedures/`                                                    | 18 procedure cards (16 qualified, 2 draft), 227 verbatim quotes from 73 official sources, checked by code                                                         |
-| `rules/`                                                         | Applicability, deadlines (holidays, debt-collection holidays, reception-by, cantonal tables), reminders, `.ics`, completeness, consolidation, phishing guard      |
-| `tools/`                                                         | The 16 tools above (JSON schema, argument checks, replay or live mode); `expert_kb`: one knowledge base per expert, used by `knowledge.search`                    |
-| `agent/`                                                         | Apertus coordinator: bounded loop, subject pinned, person-only operations hidden, prepared actions only, injection filter                                         |
-| `harness/`                                                       | DeepSeek Harness integration (MCP server, Apertus tool-call proxy, fail-closed tool allowlist), web presets (coordinator + four experts), d1-3B routing; optional |
-| `distill/`                                                       | Scenario variants, teacher runner, strict filter, training data in Apertus's tool-call syntax, QLoRA training                                                     |
-| `connectors/`                                                    | Watched inbox, PDF share, eCH-0196, QR-bill, camt.053, OFSP premiums, e-mail drafts (`.eml`, never sent)                                                          |
-| `app/`                                                           | Stdlib HTTP server + vanilla JS cockpit, no build step, no CDN (CSP `default-src 'self'`)                                                                         |
-| `gen/`, `models/`, `pipeline/`, `finetune/`, `eval/`, `explain/` | Proof 1: synthetic statements with barcode oracle, local model wrappers, batches, LoRA, replay, grounded explanations                                             |
-| `eval/scenarios/`                                                | 76 scenarios (67 scored: 43 dev, 24 test), runner, metrics; agents `rules_only`, `coordinator`, `hybrid`, `harness`                                               |
+| Module                                                           | Role                                                                                                                                                                                                           |
+| ---------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `case/`                                                          | Local dossier (`ORDNER_HOME`): facts with provenance and status, cases, actions (double-payment guard), deadlines, append-only events                                                                          |
+| `procedures/`                                                    | 18 procedure cards (16 qualified, 2 draft), 227 verbatim quotes from 73 official sources, checked by code                                                                                                      |
+| `rules/`                                                         | Applicability, deadlines (holidays, debt-collection holidays, reception-by, cantonal tables), reminders, `.ics`, completeness, consolidation, phishing guard                                                   |
+| `tools/`                                                         | The 16 tools above (JSON schema, argument checks, replay or live mode); `expert_kb`: one knowledge base per expert, used by `knowledge.search`                                                                 |
+| `agent/`                                                         | Apertus coordinator: bounded loop, subject pinned, person-only operations hidden, prepared actions only, injection filter                                                                                      |
+| `harness/`                                                       | DeepSeek Harness integration (MCP server, Apertus tool-call proxy, fail-closed tool allowlist), web presets (coordinator + four experts), d1-3B routing; optional                                              |
+| `distill/`                                                       | Scenario variants, teacher runner (expert mode), deterministic process teacher, manual frontier reference (`manual`), strict filter (drops closed-model trajectories), tool-call training data, QLoRA training |
+| `connectors/`                                                    | Watched inbox, PDF share, eCH-0196, QR-bill, camt.053, OFSP premiums, e-mail drafts (`.eml`, never sent)                                                                                                       |
+| `app/`                                                           | Stdlib HTTP server + vanilla JS cockpit, no build step, no CDN (CSP `default-src 'self'`)                                                                                                                      |
+| `gen/`, `models/`, `pipeline/`, `finetune/`, `eval/`, `explain/` | Proof 1: synthetic statements with barcode oracle, local model wrappers, batches, LoRA, replay, grounded explanations                                                                                          |
+| `eval/scenarios/`                                                | 76 scenarios (67 scored: 43 dev, 24 test), runner, metrics; agents `rules_only`, `coordinator`, `hybrid`, `harness`                                                                                            |
 
 More: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md), [`docs/harness_integration.md`](docs/harness_integration.md),
 pre-registration [`PREREG.md`](PREREG.md) (frozen in commit `f52d2c3`, deviations in its Addendum 4).
@@ -246,8 +296,13 @@ pre-registration [`PREREG.md`](PREREG.md) (frozen in commit `f52d2c3`, deviation
 
 - Scenarios were written by the team in parallel with the procedure cards: the rules engine is not an independent
   baseline. Small n (43 dev, 24 test) and run-to-run noise (5 of 43 verdicts).
-- 18 procedures; tax returns for VD, ZH, BE (qualified), GE and TI (draft). Elsewhere the coverage map says
-  « non couverte ». Cantonal rules change yearly; each card carries its access date.
+- 18 procedures; tax returns for VD, ZH, BE (qualified), GE and TI (draft). Other cantons get the 11 federal
+  procedures only; the coverage map says « non couverte » for the rest. Cantonal rules change yearly; each card
+  carries its access date.
+- After the freeze (exploratory): rule 4 of the prompt made explicit after the dev error analysis; dev scenarios
+  `serafe-01/02/03` given a valid IBAN and QR reference (the old ones failed the check digits, so refusing was right;
+  test IBANs audited: clean); expert-mode evaluation uses oracle routing. The process teacher does not cover AHV for
+  non-employed persons, withholding-tax refunds, nor LAMal and moving deadlines that need free-text facts.
 - The agentic web conversation (forked harness UI, experts, routing) demonstrates the evaluated loop but is not
   separately evaluated; with Noa's long dossier the 8B model often asks instead of acting. Without that layer, the
   console's live « Demander à Ordner » gives the coordinator all 16 tools, not the evaluated process toolset.
@@ -261,8 +316,9 @@ Full list: [technical report](technical_report.md), §6.
 ## Declarations
 
 Code, procedure cards and scenarios were written with an AI coding assistant (Claude Code) and reviewed by the team.
-GLM-5.3 was used at development time only, through OpenRouter, as a distillation teacher on fictional synthetic
-scenarios; no personal data was sent and the product never calls it. Third-party components and licences: technical
+GLM-5.3 and DeepSeek V4.1 Flash were used at development time only, through OpenRouter, as teachers on fictional
+synthetic scenarios; no personal data was sent and the product never calls them. Claude Opus 5.5 (closed) was run only
+as a frontier reference (OpenRouter, and Claude Code agents on a subscription); its trajectories never train Apertus. Third-party components and licences: technical
 report, « License ».
 
 Code: Apache-2.0 · documentation: CC-BY-4.0 · data: CDLA-Permissive-2.0.

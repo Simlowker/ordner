@@ -10,6 +10,12 @@ expert; each expert is Apertus 1.5 8B with its domain's tools, its own knowledge
 person's canton), and its own LoRA adapter only where it measurably helps; the rules engine computes what is computable;
 nothing is sent. It routes by domain and filters by canton, read from the dossier.
 
+For example, a payment order and its notification date give the opposition deadline (debt-collection holidays
+included) and a prepared opposition letter; a tax return gets the list of documents still missing; a move or a
+health-insurance change, once its date and kind are known, gets its deadline and letters; every rule is shown with its
+official source, quoted verbatim. Scope: 18 procedures, federal law + VD, ZH, BE, GE, TI, in fr/de/it; other cantons
+get the federal procedures only; all dossiers are fictional.
+
 Apertus 1.5 8B (bf16) is its only general-purpose language model; support models are loaded on demand. Tested
 configuration: Apertus served on a Mac Studio M4 Max 36 GB, clients and UI on a second Mac (M4 Max 36 GB) over the local
 network; nothing leaves the LAN at run time. Two claims are measured on frozen test splits (`PREREG.md`):
@@ -25,6 +31,10 @@ network; nothing leaves the LAN at run time. Two claims are measured on frozen t
    passed scenarios from 3 to 12 (H6 supported), still below the rules engine alone (13). Rules first, then Apertus
    (defined after dev, exploratory) passes 14, not significantly more. Distillation did not help (H7 not supported).
    No run executed anything; on dev, one hybrid run prepared an action carrying a phishing e-mail's IBAN.
+   After the freeze (exploratory), with a clarified prompt rule ("prepare the next step of every applicable
+   procedure"), rules then Apertus passes 13, Apertus 8B alone 5, or 7 with a tool-use adapter (obligations found 8 →
+   18 of 22, pass gain not significant); for context only, the closed Claude Opus 5.5 passes 19 in the same harness,
+   the gap lying in preparing actions and recording deadlines. Rules first stays the reliable configuration.
 
 Exploratory, after the freeze: **one knowledge base per expert.** 712 official passages (federal + VD, ZH, BE, GE, TI;
 fr/de/it), each a verbatim substring of the fetched text; the 436 passages from official acts are in the repository. On
@@ -80,8 +90,10 @@ COCKPIT      what concerns me · what is missing · next step · why (quoted sou
   own knowledge base (`ordner.tools.expert_kb`, `track_2b/data/knowledge/`), filtered to federal + the dossier's canton.
   LoRA adapters are kept only where they beat the base on dev (Poursuites, Logement), opt-in
   (`ORDNER_USE_ADAPTERS=1`) and not shipped.
-- **GLM-5.3** was used at development time only, through OpenRouter, as a distillation teacher on fictional synthetic
-  scenarios. It is not part of the product and no personal data was sent.
+- **GLM-5.3 and DeepSeek V4.1 Flash** were used at development time only, through OpenRouter, as teachers on
+  fictional synthetic scenarios, next to a deterministic process teacher (`ordner.distill.process`). **Claude Opus
+  5.5** (closed) was run only as a frontier reference in the same harness (`ordner.distill.manual`); its trajectories
+  never train Apertus. None is part of the product and no personal data was sent.
 
 Target architecture: **air-gapped (b)** and **on-premise (a)**. External services at runtime: **none**.
 

@@ -9,26 +9,26 @@ expert; each expert is Apertus 1.5 8B with its domain's tools, its own knowledge
 person's canton), and its own LoRA adapter only where it measurably helps; the rules engine computes what is computable;
 nothing is sent. Route by domain, filter by canton (read from the dossier, never guessed by a model).
 
-| Layer | Role | State (15.10, numbers recomputed from `data/`) |
-|---|---|---|
-| Router: d1-3B (`harness/router.py`), EmbeddingGemma 2 fallback | picks the expert from the first request; the coordinator when no expert is confident (p < 0.5) | 78.1 % correct on 201 scenario requests (EmbeddingGemma 2 alone: 64.7 %), `data/routing/results.json` |
-| Expert: Apertus 1.5 8B + domain tools + prompt (`harness/experts.py`) | Impôts, Assurance maladie, Poursuites, Logement et ménage; the coordinator is the general expert | LoRA adapter only where it beat the base on dev: Poursuites and Logement (opt-in, `ORDNER_USE_ADAPTERS=1`) |
-| Expert knowledge base (`tools/expert_kb.py`, `data/knowledge/`) | official passages of the expert's topics, federal + the dossier's canton, ranked by EmbeddingGemma 2 | 712 passages (Impôts 135, Assurance maladie 168, Poursuites 164, Logement 245), 436 from official acts in the repo; 89.6 % top-3 topic hit on 96 blind questions vs 81.2 % for one global base |
-| Rules engine and dossier (shared) | applicability, deadlines, completeness, guards; facts, cases, actions, events | unchanged; every expert reads and writes the same dossier |
+| Layer                                                                 | Role                                                                                                 | State (15.10, numbers recomputed from `data/`)                                                                                                                                                 |
+| --------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Router: d1-3B (`harness/router.py`), EmbeddingGemma 2 fallback        | picks the expert from the first request; the coordinator when no expert is confident (p < 0.5)       | 78.1 % correct on 201 scenario requests (EmbeddingGemma 2 alone: 64.7 %), `data/routing/results.json`                                                                                          |
+| Expert: Apertus 1.5 8B + domain tools + prompt (`harness/experts.py`) | Impôts, Assurance maladie, Poursuites, Logement et ménage; the coordinator is the general expert     | LoRA adapter only where it beat the base on dev: Poursuites and Logement (opt-in, `ORDNER_USE_ADAPTERS=1`)                                                                                     |
+| Expert knowledge base (`tools/expert_kb.py`, `data/knowledge/`)       | official passages of the expert's topics, federal + the dossier's canton, ranked by EmbeddingGemma 2 | 712 passages (Impôts 135, Assurance maladie 168, Poursuites 164, Logement 245), 436 from official acts in the repo; 89.6 % top-3 topic hit on 96 blind questions vs 81.2 % for one global base |
+| Rules engine and dossier (shared)                                     | applicability, deadlines, completeness, guards; facts, cases, actions, events                        | unchanged; every expert reads and writes the same dossier                                                                                                                                      |
 
-| Module | Owner | Responsibility |
-|---|---|---|
-| `ordner.case` | W1 | Durable local dossier (SQLite, `ORDNER_HOME`, default `~/.ordner`): subjects, documents, facts with provenance and status, cases (procedure instances) with states, actions, deadlines, append-only event log, resume |
-| `ordner.procedures` | W2 | Catalogue of `ProcedureCard`s as JSON in `procedures/cards/`, loader, validator; every source quote verified verbatim |
-| `ordner.rules` | W3 | Applicability evaluation (declarative conditions), deadline rules (cantonal tables, LP holidays, reception-by dates), reminders, `.ics` export |
-| `ordner.tools` | W4 | Tool registry (`ToolSpec` + implementation) wrapping the other modules: 16 tools, 11 generic (document.read/decode, knowledge.search, decision.score, expert.run, rules.evaluate, dossier.check, schedule.plan, case.load/record, receipt.verify) and 5 process tools (`tools/processes/`: piece.recevoir, impots.preparer_declaration, lamal.revoir_franchise, poursuite.repondre, demenagement.annoncer); `tools/expert_kb.py`: one knowledge base per expert |
-| `ordner.agent` | W5 | Apertus coordinator loop over the tool registry (Apertus tool-call syntax parsed exactly; local OpenAI-compatible server or in-process MLX) |
-| `ordner.harness` | W10 | DeepSeek Harness as an optional runtime for the same loop: MCP server over the coordinator's dispatch, Apertus tool-call proxy, fail-closed tool allowlist (`docs/harness_integration.md`); web presets for the coordinator and four experts (`harness/experts.py`), d1-3B routing (`harness/router.py`) |
-| `ordner.distill` | — | Distillation: dev-scenario variants, teacher runner (same loop), strict filter, training data in Apertus syntax, QLoRA training |
-| `ordner.connectors` | W6 | Local-first inputs/outputs: watched inbox, PDF share, eCH-0196, QR-bill, camt.053, OFSP premiums + LAMal comparator, email drafts (.eml, never sent) |
-| `ordner.app` | W7 | Cockpit UI (home: urgent, missing documents, next step; cases; timeline; coverage map) on top of the existing console |
-| `ordner.eval.scenarios` | W8 | Scenario suite and metrics (obligations found/missed, wrong triggers, questions, deadlines, actions, forbidden actions, schema validity); agents `rules_only`, `coordinator`, `hybrid`, `harness` |
-| existing | — | `gen/`, `models/`, `finetune/`, `eval/` (measured eCH-0196 core), `explain/` |
+| Module                  | Owner | Responsibility                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| ----------------------- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ordner.case`           | W1    | Durable local dossier (SQLite, `ORDNER_HOME`, default `~/.ordner`): subjects, documents, facts with provenance and status, cases (procedure instances) with states, actions, deadlines, append-only event log, resume                                                                                                                                                                                                                                                                                                                                      |
+| `ordner.procedures`     | W2    | Catalogue of `ProcedureCard`s as JSON in `procedures/cards/`, loader, validator; every source quote verified verbatim                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| `ordner.rules`          | W3    | Applicability evaluation (declarative conditions), deadline rules (cantonal tables, LP holidays, reception-by dates), reminders, `.ics` export                                                                                                                                                                                                                                                                                                                                                                                                             |
+| `ordner.tools`          | W4    | Tool registry (`ToolSpec` + implementation) wrapping the other modules: 16 tools, 11 generic (document.read/decode, knowledge.search, decision.score, expert.run, rules.evaluate, dossier.check, schedule.plan, case.load/record, receipt.verify) and 5 process tools (`tools/processes/`: piece.recevoir, impots.preparer_declaration, lamal.revoir_franchise, poursuite.repondre, demenagement.annoncer); `tools/expert_kb.py`: one knowledge base per expert                                                                                            |
+| `ordner.agent`          | W5    | Apertus coordinator loop over the tool registry (Apertus tool-call syntax parsed exactly; local OpenAI-compatible server or in-process MLX)                                                                                                                                                                                                                                                                                                                                                                                                                |
+| `ordner.harness`        | W10   | DeepSeek Harness as an optional runtime for the same loop: MCP server over the coordinator's dispatch, Apertus tool-call proxy, fail-closed tool allowlist (`docs/harness_integration.md`); web presets for the coordinator and four experts (`harness/experts.py`), d1-3B routing (`harness/router.py`)                                                                                                                                                                                                                                                   |
+| `ordner.distill`        | —     | Distillation and tool-use training: dev-scenario variants, teacher runner (same loop; `--expert-mode` runs each variant as its domain's expert, as in the web UI), deterministic process teacher (`process.py`: plays an ideal expert's method from tool results only, never from expected outcomes), manual frontier reference (`manual.py`: a Claude Code agent plays the teacher turn by turn, score hidden), strict filter (`filter.py`, never keeps closed-model trajectories), training data in Apertus syntax (`--tool-turns-only`), QLoRA training |
+| `ordner.connectors`     | W6    | Local-first inputs/outputs: watched inbox, PDF share, eCH-0196, QR-bill, camt.053, OFSP premiums + LAMal comparator, email drafts (.eml, never sent)                                                                                                                                                                                                                                                                                                                                                                                                       |
+| `ordner.app`            | W7    | Cockpit UI (home: urgent, missing documents, next step; cases; timeline; coverage map) on top of the existing console                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| `ordner.eval.scenarios` | W8    | Scenario suite and metrics (obligations found/missed, wrong triggers, questions, deadlines, actions, forbidden actions, schema validity); agents `rules_only`, `coordinator`, `hybrid`, `harness`                                                                                                                                                                                                                                                                                                                                                          |
+| existing                | —     | `gen/`, `models/`, `finetune/`, `eval/` (measured eCH-0196 core), `explain/`                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 
 Rules for every workstream: no network at runtime except explicit connectors; nothing is sent, filed, signed or paid
 by Ordner (it prepares, the person acts); every legal rule cites an official source; unknown or unqualified → explicit
@@ -76,15 +76,15 @@ Self-check: `python -m ordner.case.selfcheck`. Demo persona: `python -m ordner.c
 
 **Extensions to the signatures above**
 
-| Call | Effect |
-|---|---|
-| `actor=` on every mutation | Who acted (`user`, `ordner`, `connector`, `rule`, `model`), written to the event. Defaults: `add_subject` user, `add_document` connector, `confirm_fact`/`reject_fact` user, `open_case` rule, `set_state` ordner, `set_missing` rule, `add_action` ordner, `update_action` user, `add_deadline` rule, `complete_deadline` user |
-| `set_missing(case_id, missing: list[str])` | Replace `Case.missing` (missing fact keys / document kinds); event `missing_updated` |
-| `get_document(id)` | One document; `KeyError` if unknown |
-| `complete_deadline(id)` | `active` → `done` (idempotent on `done`); event `deadline_done` |
-| `deadlines(case_id, status=None)` | Every deadline of a case, history included |
-| `snapshot(subject_id, today=None, last_events=20)` | `today` fixes `overdue` for tests |
-| `close()` | Close the connection |
+| Call                                               | Effect                                                                                                                                                                                                                                                                                                                          |
+| -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `actor=` on every mutation                         | Who acted (`user`, `ordner`, `connector`, `rule`, `model`), written to the event. Defaults: `add_subject` user, `add_document` connector, `confirm_fact`/`reject_fact` user, `open_case` rule, `set_state` ordner, `set_missing` rule, `add_action` ordner, `update_action` user, `add_deadline` rule, `complete_deadline` user |
+| `set_missing(case_id, missing: list[str])`         | Replace `Case.missing` (missing fact keys / document kinds); event `missing_updated`                                                                                                                                                                                                                                            |
+| `get_document(id)`                                 | One document; `KeyError` if unknown                                                                                                                                                                                                                                                                                             |
+| `complete_deadline(id)`                            | `active` → `done` (idempotent on `done`); event `deadline_done`                                                                                                                                                                                                                                                                 |
+| `deadlines(case_id, status=None)`                  | Every deadline of a case, history included                                                                                                                                                                                                                                                                                      |
+| `snapshot(subject_id, today=None, last_events=20)` | `today` fixes `overdue` for tests                                                                                                                                                                                                                                                                                               |
+| `close()`                                          | Close the connection                                                                                                                                                                                                                                                                                                            |
 
 **Rules enforced**
 
@@ -96,14 +96,14 @@ Self-check: `python -m ordner.case.selfcheck`. Demo persona: `python -m ordner.c
 
 **Idempotency**
 
-| Call | Same input again returns the existing row, no event |
-|---|---|
-| `add_document` | same `subject_id` + `sha256` (callers must use the returned `id`, it may differ from the one passed) |
-| `open_case` | same subject + `card_id` + `period` while the case is not `closed` |
-| `add_action` | same case + `kind` + `payload` while pending (`prepared`/`validated`/`done_by_user`) |
-| `add_action` (payment) | double-payment guard: a pending payment of the same case and amount is returned (same case and amount, not a bill identity); a concrete payment cancels the case's generic payment step prepared by the rules engine (event `action_cancelled`) |
-| `add_deadline` | same case + `rule_id` + `due` (active or done). Same rule with another date = recomputation: the active one becomes `superseded` (event `deadline_superseded`) |
-| `set_state` / `set_missing` | same value: no-op |
+| Call                        | Same input again returns the existing row, no event                                                                                                                                                                                             |
+| --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `add_document`              | same `subject_id` + `sha256` (callers must use the returned `id`, it may differ from the one passed)                                                                                                                                            |
+| `open_case`                 | same subject + `card_id` + `period` while the case is not `closed`                                                                                                                                                                              |
+| `add_action`                | same case + `kind` + `payload` while pending (`prepared`/`validated`/`done_by_user`)                                                                                                                                                            |
+| `add_action` (payment)      | double-payment guard: a pending payment of the same case and amount is returned (same case and amount, not a bill identity); a concrete payment cancels the case's generic payment step prepared by the rules engine (event `action_cancelled`) |
+| `add_deadline`              | same case + `rule_id` + `due` (active or done). Same rule with another date = recomputation: the active one becomes `superseded` (event `deadline_superseded`)                                                                                  |
+| `set_state` / `set_missing` | same value: no-op                                                                                                                                                                                                                               |
 
 **Case transitions** (`NEXT` in `store.py`)
 
@@ -115,6 +115,7 @@ awaiting_response → complement_requested | decision_received
 complement_requested → missing_documents | ready_to_prepare | awaiting_response
 decision_received → result_verified → closed
 ```
+
 Any move to an earlier state (including reopening a closed case) or closing early needs a non-empty `reason`, stored
 in the `state_changed` event. Anything else raises `ValueError`.
 
@@ -141,14 +142,14 @@ follows).
 checked against `input_schema` (type, enum, required, nested `items`); unknown arguments are an error.
 Self-check: `python -m ordner.tools.selfcheck` (replay, no model, temporary dossier with the demo persona).
 
-| ctx key | Effect |
-|---|---|
-| `mode` | `replay` (default): cached model outputs from `work/` (OCR `ocr.*.jsonl`, Apertus `extract.*.jsonl`, d1 `route.jsonl`), labelled fallbacks (rule-based extraction, heuristics) otherwise. `live`: LightOnOCR-3, d1-3B, EmbeddingGemma 2, Apertus are loaded on demand and called (not all at once on a 36 GB Mac) |
-| `store`, `subject_id` | Dossier session: `subject_id` args are forced to it, `doc_...` ids resolve through the store (other subjects refused), file paths outside `track_2b/` refused |
-| `actor` | `model` (default) or `user`: `confirm_fact`/`reject_fact` and `result_verified` without proof are refused to the model (the coordinator also hides these ops from the schema it shows) |
-| `llm_url`, `llm_model` / `apertus_mlx` | `expert.run` live: OpenAI-compatible endpoint (warning if not localhost) / in-process MLX (`True` or adapter path) |
-| `today` | Scenario date (YYYY-MM-DD, default the machine date): `on` of `rules.applicable` (ages, card validity), `today` of deadlines and `reminders` |
-| `expert_tags`, `work` | Replay tags (default `apertus-lora`, `apertus-base`), work dir |
+| ctx key                                | Effect                                                                                                                                                                                                                                                                                                            |
+| -------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `mode`                                 | `replay` (default): cached model outputs from `work/` (OCR `ocr.*.jsonl`, Apertus `extract.*.jsonl`, d1 `route.jsonl`), labelled fallbacks (rule-based extraction, heuristics) otherwise. `live`: LightOnOCR-3, d1-3B, EmbeddingGemma 2, Apertus are loaded on demand and called (not all at once on a 36 GB Mac) |
+| `store`, `subject_id`                  | Dossier session: `subject_id` args are forced to it, `doc_...` ids resolve through the store (other subjects refused), file paths outside `track_2b/` refused                                                                                                                                                     |
+| `actor`                                | `model` (default) or `user`: `confirm_fact`/`reject_fact` and `result_verified` without proof are refused to the model (the coordinator also hides these ops from the schema it shows)                                                                                                                            |
+| `llm_url`, `llm_model` / `apertus_mlx` | `expert.run` live: OpenAI-compatible endpoint (warning if not localhost) / in-process MLX (`True` or adapter path)                                                                                                                                                                                                |
+| `today`                                | Scenario date (YYYY-MM-DD, default the machine date): `on` of `rules.applicable` (ages, card validity), `today` of deadlines and `reminders`                                                                                                                                                                      |
+| `expert_tags`, `work`                  | Replay tags (default `apertus-lora`, `apertus-base`), work dir                                                                                                                                                                                                                                                    |
 
 `dossier.check(subject_id, period, card_id?)` (read only) exposes `ordner.rules.completeness` (with a card: missing
 documents per declared institution, wrong year, duplicates, missing facts) and `ordner.rules.consolidate` (tax cards or
@@ -184,16 +185,23 @@ and `prepare_action`. `--toolset base` shows the 11 generic tools; `--toolset pr
 `knowledge.search`, `rules.evaluate`, `case.load` and `case.record` (9); `both` shows all 16. Same system prompt in
 every toolset.
 
+**Rule 4 of the system prompt** (`agent/coordinator.py`, since 15.10 15:10, after the freeze): when a procedure
+applies and no blocking information is missing, prepare its next step (form, letter, payment, document request) with
+`prepare_action`, once; a payment flagged as possible phishing is still prepared, with the warning, unless rule 6
+(injected instructions) applies. Before, the rule read as optional and "action not prepared" was the most frequent
+failure of every frontier teacher on dev. Test results with this prompt: technical report, Table 4
+(`data/agent_runs/test/*_rule4.json*`; rules then Apertus 13/24, identical to the rules engine alone).
+
 **Dev results** (43 scored dev scenarios; Apertus 1.5 8B bf16 behind `mlx_lm.server`, temperature 0; EmbeddingGemma 2
 for knowledge search; test split not yet run):
 
-| System                                           | Pass    | Obligations | Missing info (7 items) | Deadlines exact | Actions |
-| ------------------------------------------------ | ------- | ----------- | ---------------------- | --------------- | ------- |
-| `rules_only` (no model)                          | 46.5 %  | 76.9 %      | 0 %                    | 50.0 %          | 77.4 %  |
-| `coordinator --toolset base`                     | 14.0 %  | 33.3 %      | 42.9 %                 | 10.0 %          | 9.7 %   |
-| `coordinator --toolset process`, run 1 / run 2   | 27.9 / 30.2 % | 59.0 / 56.4 % | 71.4 / 42.9 %   | 30.0 / 33.3 %   | 29.0 / 32.3 % |
-| `harness --toolset process`                      | 23.3 %  | 59.0 %      | 71.4 %                 | 36.7 %          | 29.0 %  |
-| `hybrid --toolset process`                       | 53.5 %  | 79.5 %      | 71.4 %                 | 53.3 %          | 80.6 %  |
+| System                                         | Pass          | Obligations   | Missing info (7 items) | Deadlines exact | Actions       |
+| ---------------------------------------------- | ------------- | ------------- | ---------------------- | --------------- | ------------- |
+| `rules_only` (no model)                        | 46.5 %        | 76.9 %        | 0 %                    | 50.0 %          | 77.4 %        |
+| `coordinator --toolset base`                   | 14.0 %        | 33.3 %        | 42.9 %                 | 10.0 %          | 9.7 %         |
+| `coordinator --toolset process`, run 1 / run 2 | 27.9 / 30.2 % | 59.0 / 56.4 % | 71.4 / 42.9 %          | 30.0 / 33.3 %   | 29.0 / 32.3 % |
+| `harness --toolset process`                    | 23.3 %        | 59.0 %        | 71.4 %                 | 36.7 %          | 29.0 %        |
+| `hybrid --toolset process`                     | 53.5 %        | 79.5 %        | 71.4 %                 | 53.3 %          | 80.6 %        |
 
 - `rules_only` and `hybrid` trigger none of the 12 traps (precision is computed on traps only). No configuration
   executed an effect (send, pay, file, sign). Metrics are recall-oriented: extra procedures and dates are not

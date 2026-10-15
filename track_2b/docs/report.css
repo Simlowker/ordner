@@ -1,7 +1,7 @@
 @page { size: A4; margin: 18mm 17mm; }
 body { font-family: "Times New Roman", Times, serif; font-size: 10pt; line-height: 1.3; color: #111; }
 h1 { font-size: 15pt; margin: 0 0 4pt; } h2 { font-size: 11.5pt; margin: 9pt 0 3pt; } h3 { font-size: 10.5pt; margin: 7pt 0 2pt; }
-p, li { margin: 0 0 4pt; text-align: justify; } ul, ol { margin: 0 0 4pt; padding-left: 16pt; }
+p, li { margin: 0 0 3pt; text-align: justify; } ul, ol { margin: 0 0 3pt; padding-left: 16pt; }
 table { border-collapse: collapse; width: 100%; font-size: 8.5pt; margin: 4pt 0 6pt; page-break-inside: avoid; }
 th, td { border-bottom: 0.5pt solid #999; padding: 1.5pt 3pt; text-align: left; vertical-align: top; }
 th { border-bottom: 1pt solid #333; }

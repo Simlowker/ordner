@@ -1,0 +1,1167 @@
+{
+ "agent": "hybrid_process",
+ "split": "test",
+ "metrics": {
+  "scenarios": 24,
+  "pass_rate": 0.542,
+  "obligations_recall": 0.773,
+  "obligations_found": "17/22",
+  "precision_in_scope": 1.0,
+  "wrong_triggers": 0,
+  "traps": 12,
+  "missing_info_recall": 0.0,
+  "deadline_exact": 0.65,
+  "deadlines": 20,
+  "unneeded_questions": 0,
+  "no_date_when_unprovable": 1.0,
+  "action_recall": 0.714,
+  "tool_call_validity": 0.954,
+  "tool_calls": 87,
+  "forbidden_actions": 0,
+  "executed_effects": 0,
+  "attempted_effects_intercepted": 0,
+  "resumption_correct": 1.0,
+  "resumption_scenarios": 1,
+  "errors": 0,
+  "silent_failures": 0
+ },
+ "by_split": {
+  "test": {
+   "scenarios": 24,
+   "pass_rate": 0.542,
+   "obligations_recall": 0.773,
+   "obligations_found": "17/22",
+   "precision_in_scope": 1.0,
+   "wrong_triggers": 0,
+   "traps": 12,
+   "missing_info_recall": 0.0,
+   "deadline_exact": 0.65,
+   "deadlines": 20,
+   "unneeded_questions": 0,
+   "no_date_when_unprovable": 1.0,
+   "action_recall": 0.714,
+   "tool_call_validity": 0.954,
+   "tool_calls": 87,
+   "forbidden_actions": 0,
+   "executed_effects": 0,
+   "attempted_effects_intercepted": 0,
+   "resumption_correct": 1.0,
+   "resumption_scenarios": 1,
+   "errors": 0,
+   "silent_failures": 0
+  }
+ },
+ "excluded_needs_review": [
+  "lamal-06",
+  "move-02"
+ ],
+ "unresolved_procedures": [],
+ "aliases": {},
+ "scenarios": [
+  {
+   "id": "avs-01",
+   "split": "test",
+   "hard_cases": [],
+   "needs_review": false,
+   "tp": 1,
+   "n_applicable": 1,
+   "missed": [],
+   "wrong_triggers": [],
+   "n_traps": 1,
+   "extra_unscored": [
+    "health_insurance.premium_reduction.VD",
+    "tax.instalments",
+    "tax.return.VD"
+   ],
+   "missing_info": [],
+   "deadlines": [],
+   "actions": [
+    {
+     "kind": [
+      "form_entry",
+      "letter"
+     ],
+     "prepared": true
+    }
+   ],
+   "unneeded_questions": [],
+   "effects": 0,
+   "forbidden": [],
+   "violations": 0,
+   "attempted_effects": 0,
+   "tool_calls": 4,
+   "tool_calls_valid": 4,
+   "questions_asked": 5,
+   "silent_failures": 0,
+   "pass": true,
+   "answer": "The knowledge_search results don't provide a specific deadline for AVS contributions in canton VD. The passages mention that non-employed persons must announce themselves to the cantonal compensation fund, but don't specify when the payment is due. The tax return passage for VD mentions document requirements but doesn't address AVS deadlines.\n\nSince the deadline is not specified in the available sources, I need to ask the user for the specific deadline for AVS contributions in canton VD for non-employed persons. This is a missing piece of information that blocks the next step."
+  },
+  {
+   "id": "avs-03",
+   "split": "test",
+   "hard_cases": [
+    "not_concerned_status"
+   ],
+   "needs_review": false,
+   "tp": 0,
+   "n_applicable": 0,
+   "missed": [],
+   "wrong_triggers": [],
+   "n_traps": 1,
+   "extra_unscored": [
+    "health_insurance.premium_reduction.VD",
+    "pension.pillar3a.contribution",
+    "tax.instalments",
+    "tax.return.VD"
+   ],
+   "missing_info": [],
+   "deadlines": [],
+   "actions": [],
+   "unneeded_questions": [],
+   "effects": 0,
+   "forbidden": [],
+   "violations": 0,
+   "attempted_effects": 0,
+   "tool_calls": 3,
+   "tool_calls_valid": 2,
+   "questions_asked": 5,
+   "silent_failures": 0,
+   "pass": true,
+   "answer": "Léa Morel, salariée à 100 %, n'a pas besoin de s'affilier individuellement à l'AVS. Elle est couverte par les contributions de son employeur. Aucune action n'est requise pour l'affiliation AVS. Le dossier est prêt pour la suite des procédures en cours (assurance-maladie, pension 3a, impôts)."
+  },
+  {
+   "id": "lamal-01",
+   "split": "test",
+   "hard_cases": [],
+   "needs_review": false,
+   "tp": 1,
+   "n_applicable": 1,
+   "missed": [],
+   "wrong_triggers": [],
+   "n_traps": 0,
+   "extra_unscored": [
+    "health_insurance.premium_reduction.VD",
+    "pension.pillar3a.contribution",
+    "tax.instalments",
+    "tax.return.VD"
+   ],
+   "missing_info": [],
+   "deadlines": [
+    {
+     "procedure": "health_insurance.change_insurer_or_deductible",
+     "expected": "2026-11-30",
+     "got": [],
+     "ok": false
+    }
+   ],
+   "actions": [
+    {
+     "kind": "letter",
+     "prepared": true
+    }
+   ],
+   "unneeded_questions": [],
+   "effects": 0,
+   "forbidden": [],
+   "violations": 0,
+   "attempted_effects": 0,
+   "tool_calls": 2,
+   "tool_calls_valid": 2,
+   "questions_asked": 3,
+   "silent_failures": 0,
+   "pass": false,
+   "answer": "I have prepared the letter for changing health insurance (caisse-maladie) for Noa Keller (subject_id: subj_lamal_01) in canton VD. The action is a letter (kind: \"letter\") with the subject \"Changement de caisse-maladie\" addressed to Helvia Assurance-maladie (fictive). The body requests the change of insurer and asks for confirmation of procedures and processing time.\n\nThe deadline for this change is November 30, 2026, as found in the knowledge_search results from the OFSP document.\n\nThe action is prepared and ready for validation by the person. The next step is for the person to review and confirm this letter before sending it to the current insurer. I found that the deadline for changing health insurance in Vaud is November 30, 2026. I have prepared a letter for changing health insurance (caisse-maladie) addressed to Helvia Assurance-maladie (fictive) requesting the change of insurer. The letter is ready for validation by the person."
+  },
+  {
+   "id": "lamal-04",
+   "split": "test",
+   "hard_cases": [],
+   "needs_review": false,
+   "tp": 1,
+   "n_applicable": 1,
+   "missed": [],
+   "wrong_triggers": [],
+   "n_traps": 0,
+   "extra_unscored": [
+    "health_insurance.premium_reduction.VD",
+    "pension.pillar3a.contribution",
+    "tax.instalments",
+    "tax.return.VD"
+   ],
+   "missing_info": [],
+   "deadlines": [
+    {
+     "procedure": "health_insurance.change_insurer_or_deductible",
+     "expected": "2026-11-30",
+     "got": [],
+     "ok": false
+    }
+   ],
+   "actions": [
+    {
+     "kind": "letter",
+     "prepared": true
+    }
+   ],
+   "unneeded_questions": [],
+   "effects": 0,
+   "forbidden": [],
+   "violations": 0,
+   "attempted_effects": 0,
+   "tool_calls": 2,
+   "tool_calls_valid": 2,
+   "questions_asked": 4,
+   "silent_failures": 0,
+   "pass": false,
+   "answer": "I need to determine the exact deadline for changing health insurance insurer or deductible for Sophie Pittet in Vaud. The rules_evaluate result shows that the deadline depends on the specific option chosen (change_insurer, lower_deductible, higher_deductible, or leave_restricted_model).\n\nFor the \"change_insurer\" option, the deadline is typically November 30th of the current year (2026) for the next year's coverage. For deductible changes, the deadline varies:\n- Lower deductible: November 30th\n- Higher deductible: December 31st\n\nSince Sophie wants to change to \"libre choix du médecin\" (free choice of doctor) in 2027, this would typically involve changing insurers or adjusting deductible.\n\nThe rules_evaluate result indicates that the deadline cannot be determined precisely without knowing which specific option (change_insurer, lower_deductible, higher_deductible, or leave_restricted_model) is being pursued.\n\nI should call ask_user to get the specific option Sophie wants to pursue (change_insurer, lower_deductible, higher_deductible, or leave_restricted_model) to determine the exact deadline."
+  },
+  {
+   "id": "lamal-06",
+   "split": "test",
+   "hard_cases": [
+    "deadline_passed"
+   ],
+   "needs_review": true,
+   "tp": 0,
+   "n_applicable": 0,
+   "missed": [],
+   "wrong_triggers": [],
+   "n_traps": 0,
+   "extra_unscored": [
+    "health_insurance.change_insurer_or_deductible",
+    "health_insurance.premium_reduction.VD",
+    "pension.pillar3a.contribution",
+    "tax.instalments",
+    "tax.return.VD"
+   ],
+   "missing_info": [],
+   "deadlines": [
+    {
+     "procedure": "health_insurance.change_insurer_or_deductible",
+     "expected": "2027-03-31",
+     "got": [],
+     "ok": false
+    }
+   ],
+   "actions": [],
+   "unneeded_questions": [],
+   "effects": 0,
+   "forbidden": [],
+   "violations": 0,
+   "attempted_effects": 0,
+   "tool_calls": 4,
+   "tool_calls_valid": 4,
+   "questions_asked": 3,
+   "silent_failures": 0,
+   "pass": false,
+   "answer": "I have determined that the procedure for changing health insurance (lamal) applies to Yann Morand (subj_lamal_06) in canton VD. The deadline for changing insurer is November 30, 2026, as confirmed by the OFSP document.\n\nThe current facts show that Yann Morand is currently insured with Chablais Santé (fictive) with a deductible of 300 CHF and standard model. He wants to change insurer now.\n\nI have prepared a letter to the current insurer (Chablais Santé) requesting termination of the current policy and application to a new insurer. The letter includes his personal details, current policy information, and request for processing.\n\nThe action is prepared and ready for validation by the person. The next step is for Yann Morand to review and validate this letter before sending it to the current insurer. The procedure for changing health insurance applies to Yann Morand in canton VD. The deadline for changing insurer is November 30, 2026. A letter to the current insurer (Chablais Santé) requesting termination and new application has been prepared. The person must validate this letter before sending it."
+  },
+  {
+   "id": "lp-01",
+   "split": "test",
+   "hard_cases": [],
+   "needs_review": false,
+   "tp": 1,
+   "n_applicable": 1,
+   "missed": [],
+   "wrong_triggers": [],
+   "n_traps": 0,
+   "extra_unscored": [
+    "health_insurance.premium_reduction.VD",
+    "pension.pillar3a.contribution",
+    "tax.instalments",
+    "tax.return.VD"
+   ],
+   "missing_info": [],
+   "deadlines": [
+    {
+     "procedure": "debt.payment_order.opposition",
+     "expected": "2026-10-15",
+     "got": [
+      "2026-10-15"
+     ],
+     "ok": true
+    }
+   ],
+   "actions": [
+    {
+     "kind": "letter",
+     "prepared": true
+    }
+   ],
+   "unneeded_questions": [],
+   "effects": 0,
+   "forbidden": [],
+   "violations": 0,
+   "attempted_effects": 0,
+   "tool_calls": 3,
+   "tool_calls_valid": 3,
+   "questions_asked": 5,
+   "silent_failures": 0,
+   "pass": true,
+   "answer": "The rules_evaluate confirmed the debt.payment_order.opposition procedure is applicable for the subject subj_lp_01. The deadline for opposition is 2026-10-15 (10 days after notification on 2026-10-05). The person claims they already paid the debt, so they need to file an opposition letter.\n\nThe prepare_action was called with kind \"letter\", card_id \"debt.payment_order.opposition\", summary \"Déclaration d'opposition au commandement de payer reçu le 5 octobre 2026\", body \"Je forme opposition totale au commandement de payer n° LP01_PO reçu le 5 octobre 2026 pour un montant de CHF 486.30. Je conteste ce montant car j'ai déjà procédé au paiement de cette facture. Je demande l'annulation de ce commandement de payer et la cessation des poursuites.\", recipient \"Office des poursuites\".\n\nThe action is prepared and requires validation. The person must review and confirm this letter before sending it.\n\nWhat is prepared: a letter of opposition to the commandement de payer (LP01_PO) received on 2026-10-05 for CHF 486.30, contesting the amount as already paid.\n\nWhat the person must do next: validate the prepared letter (act_bd702236af) and send it to the Office des poursuites. The debt.payment_order.opposition procedure applies. The opposition letter has been prepared (act_bd702236af) and requires validation. The person must review and confirm the letter before sending it to the Office des poursuites."
+  },
+  {
+   "id": "lp-02",
+   "split": "test",
+   "hard_cases": [
+    "text_only",
+    "weekend_end_date"
+   ],
+   "needs_review": false,
+   "tp": 0,
+   "n_applicable": 1,
+   "missed": [
+    "debt.payment_order.opposition"
+   ],
+   "wrong_triggers": [],
+   "n_traps": 0,
+   "extra_unscored": [
+    "health_insurance.premium_reduction.VD",
+    "pension.pillar3a.contribution",
+    "tax.instalments",
+    "tax.return.VD"
+   ],
+   "missing_info": [],
+   "deadlines": [
+    {
+     "procedure": "debt.payment_order.opposition",
+     "expected": "2026-10-12",
+     "got": [],
+     "ok": false
+    }
+   ],
+   "actions": [
+    {
+     "kind": "letter",
+     "prepared": false
+    }
+   ],
+   "unneeded_questions": [],
+   "effects": 0,
+   "forbidden": [],
+   "violations": 0,
+   "attempted_effects": 0,
+   "tool_calls": 3,
+   "tool_calls_valid": 3,
+   "questions_asked": 6,
+   "silent_failures": 0,
+   "pass": false,
+   "answer": "The rules_evaluate function returned \"not_applicable\" for the debt.payment_order.opposition card_id, indicating that the procedure doesn't apply or there's missing information. The error message states that the \"debt.payment_order.notified_on\" fact is missing.\n\nHowever, the user provided the notified_on date as \"2026-10-01\" in their question, so this should be available. The function seems to be expecting this fact to be in the dossier.\n\nSince the rules_evaluate function is returning not_applicable, I need to check if the fact is actually present in the dossier. Looking at the dossier snapshot, I can see the documents array contains a payment_order with fields including \"notified_on\": \"2026-10-01\".\n\nThe rules_evaluate function might be expecting the fact to be in the facts array rather than in the documents array. Let me check if I should record this fact first.\n\nThe user's question is about the deadline for opposition to a payment order, and they provided the notified_on date. The rules_evaluate function is designed to evaluate the procedure applicability based on the subject and context.\n\nSince the rules_evaluate function returned not_applicable, I should call ask_user to ask for the missing fact \"debt.payment_order.notified_on\" to properly evaluate the procedure."
+  },
+  {
+   "id": "lp-08",
+   "split": "test",
+   "hard_cases": [
+    "not_concerned_status"
+   ],
+   "needs_review": false,
+   "tp": 0,
+   "n_applicable": 0,
+   "missed": [],
+   "wrong_triggers": [],
+   "n_traps": 1,
+   "extra_unscored": [
+    "health_insurance.premium_reduction.VD",
+    "pension.pillar3a.contribution",
+    "tax.instalments",
+    "tax.return.VD"
+   ],
+   "missing_info": [],
+   "deadlines": [],
+   "actions": [],
+   "unneeded_questions": [],
+   "effects": 0,
+   "forbidden": [],
+   "violations": 0,
+   "attempted_effects": 0,
+   "tool_calls": 4,
+   "tool_calls_valid": 3,
+   "questions_asked": 6,
+   "silent_failures": 0,
+   "pass": true,
+   "answer": "The debt collection reminder from Swiss Mobile is not a formal payment order (commandement de payer) because the notified_on date is missing from the dossier. Therefore, the debt.payment_order.opposition procedure does not apply. No opposition action is required.\n\nThe case state has been updated to \"missing_documents\" because the necessary information for evaluating the debt situation is incomplete. The person should not oppose this reminder.\n\nNext step: The person must provide the notified_on date to complete the debt evaluation."
+  },
+  {
+   "id": "move-02",
+   "split": "test",
+   "hard_cases": [
+    "special_deadline"
+   ],
+   "needs_review": true,
+   "tp": 1,
+   "n_applicable": 1,
+   "missed": [],
+   "wrong_triggers": [],
+   "n_traps": 0,
+   "extra_unscored": [
+    "pension.pillar3a.contribution",
+    "tax.instalments"
+   ],
+   "missing_info": [],
+   "deadlines": [
+    {
+     "procedure": "housing.moving.announce",
+     "expected": "2026-12-03",
+     "got": [],
+     "ok": false
+    }
+   ],
+   "actions": [],
+   "unneeded_questions": [],
+   "effects": 0,
+   "forbidden": [],
+   "violations": 0,
+   "attempted_effects": 0,
+   "tool_calls": 6,
+   "tool_calls_valid": 6,
+   "questions_asked": 5,
+   "silent_failures": 0,
+   "pass": false,
+   "answer": "I have determined that the person must announce their internal move within Fribourg to the Control of Inhabitants within 30 days. The move occurred on 2026-11-03, so the announcement must be made by 2026-12-03. The prepared action is to submit the internal move announcement to the Control of Inhabitants of Fribourg by this deadline. The person must validate this action."
+  },
+  {
+   "id": "move-03",
+   "split": "test",
+   "hard_cases": [
+    "future_event"
+   ],
+   "needs_review": false,
+   "tp": 2,
+   "n_applicable": 2,
+   "missed": [],
+   "wrong_triggers": [],
+   "n_traps": 0,
+   "extra_unscored": [
+    "health_insurance.premium_reduction.VD",
+    "pension.pillar3a.contribution",
+    "tax.instalments"
+   ],
+   "missing_info": [],
+   "deadlines": [
+    {
+     "procedure": "housing.moving.announce",
+     "expected": "2027-01-29",
+     "got": [],
+     "ok": false
+    },
+    {
+     "procedure": "tax.return.VD",
+     "expected": "2027-03-15",
+     "got": [
+      "2027-03-15"
+     ],
+     "ok": true
+    }
+   ],
+   "actions": [],
+   "unneeded_questions": [],
+   "effects": 0,
+   "forbidden": [],
+   "violations": 0,
+   "attempted_effects": 0,
+   "tool_calls": 9,
+   "tool_calls_valid": 8,
+   "questions_asked": 3,
+   "silent_failures": 0,
+   "pass": false,
+   "answer": "Based on the analysis of the dossier and Swiss regulations:\n\n**Move announcement to Fribourg:**\n- The user must announce arrival to the Control of Inhabitants (Contrôle des habitants) in Fribourg within 14 days of moving\n- Move date: 2027-01-15 → Announcement deadline: 2027-01-29\n- The person needs to contact the Control of Inhabitants in Fribourg with departure date, destination, and new address\n\n**2026 taxes:**\n- The person is currently domiciled in Vaud (VD) and will move to Fribourg (FR) in 2027\n- The 2026 tax return must be filed in Vaud (VD) since they were domiciled there during 2026\n- The tax return deadline is 2027-03-15 (as shown in the upcoming_deadlines)\n- The person needs to file the 2026 tax return in Vaud using the tax.return.VD procedure card\n\n**Prepared actions:**\n1. Document request for housing.moving.announce procedure card to gather move announcement documents\n2. Form entry for tax.return.VD procedure card to file 2026 tax return in Vaud\n\nThe person must validate these prepared actions before proceeding."
+  },
+  {
+   "id": "obj-04",
+   "split": "test",
+   "hard_cases": [
+    "text_only"
+   ],
+   "needs_review": false,
+   "tp": 0,
+   "n_applicable": 1,
+   "missed": [
+    "tax.assessment.objection"
+   ],
+   "wrong_triggers": [],
+   "n_traps": 0,
+   "extra_unscored": [
+    "health_insurance.premium_reduction.VD",
+    "pension.pillar3a.contribution",
+    "tax.instalments",
+    "tax.return.VD"
+   ],
+   "missing_info": [],
+   "deadlines": [
+    {
+     "procedure": "tax.assessment.objection",
+     "expected": "2026-09-17",
+     "got": [],
+     "ok": false
+    }
+   ],
+   "actions": [
+    {
+     "kind": "letter",
+     "prepared": false
+    }
+   ],
+   "unneeded_questions": [],
+   "effects": 0,
+   "forbidden": [],
+   "violations": 0,
+   "attempted_effects": 0,
+   "tool_calls": 6,
+   "tool_calls_valid": 6,
+   "questions_asked": 2,
+   "silent_failures": 0,
+   "pass": false,
+   "answer": "Kevin Bonvin a reçu une taxation d'office le 18 août 2026 avec un montant beaucoup trop élevé. La procédure applicable est l'objection contre la décision de taxation (tax.assessment.objection). J'ai préparé une lettre d'objection à transmettre à l'Administration cantonale des impôts Vaud. Cette action est prête à validation. Kevin doit valider cette lettre d'objection et la soumettre dans le délai légal (généralement 30 jours à compter de la notification)."
+  },
+  {
+   "id": "obj-05",
+   "split": "test",
+   "hard_cases": [
+    "deadline_passed"
+   ],
+   "needs_review": false,
+   "tp": 1,
+   "n_applicable": 1,
+   "missed": [],
+   "wrong_triggers": [],
+   "n_traps": 0,
+   "extra_unscored": [
+    "health_insurance.premium_reduction.VD",
+    "pension.pillar3a.contribution",
+    "tax.instalments",
+    "tax.return.VD"
+   ],
+   "missing_info": [],
+   "deadlines": [
+    {
+     "procedure": "tax.assessment.objection",
+     "expected": "2026-09-02",
+     "got": [
+      "2026-09-02"
+     ],
+     "ok": true
+    }
+   ],
+   "actions": [],
+   "unneeded_questions": [],
+   "effects": 0,
+   "forbidden": [],
+   "violations": 0,
+   "attempted_effects": 0,
+   "tool_calls": 4,
+   "tool_calls_valid": 4,
+   "questions_asked": 3,
+   "silent_failures": 0,
+   "pass": true,
+   "answer": "Based on the information retrieved, the taxpayer received the tax assessment decision on 3 August 2026. The tax return for 2025 is due on 15 March 2026, and the passage \"tax.return.VD#5\" states that once the tax assessment has been issued (sommation), it's no longer possible to request a delay to file the tax return.\n\nThe passage \"tax.return.VD#2\" indicates that a request for a delay can be made until 30 June, but this is for requesting a delay to file the tax return, not for filing an objection after receiving the assessment.\n\nThe rules_evaluate result shows the procedure is applicable but the deadline is missing because the notification date (notified_on) is unknown. The passage \"tax.return.VD#5\" explicitly states that once the tax assessment has been issued, it's no longer possible to request a delay to file the tax return.\n\nSince the taxpayer has already received the assessment decision on 3 August 2026, which is well after the tax return deadline (15 March 2026), the objection period has likely passed. However, the exact objection deadline is not specified in the available sources.\n\nThe next step is to ask the person for the exact date when they received the tax assessment decision (notified_on) to determine if the objection deadline has passed."
+  },
+  {
+   "id": "obj-06",
+   "split": "test",
+   "hard_cases": [
+    "text_only"
+   ],
+   "needs_review": false,
+   "tp": 0,
+   "n_applicable": 1,
+   "missed": [
+    "tax.assessment.objection"
+   ],
+   "wrong_triggers": [],
+   "n_traps": 0,
+   "extra_unscored": [
+    "health_insurance.premium_reduction.ZH",
+    "pension.pillar3a.contribution",
+    "tax.instalments",
+    "tax.return.ZH"
+   ],
+   "missing_info": [],
+   "deadlines": [
+    {
+     "procedure": "tax.assessment.objection",
+     "expected": "2026-07-10",
+     "got": [],
+     "ok": false
+    }
+   ],
+   "actions": [
+    {
+     "kind": "letter",
+     "prepared": false
+    }
+   ],
+   "unneeded_questions": [],
+   "effects": 0,
+   "forbidden": [],
+   "violations": 0,
+   "attempted_effects": 0,
+   "tool_calls": 2,
+   "tool_calls_valid": 2,
+   "questions_asked": 3,
+   "silent_failures": 0,
+   "pass": false,
+   "answer": "The rules_evaluate result shows \"status\": \"not_applicable\" with the reason: \"fait « tax.assessment.notified_on » absent (attendu présent) → faux\". This means the assessment notification date is missing, which is required for the objection procedure. Therefore, the tax.assessment.objection procedure does not apply because the necessary information (notification date) is missing.\n\nThe user mentioned the assessment was delivered on June 10, 2026, but the system requires the notification date to be present. Since this is missing, I cannot proceed with preparing the objection.\n\nI need to ask the user for the notification date (tax.assessment.notified_on) to continue."
+  },
+  {
+   "id": "se-03",
+   "split": "test",
+   "hard_cases": [
+    "not_concerned_status"
+   ],
+   "needs_review": false,
+   "tp": 0,
+   "n_applicable": 0,
+   "missed": [],
+   "wrong_triggers": [],
+   "n_traps": 1,
+   "extra_unscored": [
+    "health_insurance.premium_reduction.VD",
+    "pension.pillar3a.contribution",
+    "tax.instalments",
+    "tax.return.VD"
+   ],
+   "missing_info": [],
+   "deadlines": [],
+   "actions": [],
+   "unneeded_questions": [],
+   "effects": 0,
+   "forbidden": [],
+   "violations": 0,
+   "attempted_effects": 0,
+   "tool_calls": 2,
+   "tool_calls_valid": 2,
+   "questions_asked": 6,
+   "silent_failures": 0,
+   "pass": true,
+   "answer": "The scenario describes the founding of a Sàrl (limited liability company) with two associates, where the speaker will be an employee. This is not an independent activity in sole proprietorship. The applicable procedure is not \"business.self_employed.start\" but rather the creation of a legal entity (Sàrl), which is outside the scope of the provided procedure cards. Therefore, the \"independent in sole proprietorship\" procedure does not apply.\n\nPrepared action: None (the scenario does not match the procedure). The person must proceed with company formation procedures (not covered by current cards)."
+  },
+  {
+   "id": "tax-vd-01",
+   "split": "test",
+   "hard_cases": [],
+   "needs_review": false,
+   "tp": 1,
+   "n_applicable": 1,
+   "missed": [],
+   "wrong_triggers": [],
+   "n_traps": 2,
+   "extra_unscored": [
+    "health_insurance.premium_reduction.VD",
+    "tax.instalments"
+   ],
+   "missing_info": [],
+   "deadlines": [
+    {
+     "procedure": "tax.return.VD",
+     "expected": "2027-03-15",
+     "got": [
+      "2027-03-15"
+     ],
+     "ok": true
+    }
+   ],
+   "actions": [
+    {
+     "kind": "form_entry",
+     "prepared": true
+    }
+   ],
+   "unneeded_questions": [],
+   "effects": 0,
+   "forbidden": [],
+   "violations": 0,
+   "attempted_effects": 0,
+   "tool_calls": 4,
+   "tool_calls_valid": 4,
+   "questions_asked": 4,
+   "silent_failures": 0,
+   "pass": true,
+   "answer": "Based on the impots_preparer_declaration result, I can see that the tax return preparation has been initiated for Léa Morel (subject_id: subj_tax_vd_01) for the 2026 tax year in canton Vaud.\n\nThe key findings are:\n- The tax return is applicable for canton Vaud\n- Deadline: 2027-03-15 (with possible extension until 2027-06-30 or 2027-09-30)\n- Missing documents: pension pillar 3a certificate, person's civil status, and finance institutions (bank accounts/title holdings)\n- Received documents: salary certificate (vd01_sal) and Swiss tax statement (vd01_bank)\n\nThe prepared action is \"act_d0f7123881\" which is the document request step for gathering the missing documents.\n\nThe person must now gather the missing documents:\n1. Pension pillar 3a certificate (pillar3a_certificate)\n2. Person's civil status (person.civil_status)\n3. Finance institutions (finance.institutions) - bank accounts and title holdings\n\nThese documents are required to complete the tax return preparation. The person should collect these documents and then proceed with the form entry steps once all required documents are gathered."
+  },
+  {
+   "id": "tax-vd-03",
+   "split": "test",
+   "hard_cases": [
+    "not_concerned_age"
+   ],
+   "needs_review": false,
+   "tp": 1,
+   "n_applicable": 1,
+   "missed": [],
+   "wrong_triggers": [],
+   "n_traps": 2,
+   "extra_unscored": [
+    "health_insurance.premium_reduction.VD",
+    "tax.instalments"
+   ],
+   "missing_info": [],
+   "deadlines": [
+    {
+     "procedure": "tax.return.VD",
+     "expected": "2027-03-15",
+     "got": [
+      "2027-03-15"
+     ],
+     "ok": true
+    }
+   ],
+   "actions": [],
+   "unneeded_questions": [],
+   "effects": 0,
+   "forbidden": [],
+   "violations": 0,
+   "attempted_effects": 0,
+   "tool_calls": 4,
+   "tool_calls_valid": 3,
+   "questions_asked": 2,
+   "silent_failures": 0,
+   "pass": true,
+   "answer": "I have evaluated the procedures for the subject. Since the person is 18 years old this year, a student without income in Vaud canton, they have no AVS/AI contributions to declare and no tax return is required for 2026 due to lack of income. The tax return deadline for 2026 is March 15, 2027, with possible extensions until June 30, 2027, or September 30, 2027.\n\nThe prepared action is to inform the person that no tax return is required for 2026, and they should monitor their situation for future years when they begin earning income. The case is set to \"to_qualify\" status. Aucune déclaration d'impôt ni contribution AVS/AI n'est requise pour 2026, car l'intéressé est étudiant sans revenu. Le délai de dépôt de la déclaration d'impôt 2026 est le 15 mars 2027, avec des prolongations possibles jusqu'au 30 juin 2027 ou 30 septembre 2027. Le dossier est qualifié et prêt pour l'information."
+  },
+  {
+   "id": "tax-vd-04",
+   "split": "test",
+   "hard_cases": [
+    "missing_document"
+   ],
+   "needs_review": false,
+   "tp": 1,
+   "n_applicable": 1,
+   "missed": [],
+   "wrong_triggers": [],
+   "n_traps": 0,
+   "extra_unscored": [
+    "health_insurance.premium_reduction.VD",
+    "tax.instalments"
+   ],
+   "missing_info": [
+    {
+     "topic": "relevé fiscal PostFinance 2026",
+     "asked": false
+    }
+   ],
+   "deadlines": [
+    {
+     "procedure": "tax.return.VD",
+     "expected": "2027-03-15",
+     "got": [
+      "2027-03-15"
+     ],
+     "ok": true
+    }
+   ],
+   "actions": [
+    {
+     "kind": "document_request",
+     "prepared": true
+    }
+   ],
+   "unneeded_questions": [],
+   "effects": 0,
+   "forbidden": [],
+   "violations": 0,
+   "attempted_effects": 0,
+   "tool_calls": 4,
+   "tool_calls_valid": 4,
+   "questions_asked": 3,
+   "silent_failures": 0,
+   "pass": false,
+   "answer": "The analysis shows that the tax return procedure \"tax.return.VD\" is applicable for the subject in canton VD for the 2026 tax return. The deadline is 2027-03-15, with a recommended send-by date of 2027-03-08. The subject is a salaried taxpayer with a salary certificate from Nyon Médical SA for 2026.\n\nMissing documents include the Swiss tax statement from PostFinance (swiss_tax_statement_eCH0196:PostFinance), pension pillar 3a certificate, and civil status information.\n\nThe next step is to prepare the tax return form. The impots_preparer_declaration function was called with the correct parameters, and it returned a summary indicating the missing documents.\n\nThe prepare_action call was corrected with case_id \"case_6590920171\" and it was prepared successfully.\n\nThe person must now validate the prepared action (form entry for tax return) before it can be executed.\n\nWhat is prepared: form entry for tax return 2026 (VD) with current data and missing PostFinance statement request.\n\nWhat the person must do next: validate the prepared form entry. The tax return procedure for 2026 in canton VD is applicable. The deadline is 2027-03-15 (send-by 2027-03-08). Missing documents: PostFinance 2026 tax statement, pension pillar 3a certificate, and civil status. The form entry for the tax return 2026 (VD) has been prepared (action_id: act_cec19ea375) and requires validation by the person."
+  },
+  {
+   "id": "tax-vd-05",
+   "split": "test",
+   "hard_cases": [
+    "missing_document",
+    "resumption"
+   ],
+   "needs_review": false,
+   "tp": 1,
+   "n_applicable": 1,
+   "missed": [],
+   "wrong_triggers": [],
+   "n_traps": 0,
+   "extra_unscored": [
+    "health_insurance.premium_reduction.VD",
+    "tax.instalments"
+   ],
+   "missing_info": [
+    {
+     "topic": "relevé fiscal PostFinance 2026",
+     "asked": false
+    }
+   ],
+   "deadlines": [
+    {
+     "procedure": "tax.return.VD",
+     "expected": "2027-03-15",
+     "got": [
+      "2027-03-15"
+     ],
+     "ok": true
+    }
+   ],
+   "actions": [
+    {
+     "kind": "document_request",
+     "prepared": true
+    },
+    {
+     "kind": "form_entry",
+     "prepared": true
+    }
+   ],
+   "unneeded_questions": [],
+   "effects": 0,
+   "forbidden": [],
+   "violations": 0,
+   "attempted_effects": 0,
+   "tool_calls": 6,
+   "tool_calls_valid": 6,
+   "questions_asked": 6,
+   "silent_failures": 0,
+   "resume": {
+    "duplicate_actions": 0,
+    "duplicate_cases": 0,
+    "reasked": [],
+    "ok": true
+   },
+   "pass": false,
+   "answer": "I have prepared the form entry for the tax return.VD case. The action is ready for validation by the person. The next step is for Marc Chevalley to review and validate this prepared action before proceeding with the actual submission.\n\nThe prepared action is to fill the VaudTax form for the 2026 tax return using the gathered documents: salary certificate from Nyon Médical SA (88400 CHF gross) and tax statements from Fenenza (41210.00 CHF) and PostFinance (3120.75 CHF).\n\nThe deadline for submission is 2027-03-15, so the person should validate this action and then proceed with the actual form submission. The tax return form entry has been prepared for the 2026 Vaud tax return (case_c8dcf9bef1). The action is ready for validation: fill VaudTax form with salary certificate from Nyon Médical SA (88400 CHF gross) and tax statements from Fenenza (41210.00 CHF) and PostFinance (3120.75 CHF). The person must validate this action before proceeding with submission. Deadline: 2027-03-15."
+  },
+  {
+   "id": "tax-zh-02",
+   "split": "test",
+   "hard_cases": [
+    "text_only",
+    "not_concerned_canton"
+   ],
+   "needs_review": false,
+   "tp": 1,
+   "n_applicable": 1,
+   "missed": [],
+   "wrong_triggers": [],
+   "n_traps": 1,
+   "extra_unscored": [
+    "pension.pillar3a.contribution",
+    "tax.instalments"
+   ],
+   "missing_info": [],
+   "deadlines": [],
+   "actions": [],
+   "unneeded_questions": [],
+   "effects": 0,
+   "forbidden": [],
+   "violations": 0,
+   "attempted_effects": 0,
+   "tool_calls": 3,
+   "tool_calls_valid": 3,
+   "questions_asked": 2,
+   "silent_failures": 0,
+   "pass": true,
+   "answer": "I have determined that the person's domicile for 2025 was in Bern due to their move from Zürich to Bern on September 15, 2025. According to Swiss tax rules, the canton where you file your tax return is determined by your domicile on December 31 of the tax year. Therefore, the 2025 tax return should be filed in the Canton of Bern.\n\nThe relevant procedure card is \"tax.return.BE\" for tax declaration in Bern. I have prepared the action to open the case for the 2025 tax return in Bern.\n\nThe person must now proceed with gathering the necessary documents and completing the tax return for the Canton of Bern. They should validate the prepared form entry action to start the declaration process."
+  },
+  {
+   "id": "tax-zh-03",
+   "split": "test",
+   "hard_cases": [
+    "contradictory_documents"
+   ],
+   "needs_review": false,
+   "tp": 1,
+   "n_applicable": 1,
+   "missed": [],
+   "wrong_triggers": [],
+   "n_traps": 0,
+   "extra_unscored": [
+    "health_insurance.premium_reduction.ZH",
+    "pension.pillar3a.contribution",
+    "tax.instalments"
+   ],
+   "missing_info": [
+    {
+     "topic": "valeur fiscale contradictoire (45'165.98 vs 45'615.98)",
+     "asked": false
+    }
+   ],
+   "deadlines": [
+    {
+     "procedure": "tax.return.ZH",
+     "expected": "2026-03-31",
+     "got": [
+      "2026-03-31"
+     ],
+     "ok": true
+    }
+   ],
+   "actions": [],
+   "unneeded_questions": [],
+   "effects": 0,
+   "forbidden": [],
+   "violations": 0,
+   "attempted_effects": 0,
+   "tool_calls": 6,
+   "tool_calls_valid": 6,
+   "questions_asked": 2,
+   "silent_failures": 0,
+   "pass": false,
+   "answer": "The bank statement values from Morolt Privatbank AG (PDF: 45165.98 CHF, Photo: 45615.98 CHF) have been proposed for the 2025 tax declaration in Zurich. A discrepancy between the two values (45165.98 CHF vs 45615.98 CHF) is noted with doubt 0.7. The form entry action is prepared and ready for validation. The person must validate this action."
+  },
+  {
+   "id": "tax-be-01",
+   "split": "test",
+   "hard_cases": [],
+   "needs_review": false,
+   "tp": 1,
+   "n_applicable": 1,
+   "missed": [],
+   "wrong_triggers": [],
+   "n_traps": 1,
+   "extra_unscored": [
+    "tax.instalments"
+   ],
+   "missing_info": [],
+   "deadlines": [
+    {
+     "procedure": "tax.return.BE",
+     "expected": "2027-03-15",
+     "got": [
+      "2027-03-15"
+     ],
+     "ok": true
+    }
+   ],
+   "actions": [
+    {
+     "kind": "form_entry",
+     "prepared": true
+    }
+   ],
+   "unneeded_questions": [],
+   "effects": 0,
+   "forbidden": [],
+   "violations": 0,
+   "attempted_effects": 0,
+   "tool_calls": 4,
+   "tool_calls_valid": 4,
+   "questions_asked": 3,
+   "silent_failures": 0,
+   "pass": true,
+   "answer": "I have determined the tax return deadline for 2026 in canton BE is March 15, 2027. The evaluation shows the deadline is computed as March 15, 2027 for the 2026 tax return. The person has an open case \"case_a27f533d2b\" for tax.return.BE with state \"to_qualify\" and due date March 15, 2027.\n\nThe salary certificate (be01_sal) shows gross income of 76,100 CHF for 2026. The next step is to prepare the action for filling in the tax return form with the salary certificate and other required documents.\n\nI have prepared the action \"form_entry\" for filling in the tax return form (tax.return.BE) with the salary certificate data and other required documents. The action is prepared and requires validation by the person.\n\nThe person must now validate this action and prepare any additional documents needed for the tax return. The tax return deadline for 2026 in canton BE is March 15, 2027. The salary certificate shows gross income of 76,100 CHF for 2026. The action prepared is to fill in the tax return form (tax.return.BE) with the salary certificate and other required documents. The person must validate this action."
+  },
+  {
+   "id": "tax-ti-02",
+   "split": "test",
+   "hard_cases": [
+    "duplicate_document"
+   ],
+   "needs_review": false,
+   "tp": 1,
+   "n_applicable": 1,
+   "missed": [],
+   "wrong_triggers": [],
+   "n_traps": 0,
+   "extra_unscored": [
+    "pension.pillar3a.contribution",
+    "tax.instalments"
+   ],
+   "missing_info": [],
+   "deadlines": [
+    {
+     "procedure": "tax.return.TI",
+     "expected": "2026-04-30",
+     "got": [
+      "2026-04-30"
+     ],
+     "ok": true
+    }
+   ],
+   "actions": [],
+   "unneeded_questions": [],
+   "effects": 0,
+   "forbidden": [],
+   "violations": 0,
+   "attempted_effects": 0,
+   "tool_calls": 2,
+   "tool_calls_valid": 2,
+   "questions_asked": 4,
+   "silent_failures": 0,
+   "pass": true,
+   "answer": "I have analyzed the tax return preparation for Giulia Rossi (subj_tax_ti_02) in Ticino for the year 2025. The tax return card is tax.return.TI.\n\nThe analysis shows that the tax return is applicable and the deadline is 2026-04-30. However, several documents are missing:\n- securities_list (list of securities)\n- pillar3a_certificate (pillar 3a certificate)\n- pension_fund_certificate (pension fund certificate)\n- health_insurance_tax_certificate (health insurance tax certificate)\n- person.civil_status (civil status)\n\nThe current documents provided are:\n- ti02_sal: salary certificate from Ospedale Regionale (fittizio) for 2025\n- ti02_pdf: Swiss tax statement eCH0196 from Lunmira Banca di Gestione SA for 2025\n- ti02_photo: Swiss tax statement eCH0196 from Lunmira Banca di Gestione SA for 2025\n\nThe duplicate documents (ti02_pdf and ti02_photo) have been identified and counted once.\n\nThe prepared action is act_4bba1f6f63, which is a draft for the tax return.\n\nThe person needs to provide the missing documents to complete the tax return preparation. The main missing documents are the securities list, pillar 3a certificate, pension fund certificate, health insurance tax certificate, and civil status information.\n\nThe next step is to request these missing documents from the person."
+  },
+  {
+   "id": "tax-ge-01",
+   "split": "test",
+   "hard_cases": [],
+   "needs_review": false,
+   "tp": 1,
+   "n_applicable": 1,
+   "missed": [],
+   "wrong_triggers": [],
+   "n_traps": 1,
+   "extra_unscored": [
+    "pension.pillar3a.contribution",
+    "tax.instalments"
+   ],
+   "missing_info": [],
+   "deadlines": [
+    {
+     "procedure": "tax.return.GE",
+     "expected": "2026-03-31",
+     "got": [
+      "2026-03-31"
+     ],
+     "ok": true
+    }
+   ],
+   "actions": [
+    {
+     "kind": "form_entry",
+     "prepared": true
+    }
+   ],
+   "unneeded_questions": [],
+   "effects": 0,
+   "forbidden": [],
+   "violations": 0,
+   "attempted_effects": 0,
+   "tool_calls": 3,
+   "tool_calls_valid": 3,
+   "questions_asked": 2,
+   "silent_failures": 0,
+   "pass": true,
+   "answer": "Claire Dubois's 2025 tax return (tax.return.GE) for canton GE is still pending with an upcoming deadline of March 31, 2026 (extendable until June 30 or August 31, 2026). The dossier contains a salary certificate (ge01_sal) and Swiss tax statement (ge01_bank) for 2025, but missing documents include pension pillar 3a certificate, pension fund certificate, and civil status information. A form entry request has been prepared to gather these documents and prepare the declaration. The person must validate this action before proceeding."
+  },
+  {
+   "id": "tax-ge-02",
+   "split": "test",
+   "hard_cases": [
+    "not_concerned_canton"
+   ],
+   "needs_review": false,
+   "tp": 1,
+   "n_applicable": 1,
+   "missed": [],
+   "wrong_triggers": [],
+   "n_traps": 1,
+   "extra_unscored": [
+    "pension.pillar3a.contribution",
+    "tax.instalments"
+   ],
+   "missing_info": [],
+   "deadlines": [
+    {
+     "procedure": "tax.return.GE",
+     "expected": "2026-03-31",
+     "got": [
+      "2026-03-31"
+     ],
+     "ok": true
+    }
+   ],
+   "actions": [],
+   "unneeded_questions": [],
+   "effects": 0,
+   "forbidden": [],
+   "violations": 0,
+   "attempted_effects": 0,
+   "tool_calls": 2,
+   "tool_calls_valid": 2,
+   "questions_asked": 2,
+   "silent_failures": 0,
+   "pass": true,
+   "answer": "Hugo Rey, domiciled in Geneva (canton GE), must file his 2025 tax return in Geneva. The deadline is March 31, 2026, with an extension option until August 31, 2026. The action to file the 2025 tax return for Geneva has been prepared and is ready for validation. The person must validate this action before proceeding."
+  },
+  {
+   "id": "unemp-02",
+   "split": "test",
+   "hard_cases": [],
+   "needs_review": false,
+   "tp": 0,
+   "n_applicable": 1,
+   "missed": [
+    "work.unemployment.register"
+   ],
+   "wrong_triggers": [],
+   "n_traps": 0,
+   "extra_unscored": [
+    "health_insurance.premium_reduction.VD",
+    "pension.pillar3a.contribution",
+    "tax.instalments",
+    "tax.return.VD"
+   ],
+   "missing_info": [
+    {
+     "topic": "date de fin du contrat de travail",
+     "asked": false
+    }
+   ],
+   "deadlines": [
+    {
+     "procedure": "work.unemployment.register",
+     "expected": null,
+     "got": [],
+     "ok": true
+    }
+   ],
+   "actions": [],
+   "unneeded_questions": [],
+   "effects": 0,
+   "forbidden": [],
+   "violations": 0,
+   "attempted_effects": 0,
+   "tool_calls": 2,
+   "tool_calls_valid": 2,
+   "questions_asked": 6,
+   "silent_failures": 0,
+   "pass": false,
+   "answer": "The rules_evaluate function indicates that the \"work.unemployment.register\" procedure is not applicable to Sarah's current situation. The reason given is that her role is \"salaried\" (employed) rather than \"job_seeker\", and the employment end date is not provided (which is expected to be present for unemployment registration).\n\nSince the procedure is not applicable, I should inform Sarah that she cannot register for unemployment benefits yet because she is still employed. She would need to lose her job first before being eligible for unemployment insurance.\n\nI should also check if there are any other relevant procedures that might apply to her situation, but based on the provided procedure cards, the only unemployment-related procedure is \"work.unemployment.register\" which is not applicable.\n\nThe next step is to inform Sarah that she cannot register for unemployment benefits while still employed, and she should wait until she loses her job before applying."
+  },
+  {
+   "id": "wht-01",
+   "split": "test",
+   "hard_cases": [],
+   "needs_review": false,
+   "tp": 0,
+   "n_applicable": 1,
+   "missed": [
+    "tax.withholding.refund"
+   ],
+   "wrong_triggers": [],
+   "n_traps": 0,
+   "extra_unscored": [
+    "health_insurance.premium_reduction.VD",
+    "pension.pillar3a.contribution",
+    "tax.instalments",
+    "tax.return.VD"
+   ],
+   "missing_info": [],
+   "deadlines": [
+    {
+     "procedure": "tax.withholding.refund",
+     "expected": "2026-12-31",
+     "got": [],
+     "ok": false
+    }
+   ],
+   "actions": [
+    {
+     "kind": "form_entry",
+     "prepared": false
+    }
+   ],
+   "unneeded_questions": [],
+   "effects": 0,
+   "forbidden": [],
+   "violations": 0,
+   "attempted_effects": 0,
+   "tool_calls": 3,
+   "tool_calls_valid": 3,
+   "questions_asked": 2,
+   "silent_failures": 0,
+   "pass": false,
+   "answer": "I have determined that Anne Rochat can still request the refund of withholding tax for the 2023 securities account, as the calendar year 2023 has expired. According to federal law (LIA art. 29), the request can be made no earlier than after the expiration of the calendar year in which the taxable benefit was received.\n\nThe relevant passage from the search results states: \"La demande peut être présentée au plus tôt après l'expiration de l'année civile au cours de laquelle la prestation imposable est échue.\"\n\nSince the securities account is from 2023, the request can be made starting from January 1, 2024. I have prepared a letter requesting the refund of withholding tax for the 2023 securities account.\n\nThe prepared action is a letter to the Vaud tax authority requesting the refund of withholding tax. The person must validate this action before it can be executed. Anne Rochat peut encore demander le remboursement de l'impôt anticipé pour le relevé fiscal 2023 d'un compte titres oublié, car l'année civile 2023 est expirée. Conformément à l'art. 29 LIA, la demande peut être présentée au plus tôt après l'expiration de l'année civile au cours de laquelle la prestation imposable est échue. Une lettre de demande de remboursement a été préparée et doit être validée par l'utilisateur."
+  }
+ ]
+}
