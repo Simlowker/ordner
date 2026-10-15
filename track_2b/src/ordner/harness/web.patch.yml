@@ -160,3 +160,7 @@
 - id: ui-chat
   config:
     performanceUsage: compact
+
+# One model (Apertus 1.5 8B behind the proxy): the person picks an expert with the preset chip, never a model.
+- id: ui-model-selection
+  disabled: true

@@ -103,6 +103,12 @@ export const fr: Dicts = {
   'pluginManager': { 'panel': 'Extensions', 'title': 'Extensions' },
   'schedule.manager': { 'panel': 'Tâches planifiées', 'title': 'Tâches planifiées' },
   'settings.models': { 'welcomeTitle': 'Prototype', 'welcomeBody': NOTICE_FR, 'welcomeContinue': 'Commencer' },
+  'settings.agentPreset': {
+    'seatHint': 'Expert : qui répond à cette conversation (Ordner (général) le choisit pour vous)',
+    'headerHint': 'L’expert choisi au début de cette conversation', 'nav': 'Experts', 'builtInGroup': 'Experts',
+    'sectionIntro': 'Chaque expert est Apertus 1.5 8B avec les outils de son domaine.', 'inUse': 'Expert par défaut',
+    'setDefault': 'Choisir comme expert par défaut', 'view': 'Voir la configuration', 'noDescription': 'Pas de description.',
+  },
 }
 
 /** German (Swiss spelling). */
@@ -119,6 +125,10 @@ export const de: Dicts = {
   'workspace': { 'session.new': 'Neues Gespräch', 'section.workspaces': 'Dossiers', 'section.sessions': 'Gespräche' },
   'settings': { 'trigger': 'Einstellungen' },
   'settings.models': { 'welcomeTitle': 'Prototyp', 'welcomeBody': NOTICE_DE, 'welcomeContinue': 'Beginnen' },
+  'settings.agentPreset': {
+    'seatHint': 'Experte: wer dieses Gespräch beantwortet (Ordner (général) wählt für Sie)',
+    'headerHint': 'Die zu Beginn dieses Gesprächs gewählte Expertin', 'nav': 'Experten', 'builtInGroup': 'Experten',
+  },
 }
 
 /** Italian (formal "lei", as in the cockpit). */
@@ -135,6 +145,10 @@ export const it: Dicts = {
   'workspace': { 'session.new': 'Nuova conversazione', 'section.workspaces': 'Dossier', 'section.sessions': 'Conversazioni' },
   'settings': { 'trigger': 'Impostazioni' },
   'settings.models': { 'welcomeTitle': 'Prototipo', 'welcomeBody': NOTICE_IT, 'welcomeContinue': 'Iniziare' },
+  'settings.agentPreset': {
+    'seatHint': 'Esperto: chi risponde a questa conversazione (Ordner (général) lo sceglie per lei)',
+    'headerHint': 'L’esperto scelto all’inizio di questa conversazione', 'nav': 'Esperti', 'builtInGroup': 'Esperti',
+  },
 }
 
 /** Language definitions, registered in this order (each falls back to English). */

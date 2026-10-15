@@ -147,6 +147,39 @@ with identical settings to measure the noise floor, as planned above.
 - **State:** one MCP process per expert, shared by all sessions of that expert. One conversation per expert; restart
   the launcher to start from scratch (it prints this rule).
 
+### Expert routing in « Ordner (général) » (15.10.2026)
+
+The person picks an expert, never a model (the model picker row `ui-model-selection` is off; always Apertus 1.5 8B).
+The default preset « Ordner (général) » (« choisit l'expert pour vous ») routes:
+
+- **Pick** (`ordner.harness.router`): d1-3B answers a native `choice` question over `router.ROUTES` (one description
+  per expert, English with the official fr/de/it terms) on the conversation's first user message. It runs on the GPU
+  host as `python -m ordner.harness.router --serve --port 8091` (bf16, ~6.5 GB), reached at `ORDNER_ROUTER_URL`
+  (5 s timeout). Fallback, in the proxy's process: EmbeddingGemma 2 cosine to the same descriptions, softmax at
+  T = 0.03 (needs `ORDNER_EMBED=1`). Rule for both: the top option if it is an expert with p >= 0.5, else general
+  (coordinator, all process tools). T and 0.5 were set by hand on six made-up questions before any measurement.
+- **Kept** for the conversation (keyed by its first user message). The picked expert gets its own system prompt, the
+  request's tools narrowed to its own, and its adapter if `use_adapter` (rule fixed before test: only if it beat the
+  base on dev; poursuites and logement yes, lamal, impots and the coordinator no). The first answer without tool calls
+  starts with « Expert : Poursuites — choisi par d1-3B (97 %) »; the proxy removes that line from the history the model
+  sees.
+- **Sources** (experts mode, `ORDNER_EMBED=1`): the top 3 verified quotes of the expert's procedure cards for the
+  question (EmbeddingGemma 2 over `ordner.tools.knowledge`'s passages, federal + the person's canton), as one user
+  message right after the question, between `<<<SOURCES` and `SOURCES>>>`, marked as data, not instructions. Tool
+  calls and tool results are never rewritten (selfcheck part 5).
+- **Not changed:** headless runtime and scenario evaluations (`experts=False`); a direct expert preset routes on its
+  marker as before (plus the sources).
+- **Measured** (`python -m ordner.eval.routing --router-url ...`, `data/routing/results.json`): goals of the 67 scored
+  scenarios (43 dev, 24 test) in fr, de and it, 201 queries; gold = the expert covering every expected procedure, else
+  general. d1-3B (bf16, service on the Mac Studio): **78.1 %** (fr 77.6, de 80.6, it 76.1; dev 80.6, test 73.6),
+  0.41 s per query server side. EmbeddingGemma 2 (laptop): **64.7 %** (fr 59.7, de 70.1, it 64.2), 0.05 s. Most
+  errors stay general (d1: 37 of 44; impots 21 times), which keeps all process tools; d1 sent 7 queries to a wrong
+  expert, EmbeddingGemma 10. Memory on the Mac Studio with both loaded: Apertus server 16 GB + d1 7.4 GB.
+- **Caveat (measured 15.10):** `mlx_lm.server` reloads the whole model when the `adapters` field changes between
+  requests; alternating adapter and base requests (the e2e conversation during an evaluation on the base) grew its
+  footprint from 16 to 35 GB, filled swap and the disk (one request failed with ENOSPC). Serve a demo with one
+  adapter at a time, or nothing else on the server.
+
 ## Commands (macstudio, full A/B)
 
 Setup, once. Either copy the built arm64 checkout from the laptop, or rebuild it (Node ≥ 22.19, pnpm 11.28.5,

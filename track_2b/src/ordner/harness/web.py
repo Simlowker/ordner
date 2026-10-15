@@ -4,7 +4,8 @@
 
 Seeds or opens the dossier ($ORDNER_HOME/ordner.db, same as the cockpit, simulated date ORDNER_TODAY), serves
 ordner.harness.proxy in a thread (expert routing: tool subset and LoRA adapter from the marker of the expert's system
-prompt) and runs `dsh --profile web` with web.patch.yml + the generated presets. --llm openai reads LLM_BASE_URL,
+prompt; with « Ordner (général) », the expert picked by ordner.harness.router: d1-3B at ORDNER_ROUTER_URL, else
+EmbeddingGemma 2 with ORDNER_EMBED=1, which also adds the expert's official passages) and runs `dsh --profile web` with web.patch.yml + the generated presets. --llm openai reads LLM_BASE_URL,
 LLM_NAME, LLM_API_KEY; ORDNER_BACKEND=mlx (default) asks the server for the expert's adapter per request. Each expert
 has one MCP process shared by all its sessions: one conversation per expert, restart to start from scratch.
 Model requests are logged as JSON lines in $ORDNER_HOME/harness/proxy.log. The conversation URL (with its token) is
@@ -57,7 +58,7 @@ def main(argv=None):
     os.environ["ORDNER_HOME"] = str(home)
     from ordner.app import cockpit   # same dossier and seeding (persona + periodic review) as the cockpit
     store = cockpit.store()
-    subject = store.subjects()[0].id
+    subject = store.subjects()[0]
     llm = DemoLLM() if a.llm == "mock" else OpenAICompat(os.environ.get("LLM_BASE_URL", "http://127.0.0.1:8080/v1"),
                                                          os.environ.get("LLM_NAME") or "default",
                                                          os.environ.get("LLM_API_KEY") or None)
@@ -66,13 +67,13 @@ def main(argv=None):
     state = home / "harness"
     (state / "workspace").mkdir(parents=True, exist_ok=True)
     proxy = Proxy(llm, max_steps=a.max_steps, order=order, allowed=allowed, experts=True,
-                  log_file=state / "proxy.log")
+                  log_file=state / "proxy.log", canton=subject.canton)
     presets = state / "experts.patch.yml"
     presets.write_text(E.presets_yaml(proxy.adapters_ok), encoding="utf-8")
     env = {**os.environ, "DSH_HOME": str(state / "dsh-home"), "ORDNER_LOCAL_KEY": "local", "ORDNER_PROXY_URL": proxy.url,
            "ORDNER_PY": sys.executable, "ORDNER_SRC": str(ROOT / "src"), "ORDNER_SYSTEM": C.SYSTEM,
            "DSH_TELEMETRY_DISABLED": "1",
-           **E.env_for(store.path, subject, os.environ.get("ORDNER_TODAY"), state)}
+           **E.env_for(store.path, subject.id, os.environ.get("ORDNER_TODAY"), state)}
     cmd = ["node", str(BIN), "--profile", "web", "--patch", str(PATCH), "--patch", str(presets), "--no-open",
            "--port", str(a.port), "--host", a.host, *passthrough]
     print(f"[ordner] conversation: http://127.0.0.1:{a.port}/  (model: {a.llm} via {proxy.url}, dossier {store.path})\n"

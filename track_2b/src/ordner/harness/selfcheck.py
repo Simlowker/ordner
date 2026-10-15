@@ -8,6 +8,9 @@
 4. Experts (web UI): definitions and generated presets, routing by marker (tools, adapter; plan Review Focus 1, 2, 3,
    5: foreign tool refused or answered unknown_tool, no marker -> base model, no adapter/MLX -> no `adapters` field,
    backend down -> 502 within the client timeout), web overlay rows and its composition (`dsh --dump-config`).
+5. General preset: the router's pick (stubbed d1 service), EmbeddingGemma fallback when the router fails, general when
+   nobody is confident, the pick kept for the conversation, at most 3 delimited passages, tool calls and tool results
+   untouched, adapters only where use_adapter.
 Part 2-3 and the composition are skipped when the harness build is missing (work/vendor/deepseek-harness).
 """
 import json
@@ -212,6 +215,7 @@ def check_web_patch():
                 "office-to-pdf", "ui-sidebar-documentpreview"):
         assert f"- id: {row}\n  disabled: true" in text, row
     assert "preference: light" in text and "preference: fr" in text
+    assert "- id: ui-model-selection\n  disabled: true" in text   # one model: the person picks an expert
     if not H.available():
         return print("web patch: composition SKIPPED (no harness build)")
     with tempfile.TemporaryDirectory() as tmp:
@@ -238,21 +242,27 @@ def check_routing():
     from . import experts as E
     from .proxy import route
     api = lambda e: {t.replace(".", "_") for t in E.EXPERTS[e].tools} | {"ask_user", "prepare_action"}  # noqa: E731
-    sp = E.system_prompt("lamal")
+    sp = E.system_prompt("poursuites")
     r = route([{"role": "system", "content": sp}], adapters_ok=True)
-    assert r["expert"] == "lamal" and set(r["allowed"]) == api("lamal")
+    assert r["expert"] == "poursuites" and set(r["allowed"]) == api("poursuites")
     # Review Focus 2: no marker or an unknown expert -> base model, no adapter, the proxy's own allowlist
     for text in ("plain", "[ordner-expert: nobody]\n" + SYSTEM):
         assert route([{"role": "system", "content": text}], adapters_ok=True) == {"expert": None, "allowed": None,
                                                                                     "adapter": None}
-    # Review Focus 3: adapter only if its directory exists and the backend is MLX
+    # Review Focus 3: adapter only if the expert uses it (beat the base on dev), its directory exists and the backend
+    # is MLX
+    assert {e.id for e in E.EXPERTS.values() if e.use_adapter} == {"poursuites", "logement"}
     with tempfile.TemporaryDirectory() as tmp, mock.patch.object(E, "ADAPTERS", Path(tmp)):
         assert route([{"role": "system", "content": sp}], adapters_ok=True)["adapter"] is None   # not trained
-        d = Path(tmp) / E.EXPERTS["lamal"].adapter
-        d.mkdir()
-        (d / "adapters.safetensors").write_bytes(b"")
+        for e in E.EXPERTS.values():
+            (Path(tmp) / e.adapter).mkdir()
+            (Path(tmp) / e.adapter / "adapters.safetensors").write_bytes(b"")
+        d = Path(tmp) / E.EXPERTS["poursuites"].adapter
         assert route([{"role": "system", "content": sp}], adapters_ok=True)["adapter"] == str(d)
         assert route([{"role": "system", "content": sp}], adapters_ok=False)["adapter"] is None   # non-MLX backend
+        assert route([{"role": "system", "content": E.system_prompt("lamal")}], adapters_ok=True)["adapter"] is None
+        assert E.model_label("poursuites") == "Apertus 1.5 8B + adaptateur expert-poursuites-v1"
+        assert E.model_label("lamal") == E.model_label("coordinateur") == "Apertus 1.5 8B"   # trained, not used
 
         tool = lambda n: {"type": "function", "function": {"name": PREFIX + n, "description": "", "parameters": {}}}  # noqa: E731
         def req(expert, names, system=None):
@@ -269,12 +279,12 @@ def check_routing():
         up = Upstream()
         allowed = sorted({n for e in E.EXPERTS for n in api(e)})
         with up, Proxy(OpenAICompat(up.url), allowed=allowed, experts=True) as p:
-            code, _ = post(p, req("lamal", sorted(api("lamal"))))
+            code, _ = post(p, req("poursuites", sorted(api("poursuites"))))
             assert code == 200 and up.bodies[-1]["adapters"] == str(d) and p.log[-1]["adapter"] == str(d)
-            code, _ = post(p, req("impots", sorted(api("impots"))))   # impots has no adapter in tmp
+            code, _ = post(p, req("impots", sorted(api("impots"))))   # impots: trained, not used (use_adapter)
             assert code == 200 and "adapters" not in up.bodies[-1] and p.log[-1]["adapter"] == "none"
             p.adapters_ok = False   # a jury's own endpoint (vLLM, ...): never an `adapters` field
-            code, _ = post(p, req("lamal", sorted(api("lamal"))))
+            code, _ = post(p, req("poursuites", sorted(api("poursuites"))))
             assert code == 200 and "adapters" not in up.bodies[-1] and p.log[-1]["adapter"] == "none"
             p.adapters_ok = True
             code, _ = post(p, req("lamal", ["case_load"], system="plain"))   # Review Focus 2 through the proxy
@@ -309,14 +319,136 @@ def check_routing():
           "unknown_tool; backend down -> 502: ok")
 
 
+def check_general_routing():
+    import os
+    import socket
+    import tempfile
+    from pathlib import Path
+    from unittest import mock
+
+    import numpy as np
+
+    from ordner.agent.llm import OpenAICompat
+    from ordner.explain import retrieve
+
+    from . import experts as E
+    from . import router as R
+    from .proxy import BANNER, SOURCES_HEAD
+    assert set(R.ROUTES) == set(E.EXPERTS)
+    assert E.EXPERTS["coordinateur"].name == "Ordner (général)" and "choisit l'expert pour vous" in E.presets_yaml()
+    assert R.decide({"lamal": 0.6, "coordinateur": 0.4}, "x")["expert"] == "lamal"
+    assert R.decide({"lamal": 0.45, "impots": 0.3, "coordinateur": 0.25}, "x")["expert"] is None   # not confident
+    assert R.decide({"lamal": 0.1, "coordinateur": 0.9}, "x")["expert"] is None
+    assert BANNER.sub("", "Expert : je pense que oui") == "Expert : je pense que oui"
+    api = lambda e: {t.replace(".", "_") for t in E.EXPERTS[e].tools} | {"ask_user", "prepare_action"}  # noqa: E731
+    coord = sorted(api("coordinateur"))
+    tool = lambda n: {"type": "function", "function": {"name": PREFIX + n, "description": "", "parameters": {}}}  # noqa: E731
+    question = "J'ai reçu un commandement de payer, que dois-je faire ?"
+
+    def req(history=()):
+        return {"messages": [{"role": "system", "content": E.system_prompt("coordinateur")},
+                             {"role": "user", "content": question}, *history], "tools": [tool(n) for n in coord]}
+
+    def post(p, body):
+        with urllib.request.urlopen(urllib.request.Request(p.url + "/chat/completions", json.dumps(body).encode()),
+                                    timeout=20) as f:
+            return json.load(f)["choices"][0]["message"]
+
+    def model_input(p):
+        return p.log[-1]["messages"], [t["function"]["name"] for t in p.log[-1]["tools"]]
+    dead = socket.socket()
+    dead.bind(("127.0.0.1", 0))
+    dead_url = f"http://127.0.0.1:{dead.getsockname()[1]}"
+    dead.close()   # nothing listens: connection refused
+    rank = lambda q, ps: np.arange(len(ps), dtype=float)  # noqa: E731  (stub EmbeddingGemma: later passages first)
+    with tempfile.TemporaryDirectory() as tmp, mock.patch.object(E, "ADAPTERS", Path(tmp)), \
+            mock.patch.object(retrieve, "scores", rank), Upstream() as up, Upstream() as d1:
+        for e in E.EXPERTS.values():
+            (Path(tmp) / e.adapter).mkdir()
+            (Path(tmp) / e.adapter / "adapters.safetensors").write_bytes(b"")
+        d1.answer = {"expert": "poursuites", "p": {"poursuites": 0.97, "coordinateur": 0.03}, "by": "d1-3B"}
+        up.reply = "Je regarde votre dossier. " + calls(("case_load", {}))
+        env = {"ORDNER_EMBED": "1", "ORDNER_ROUTER_URL": d1.url.removesuffix("/v1")}
+        with mock.patch.dict(os.environ, env), Proxy(OpenAICompat(up.url), allowed=coord, experts=True,
+                                                     canton="VD") as p:
+            first = post(p, req())
+            msgs, names = model_input(p)
+            assert len(d1.bodies) == 1 and d1.bodies[0] == {"text": question}
+            assert first["content"] == p.log[-1]["reply"]["content"]   # a step with tool calls: no banner
+            assert msgs[0]["content"] == E.system_prompt("poursuites") and up.bodies[-1]["adapters"].endswith(
+                "expert-poursuites-v1")
+            assert names == [n for n in coord if n in api("poursuites")] and "lamal_revoir_franchise" not in names
+            src = [m for m in msgs if m["content"].startswith(SOURCES_HEAD)]
+            assert len(src) == 1 and msgs.index(src[0]) == 2 and src[0]["role"] == "user"   # right after the question
+            text = src[0]["content"]
+            assert "<<<SOURCES" in text and text.endswith("SOURCES>>>") and "[3]" in text and "[4]" not in text
+            assert len(p.log[-1]["sources"]) == 3 and all(x.startswith("debt.") for x in p.log[-1]["sources"])
+            with Proxy(OpenAICompat(up.url), allowed=coord) as plain:   # same reply, no routing: same tool calls
+                assert post(plain, req())["tool_calls"] == first["tool_calls"]
+            # the first answer names the expert; the pick is kept (the router is not asked again, even if it would
+            # now answer otherwise); the tool result reaches the model unchanged
+            d1.answer = {"expert": "lamal", "p": {"lamal": 0.99}, "by": "d1-3B"}
+            (c,) = first["tool_calls"]
+            result = '{"tool": "case_load", "result": {"subject": "x"}}'
+            history = [{"role": "assistant", "content": first["content"], "tool_calls": [c]},
+                       {"role": "tool", "tool_call_id": c["id"], "content": result}]
+            up.reply = "Vous avez 10 jours pour faire opposition."
+            second = post(p, req(history))
+            msgs, names = model_input(p)
+            assert second["content"] == f"Expert : Poursuites — choisi par d1-3B (97 %)\n\n{up.reply}"
+            assert len(d1.bodies) == 1 and p.log[-1]["expert"] == "poursuites"
+            assert [m["content"] for m in msgs if m["role"] == "tool"] == [result]
+            # next turn: no banner again, the banner is out of the history the model sees, sources after the new message
+            history += [{"role": "assistant", "content": second["content"]}, {"role": "user", "content": "Et après ?"}]
+            up.reply = "Le créancier peut demander la mainlevée."
+            third = post(p, req(history))
+            msgs, names = model_input(p)
+            assert third["content"] == up.reply and len(d1.bodies) == 1 and p.log[-1]["expert"] == "poursuites"
+            assert [m["content"] for m in msgs if m["role"] == "assistant"] == [first["content"],
+                                                                                "Vous avez 10 jours pour faire opposition."]
+            assert [m["content"] for m in msgs if m["role"] == "tool"] == [result]
+            assert [m["tool_calls"][0]["function"]["name"] for m in msgs if m.get("tool_calls")] == ["case_load"]
+            assert msgs[-2]["content"] == "Et après ?" and msgs[-1]["content"].startswith(SOURCES_HEAD)
+            assert sum(m["content"].startswith(SOURCES_HEAD) for m in msgs) == 1
+        up.reply = "Réponse."
+        # the router fails -> EmbeddingGemma (stubbed scores); nobody confident -> general, coordinator as is
+        for scores, expert in (({"logement": 0.8, "coordinateur": 0.2}, "logement"),
+                               ({k: 0.2 for k in R.ROUTES}, None)):
+            env = {"ORDNER_EMBED": "1", "ORDNER_ROUTER_URL": dead_url}
+            with mock.patch.dict(os.environ, env), mock.patch.object(R, "embed_scores", lambda t, s=scores: s), \
+                    Proxy(OpenAICompat(up.url), allowed=coord, experts=True) as p:
+                out = post(p, req())
+                msgs, names = model_input(p)
+                pick = p.log[-1]["routing"]
+                assert pick["by"] == "EmbeddingGemma" and pick["expert"] == expert and pick["errors"]
+                if expert:
+                    assert out["content"].startswith("Expert : Logement et ménage — choisi par EmbeddingGemma (80 %)")
+                    assert up.bodies[-1]["adapters"].endswith("expert-logement-v1")
+                else:
+                    assert out["content"].startswith("Expert : Ordner (général) — aucun expert assez sûr selon "
+                                                     "EmbeddingGemma")
+                    assert msgs[0]["content"] == E.system_prompt("coordinateur") and names == coord
+                    assert "adapters" not in up.bodies[-1] and len(p.log[-1]["sources"]) == 3
+        # without ORDNER_EMBED and without router: general, no embedding model loaded, no sources
+        with mock.patch.dict(os.environ, {"ORDNER_ROUTER_URL": dead_url}):   # restores ORDNER_EMBED on exit
+            os.environ.pop("ORDNER_EMBED", None)
+            with Proxy(OpenAICompat(up.url), allowed=coord, experts=True) as p:
+                out = post(p, req())
+                assert out["content"].startswith("Expert : Ordner (général) — routage indisponible")
+                assert p.log[-1]["routing"]["by"] is None and "sources" not in p.log[-1]
+    print("general preset: router pick + banner, EmbeddingGemma fallback, general when unsure, pick kept, 3 delimited "
+          "passages after the question, tool calls/results untouched: ok")
+
+
 class Upstream(HTTPServer):
-    """Fake OpenAI-compatible backend recording request bodies."""
+    """Fake OpenAI-compatible backend (or, with `answer`, any JSON endpoint: the d1 router) recording request bodies."""
 
     def __init__(self):
         class H(BaseHTTPRequestHandler):
             def do_POST(h):
                 self.bodies.append(json.loads(h.rfile.read(int(h.headers["Content-Length"]))))
-                data = json.dumps({"choices": [{"message": {"role": "assistant", "content": self.reply}}]}).encode()
+                data = json.dumps(self.answer or {"choices": [{"message": {"role": "assistant",
+                                                                           "content": self.reply}}]}).encode()
                 h.send_response(200)
                 h.send_header("Content-Length", str(len(data)))
                 h.end_headers()
@@ -325,7 +457,7 @@ class Upstream(HTTPServer):
             def log_message(h, *a):
                 pass
         super().__init__(("127.0.0.1", 0), H)
-        self.bodies, self.reply = [], "Réponse."
+        self.bodies, self.reply, self.answer = [], "Réponse.", None
 
     @property
     def url(self):
@@ -363,6 +495,7 @@ if __name__ == "__main__":
     units()
     check_experts()
     check_routing()
+    check_general_routing()
     check_web_patch()
     end_to_end()
     print("harness selfcheck: OK")

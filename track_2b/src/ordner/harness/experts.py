@@ -31,10 +31,11 @@ class Expert:
     adapter: str | None   # directory name under ADAPTERS
     order: int
     domain: str = ""
+    use_adapter: bool = False   # rule fixed before test (docs 01-decision, 15.10): only if it beat the base on dev
 
 
 EXPERTS = {e.id: e for e in [
-    Expert("coordinateur", "Ordner", "Vue d'ensemble du dossier, toutes les démarches", ("*",),
+    Expert("coordinateur", "Ordner (général)", "choisit l'expert pour vous", ("*",),
            tuple(s.name for s in SPECS if P.in_toolset(s.name, "process")), "coordinator-distill-v1", 1,
            "You see the whole dossier and every procedure."),
     Expert("impots", "Impôts", "Déclaration, acomptes, réclamation, impôt anticipé, 3e pilier",
@@ -46,10 +47,12 @@ EXPERTS = {e.id: e for e in [
            BASE_TOOLS + ("lamal.revoir_franchise",), "expert-lamal-v1", 3,
            "You handle compulsory health insurance only (LAMal/KVG)."),
     Expert("poursuites", "Poursuites", "Commandement de payer, opposition, délais", ("debt.",),
-           BASE_TOOLS + ("poursuite.repondre",), "expert-poursuites-v1", 4, "You handle debt collection (LP/SchKG) only."),
+           BASE_TOOLS + ("poursuite.repondre",), "expert-poursuites-v1", 4, "You handle debt collection (LP/SchKG) only.",
+           use_adapter=True),
     Expert("logement", "Logement et ménage", "Déménagement, annonce à la commune, redevance Serafe",
            ("housing.", "household."), BASE_TOOLS + ("demenagement.annoncer",), "expert-logement-v1", 5,
-           "You handle moving (registration at the commune) and the household radio-TV fee (Serafe) only."),
+           "You handle moving (registration at the commune) and the household radio-TV fee (Serafe) only.",
+           use_adapter=True),
 ]}
 
 
@@ -64,10 +67,11 @@ def system_prompt(expert_id):
 
 
 def adapter_path(expert_id):
-    """The adapter directory as the MLX server sees it, if it exists locally, else None (base model).
-    ORDNER_ADAPTERS_SERVER: the same directory on a remote server (e.g. the Mac Studio behind an SSH tunnel)."""
+    """The adapter directory as the MLX server sees it, if the expert uses it (use_adapter) and it exists locally, else
+    None (base model). ORDNER_ADAPTERS_SERVER: the same directory on a remote server (e.g. the Mac Studio behind an SSH
+    tunnel)."""
     e = EXPERTS.get(expert_id)
-    p = ADAPTERS / e.adapter if e and e.adapter else None
+    p = ADAPTERS / e.adapter if e and e.adapter and e.use_adapter else None
     if not (p and (p / "adapters.safetensors").exists()):
         return None
     server = os.environ.get("ORDNER_ADAPTERS_SERVER")
@@ -76,7 +80,9 @@ def adapter_path(expert_id):
 
 def model_label(expert_id, adapters_ok=True):
     path = adapter_path(expert_id) if adapters_ok else None
-    return f"Apertus 1.5 8B + adaptateur {Path(path).name}" if path else "Apertus 1.5 8B (adaptateur non disponible)"
+    if path:
+        return f"Apertus 1.5 8B + adaptateur {Path(path).name}"
+    return "Apertus 1.5 8B (adaptateur non disponible)" if EXPERTS[expert_id].use_adapter else "Apertus 1.5 8B"
 
 
 def _env(kind, e):

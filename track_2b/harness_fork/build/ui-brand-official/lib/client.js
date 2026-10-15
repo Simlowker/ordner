@@ -216,6 +216,17 @@ window.__ModuleLoader__.load({
 						"welcomeTitle": "Prototype",
 						"welcomeBody": NOTICE_FR,
 						"welcomeContinue": "Commencer"
+					},
+					"settings.agentPreset": {
+						"seatHint": "Expert : qui répond à cette conversation (Ordner (général) le choisit pour vous)",
+						"headerHint": "L’expert choisi au début de cette conversation",
+						"nav": "Experts",
+						"builtInGroup": "Experts",
+						"sectionIntro": "Chaque expert est Apertus 1.5 8B avec les outils de son domaine.",
+						"inUse": "Expert par défaut",
+						"setDefault": "Choisir comme expert par défaut",
+						"view": "Voir la configuration",
+						"noDescription": "Pas de description."
 					}
 				}
 			},
@@ -250,6 +261,12 @@ window.__ModuleLoader__.load({
 						"welcomeTitle": "Prototyp",
 						"welcomeBody": NOTICE_DE,
 						"welcomeContinue": "Beginnen"
+					},
+					"settings.agentPreset": {
+						"seatHint": "Experte: wer dieses Gespräch beantwortet (Ordner (général) wählt für Sie)",
+						"headerHint": "Die zu Beginn dieses Gesprächs gewählte Expertin",
+						"nav": "Experten",
+						"builtInGroup": "Experten"
 					}
 				}
 			},
@@ -284,6 +301,12 @@ window.__ModuleLoader__.load({
 						"welcomeTitle": "Prototipo",
 						"welcomeBody": NOTICE_IT,
 						"welcomeContinue": "Iniziare"
+					},
+					"settings.agentPreset": {
+						"seatHint": "Esperto: chi risponde a questa conversazione (Ordner (général) lo sceglie per lei)",
+						"headerHint": "L’esperto scelto all’inizio di questa conversazione",
+						"nav": "Esperti",
+						"builtInGroup": "Esperti"
 					}
 				}
 			}
