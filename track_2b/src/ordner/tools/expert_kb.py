@@ -3,6 +3,7 @@
 authority pages, rebuilt locally), ranked by EmbeddingGemma 2 (explain/retrieve.py, embeddings cached per passage set).
 Topics: data/knowledge/topics.json. Measured by ordner.eval.knowledge_experts."""
 import json
+import os
 from functools import lru_cache
 
 from .base import ROOT
@@ -17,7 +18,8 @@ def _jsonl(path):
 @lru_cache(maxsize=8)
 def passages(expert):
     """The expert's passages (repo first, then local), deduplicated by passage_id; [] when it has no base."""
-    rows = _jsonl(DATA / expert / "passages.jsonl") + _jsonl(WORK / expert / "passages_local.jsonl")
+    local = [] if os.environ.get("ORDNER_KB_REPO_ONLY") == "1" else _jsonl(WORK / expert / "passages_local.jsonl")
+    rows = _jsonl(DATA / expert / "passages.jsonl") + local   # ORDNER_KB_REPO_ONLY=1: what a clean clone has
     return list({r["passage_id"]: {**r, "expert": expert} for r in rows if r.get("text")}.values())
 
 

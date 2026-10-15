@@ -5,6 +5,7 @@ product), one global base with every expert's passages (no routing), BM25 on the
 python -m ordner.eval.knowledge_experts  ->  data/knowledge/results.json"""
 import json
 import math
+import os
 from collections import Counter, defaultdict
 from pathlib import Path
 
@@ -12,7 +13,7 @@ from ordner.tools import expert_kb
 from ordner.tools.knowledge import tokens
 
 QUESTIONS = Path("data/knowledge/questions.json")
-OUT = Path("data/knowledge/results.json")
+OUT = Path("data/knowledge/results_repo_only.json" if os.environ.get("ORDNER_KB_REPO_ONLY") == "1" else "data/knowledge/results.json")
 
 
 def bm25_scorer(query, ps, k1=1.5, b=0.75):

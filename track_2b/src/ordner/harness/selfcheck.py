@@ -408,7 +408,10 @@ def check_general_routing():
             assert len(src) == 1 and msgs.index(src[0]) == 2 and src[0]["role"] == "user"   # right after the question
             text = src[0]["content"]
             assert "<<<SOURCES" in text and text.endswith("SOURCES>>>") and "[3]" in text and "[4]" not in text
-            assert len(p.log[-1]["sources"]) == 3 and all(x.startswith("debt.") for x in p.log[-1]["sources"])
+            from ordner.tools import expert_kb   # the expert's own base when it exists, else its cards' quotes
+            own = {x["passage_id"] for x in expert_kb.passages("poursuites")}
+            assert len(p.log[-1]["sources"]) == 3 and all(x in own if own else x.startswith("debt.")
+                                                          for x in p.log[-1]["sources"])
             with Proxy(OpenAICompat(up.url), allowed=coord) as plain:   # same reply, no routing: same tool calls
                 assert post(plain, req())["tool_calls"] == first["tool_calls"]
             # the first answer names the expert; the pick is kept (the router is not asked again, even if it would

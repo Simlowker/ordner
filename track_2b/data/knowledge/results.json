@@ -1,0 +1,2258 @@
+{
+ "questions": 96,
+ "experts_with_base": [
+  "impots",
+  "lamal",
+  "logement",
+  "poursuites"
+ ],
+ "embed_model": "google/embeddinggemma-2",
+ "overall": {
+  "expert_base": 0.896,
+  "global_base": 0.812,
+  "bm25_expert_base": 0.812
+ },
+ "by": {
+  "expert=impots": {
+   "expert_base": 0.875,
+   "global_base": 0.667,
+   "bm25_expert_base": 0.792,
+   "n": 24
+  },
+  "expert=lamal": {
+   "expert_base": 0.958,
+   "global_base": 0.958,
+   "bm25_expert_base": 0.833,
+   "n": 24
+  },
+  "expert=logement": {
+   "expert_base": 0.958,
+   "global_base": 0.917,
+   "bm25_expert_base": 0.833,
+   "n": 24
+  },
+  "expert=poursuites": {
+   "expert_base": 0.792,
+   "global_base": 0.708,
+   "bm25_expert_base": 0.792,
+   "n": 24
+  },
+  "lang=de": {
+   "expert_base": 0.938,
+   "global_base": 0.844,
+   "bm25_expert_base": 0.781,
+   "n": 32
+  },
+  "lang=fr": {
+   "expert_base": 0.906,
+   "global_base": 0.812,
+   "bm25_expert_base": 0.781,
+   "n": 32
+  },
+  "lang=it": {
+   "expert_base": 0.844,
+   "global_base": 0.781,
+   "bm25_expert_base": 0.875,
+   "n": 32
+  }
+ },
+ "global_routed_elsewhere": 0.292,
+ "coverage": {
+  "impots": {
+   "passages": 135,
+   "in_repo": 105,
+   "jurisdictions": {
+    "CH": 79,
+    "VD": 11,
+    "ZH": 9,
+    "BE": 11,
+    "GE": 14,
+    "TI": 11
+   },
+   "topics": {
+    "tax.return.deadline": 19,
+    "tax.return.documents": 32,
+    "tax.securities.value": 19,
+    "tax.assessment.objection": 12,
+    "tax.instalments": 32,
+    "tax.pillar3a": 27,
+    "tax.withholding.refund": 28
+   }
+  },
+  "lamal": {
+   "passages": 168,
+   "in_repo": 114,
+   "jurisdictions": {
+    "CH": 126,
+    "GE": 9,
+    "BE": 12,
+    "TI": 8,
+    "ZH": 8,
+    "VD": 5
+   },
+   "topics": {
+    "lamal.obligation": 29,
+    "lamal.change.deadline": 43,
+    "lamal.premium_notice": 30,
+    "lamal.models": 30,
+    "lamal.deductible": 33,
+    "lamal.premium_reduction": 41
+   }
+  },
+  "logement": {
+   "passages": 245,
+   "in_repo": 106,
+   "jurisdictions": {
+    "CH": 158,
+    "ZH": 17,
+    "VD": 12,
+    "GE": 19,
+    "BE": 25,
+    "TI": 14
+   },
+   "topics": {
+    "household.fee.obligation": 75,
+    "household.fee.invoice": 99,
+    "household.fee.exemption": 42,
+    "housing.announce.deadline": 64,
+    "housing.announce.documents": 50,
+    "housing.intercantonal": 54
+   }
+  },
+  "poursuites": {
+   "passages": 164,
+   "in_repo": 111,
+   "jurisdictions": {
+    "CH": 107,
+    "GE": 14,
+    "ZH": 11,
+    "BE": 11,
+    "TI": 10,
+    "VD": 11
+   },
+   "topics": {
+    "lp.register_extract": 27,
+    "lp.holidays": 19,
+    "lp.opposition": 35,
+    "lp.notification": 27,
+    "lp.payment_order": 25,
+    "lp.lifting": 29,
+    "lp.continuation": 45
+   }
+  }
+ },
+ "rows": [
+  {
+   "expert": "impots",
+   "topic": "tax.return.deadline",
+   "lang": "fr",
+   "canton": "VD",
+   "q": "J'habite à Lausanne et je n'arriverai pas à remplir ma déclaration d'impôt à temps. Jusqu'à quand dois-je la rendre et comment demander un délai ?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "logement",
+    "impots",
+    "impots"
+   ],
+   "top": [
+    "impots-vd-delai-fr",
+    "impots-vd-directive-delai-fr",
+    "impots-vd-li-art174-fr"
+   ]
+  },
+  {
+   "expert": "impots",
+   "topic": "tax.return.deadline",
+   "lang": "de",
+   "canton": "ZH",
+   "q": "Ich wohne in Winterthur. Bis wann muss ich die Steuererklärung abgeben, und kann ich online eine Verlängerung beantragen?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "impots",
+    "logement",
+    "impots"
+   ],
+   "top": [
+    "impots-zh-zstb133-frist-de",
+    "impots-zh-zstb133-vst-de",
+    "impots-fedlex-642.11-art124-de"
+   ]
+  },
+  {
+   "expert": "impots",
+   "topic": "tax.return.deadline",
+   "lang": "de",
+   "canton": "BE",
+   "q": "Ich wohne in Thun und bin mit der Steuererklärung spät dran. Bis wann muss ich sie einreichen und wie bekomme ich mehr Zeit?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "impots",
+    "impots",
+    "impots"
+   ],
+   "top": [
+    "impots-fedlex-642.11-art124-de",
+    "impots-be-fristen-de",
+    "impots-fedlex-642.124-art1-2-3-4-de"
+   ]
+  },
+  {
+   "expert": "impots",
+   "topic": "tax.return.deadline",
+   "lang": "it",
+   "canton": "TI",
+   "q": "Abito a Lugano: entro quando devo inviare la dichiarazione d'imposta e posso chiedere più tempo?",
+   "hit": {
+    "expert_base": true,
+    "global_base": false,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "logement",
+    "logement",
+    "logement"
+   ],
+   "top": [
+    "impots-fedlex-642.11-art124-it",
+    "impots-ti-lt-art198-it",
+    "impots-fedlex-642.11-art163-164-it"
+   ]
+  },
+  {
+   "expert": "impots",
+   "topic": "tax.assessment.objection",
+   "lang": "fr",
+   "canton": "GE",
+   "q": "J'ai reçu mon bordereau d'impôt à Genève et je pense qu'il y a une erreur. Combien de temps ai-je pour le contester et comment faire ?",
+   "hit": {
+    "expert_base": false,
+    "global_base": false,
+    "bm25_expert_base": false
+   },
+   "global_top_experts": [
+    "logement",
+    "logement",
+    "logement"
+   ],
+   "top": [
+    "impots-ge-delai-fr",
+    "impots-ge-impot-anticipe-fr",
+    "impots-ge-actu-delai-fr"
+   ]
+  },
+  {
+   "expert": "impots",
+   "topic": "tax.assessment.objection",
+   "lang": "de",
+   "canton": "ZH",
+   "q": "Ich bin mit meiner Steuerveranlagung vom Steueramt Zürich nicht einverstanden, die Kosten für die Kinderbetreuung wurden gestrichen. Wie wehre ich mich und bis wann?",
+   "hit": {
+    "expert_base": false,
+    "global_base": false,
+    "bm25_expert_base": false
+   },
+   "global_top_experts": [
+    "impots",
+    "logement",
+    "logement"
+   ],
+   "top": [
+    "impots-zh-zstb172-bezug-de",
+    "impots-fedlex-642.21-art23-de",
+    "impots-zh-zstb133-vst-de"
+   ]
+  },
+  {
+   "expert": "impots",
+   "topic": "tax.assessment.objection",
+   "lang": "it",
+   "canton": "TI",
+   "q": "Non sono d'accordo con la decisione di tassazione che mi ha mandato il Cantone Ticino. Come posso contestarla e quanto tempo ho?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "impots",
+    "impots",
+    "impots"
+   ],
+   "top": [
+    "impots-fedlex-642.11-art132-it",
+    "impots-ti-lt-art206-it",
+    "impots-fedlex-642.14-art48-it"
+   ]
+  },
+  {
+   "expert": "impots",
+   "topic": "tax.assessment.objection",
+   "lang": "fr",
+   "canton": "VD",
+   "q": "Dans ma taxation, l'administration fiscale vaudoise n'a pas accepté mes frais de déplacement. Comment est-ce que je peux m'y opposer ?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": false
+   },
+   "global_top_experts": [
+    "logement",
+    "logement",
+    "impots"
+   ],
+   "top": [
+    "impots-fedlex-642.14-art48-fr",
+    "impots-vd-li-art186-fr",
+    "impots-fedlex-642.11-art132-fr"
+   ]
+  },
+  {
+   "expert": "impots",
+   "topic": "tax.instalments",
+   "lang": "de",
+   "canton": "BE",
+   "q": "Ich habe vom Kanton Bern Ratenrechnungen für die Steuern bekommen. Wann muss ich die Raten bezahlen und was passiert, wenn ich zu spät zahle?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "logement",
+    "logement",
+    "impots"
+   ],
+   "top": [
+    "impots-fedlex-642.124-art1-2-3-4-de",
+    "impots-fedlex-642.11-art163-164-de",
+    "impots-fedlex-642.21-art31-32-de"
+   ]
+  },
+  {
+   "expert": "impots",
+   "topic": "tax.instalments",
+   "lang": "fr",
+   "canton": "GE",
+   "q": "À Genève, je paie des acomptes d'impôt chaque mois. Est-ce que je peux modifier le montant si mon salaire a baissé ?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "impots",
+    "logement",
+    "logement"
+   ],
+   "top": [
+    "impots-ge-acomptes-fr",
+    "impots-ge-lpgip-art5-fr",
+    "impots-ge-impot-anticipe-fr"
+   ]
+  },
+  {
+   "expert": "impots",
+   "topic": "tax.instalments",
+   "lang": "de",
+   "canton": "ZH",
+   "q": "Lohnt es sich im Kanton Zürich, die Steuern schon im Voraus zu bezahlen, bevor die definitive Rechnung kommt?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "impots",
+    "lamal",
+    "impots"
+   ],
+   "top": [
+    "impots-fedlex-642.124-art1-2-3-4-de",
+    "impots-fedlex-642.11-art163-164-de",
+    "impots-zh-zstb172-bezug-de"
+   ]
+  },
+  {
+   "expert": "impots",
+   "topic": "tax.instalments",
+   "lang": "fr",
+   "canton": "VD",
+   "q": "Je viens de m'installer dans le canton de Vaud. Comment fonctionnent les acomptes d'impôt et que se passe-t-il si je paie en retard ?",
+   "hit": {
+    "expert_base": true,
+    "global_base": false,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "logement",
+    "logement",
+    "logement"
+   ],
+   "top": [
+    "impots-fedlex-642.11-art163-164-fr",
+    "impots-vd-li-art222-224-fr",
+    "impots-vd-acomptes-fr"
+   ]
+  },
+  {
+   "expert": "impots",
+   "topic": "tax.return.documents",
+   "lang": "fr",
+   "canton": "BE",
+   "q": "J'habite à Bienne et je remplis ma déclaration pour la première fois. Quels justificatifs dois-je joindre et lesquels puis-je simplement garder chez moi ?",
+   "hit": {
+    "expert_base": true,
+    "global_base": false,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "logement",
+    "logement",
+    "logement"
+   ],
+   "top": [
+    "impots-be-stg-170-171-de",
+    "impots-fedlex-642.14-art42-fr",
+    "impots-be-guide-ia-fr"
+   ]
+  },
+  {
+   "expert": "impots",
+   "topic": "tax.return.documents",
+   "lang": "fr",
+   "canton": "GE",
+   "q": "Ma banque m'a envoyé un relevé fiscal électronique avec un code-barres. Est-ce que je peux l'utiliser pour ma déclaration genevoise ?",
+   "hit": {
+    "expert_base": true,
+    "global_base": false,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "logement",
+    "logement",
+    "logement"
+   ],
+   "top": [
+    "impots-ge-delai-fr",
+    "impots-ge-impot-anticipe-1650-fr",
+    "impots-bsv-3a-fr"
+   ]
+  },
+  {
+   "expert": "impots",
+   "topic": "tax.return.documents",
+   "lang": "it",
+   "canton": "TI",
+   "q": "Per la dichiarazione d'imposta in Ticino, quali documenti devo allegare? Il certificato di salario basta o serve altro?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "impots",
+    "impots",
+    "impots"
+   ],
+   "top": [
+    "impots-ti-istr-titoli-it",
+    "impots-fedlex-642.14-art42-it",
+    "impots-ti-lt-art199-it"
+   ]
+  },
+  {
+   "expert": "impots",
+   "topic": "tax.withholding.refund",
+   "lang": "it",
+   "canton": "CH",
+   "q": "Sul mio conto di risparmio la banca ha trattenuto una parte degli interessi come imposta. Come posso riavere questi soldi?",
+   "hit": {
+    "expert_base": false,
+    "global_base": false,
+    "bm25_expert_base": false
+   },
+   "global_top_experts": [
+    "logement",
+    "impots",
+    "impots"
+   ],
+   "top": [
+    "impots-fedlex-642.124-art1-2-3-4-it-2",
+    "impots-ti-istr-interessi-it",
+    "impots-ge-acomptes-interets-fr"
+   ]
+  },
+  {
+   "expert": "impots",
+   "topic": "tax.withholding.refund",
+   "lang": "it",
+   "canton": "CH",
+   "q": "Ho ricevuto dei dividendi da azioni svizzere, ma sul conto è arrivato meno del previsto. Perché, e posso recuperare la differenza?",
+   "hit": {
+    "expert_base": true,
+    "global_base": false,
+    "bm25_expert_base": false
+   },
+   "global_top_experts": [
+    "logement",
+    "logement",
+    "impots"
+   ],
+   "top": [
+    "impots-ti-istr-titoli-it",
+    "impots-vd-impot-anticipe-fr",
+    "impots-fedlex-642.21-art22-it"
+   ]
+  },
+  {
+   "expert": "impots",
+   "topic": "tax.withholding.refund",
+   "lang": "de",
+   "canton": "CH",
+   "q": "Ich habe vergessen, mein Sparkonto in der Steuererklärung anzugeben. Bekomme ich die Verrechnungssteuer trotzdem zurück?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "impots",
+    "impots",
+    "impots"
+   ],
+   "top": [
+    "impots-fedlex-642.21-art23-de",
+    "impots-zh-zstb133-vst-de",
+    "impots-fedlex-642.11-art124-de"
+   ]
+  },
+  {
+   "expert": "impots",
+   "topic": "tax.securities.value",
+   "lang": "it",
+   "canton": "CH",
+   "q": "Ho alcune azioni in un deposito: a quale valore devo indicarle nella dichiarazione d'imposta?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "impots",
+    "impots",
+    "impots"
+   ],
+   "top": [
+    "impots-ti-istr-titoli-it",
+    "impots-ti-lt-art198-it",
+    "impots-fedlex-642.11-art125-it"
+   ]
+  },
+  {
+   "expert": "impots",
+   "topic": "tax.securities.value",
+   "lang": "de",
+   "canton": "CH",
+   "q": "Wie finde ich heraus, mit welchem Kurs ich meine Aktien und Fondsanteile im Wertschriftenverzeichnis angeben muss?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "impots",
+    "impots",
+    "poursuites"
+   ],
+   "top": [
+    "impots-ti-istr-titoli-it",
+    "impots-fedlex-831.461.3-art8-8a-de",
+    "impots-fedlex-642.11-art125-de"
+   ]
+  },
+  {
+   "expert": "impots",
+   "topic": "tax.securities.value",
+   "lang": "fr",
+   "canton": "CH",
+   "q": "Dans l'état des titres de ma déclaration, je dois classer mes revenus en A ou en B. Quelle est la différence ?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "impots",
+    "impots",
+    "impots"
+   ],
+   "top": [
+    "impots-be-guide-3a-fr",
+    "impots-be-guide-releve-fr",
+    "impots-ti-istr-titoli-it"
+   ]
+  },
+  {
+   "expert": "impots",
+   "topic": "tax.pillar3a",
+   "lang": "it",
+   "canton": "CH",
+   "q": "Lavoro come dipendente e ho una cassa pensione. Quanto posso versare al massimo nel pilastro 3a e dedurre dalle imposte?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "impots",
+    "impots",
+    "impots"
+   ],
+   "top": [
+    "impots-ti-istr-3a-it",
+    "impots-bsv-3a-fr",
+    "impots-fedlex-831.461.3-art7-it"
+   ]
+  },
+  {
+   "expert": "impots",
+   "topic": "tax.pillar3a",
+   "lang": "it",
+   "canton": "CH",
+   "q": "Che documento mi serve per dedurre dalle imposte i versamenti del 3° pilastro?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "impots",
+    "impots",
+    "impots"
+   ],
+   "top": [
+    "impots-bsv-3a-fr",
+    "impots-vd-pieces-fr",
+    "impots-be-info-3a-de"
+   ]
+  },
+  {
+   "expert": "impots",
+   "topic": "tax.pillar3a",
+   "lang": "de",
+   "canton": "CH",
+   "q": "Ich arbeite Teilzeit und habe eine Pensionskasse. Darf ich überhaupt in eine Säule 3a einzahlen und den Betrag abziehen?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "impots",
+    "impots",
+    "impots"
+   ],
+   "top": [
+    "impots-be-info-3a-de",
+    "impots-bsv-3a-fr",
+    "impots-fedlex-831.461.3-art7a-de"
+   ]
+  },
+  {
+   "expert": "lamal",
+   "topic": "lamal.premium_reduction",
+   "lang": "fr",
+   "canton": "VD",
+   "q": "Je vis seule à Yverdon avec un petit salaire et ma prime d'assurance maladie me coûte trop cher. Est-ce que je peux recevoir une aide, et où faire la demande ?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": false
+   },
+   "global_top_experts": [
+    "lamal",
+    "lamal",
+    "lamal"
+   ],
+   "top": [
+    "lamal-vd-ovam-subside-p2-fr",
+    "lamal-vd-ovam-subside-p1-fr",
+    "lamal-fedlex-832.10-art65-al1-fr"
+   ]
+  },
+  {
+   "expert": "lamal",
+   "topic": "lamal.premium_reduction",
+   "lang": "fr",
+   "canton": "GE",
+   "q": "Nous sommes une famille avec deux enfants à Genève. Comment savoir si nous avons droit à un subside pour l'assurance maladie ?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "lamal",
+    "lamal",
+    "lamal"
+   ],
+   "top": [
+    "lamal-ge-ocas-subside-2026-fr",
+    "lamal-ge-lalamal-art24-25-fr",
+    "lamal-ge-lalamal-art19-20-fr"
+   ]
+  },
+  {
+   "expert": "lamal",
+   "topic": "lamal.premium_reduction",
+   "lang": "de",
+   "canton": "ZH",
+   "q": "Ich bin alleinerziehend und wohne in Zürich. Wie beantrage ich Prämienverbilligung und bis wann muss der Antrag eingereicht sein?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "lamal",
+    "lamal",
+    "lamal"
+   ],
+   "top": [
+    "lamal-zh-gd-ipv-leichte-sprache-de",
+    "lamal-zh-gd-ipv-p1-de",
+    "lamal-zh-gd-ipv-p2-de"
+   ]
+  },
+  {
+   "expert": "lamal",
+   "topic": "lamal.premium_reduction",
+   "lang": "de",
+   "canton": "BE",
+   "q": "Ich wohne in Bern und habe gehört, dass der Kanton bei der Krankenkassenprämie helfen kann. Muss ich dafür einen Antrag stellen?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "lamal",
+    "lamal",
+    "lamal"
+   ],
+   "top": [
+    "lamal-fedlex-832.10-art65-al1-de",
+    "lamal-fedlex-832.10-art65-al3-de",
+    "lamal-bag-guide-cost-sharing-de"
+   ]
+  },
+  {
+   "expert": "lamal",
+   "topic": "lamal.premium_reduction",
+   "lang": "it",
+   "canton": "TI",
+   "q": "Vivo a Bellinzona e il premio della cassa malati pesa troppo sul mio budget. Ho diritto a un sussidio e come lo chiedo?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "lamal",
+    "lamal",
+    "lamal"
+   ],
+   "top": [
+    "lamal-ti-ias-ripam-p1-it",
+    "lamal-bag-guide-when-insure-it",
+    "lamal-fedlex-832.10-art65-al1-it"
+   ]
+  },
+  {
+   "expert": "lamal",
+   "topic": "lamal.obligation",
+   "lang": "fr",
+   "canton": "CH",
+   "q": "Je m'installe en Suisse depuis la France pour un nouveau travail. Dans quel délai dois-je m'assurer pour la maladie ?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "lamal",
+    "lamal",
+    "lamal"
+   ],
+   "top": [
+    "lamal-vd-ovam-obligation-p2-fr",
+    "lamal-fedlex-832.102-art7-al1-fr",
+    "lamal-bag-guide-when-insure-fr"
+   ]
+  },
+  {
+   "expert": "lamal",
+   "topic": "lamal.obligation",
+   "lang": "de",
+   "canton": "CH",
+   "q": "Unser Baby kommt im Dezember zur Welt. Bis wann müssen wir es bei einer Krankenkasse versichern?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": false
+   },
+   "global_top_experts": [
+    "lamal",
+    "lamal",
+    "lamal"
+   ],
+   "top": [
+    "lamal-bag-guide-when-insure-de",
+    "lamal-fedlex-832.10-art64-al5-de",
+    "lamal-bag-primes-conseil-deadlines-p1-de"
+   ]
+  },
+  {
+   "expert": "lamal",
+   "topic": "lamal.obligation",
+   "lang": "it",
+   "canton": "CH",
+   "q": "Una cassa malati può rifiutarmi l'assicurazione di base perché sono già malato?",
+   "hit": {
+    "expert_base": false,
+    "global_base": false,
+    "bm25_expert_base": false
+   },
+   "global_top_experts": [
+    "lamal",
+    "lamal",
+    "lamal"
+   ],
+   "top": [
+    "lamal-bag-factsheet-change-p4-it",
+    "lamal-bag-factsheet-change-p2-it",
+    "lamal-bag-factsheet-change-p3-it"
+   ]
+  },
+  {
+   "expert": "lamal",
+   "topic": "lamal.obligation",
+   "lang": "it",
+   "canton": "CH",
+   "q": "Sono in Svizzera con un permesso di sei mesi: devo per forza stipulare l'assicurazione malattia svizzera?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "lamal",
+    "lamal",
+    "lamal"
+   ],
+   "top": [
+    "lamal-bag-guide-when-insure-it",
+    "lamal-fedlex-832.102-art7-al1-it",
+    "lamal-fedlex-832.10-art3-it"
+   ]
+  },
+  {
+   "expert": "lamal",
+   "topic": "lamal.change.deadline",
+   "lang": "fr",
+   "canton": "CH",
+   "q": "Je veux quitter ma caisse maladie à la fin de l'année. Jusqu'à quand ma lettre doit-elle leur parvenir ?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "lamal",
+    "lamal",
+    "lamal"
+   ],
+   "top": [
+    "lamal-bag-factsheet-change-p2-fr",
+    "lamal-bag-factsheet-change-p4-fr",
+    "lamal-bag-primes-conseil-deadlines-p2-fr"
+   ]
+  },
+  {
+   "expert": "lamal",
+   "topic": "lamal.change.deadline",
+   "lang": "de",
+   "canton": "CH",
+   "q": "Kann ich die Krankenkasse auch Mitte Jahr wechseln, oder nur auf Ende Jahr?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "lamal",
+    "lamal",
+    "lamal"
+   ],
+   "top": [
+    "lamal-bag-factsheet-change-p2-de",
+    "lamal-fedlex-832.10-art7-al1-de",
+    "lamal-bag-factsheet-change-p3-de"
+   ]
+  },
+  {
+   "expert": "lamal",
+   "topic": "lamal.change.deadline",
+   "lang": "it",
+   "canton": "CH",
+   "q": "Ho una franchigia alta e vorrei abbassarla per l'anno prossimo. Entro quando devo avvisare la cassa?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "impots",
+    "lamal",
+    "lamal"
+   ],
+   "top": [
+    "lamal-bag-primes-conseil-deductible-it",
+    "lamal-bag-factsheet-change-p2-it",
+    "lamal-fedlex-832.102-art103-p1-it"
+   ]
+  },
+  {
+   "expert": "lamal",
+   "topic": "lamal.change.deadline",
+   "lang": "fr",
+   "canton": "CH",
+   "q": "Ma caisse ne m'a pas encore envoyé ma nouvelle prime pour l'an prochain. Est-ce que je peux quand même changer d'assureur ?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "lamal",
+    "logement",
+    "lamal"
+   ],
+   "top": [
+    "lamal-bag-guide-new-premium-fr",
+    "lamal-bag-factsheet-change-p2-fr",
+    "lamal-priminfo-premium-approval-fr"
+   ]
+  },
+  {
+   "expert": "lamal",
+   "topic": "lamal.deductible",
+   "lang": "de",
+   "canton": "CH",
+   "q": "Welche Franchisen kann ich bei der Grundversicherung wählen, und was zahle ich nach der Franchise noch selbst?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "lamal",
+    "lamal",
+    "lamal"
+   ],
+   "top": [
+    "lamal-bag-primes-conseil-deductible-de",
+    "lamal-fedlex-832.102-art103-p1-de",
+    "lamal-bag-factsheet-change-p2-de"
+   ]
+  },
+  {
+   "expert": "lamal",
+   "topic": "lamal.deductible",
+   "lang": "it",
+   "canton": "CH",
+   "q": "Ho la franchigia più bassa e quest'anno ho avuto molte spese mediche. Fino a quanto devo pagare di tasca mia oltre la franchigia?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "lamal",
+    "lamal",
+    "lamal"
+   ],
+   "top": [
+    "lamal-bag-primes-conseil-deductible-it",
+    "lamal-bag-guide-cost-sharing-it",
+    "lamal-bag-primes-conseil-deductible-de"
+   ]
+  },
+  {
+   "expert": "lamal",
+   "topic": "lamal.deductible",
+   "lang": "fr",
+   "canton": "CH",
+   "q": "Pour mon fils de 10 ans, est-ce qu'on paie aussi une franchise quand il va chez le médecin ?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "lamal",
+    "lamal",
+    "lamal"
+   ],
+   "top": [
+    "lamal-bag-primes-conseil-deductible-de",
+    "lamal-bag-primes-conseil-deductible-fr",
+    "lamal-bag-guide-cost-sharing-fr"
+   ]
+  },
+  {
+   "expert": "lamal",
+   "topic": "lamal.deductible",
+   "lang": "de",
+   "canton": "CH",
+   "q": "Ich war im Spital. Muss ich neben der Franchise auch für die Tage im Spital selbst etwas bezahlen?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "lamal",
+    "lamal",
+    "lamal"
+   ],
+   "top": [
+    "lamal-bag-primes-conseil-deductible-de",
+    "lamal-fedlex-832.102-art103-p1-de",
+    "lamal-bag-guide-cost-sharing-de"
+   ]
+  },
+  {
+   "expert": "lamal",
+   "topic": "lamal.models",
+   "lang": "it",
+   "canton": "CH",
+   "q": "Cosa cambia se scelgo il modello telmed? Devo sempre telefonare prima di andare dal medico?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "lamal",
+    "lamal",
+    "lamal"
+   ],
+   "top": [
+    "lamal-bag-primes-conseil-models-it",
+    "lamal-bag-primes-conseil-models-de",
+    "lamal-bag-primes-conseil-models-fr"
+   ]
+  },
+  {
+   "expert": "lamal",
+   "topic": "lamal.models",
+   "lang": "fr",
+   "canton": "CH",
+   "q": "Dans un modèle HMO, est-ce que je peux encore aller directement chez le gynécologue ou l'ophtalmologue ?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "lamal",
+    "lamal",
+    "lamal"
+   ],
+   "top": [
+    "lamal-bag-primes-conseil-models-fr",
+    "lamal-bag-primes-conseil-models-it",
+    "lamal-bag-guide-new-premium-fr"
+   ]
+  },
+  {
+   "expert": "lamal",
+   "topic": "lamal.models",
+   "lang": "de",
+   "canton": "CH",
+   "q": "Wie viel kann ich mit einem Hausarztmodell sparen, und welche Pflichten habe ich dann?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "lamal",
+    "logement",
+    "lamal"
+   ],
+   "top": [
+    "lamal-bag-primes-conseil-deductible-de",
+    "lamal-bag-primes-conseil-models-de",
+    "lamal-fedlex-832.10-art41-al3bis-de"
+   ]
+  },
+  {
+   "expert": "lamal",
+   "topic": "lamal.premium_notice",
+   "lang": "fr",
+   "canton": "CH",
+   "q": "Qui fixe les primes d'assurance maladie, et est-ce que quelqu'un vérifie qu'elles ne sont pas trop élevées ?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "lamal",
+    "lamal",
+    "lamal"
+   ],
+   "top": [
+    "lamal-priminfo-premium-approval-procedure-fr",
+    "lamal-bag-factsheet-change-p1-fr",
+    "lamal-fedlex-832.121-art27-28-fr"
+   ]
+  },
+  {
+   "expert": "lamal",
+   "topic": "lamal.premium_notice",
+   "lang": "de",
+   "canton": "CH",
+   "q": "Wo finde ich offiziell alle Krankenkassenprämien für meinen Wohnort im nächsten Jahr?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": false
+   },
+   "global_top_experts": [
+    "lamal",
+    "lamal",
+    "lamal"
+   ],
+   "top": [
+    "lamal-zh-gd-ipv-leichte-sprache-de",
+    "lamal-bag-factsheet-change-p1-de",
+    "lamal-be-asv-factsheet-p1-de"
+   ]
+  },
+  {
+   "expert": "lamal",
+   "topic": "lamal.premium_notice",
+   "lang": "it",
+   "canton": "CH",
+   "q": "Ho ricevuto la lettera con il premio del prossimo anno. Come verifico se è un buon prezzo rispetto alle altre casse?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "lamal",
+    "lamal",
+    "lamal"
+   ],
+   "top": [
+    "lamal-bag-factsheet-change-p1-it",
+    "lamal-bag-primes-conseil-deductible-it",
+    "lamal-fedlex-832.12-art16-p2-it"
+   ]
+  },
+  {
+   "expert": "lamal",
+   "topic": "lamal.premium_notice",
+   "lang": "it",
+   "canton": "CH",
+   "q": "Il mio premio sale di nuovo: chi ha approvato questo aumento e posso contestarlo?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "logement",
+    "lamal",
+    "lamal"
+   ],
+   "top": [
+    "lamal-fedlex-832.12-art16-p2-it",
+    "lamal-priminfo-premium-approval-it",
+    "lamal-fedlex-832.10-art65-al3-it"
+   ]
+  },
+  {
+   "expert": "poursuites",
+   "topic": "lp.register_extract",
+   "lang": "fr",
+   "canton": "VD",
+   "q": "Ma future régie à Lausanne me demande un extrait des poursuites. Comment est-ce que je l'obtiens et combien ça coûte ?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "poursuites",
+    "poursuites",
+    "logement"
+   ],
+   "top": [
+    "poursuites-vd-demander-un-extrait-du-registre-des-pour-2-fr",
+    "poursuites-vd-demander-un-extrait-du-registre-des-pour-1-fr",
+    "poursuites-fedlex-281.1-art67-fr"
+   ]
+  },
+  {
+   "expert": "poursuites",
+   "topic": "lp.register_extract",
+   "lang": "fr",
+   "canton": "GE",
+   "q": "Je cherche un appartement à Genève : où puis-je commander un extrait du registre des poursuites, et est-ce possible en ligne ?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "poursuites",
+    "poursuites",
+    "logement"
+   ],
+   "top": [
+    "poursuites-ge-demander-extrait-du-registre-poursuites-1-fr",
+    "poursuites-ge-demander-extrait-du-registre-poursuites-2-fr",
+    "poursuites-ge-comprendre-procedure-poursuite-2-fr"
+   ]
+  },
+  {
+   "expert": "poursuites",
+   "topic": "lp.register_extract",
+   "lang": "de",
+   "canton": "ZH",
+   "q": "Ich brauche für die Wohnungsbewerbung in Zürich einen Betreibungsauszug. Wo bestelle ich ihn?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "logement",
+    "logement",
+    "poursuites"
+   ],
+   "top": [
+    "poursuites-zh-betreibungsregisterauszug-bestellen-1-de",
+    "poursuites-zh-betreibungsregisterauszug-bestellen-2-de",
+    "poursuites-zh-zahlungsbefehl-6-de"
+   ]
+  },
+  {
+   "expert": "poursuites",
+   "topic": "lp.register_extract",
+   "lang": "de",
+   "canton": "BE",
+   "q": "Ich bin vor drei Monaten von Biel nach Bern gezogen. Welches Betreibungsamt stellt meinen Auszug aus, und erscheinen darauf auch Betreibungen vom alten Wohnort?",
+   "hit": {
+    "expert_base": true,
+    "global_base": false,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "logement",
+    "logement",
+    "logement"
+   ],
+   "top": [
+    "poursuites-be-Auszug-bestellen-2-de",
+    "poursuites-be-Auszug-bestellen-1-de",
+    "poursuites-be-Auszug-bestellen-2-fr"
+   ]
+  },
+  {
+   "expert": "poursuites",
+   "topic": "lp.register_extract",
+   "lang": "it",
+   "canton": "TI",
+   "q": "Abito a Mendrisio e il datore di lavoro mi chiede un estratto del registro esecuzioni. Dove lo chiedo e serve un documento d'identità?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "poursuites",
+    "poursuites",
+    "poursuites"
+   ],
+   "top": [
+    "poursuites-ti-esecuzioni-e-fallimento-1-it",
+    "poursuites-ti-precetto-esecutivo-1-it",
+    "poursuites-ti-esecuzione-del-pignoramento-1-it"
+   ]
+  },
+  {
+   "expert": "poursuites",
+   "topic": "lp.payment_order",
+   "lang": "fr",
+   "canton": "CH",
+   "q": "J'ai reçu un papier de l'office des poursuites qui s'appelle commandement de payer. Qu'est-ce que c'est, et est-ce que ça veut dire que je dois vraiment cet argent ?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "poursuites",
+    "poursuites",
+    "poursuites"
+   ],
+   "top": [
+    "poursuites-vd-vous-etes-poursuivi-debiteur-1-fr",
+    "poursuites-ge-comprendre-procedure-poursuite-1-fr",
+    "poursuites-ge-poursuites-faillites-glossaire-termes-te-1-fr"
+   ]
+  },
+  {
+   "expert": "poursuites",
+   "topic": "lp.payment_order",
+   "lang": "de",
+   "canton": "CH",
+   "q": "Kann jemand einfach so einen Zahlungsbefehl gegen mich verschicken lassen, auch ohne Beweis, dass ich ihm Geld schulde?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": false
+   },
+   "global_top_experts": [
+    "poursuites",
+    "poursuites",
+    "poursuites"
+   ],
+   "top": [
+    "poursuites-zh-zahlungsbefehl-2-de",
+    "poursuites-zh-zahlungsbefehl-1-de",
+    "poursuites-zh-rechtsvorschlag-erheben-1-de"
+   ]
+  },
+  {
+   "expert": "poursuites",
+   "topic": "lp.payment_order",
+   "lang": "it",
+   "canton": "CH",
+   "q": "Sul precetto esecutivo che ho ricevuto ci sono diverse cifre e spese. Cosa significano le varie voci?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "poursuites",
+    "poursuites",
+    "poursuites"
+   ],
+   "top": [
+    "poursuites-fedlex-281.35-art16-it",
+    "poursuites-ti-precetto-esecutivo-1-it",
+    "poursuites-ti-domande-frequenti-precetto-esecutivo-1-it"
+   ]
+  },
+  {
+   "expert": "poursuites",
+   "topic": "lp.opposition",
+   "lang": "fr",
+   "canton": "CH",
+   "q": "Je conteste une facture pour laquelle on me poursuit. Comment est-ce que je fais opposition : faut-il une lettre, une signature, une justification ?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "poursuites",
+    "poursuites",
+    "poursuites"
+   ],
+   "top": [
+    "poursuites-ge-poursuites-faillites-glossaire-termes-te-1-fr",
+    "poursuites-ge-comprendre-procedure-poursuite-3-fr",
+    "poursuites-vd-vous-etes-poursuivi-debiteur-3-fr"
+   ]
+  },
+  {
+   "expert": "poursuites",
+   "topic": "lp.opposition",
+   "lang": "de",
+   "canton": "CH",
+   "q": "Was passiert, nachdem ich Rechtsvorschlag erhoben habe? Ist die Betreibung dann erledigt?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "poursuites",
+    "poursuites",
+    "poursuites"
+   ],
+   "top": [
+    "poursuites-zh-rechtsvorschlag-erheben-1-de",
+    "poursuites-fedlex-281.1-art8a-p2-de",
+    "poursuites-fedlex-281.1-art78-79-de"
+   ]
+  },
+  {
+   "expert": "poursuites",
+   "topic": "lp.opposition",
+   "lang": "it",
+   "canton": "CH",
+   "q": "Ho ricevuto un precetto esecutivo, ma devo solo una parte dell'importo. Posso oppormi soltanto per una parte?",
+   "hit": {
+    "expert_base": false,
+    "global_base": false,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "poursuites",
+    "poursuites",
+    "poursuites"
+   ],
+   "top": [
+    "poursuites-ti-domande-frequenti-precetto-esecutivo-3-it",
+    "poursuites-ti-precetto-esecutivo-1-it",
+    "poursuites-ti-domande-frequenti-precetto-esecutivo-1-it"
+   ]
+  },
+  {
+   "expert": "poursuites",
+   "topic": "lp.opposition",
+   "lang": "it",
+   "canton": "CH",
+   "q": "Mi è arrivato un precetto esecutivo: quanto tempo ho per oppormi e devo spiegare il motivo?",
+   "hit": {
+    "expert_base": false,
+    "global_base": false,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "poursuites",
+    "poursuites",
+    "poursuites"
+   ],
+   "top": [
+    "poursuites-ti-domande-frequenti-precetto-esecutivo-3-it",
+    "poursuites-ti-domande-frequenti-precetto-esecutivo-1-it",
+    "poursuites-ti-precetto-esecutivo-1-it"
+   ]
+  },
+  {
+   "expert": "poursuites",
+   "topic": "lp.notification",
+   "lang": "fr",
+   "canton": "CH",
+   "q": "Le facteur a laissé un avis de retrait pour un commandement de payer. Si je ne vais pas le chercher, que se passe-t-il ?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "poursuites",
+    "poursuites",
+    "lamal"
+   ],
+   "top": [
+    "poursuites-ge-poursuites-faillites-glossaire-termes-te-1-fr",
+    "poursuites-vd-vous-etes-poursuivi-debiteur-1-fr",
+    "poursuites-vd-vous-etes-poursuivi-debiteur-3-fr"
+   ]
+  },
+  {
+   "expert": "poursuites",
+   "topic": "lp.notification",
+   "lang": "de",
+   "canton": "CH",
+   "q": "Meine Mitbewohnerin hat einen Zahlungsbefehl für mich entgegengenommen, als ich nicht zu Hause war. Gilt er damit als zugestellt?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": false
+   },
+   "global_top_experts": [
+    "logement",
+    "poursuites",
+    "logement"
+   ],
+   "top": [
+    "poursuites-zh-zahlungsbefehl-6-de",
+    "poursuites-fedlex-281.1-art71-72-de",
+    "poursuites-fedlex-281.1-art66-de"
+   ]
+  },
+  {
+   "expert": "poursuites",
+   "topic": "lp.notification",
+   "lang": "it",
+   "canton": "CH",
+   "q": "Da quale giorno comincia a contare il termine di opposizione dopo la consegna del precetto esecutivo?",
+   "hit": {
+    "expert_base": false,
+    "global_base": false,
+    "bm25_expert_base": false
+   },
+   "global_top_experts": [
+    "poursuites",
+    "poursuites",
+    "poursuites"
+   ],
+   "top": [
+    "poursuites-ti-opposizione-1-it",
+    "poursuites-ti-domande-frequenti-precetto-esecutivo-3-it",
+    "poursuites-ti-domande-frequenti-precetto-esecutivo-1-it"
+   ]
+  },
+  {
+   "expert": "poursuites",
+   "topic": "lp.holidays",
+   "lang": "fr",
+   "canton": "CH",
+   "q": "Est-ce qu'il y a des périodes de l'année pendant lesquelles l'office des poursuites ne peut pas m'envoyer de commandement de payer ?",
+   "hit": {
+    "expert_base": false,
+    "global_base": false,
+    "bm25_expert_base": false
+   },
+   "global_top_experts": [
+    "poursuites",
+    "poursuites",
+    "poursuites"
+   ],
+   "top": [
+    "poursuites-ge-comprendre-procedure-poursuite-1-fr",
+    "poursuites-vd-vous-etes-poursuivi-debiteur-1-fr",
+    "poursuites-ge-comprendre-procedure-poursuite-6-fr"
+   ]
+  },
+  {
+   "expert": "poursuites",
+   "topic": "lp.holidays",
+   "lang": "de",
+   "canton": "CH",
+   "q": "Ich leiste gerade Militärdienst. Darf eine Betreibung gegen mich in dieser Zeit weiterlaufen?",
+   "hit": {
+    "expert_base": true,
+    "global_base": false,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "logement",
+    "impots",
+    "lamal"
+   ],
+   "top": [
+    "poursuites-zh-rechtsvorschlag-erheben-1-de",
+    "poursuites-fedlex-281.1-art92-p1-de",
+    "poursuites-fedlex-281.1-art56-de"
+   ]
+  },
+  {
+   "expert": "poursuites",
+   "topic": "lp.holidays",
+   "lang": "it",
+   "canton": "CH",
+   "q": "Il precetto mi è stato consegnato pochi giorni prima di Pasqua. Le feste cambiano qualcosa per il termine di opposizione?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "poursuites",
+    "poursuites",
+    "poursuites"
+   ],
+   "top": [
+    "poursuites-fedlex-281.1-art56-it",
+    "poursuites-fedlex-272-art142-it",
+    "poursuites-ti-domande-frequenti-precetto-esecutivo-1-it"
+   ]
+  },
+  {
+   "expert": "poursuites",
+   "topic": "lp.lifting",
+   "lang": "fr",
+   "canton": "CH",
+   "q": "J'ai fait opposition, et maintenant le créancier m'écrit qu'il va demander au juge de la faire tomber. Comment ça se passe et est-ce que je peux me défendre ?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "poursuites",
+    "poursuites",
+    "poursuites"
+   ],
+   "top": [
+    "poursuites-fedlex-281.1-art76-77-fr",
+    "poursuites-ge-poursuites-faillites-glossaire-termes-te-3-fr",
+    "poursuites-vd-vous-etes-poursuivant-creancier-2-fr"
+   ]
+  },
+  {
+   "expert": "poursuites",
+   "topic": "lp.lifting",
+   "lang": "de",
+   "canton": "CH",
+   "q": "Der Gläubiger hat ein Gerichtsurteil gegen mich. Kann er meinen Rechtsvorschlag einfach aufheben lassen?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "poursuites",
+    "poursuites",
+    "poursuites"
+   ],
+   "top": [
+    "poursuites-zh-rechtsvorschlag-erheben-1-de",
+    "poursuites-fedlex-281.1-art76-77-de",
+    "poursuites-fedlex-281.1-art78-79-de"
+   ]
+  },
+  {
+   "expert": "poursuites",
+   "topic": "lp.lifting",
+   "lang": "it",
+   "canton": "CH",
+   "q": "Il creditore ha chiesto al giudice di togliere la mia opposizione. Cosa devo fare e quali prove posso portare?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "poursuites",
+    "poursuites",
+    "poursuites"
+   ],
+   "top": [
+    "poursuites-ti-procedura-di-rigetto-1-it",
+    "poursuites-fedlex-281.1-art76-77-it",
+    "poursuites-ti-opposizione-1-it"
+   ]
+  },
+  {
+   "expert": "poursuites",
+   "topic": "lp.continuation",
+   "lang": "fr",
+   "canton": "CH",
+   "q": "Je n'ai pas fait opposition à temps. Que va-t-il se passer maintenant, est-ce qu'on peut prendre une partie de mon salaire ?",
+   "hit": {
+    "expert_base": false,
+    "global_base": false,
+    "bm25_expert_base": false
+   },
+   "global_top_experts": [
+    "poursuites",
+    "poursuites",
+    "impots"
+   ],
+   "top": [
+    "poursuites-ge-comprendre-procedure-poursuite-3-fr",
+    "poursuites-vd-vous-etes-poursuivi-debiteur-3-fr",
+    "poursuites-vd-demander-la-non-divulgation-dune-poursui-1-fr"
+   ]
+  },
+  {
+   "expert": "poursuites",
+   "topic": "lp.continuation",
+   "lang": "de",
+   "canton": "CH",
+   "q": "Was muss mir das Betreibungsamt bei einer Pfändung lassen? Wird mir der ganze Lohn weggenommen?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "poursuites",
+    "poursuites",
+    "poursuites"
+   ],
+   "top": [
+    "poursuites-fedlex-281.1-art89-90-91-de",
+    "poursuites-zh-zahlungsbefehl-6-de",
+    "poursuites-fedlex-281.1-art149-de"
+   ]
+  },
+  {
+   "expert": "poursuites",
+   "topic": "lp.continuation",
+   "lang": "it",
+   "canton": "CH",
+   "q": "Il creditore ha chiesto di continuare l'esecuzione. Entro quando può farlo e cosa succede dopo?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "poursuites",
+    "poursuites",
+    "poursuites"
+   ],
+   "top": [
+    "poursuites-ti-domanda-di-continuazione-1-it",
+    "poursuites-fedlex-281.1-art73-it",
+    "poursuites-fedlex-281.1-art78-79-it"
+   ]
+  },
+  {
+   "expert": "logement",
+   "topic": "housing.announce.deadline",
+   "lang": "fr",
+   "canton": "VD",
+   "q": "Je viens d'emménager à Morges. Combien de temps ai-je pour m'inscrire au contrôle des habitants ?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "logement",
+    "logement",
+    "logement"
+   ],
+   "top": [
+    "logement-vdch-changement-adresse-1",
+    "logement-vd-lch-142.01-art2a-3-fr",
+    "logement-vd-lsh-expose-motifs-art15-fr"
+   ]
+  },
+  {
+   "expert": "logement",
+   "topic": "housing.announce.deadline",
+   "lang": "fr",
+   "canton": "GE",
+   "q": "Je quitte Genève pour aller vivre à l'étranger. Quand et comment dois-je annoncer mon départ ?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "logement",
+    "logement",
+    "logement"
+   ],
+   "top": [
+    "ge-ge.ch-depart-ocpm-fr-1",
+    "ge-ge.ch-changement-canton-fr-1",
+    "ge-ge.ch-changement-adresse-fr-1"
+   ]
+  },
+  {
+   "expert": "logement",
+   "topic": "housing.announce.deadline",
+   "lang": "de",
+   "canton": "ZH",
+   "q": "Ich ziehe nächsten Monat innerhalb der Stadt Zürich in eine neue Wohnung. Muss ich das melden, und wie viel Zeit habe ich dafür?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "logement",
+    "logement",
+    "logement"
+   ],
+   "top": [
+    "zh-stadtzh-umzug-de-1",
+    "zh-stadtzh-zuzug-ch-de-1",
+    "zh-stadtzh-umzug-de-2"
+   ]
+  },
+  {
+   "expert": "logement",
+   "topic": "housing.announce.deadline",
+   "lang": "de",
+   "canton": "BE",
+   "q": "Ich bin nach Köniz gezogen. Bis wann muss ich mich bei der Gemeinde anmelden, und was passiert, wenn ich es zu spät mache?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": false
+   },
+   "global_top_experts": [
+    "logement",
+    "logement",
+    "logement"
+   ],
+   "top": [
+    "be-nag-122.11-art1-2-de",
+    "be-nag-122.11-art3-4-de",
+    "logement-chch-de-wohnen-umzug-ab-und-anmelden-bei-der-wohngemeinde-1"
+   ]
+  },
+  {
+   "expert": "logement",
+   "topic": "housing.announce.deadline",
+   "lang": "it",
+   "canton": "TI",
+   "q": "Mi sono appena trasferito a Lugano da un altro comune ticinese. Entro quanti giorni devo annunciarmi al controllo abitanti?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "logement",
+    "logement",
+    "logement"
+   ],
+   "top": [
+    "ti-lugano.ch-annuncio-arrivo-it-1",
+    "ti-lugano.ch-annuncio-partenza-it-1",
+    "ti-lugano.ch-cambio-indirizzo-it-1"
+   ]
+  },
+  {
+   "expert": "logement",
+   "topic": "housing.announce.documents",
+   "lang": "fr",
+   "canton": "VD",
+   "q": "Quels papiers dois-je apporter pour m'annoncer à la commune à Lausanne ? Je suis suisse et je loue un appartement.",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "logement",
+    "logement",
+    "logement"
+   ],
+   "top": [
+    "logement-lausanne-arrivee-suisse-1",
+    "logement-lausanne-arrivee-suisse-2",
+    "logement-chch-fr-logement-demenagement-annonce-de-depart-et-d-arrivee-2"
+   ]
+  },
+  {
+   "expert": "logement",
+   "topic": "housing.announce.documents",
+   "lang": "fr",
+   "canton": "GE",
+   "q": "J'arrive à Genève, je suis ressortissante de l'Union européenne. Quels documents dois-je présenter pour m'annoncer ?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": false
+   },
+   "global_top_experts": [
+    "logement",
+    "logement",
+    "logement"
+   ],
+   "top": [
+    "ge-ge.ch-arrivee-suisses-fr-1",
+    "ge-ge.ch-arrivee-suisses-fr-2",
+    "ge-ge.ch-depart-ocpm-fr-1"
+   ]
+  },
+  {
+   "expert": "logement",
+   "topic": "housing.announce.documents",
+   "lang": "de",
+   "canton": "ZH",
+   "q": "Welche Unterlagen brauche ich, um mich in Winterthur anzumelden? Ich bin verheiratet und wir haben ein Kind.",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": false
+   },
+   "global_top_experts": [
+    "logement",
+    "logement",
+    "logement"
+   ],
+   "top": [
+    "zh-stadtzh-zuzug-ch-de-2",
+    "zh-stadtzh-wegzug-de-2",
+    "zh-stadtzh-zuzug-ch-de-1"
+   ]
+  },
+  {
+   "expert": "logement",
+   "topic": "housing.announce.documents",
+   "lang": "fr",
+   "canton": "BE",
+   "q": "Je m'installe à Bienne avec ma famille. Quels documents faut-il présenter au contrôle des habitants ?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": false
+   },
+   "global_top_experts": [
+    "logement",
+    "logement",
+    "logement"
+   ],
+   "top": [
+    "logement-chch-fr-logement-demenagement-annonce-de-depart-et-d-arrivee-2",
+    "be-nag-122.11-art7-fr",
+    "be-nag-122.11-art8-fr"
+   ]
+  },
+  {
+   "expert": "logement",
+   "topic": "housing.announce.documents",
+   "lang": "it",
+   "canton": "TI",
+   "q": "Quali documenti devo portare al comune di Locarno per notificare il mio arrivo con la mia famiglia?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "logement",
+    "logement",
+    "logement"
+   ],
+   "top": [
+    "ti-locarno-om-023-1-art5-it",
+    "ti-locarno-om-023-1-art1-it",
+    "ti-lugano.ch-annuncio-arrivo-it-1"
+   ]
+  },
+  {
+   "expert": "logement",
+   "topic": "housing.intercantonal",
+   "lang": "fr",
+   "canton": "VD",
+   "q": "Je déménage de Neuchâtel à Nyon en cours d'année. Dans quel canton vais-je payer mes impôts pour cette année ?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "logement",
+    "logement",
+    "logement"
+   ],
+   "top": [
+    "logement-vdch-impots-situation-personnelle-1",
+    "logement-vdch-changement-adresse-1",
+    "logement-fedlex-lifd-642.11-art105-fr"
+   ]
+  },
+  {
+   "expert": "logement",
+   "topic": "housing.intercantonal",
+   "lang": "fr",
+   "canton": "GE",
+   "q": "Je quitte le canton de Vaud pour Genève avec ma voiture. Que dois-je faire pour mes plaques et mon permis de circulation ?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "logement",
+    "logement",
+    "logement"
+   ],
+   "top": [
+    "ge-ge.ch-ocv-changement-adresse-fr-1",
+    "ge-ge.ch-depart-ocpm-fr-1",
+    "ge-ge.ch-changement-canton-fr-1"
+   ]
+  },
+  {
+   "expert": "logement",
+   "topic": "housing.intercantonal",
+   "lang": "de",
+   "canton": "ZH",
+   "q": "Ich ziehe von St. Gallen nach Zürich. Ändert sich dadurch meine Krankenkassenprämie, und muss ich der Kasse etwas melden?",
+   "hit": {
+    "expert_base": true,
+    "global_base": false,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "lamal",
+    "lamal",
+    "lamal"
+   ],
+   "top": [
+    "logement-priminfo-faq-de-19",
+    "zh-stadtzh-okv-de",
+    "zh-stva-wegzug-kanton-de"
+   ]
+  },
+  {
+   "expert": "logement",
+   "topic": "housing.intercantonal",
+   "lang": "de",
+   "canton": "BE",
+   "q": "Ich ziehe von Luzern nach Bern. Was muss ich ausser der Anmeldung noch erledigen, zum Beispiel mit dem Auto?",
+   "hit": {
+    "expert_base": false,
+    "global_base": false,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "logement",
+    "logement",
+    "logement"
+   ],
+   "top": [
+    "be-stadtbern-anmeldung-ausl-de",
+    "be-stadtbern-anmeldung-ch-de",
+    "be-stadtbern-krankenversicherung-de"
+   ]
+  },
+  {
+   "expert": "logement",
+   "topic": "housing.intercantonal",
+   "lang": "it",
+   "canton": "TI",
+   "q": "Mi trasferisco da Zurigo a Lugano. Cosa cambia per le imposte, la cassa malati e la targa dell'auto?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "logement",
+    "logement",
+    "logement"
+   ],
+   "top": [
+    "ti-lugano.ch-annuncio-arrivo-it-2",
+    "ti-lugano.ch-cambio-indirizzo-it-1",
+    "ti-lugano.ch-annuncio-partenza-it-1"
+   ]
+  },
+  {
+   "expert": "logement",
+   "topic": "household.fee.obligation",
+   "lang": "it",
+   "canton": "CH",
+   "q": "Non ho né televisore né radio. Devo comunque pagare il canone Serafe?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "logement",
+    "logement",
+    "logement"
+   ],
+   "top": [
+    "logement-ofcom-it-domande-e-risposte-faq-8",
+    "logement-ofcom-it-domande-e-risposte-faq-10",
+    "logement-ofcom-it-domande-e-risposte-faq-2"
+   ]
+  },
+  {
+   "expert": "logement",
+   "topic": "household.fee.obligation",
+   "lang": "it",
+   "canton": "CH",
+   "q": "Abito con due coinquilini: dobbiamo pagare il canone radio-TV ciascuno o una sola volta per l'appartamento?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "logement",
+    "logement",
+    "logement"
+   ],
+   "top": [
+    "logement-ofcom-it-domande-e-risposte-faq-2",
+    "logement-ofcom-it-domande-e-risposte-faq-8",
+    "logement-ofcom-it-domande-e-risposte-faq-1"
+   ]
+  },
+  {
+   "expert": "logement",
+   "topic": "household.fee.obligation",
+   "lang": "de",
+   "canton": "CH",
+   "q": "Wie viel kostet die Serafe-Rechnung pro Jahr für einen normalen Haushalt?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "logement",
+    "logement",
+    "logement"
+   ],
+   "top": [
+    "logement-serafe-de-abgabe-abgabeuebersicht-1",
+    "logement-ofcom-de-fragen-und-antworten-faqs-7",
+    "logement-ofcom-de-hoehe-der-abgabe-und-rechnungsstellung-2"
+   ]
+  },
+  {
+   "expert": "logement",
+   "topic": "household.fee.exemption",
+   "lang": "de",
+   "canton": "CH",
+   "q": "Meine Mutter bezieht Ergänzungsleistungen zur AHV. Muss sie die Serafe-Rechnung trotzdem bezahlen?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "logement",
+    "logement",
+    "logement"
+   ],
+   "top": [
+    "logement-serafe-de-abgabebefreiung-personen-mit-ergaenzungsleistungen-1",
+    "logement-serafe-de-abgabe-rechnungsstellung-3",
+    "logement-serafe-de-abgabebefreiung-grundsatz-1"
+   ]
+  },
+  {
+   "expert": "logement",
+   "topic": "household.fee.exemption",
+   "lang": "it",
+   "canton": "CH",
+   "q": "Mio padre si è trasferito in una casa per anziani. Chi paga ora il canone radio-TV?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "logement",
+    "logement",
+    "logement"
+   ],
+   "top": [
+    "logement-ofcom-it-domande-e-risposte-faq-4",
+    "logement-ofcom-it-domande-e-risposte-faq-1",
+    "logement-ofcom-it-domande-e-risposte-faq-11"
+   ]
+  },
+  {
+   "expert": "logement",
+   "topic": "household.fee.exemption",
+   "lang": "fr",
+   "canton": "CH",
+   "q": "Je suis sourd et aveugle. Est-ce que je dois quand même payer la redevance radio-TV ?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "logement",
+    "logement",
+    "logement"
+   ],
+   "top": [
+    "logement-serafe-fr-exoneration-personnes-sourdes-aveugles-1",
+    "logement-ofcom-fr-questions-et-reponses-faq-12",
+    "logement-ofcom-fr-questions-et-reponses-faq-8"
+   ]
+  },
+  {
+   "expert": "logement",
+   "topic": "household.fee.invoice",
+   "lang": "de",
+   "canton": "CH",
+   "q": "Ich bin mit meiner Freundin zusammengezogen und jetzt bekommen wir beide eine Serafe-Rechnung. Was müssen wir tun?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "logement",
+    "logement",
+    "logement"
+   ],
+   "top": [
+    "logement-serafe-de-fragen-antworten-fragen-antworten-4",
+    "logement-serafe-de-fragen-antworten-fragen-antworten-5",
+    "logement-ofcom-de-fragen-und-antworten-faqs-7"
+   ]
+  },
+  {
+   "expert": "logement",
+   "topic": "household.fee.invoice",
+   "lang": "it",
+   "canton": "CH",
+   "q": "Posso pagare la fattura Serafe in più rate invece che tutta in una volta?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "logement",
+    "logement",
+    "logement"
+   ],
+   "top": [
+    "logement-serafe-it-domande-e-risposte-faq-8",
+    "logement-serafe-it-domande-e-risposte-faq-4",
+    "logement-serafe-it-il-canone-fatturazione-3"
+   ]
+  },
+  {
+   "expert": "logement",
+   "topic": "household.fee.invoice",
+   "lang": "it",
+   "canton": "CH",
+   "q": "Il mio coinquilino se n'è andato e la fattura Serafe è intestata a lui. Cosa succede adesso e chi deve pagare?",
+   "hit": {
+    "expert_base": true,
+    "global_base": true,
+    "bm25_expert_base": true
+   },
+   "global_top_experts": [
+    "logement",
+    "logement",
+    "logement"
+   ],
+   "top": [
+    "logement-serafe-it-il-canone-recupero-crediti-1",
+    "logement-ofcom-it-importo-e-fatturazione-2",
+    "logement-serafe-it-domande-e-risposte-faq-6"
+   ]
+  }
+ ]
+}
