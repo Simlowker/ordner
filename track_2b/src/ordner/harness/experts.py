@@ -40,7 +40,7 @@ EXPERTS = {e.id: e for e in [
            "You see the whole dossier and every procedure."),
     Expert("impots", "Impôts", "Déclaration, acomptes, réclamation, impôt anticipé, 3e pilier",
            ("tax.", "pension.pillar3a."),
-           BASE_TOOLS + ("impots.preparer_declaration", "document.decode", "expert.run"), "expert-impots-v1", 2,
+           BASE_TOOLS + ("impots.preparer_declaration", "document.decode"), "expert-impots-v1", 2,
            "You handle Swiss tax procedures only: tax return, instalments, objections, withholding tax refund, "
            "pillar 3a."),
     Expert("lamal", "Assurance maladie", "Changer de caisse, franchise, subsides", ("health_insurance.",),

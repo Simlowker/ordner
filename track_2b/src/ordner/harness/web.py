@@ -75,7 +75,8 @@ def main(argv=None):
            "DSH_TELEMETRY_DISABLED": "1",
            **E.env_for(store.path, subject.id, os.environ.get("ORDNER_TODAY"), state)}
     cmd = ["node", str(BIN), "--profile", "web", "--patch", str(PATCH), "--patch", str(presets), "--no-open",
-           "--port", str(a.port), "--host", a.host, *passthrough]
+           "--port", str(a.port), "--host", a.host,
+           *([] if "--trusted-host" in passthrough else ["--trusted-host", f"localhost:{a.port}"]), *passthrough]
     print(f"[ordner] conversation: http://127.0.0.1:{a.port}/  (model: {a.llm} via {proxy.url}, dossier {store.path})\n"
           f"[ordner] Une conversation par expert ; relancer pour repartir de zéro.", flush=True)
     url_file = state / "url.txt"   # read by the cockpit's /api/health ("Demander à Ordner" opens it)
