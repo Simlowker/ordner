@@ -37,7 +37,7 @@ ROUTES = {   # keys = ordner.harness.experts.EXPERTS; English, with the official
 QUESTION = "Which expert of a Swiss personal-administration assistant should answer this person's message?"
 MIN_P = 0.5
 TEMP = 0.03   # ponytail: fixed softmax temperature for cosines; calibrate on held-out questions if fallback matters
-TIMEOUT = 5
+TIMEOUT = 15   # s; the first d1 call after start, or one sharing the GPU with Apertus, can take several seconds
 
 
 def decide(p, by):

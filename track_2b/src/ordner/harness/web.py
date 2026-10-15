@@ -69,6 +69,10 @@ def main(argv=None):
     proxy = Proxy(llm, max_steps=a.max_steps, order=order, allowed=allowed, experts=True,
                   log_file=state / "proxy.log", canton=subject.canton,
                   dossier=(str(store.path), subject.id, os.environ.get("ORDNER_TODAY")))
+    if proxy.router_url:   # warm the d1 service up so the first conversation's routing does not time out
+        import threading
+        from . import router as R
+        threading.Thread(target=lambda: R.ask("bonjour", proxy.router_url, fallback=False), daemon=True).start()
     presets = state / "experts.patch.yml"
     presets.write_text(E.presets_yaml(proxy.adapters_ok), encoding="utf-8")
     env = {**os.environ, "DSH_HOME": str(state / "dsh-home"), "ORDNER_LOCAL_KEY": "local", "ORDNER_PROXY_URL": proxy.url,
