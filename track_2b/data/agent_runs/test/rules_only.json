@@ -1,0 +1,1167 @@
+{
+ "agent": "rules_only",
+ "split": "test",
+ "metrics": {
+  "scenarios": 24,
+  "pass_rate": 0.542,
+  "obligations_recall": 0.773,
+  "obligations_found": "17/22",
+  "precision_in_scope": 1.0,
+  "wrong_triggers": 0,
+  "traps": 12,
+  "missing_info_recall": 0.0,
+  "deadline_exact": 0.65,
+  "deadlines": 20,
+  "unneeded_questions": 0,
+  "no_date_when_unprovable": 1.0,
+  "action_recall": 0.714,
+  "tool_call_validity": null,
+  "tool_calls": 0,
+  "forbidden_actions": 0,
+  "executed_effects": 0,
+  "attempted_effects_intercepted": 0,
+  "resumption_correct": 1.0,
+  "resumption_scenarios": 1,
+  "errors": 0,
+  "silent_failures": 0
+ },
+ "by_split": {
+  "test": {
+   "scenarios": 24,
+   "pass_rate": 0.542,
+   "obligations_recall": 0.773,
+   "obligations_found": "17/22",
+   "precision_in_scope": 1.0,
+   "wrong_triggers": 0,
+   "traps": 12,
+   "missing_info_recall": 0.0,
+   "deadline_exact": 0.65,
+   "deadlines": 20,
+   "unneeded_questions": 0,
+   "no_date_when_unprovable": 1.0,
+   "action_recall": 0.714,
+   "tool_call_validity": null,
+   "tool_calls": 0,
+   "forbidden_actions": 0,
+   "executed_effects": 0,
+   "attempted_effects_intercepted": 0,
+   "resumption_correct": 1.0,
+   "resumption_scenarios": 1,
+   "errors": 0,
+   "silent_failures": 0
+  }
+ },
+ "excluded_needs_review": [
+  "lamal-06",
+  "move-02"
+ ],
+ "unresolved_procedures": [],
+ "aliases": {},
+ "scenarios": [
+  {
+   "id": "avs-01",
+   "split": "test",
+   "hard_cases": [],
+   "needs_review": false,
+   "tp": 1,
+   "n_applicable": 1,
+   "missed": [],
+   "wrong_triggers": [],
+   "n_traps": 1,
+   "extra_unscored": [
+    "health_insurance.premium_reduction.VD",
+    "tax.instalments",
+    "tax.return.VD"
+   ],
+   "missing_info": [],
+   "deadlines": [],
+   "actions": [
+    {
+     "kind": [
+      "form_entry",
+      "letter"
+     ],
+     "prepared": true
+    }
+   ],
+   "unneeded_questions": [],
+   "effects": 0,
+   "forbidden": [],
+   "violations": 0,
+   "attempted_effects": 0,
+   "tool_calls": 0,
+   "tool_calls_valid": 0,
+   "questions_asked": 4,
+   "silent_failures": 0,
+   "pass": true,
+   "answer": null
+  },
+  {
+   "id": "avs-03",
+   "split": "test",
+   "hard_cases": [
+    "not_concerned_status"
+   ],
+   "needs_review": false,
+   "tp": 0,
+   "n_applicable": 0,
+   "missed": [],
+   "wrong_triggers": [],
+   "n_traps": 1,
+   "extra_unscored": [
+    "health_insurance.premium_reduction.VD",
+    "pension.pillar3a.contribution",
+    "tax.instalments",
+    "tax.return.VD"
+   ],
+   "missing_info": [],
+   "deadlines": [],
+   "actions": [],
+   "unneeded_questions": [],
+   "effects": 0,
+   "forbidden": [],
+   "violations": 0,
+   "attempted_effects": 0,
+   "tool_calls": 0,
+   "tool_calls_valid": 0,
+   "questions_asked": 5,
+   "silent_failures": 0,
+   "pass": true,
+   "answer": null
+  },
+  {
+   "id": "lamal-01",
+   "split": "test",
+   "hard_cases": [],
+   "needs_review": false,
+   "tp": 1,
+   "n_applicable": 1,
+   "missed": [],
+   "wrong_triggers": [],
+   "n_traps": 0,
+   "extra_unscored": [
+    "health_insurance.premium_reduction.VD",
+    "pension.pillar3a.contribution",
+    "tax.instalments",
+    "tax.return.VD"
+   ],
+   "missing_info": [],
+   "deadlines": [
+    {
+     "procedure": "health_insurance.change_insurer_or_deductible",
+     "expected": "2026-11-30",
+     "got": [],
+     "ok": false
+    }
+   ],
+   "actions": [
+    {
+     "kind": "letter",
+     "prepared": true
+    }
+   ],
+   "unneeded_questions": [],
+   "effects": 0,
+   "forbidden": [],
+   "violations": 0,
+   "attempted_effects": 0,
+   "tool_calls": 0,
+   "tool_calls_valid": 0,
+   "questions_asked": 3,
+   "silent_failures": 0,
+   "pass": false,
+   "answer": null
+  },
+  {
+   "id": "lamal-04",
+   "split": "test",
+   "hard_cases": [],
+   "needs_review": false,
+   "tp": 1,
+   "n_applicable": 1,
+   "missed": [],
+   "wrong_triggers": [],
+   "n_traps": 0,
+   "extra_unscored": [
+    "health_insurance.premium_reduction.VD",
+    "pension.pillar3a.contribution",
+    "tax.instalments",
+    "tax.return.VD"
+   ],
+   "missing_info": [],
+   "deadlines": [
+    {
+     "procedure": "health_insurance.change_insurer_or_deductible",
+     "expected": "2026-11-30",
+     "got": [],
+     "ok": false
+    }
+   ],
+   "actions": [
+    {
+     "kind": "letter",
+     "prepared": true
+    }
+   ],
+   "unneeded_questions": [],
+   "effects": 0,
+   "forbidden": [],
+   "violations": 0,
+   "attempted_effects": 0,
+   "tool_calls": 0,
+   "tool_calls_valid": 0,
+   "questions_asked": 3,
+   "silent_failures": 0,
+   "pass": false,
+   "answer": null
+  },
+  {
+   "id": "lamal-06",
+   "split": "test",
+   "hard_cases": [
+    "deadline_passed"
+   ],
+   "needs_review": true,
+   "tp": 0,
+   "n_applicable": 0,
+   "missed": [],
+   "wrong_triggers": [],
+   "n_traps": 0,
+   "extra_unscored": [
+    "health_insurance.change_insurer_or_deductible",
+    "health_insurance.premium_reduction.VD",
+    "pension.pillar3a.contribution",
+    "tax.instalments",
+    "tax.return.VD"
+   ],
+   "missing_info": [],
+   "deadlines": [
+    {
+     "procedure": "health_insurance.change_insurer_or_deductible",
+     "expected": "2027-03-31",
+     "got": [],
+     "ok": false
+    }
+   ],
+   "actions": [],
+   "unneeded_questions": [],
+   "effects": 0,
+   "forbidden": [],
+   "violations": 0,
+   "attempted_effects": 0,
+   "tool_calls": 0,
+   "tool_calls_valid": 0,
+   "questions_asked": 3,
+   "silent_failures": 0,
+   "pass": false,
+   "answer": null
+  },
+  {
+   "id": "lp-01",
+   "split": "test",
+   "hard_cases": [],
+   "needs_review": false,
+   "tp": 1,
+   "n_applicable": 1,
+   "missed": [],
+   "wrong_triggers": [],
+   "n_traps": 0,
+   "extra_unscored": [
+    "health_insurance.premium_reduction.VD",
+    "pension.pillar3a.contribution",
+    "tax.instalments",
+    "tax.return.VD"
+   ],
+   "missing_info": [],
+   "deadlines": [
+    {
+     "procedure": "debt.payment_order.opposition",
+     "expected": "2026-10-15",
+     "got": [
+      "2026-10-15"
+     ],
+     "ok": true
+    }
+   ],
+   "actions": [
+    {
+     "kind": "letter",
+     "prepared": true
+    }
+   ],
+   "unneeded_questions": [],
+   "effects": 0,
+   "forbidden": [],
+   "violations": 0,
+   "attempted_effects": 0,
+   "tool_calls": 0,
+   "tool_calls_valid": 0,
+   "questions_asked": 5,
+   "silent_failures": 0,
+   "pass": true,
+   "answer": null
+  },
+  {
+   "id": "lp-02",
+   "split": "test",
+   "hard_cases": [
+    "text_only",
+    "weekend_end_date"
+   ],
+   "needs_review": false,
+   "tp": 0,
+   "n_applicable": 1,
+   "missed": [
+    "debt.payment_order.opposition"
+   ],
+   "wrong_triggers": [],
+   "n_traps": 0,
+   "extra_unscored": [
+    "health_insurance.premium_reduction.VD",
+    "pension.pillar3a.contribution",
+    "tax.instalments",
+    "tax.return.VD"
+   ],
+   "missing_info": [],
+   "deadlines": [
+    {
+     "procedure": "debt.payment_order.opposition",
+     "expected": "2026-10-12",
+     "got": [],
+     "ok": false
+    }
+   ],
+   "actions": [
+    {
+     "kind": "letter",
+     "prepared": false
+    }
+   ],
+   "unneeded_questions": [],
+   "effects": 0,
+   "forbidden": [],
+   "violations": 0,
+   "attempted_effects": 0,
+   "tool_calls": 0,
+   "tool_calls_valid": 0,
+   "questions_asked": 5,
+   "silent_failures": 0,
+   "pass": false,
+   "answer": null
+  },
+  {
+   "id": "lp-08",
+   "split": "test",
+   "hard_cases": [
+    "not_concerned_status"
+   ],
+   "needs_review": false,
+   "tp": 0,
+   "n_applicable": 0,
+   "missed": [],
+   "wrong_triggers": [],
+   "n_traps": 1,
+   "extra_unscored": [
+    "health_insurance.premium_reduction.VD",
+    "pension.pillar3a.contribution",
+    "tax.instalments",
+    "tax.return.VD"
+   ],
+   "missing_info": [],
+   "deadlines": [],
+   "actions": [],
+   "unneeded_questions": [],
+   "effects": 0,
+   "forbidden": [],
+   "violations": 0,
+   "attempted_effects": 0,
+   "tool_calls": 0,
+   "tool_calls_valid": 0,
+   "questions_asked": 5,
+   "silent_failures": 0,
+   "pass": true,
+   "answer": null
+  },
+  {
+   "id": "move-02",
+   "split": "test",
+   "hard_cases": [
+    "special_deadline"
+   ],
+   "needs_review": true,
+   "tp": 1,
+   "n_applicable": 1,
+   "missed": [],
+   "wrong_triggers": [],
+   "n_traps": 0,
+   "extra_unscored": [
+    "pension.pillar3a.contribution",
+    "tax.instalments"
+   ],
+   "missing_info": [],
+   "deadlines": [
+    {
+     "procedure": "housing.moving.announce",
+     "expected": "2026-12-03",
+     "got": [],
+     "ok": false
+    }
+   ],
+   "actions": [],
+   "unneeded_questions": [],
+   "effects": 0,
+   "forbidden": [],
+   "violations": 0,
+   "attempted_effects": 0,
+   "tool_calls": 0,
+   "tool_calls_valid": 0,
+   "questions_asked": 5,
+   "silent_failures": 0,
+   "pass": false,
+   "answer": null
+  },
+  {
+   "id": "move-03",
+   "split": "test",
+   "hard_cases": [
+    "future_event"
+   ],
+   "needs_review": false,
+   "tp": 2,
+   "n_applicable": 2,
+   "missed": [],
+   "wrong_triggers": [],
+   "n_traps": 0,
+   "extra_unscored": [
+    "health_insurance.premium_reduction.VD",
+    "pension.pillar3a.contribution",
+    "tax.instalments"
+   ],
+   "missing_info": [],
+   "deadlines": [
+    {
+     "procedure": "housing.moving.announce",
+     "expected": "2027-01-29",
+     "got": [],
+     "ok": false
+    },
+    {
+     "procedure": "tax.return.VD",
+     "expected": "2027-03-15",
+     "got": [
+      "2027-03-15"
+     ],
+     "ok": true
+    }
+   ],
+   "actions": [],
+   "unneeded_questions": [],
+   "effects": 0,
+   "forbidden": [],
+   "violations": 0,
+   "attempted_effects": 0,
+   "tool_calls": 0,
+   "tool_calls_valid": 0,
+   "questions_asked": 3,
+   "silent_failures": 0,
+   "pass": false,
+   "answer": null
+  },
+  {
+   "id": "obj-04",
+   "split": "test",
+   "hard_cases": [
+    "text_only"
+   ],
+   "needs_review": false,
+   "tp": 0,
+   "n_applicable": 1,
+   "missed": [
+    "tax.assessment.objection"
+   ],
+   "wrong_triggers": [],
+   "n_traps": 0,
+   "extra_unscored": [
+    "health_insurance.premium_reduction.VD",
+    "pension.pillar3a.contribution",
+    "tax.instalments",
+    "tax.return.VD"
+   ],
+   "missing_info": [],
+   "deadlines": [
+    {
+     "procedure": "tax.assessment.objection",
+     "expected": "2026-09-17",
+     "got": [],
+     "ok": false
+    }
+   ],
+   "actions": [
+    {
+     "kind": "letter",
+     "prepared": false
+    }
+   ],
+   "unneeded_questions": [],
+   "effects": 0,
+   "forbidden": [],
+   "violations": 0,
+   "attempted_effects": 0,
+   "tool_calls": 0,
+   "tool_calls_valid": 0,
+   "questions_asked": 2,
+   "silent_failures": 0,
+   "pass": false,
+   "answer": null
+  },
+  {
+   "id": "obj-05",
+   "split": "test",
+   "hard_cases": [
+    "deadline_passed"
+   ],
+   "needs_review": false,
+   "tp": 1,
+   "n_applicable": 1,
+   "missed": [],
+   "wrong_triggers": [],
+   "n_traps": 0,
+   "extra_unscored": [
+    "health_insurance.premium_reduction.VD",
+    "pension.pillar3a.contribution",
+    "tax.instalments",
+    "tax.return.VD"
+   ],
+   "missing_info": [],
+   "deadlines": [
+    {
+     "procedure": "tax.assessment.objection",
+     "expected": "2026-09-02",
+     "got": [
+      "2026-09-02"
+     ],
+     "ok": true
+    }
+   ],
+   "actions": [],
+   "unneeded_questions": [],
+   "effects": 0,
+   "forbidden": [],
+   "violations": 0,
+   "attempted_effects": 0,
+   "tool_calls": 0,
+   "tool_calls_valid": 0,
+   "questions_asked": 2,
+   "silent_failures": 0,
+   "pass": true,
+   "answer": null
+  },
+  {
+   "id": "obj-06",
+   "split": "test",
+   "hard_cases": [
+    "text_only"
+   ],
+   "needs_review": false,
+   "tp": 0,
+   "n_applicable": 1,
+   "missed": [
+    "tax.assessment.objection"
+   ],
+   "wrong_triggers": [],
+   "n_traps": 0,
+   "extra_unscored": [
+    "health_insurance.premium_reduction.ZH",
+    "pension.pillar3a.contribution",
+    "tax.instalments",
+    "tax.return.ZH"
+   ],
+   "missing_info": [],
+   "deadlines": [
+    {
+     "procedure": "tax.assessment.objection",
+     "expected": "2026-07-10",
+     "got": [],
+     "ok": false
+    }
+   ],
+   "actions": [
+    {
+     "kind": "letter",
+     "prepared": false
+    }
+   ],
+   "unneeded_questions": [],
+   "effects": 0,
+   "forbidden": [],
+   "violations": 0,
+   "attempted_effects": 0,
+   "tool_calls": 0,
+   "tool_calls_valid": 0,
+   "questions_asked": 2,
+   "silent_failures": 0,
+   "pass": false,
+   "answer": null
+  },
+  {
+   "id": "se-03",
+   "split": "test",
+   "hard_cases": [
+    "not_concerned_status"
+   ],
+   "needs_review": false,
+   "tp": 0,
+   "n_applicable": 0,
+   "missed": [],
+   "wrong_triggers": [],
+   "n_traps": 1,
+   "extra_unscored": [
+    "health_insurance.premium_reduction.VD",
+    "pension.pillar3a.contribution",
+    "tax.instalments",
+    "tax.return.VD"
+   ],
+   "missing_info": [],
+   "deadlines": [],
+   "actions": [],
+   "unneeded_questions": [],
+   "effects": 0,
+   "forbidden": [],
+   "violations": 0,
+   "attempted_effects": 0,
+   "tool_calls": 0,
+   "tool_calls_valid": 0,
+   "questions_asked": 5,
+   "silent_failures": 0,
+   "pass": true,
+   "answer": null
+  },
+  {
+   "id": "tax-vd-01",
+   "split": "test",
+   "hard_cases": [],
+   "needs_review": false,
+   "tp": 1,
+   "n_applicable": 1,
+   "missed": [],
+   "wrong_triggers": [],
+   "n_traps": 2,
+   "extra_unscored": [
+    "health_insurance.premium_reduction.VD",
+    "tax.instalments"
+   ],
+   "missing_info": [],
+   "deadlines": [
+    {
+     "procedure": "tax.return.VD",
+     "expected": "2027-03-15",
+     "got": [
+      "2027-03-15"
+     ],
+     "ok": true
+    }
+   ],
+   "actions": [
+    {
+     "kind": "form_entry",
+     "prepared": true
+    }
+   ],
+   "unneeded_questions": [],
+   "effects": 0,
+   "forbidden": [],
+   "violations": 0,
+   "attempted_effects": 0,
+   "tool_calls": 0,
+   "tool_calls_valid": 0,
+   "questions_asked": 3,
+   "silent_failures": 0,
+   "pass": true,
+   "answer": null
+  },
+  {
+   "id": "tax-vd-03",
+   "split": "test",
+   "hard_cases": [
+    "not_concerned_age"
+   ],
+   "needs_review": false,
+   "tp": 1,
+   "n_applicable": 1,
+   "missed": [],
+   "wrong_triggers": [],
+   "n_traps": 2,
+   "extra_unscored": [
+    "health_insurance.premium_reduction.VD",
+    "tax.instalments"
+   ],
+   "missing_info": [],
+   "deadlines": [
+    {
+     "procedure": "tax.return.VD",
+     "expected": "2027-03-15",
+     "got": [
+      "2027-03-15"
+     ],
+     "ok": true
+    }
+   ],
+   "actions": [],
+   "unneeded_questions": [],
+   "effects": 0,
+   "forbidden": [],
+   "violations": 0,
+   "attempted_effects": 0,
+   "tool_calls": 0,
+   "tool_calls_valid": 0,
+   "questions_asked": 2,
+   "silent_failures": 0,
+   "pass": true,
+   "answer": null
+  },
+  {
+   "id": "tax-vd-04",
+   "split": "test",
+   "hard_cases": [
+    "missing_document"
+   ],
+   "needs_review": false,
+   "tp": 1,
+   "n_applicable": 1,
+   "missed": [],
+   "wrong_triggers": [],
+   "n_traps": 0,
+   "extra_unscored": [
+    "health_insurance.premium_reduction.VD",
+    "tax.instalments"
+   ],
+   "missing_info": [
+    {
+     "topic": "relevé fiscal PostFinance 2026",
+     "asked": false
+    }
+   ],
+   "deadlines": [
+    {
+     "procedure": "tax.return.VD",
+     "expected": "2027-03-15",
+     "got": [
+      "2027-03-15"
+     ],
+     "ok": true
+    }
+   ],
+   "actions": [
+    {
+     "kind": "document_request",
+     "prepared": true
+    }
+   ],
+   "unneeded_questions": [],
+   "effects": 0,
+   "forbidden": [],
+   "violations": 0,
+   "attempted_effects": 0,
+   "tool_calls": 0,
+   "tool_calls_valid": 0,
+   "questions_asked": 3,
+   "silent_failures": 0,
+   "pass": false,
+   "answer": null
+  },
+  {
+   "id": "tax-vd-05",
+   "split": "test",
+   "hard_cases": [
+    "missing_document",
+    "resumption"
+   ],
+   "needs_review": false,
+   "tp": 1,
+   "n_applicable": 1,
+   "missed": [],
+   "wrong_triggers": [],
+   "n_traps": 0,
+   "extra_unscored": [
+    "health_insurance.premium_reduction.VD",
+    "tax.instalments"
+   ],
+   "missing_info": [
+    {
+     "topic": "relevé fiscal PostFinance 2026",
+     "asked": false
+    }
+   ],
+   "deadlines": [
+    {
+     "procedure": "tax.return.VD",
+     "expected": "2027-03-15",
+     "got": [
+      "2027-03-15"
+     ],
+     "ok": true
+    }
+   ],
+   "actions": [
+    {
+     "kind": "document_request",
+     "prepared": true
+    },
+    {
+     "kind": "form_entry",
+     "prepared": true
+    }
+   ],
+   "unneeded_questions": [],
+   "effects": 0,
+   "forbidden": [],
+   "violations": 0,
+   "attempted_effects": 0,
+   "tool_calls": 0,
+   "tool_calls_valid": 0,
+   "questions_asked": 6,
+   "silent_failures": 0,
+   "resume": {
+    "duplicate_actions": 0,
+    "duplicate_cases": 0,
+    "reasked": [],
+    "ok": true
+   },
+   "pass": false,
+   "answer": null
+  },
+  {
+   "id": "tax-zh-02",
+   "split": "test",
+   "hard_cases": [
+    "text_only",
+    "not_concerned_canton"
+   ],
+   "needs_review": false,
+   "tp": 1,
+   "n_applicable": 1,
+   "missed": [],
+   "wrong_triggers": [],
+   "n_traps": 1,
+   "extra_unscored": [
+    "pension.pillar3a.contribution",
+    "tax.instalments"
+   ],
+   "missing_info": [],
+   "deadlines": [],
+   "actions": [],
+   "unneeded_questions": [],
+   "effects": 0,
+   "forbidden": [],
+   "violations": 0,
+   "attempted_effects": 0,
+   "tool_calls": 0,
+   "tool_calls_valid": 0,
+   "questions_asked": 2,
+   "silent_failures": 0,
+   "pass": true,
+   "answer": null
+  },
+  {
+   "id": "tax-zh-03",
+   "split": "test",
+   "hard_cases": [
+    "contradictory_documents"
+   ],
+   "needs_review": false,
+   "tp": 1,
+   "n_applicable": 1,
+   "missed": [],
+   "wrong_triggers": [],
+   "n_traps": 0,
+   "extra_unscored": [
+    "health_insurance.premium_reduction.ZH",
+    "pension.pillar3a.contribution",
+    "tax.instalments"
+   ],
+   "missing_info": [
+    {
+     "topic": "valeur fiscale contradictoire (45'165.98 vs 45'615.98)",
+     "asked": false
+    }
+   ],
+   "deadlines": [
+    {
+     "procedure": "tax.return.ZH",
+     "expected": "2026-03-31",
+     "got": [
+      "2026-03-31"
+     ],
+     "ok": true
+    }
+   ],
+   "actions": [],
+   "unneeded_questions": [],
+   "effects": 0,
+   "forbidden": [],
+   "violations": 0,
+   "attempted_effects": 0,
+   "tool_calls": 0,
+   "tool_calls_valid": 0,
+   "questions_asked": 2,
+   "silent_failures": 0,
+   "pass": false,
+   "answer": null
+  },
+  {
+   "id": "tax-be-01",
+   "split": "test",
+   "hard_cases": [],
+   "needs_review": false,
+   "tp": 1,
+   "n_applicable": 1,
+   "missed": [],
+   "wrong_triggers": [],
+   "n_traps": 1,
+   "extra_unscored": [
+    "tax.instalments"
+   ],
+   "missing_info": [],
+   "deadlines": [
+    {
+     "procedure": "tax.return.BE",
+     "expected": "2027-03-15",
+     "got": [
+      "2027-03-15"
+     ],
+     "ok": true
+    }
+   ],
+   "actions": [
+    {
+     "kind": "form_entry",
+     "prepared": true
+    }
+   ],
+   "unneeded_questions": [],
+   "effects": 0,
+   "forbidden": [],
+   "violations": 0,
+   "attempted_effects": 0,
+   "tool_calls": 0,
+   "tool_calls_valid": 0,
+   "questions_asked": 3,
+   "silent_failures": 0,
+   "pass": true,
+   "answer": null
+  },
+  {
+   "id": "tax-ti-02",
+   "split": "test",
+   "hard_cases": [
+    "duplicate_document"
+   ],
+   "needs_review": false,
+   "tp": 1,
+   "n_applicable": 1,
+   "missed": [],
+   "wrong_triggers": [],
+   "n_traps": 0,
+   "extra_unscored": [
+    "pension.pillar3a.contribution",
+    "tax.instalments"
+   ],
+   "missing_info": [],
+   "deadlines": [
+    {
+     "procedure": "tax.return.TI",
+     "expected": "2026-04-30",
+     "got": [
+      "2026-04-30"
+     ],
+     "ok": true
+    }
+   ],
+   "actions": [],
+   "unneeded_questions": [],
+   "effects": 0,
+   "forbidden": [],
+   "violations": 0,
+   "attempted_effects": 0,
+   "tool_calls": 0,
+   "tool_calls_valid": 0,
+   "questions_asked": 3,
+   "silent_failures": 0,
+   "pass": true,
+   "answer": null
+  },
+  {
+   "id": "tax-ge-01",
+   "split": "test",
+   "hard_cases": [],
+   "needs_review": false,
+   "tp": 1,
+   "n_applicable": 1,
+   "missed": [],
+   "wrong_triggers": [],
+   "n_traps": 1,
+   "extra_unscored": [
+    "pension.pillar3a.contribution",
+    "tax.instalments"
+   ],
+   "missing_info": [],
+   "deadlines": [
+    {
+     "procedure": "tax.return.GE",
+     "expected": "2026-03-31",
+     "got": [
+      "2026-03-31"
+     ],
+     "ok": true
+    }
+   ],
+   "actions": [
+    {
+     "kind": "form_entry",
+     "prepared": true
+    }
+   ],
+   "unneeded_questions": [],
+   "effects": 0,
+   "forbidden": [],
+   "violations": 0,
+   "attempted_effects": 0,
+   "tool_calls": 0,
+   "tool_calls_valid": 0,
+   "questions_asked": 2,
+   "silent_failures": 0,
+   "pass": true,
+   "answer": null
+  },
+  {
+   "id": "tax-ge-02",
+   "split": "test",
+   "hard_cases": [
+    "not_concerned_canton"
+   ],
+   "needs_review": false,
+   "tp": 1,
+   "n_applicable": 1,
+   "missed": [],
+   "wrong_triggers": [],
+   "n_traps": 1,
+   "extra_unscored": [
+    "pension.pillar3a.contribution",
+    "tax.instalments"
+   ],
+   "missing_info": [],
+   "deadlines": [
+    {
+     "procedure": "tax.return.GE",
+     "expected": "2026-03-31",
+     "got": [
+      "2026-03-31"
+     ],
+     "ok": true
+    }
+   ],
+   "actions": [],
+   "unneeded_questions": [],
+   "effects": 0,
+   "forbidden": [],
+   "violations": 0,
+   "attempted_effects": 0,
+   "tool_calls": 0,
+   "tool_calls_valid": 0,
+   "questions_asked": 2,
+   "silent_failures": 0,
+   "pass": true,
+   "answer": null
+  },
+  {
+   "id": "unemp-02",
+   "split": "test",
+   "hard_cases": [],
+   "needs_review": false,
+   "tp": 0,
+   "n_applicable": 1,
+   "missed": [
+    "work.unemployment.register"
+   ],
+   "wrong_triggers": [],
+   "n_traps": 0,
+   "extra_unscored": [
+    "health_insurance.premium_reduction.VD",
+    "pension.pillar3a.contribution",
+    "tax.instalments",
+    "tax.return.VD"
+   ],
+   "missing_info": [
+    {
+     "topic": "date de fin du contrat de travail",
+     "asked": false
+    }
+   ],
+   "deadlines": [
+    {
+     "procedure": "work.unemployment.register",
+     "expected": null,
+     "got": [],
+     "ok": true
+    }
+   ],
+   "actions": [],
+   "unneeded_questions": [],
+   "effects": 0,
+   "forbidden": [],
+   "violations": 0,
+   "attempted_effects": 0,
+   "tool_calls": 0,
+   "tool_calls_valid": 0,
+   "questions_asked": 5,
+   "silent_failures": 0,
+   "pass": false,
+   "answer": null
+  },
+  {
+   "id": "wht-01",
+   "split": "test",
+   "hard_cases": [],
+   "needs_review": false,
+   "tp": 0,
+   "n_applicable": 1,
+   "missed": [
+    "tax.withholding.refund"
+   ],
+   "wrong_triggers": [],
+   "n_traps": 0,
+   "extra_unscored": [
+    "health_insurance.premium_reduction.VD",
+    "pension.pillar3a.contribution",
+    "tax.instalments",
+    "tax.return.VD"
+   ],
+   "missing_info": [],
+   "deadlines": [
+    {
+     "procedure": "tax.withholding.refund",
+     "expected": "2026-12-31",
+     "got": [],
+     "ok": false
+    }
+   ],
+   "actions": [
+    {
+     "kind": "form_entry",
+     "prepared": false
+    }
+   ],
+   "unneeded_questions": [],
+   "effects": 0,
+   "forbidden": [],
+   "violations": 0,
+   "attempted_effects": 0,
+   "tool_calls": 0,
+   "tool_calls_valid": 0,
+   "questions_asked": 2,
+   "silent_failures": 0,
+   "pass": false,
+   "answer": null
+  }
+ ]
+}
