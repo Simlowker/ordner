@@ -32,6 +32,9 @@ TEACHERS = {  # checked 14.10.2026: HF router maps swiss-ai/Apertus-v1.5-70B to 
             "extra": {"usage": {"include": True}}},
     "deepseek": {"base_url": "https://openrouter.ai/api/v1", "model": "deepseek/deepseek-v4.1-flash",
                  "key": "OPENROUTER_API_KEY", "extra": {"usage": {"include": True}}},
+    # ceiling check only: a closed model, its trajectories never train Apertus (filter.py drops them)
+    "claude": {"base_url": "https://openrouter.ai/api/v1", "model": "anthropic/claude-opus-5.5",
+               "key": "OPENROUTER_API_KEY", "extra": {"usage": {"include": True}}},
 }
 
 

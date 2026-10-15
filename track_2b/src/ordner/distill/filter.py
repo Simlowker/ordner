@@ -17,6 +17,7 @@ from . import OUT, read_jsonl, write_jsonl
 MODEL_ERRORS = ("valid JSON", "unknown tool", "missing required argument", "must be of type", "must be one of",
                 "this exact call was already made", "invalid arguments", "unknown procedure card", "unknown case_id",
                 "several cases are open")
+NEVER_TRAIN = {"claude"}   # closed model, ceiling check only: never training data (AGENTS.md rule 6)
 BAD_NOTES = {"date(s) in the answer found in no tool result": "ungrounded_date", "max_steps=": "max_steps",
              "kept repeating": "repeating"}
 
@@ -69,7 +70,7 @@ def main(argv=None):
     ap.add_argument("--out", default=str(OUT / "kept.jsonl"))
     ap.add_argument("--report", default=str(OUT / "filter_report.json"))
     a = ap.parse_args(argv)
-    rows = [r for p in a.traj for r in read_jsonl(p)]
+    rows = [r for p in a.traj for r in read_jsonl(p) if r["teacher"] not in NEVER_TRAIN]
     kept, why, by_teacher, by_source = [], Counter(), defaultdict(Counter), defaultdict(Counter)
     for r in rows:
         rs = reasons(r)
