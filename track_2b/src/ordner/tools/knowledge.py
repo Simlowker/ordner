@@ -84,6 +84,17 @@ def _context(ctx):
 
 
 def search(args, ctx):
+    if ctx.get("expert"):   # an expert's own knowledge base (ordner.tools.expert_kb), when it has one
+        from . import expert_kb
+        if expert_kb.passages(ctx["expert"]):
+            subject, _ = _context(ctx)
+            canton = args.get("canton") or (subject and subject.canton)
+            hits = expert_kb.search(args["query"], ctx["expert"], canton, args.get("lang"), min(args.get("k", 3), 8))
+            return ({"passages": [{"passage_id": h["passage_id"], "title": h.get("source_title"), "url": h.get("url"),
+                                   "page": None, "lang": h.get("lang"), "jurisdiction": h.get("jurisdiction"),
+                                   "card_id": None, "score": h["score"], "text": h["text"]} for h in hits]},
+                    [] if hits else ["no passage in this expert's knowledge base"],
+                    {"corpus": f"data/knowledge/{ctx['expert']} (expert base)", "method": "EmbeddingGemma 2"})
     path, ps, *_ = corpus()
     subject, open_cards = _context(ctx)
     canton = args.get("canton") or (subject and subject.canton)

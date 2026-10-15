@@ -38,7 +38,8 @@ class Server:
             from ordner.agent import coordinator as C
             from ordner.case.store import Store
             self.C = C
-            ctx = {"mode": self.a.mode, **({"today": self.a.today} if self.a.today else {})}
+            ctx = {"mode": self.a.mode, **({"today": self.a.today} if self.a.today else {}),
+                   **({"expert": self.a.expert} if self.a.expert else {})}   # knowledge.search uses its base
             reg = C._registry()
             reg = Subset(reg, self.a.tools.split(",")) if self.a.tools else reg
             self.run = C._Run(self.a.goal, self.a.subject, Store(self.a.db), reg, ctx)
@@ -81,6 +82,7 @@ def main(argv=None):
     ap.add_argument("--today")
     ap.add_argument("--mode", default="replay")
     ap.add_argument("--tools", help="comma-separated registry tool names (default: all)")
+    ap.add_argument("--expert", help="expert id: knowledge.search ranks that expert's own knowledge base")
     srv = Server(ap.parse_args(argv))
     for line in sys.stdin:
         if not line.strip():

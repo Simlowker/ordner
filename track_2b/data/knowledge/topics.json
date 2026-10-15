@@ -1,0 +1,37 @@
+{"note": "Fixed on 15.10.2026 11:40, before any source collection or question writing. A passage is tagged with the topics it answers; a retrieval hit = a top-3 passage tagged with the question's topic. Jurisdictions in scope: CH (federal) + VD, ZH, BE, GE, TI.",
+ "experts": {
+  "impots": {
+   "tax.return.deadline": "deadline to file the tax return, extensions (per canton)",
+   "tax.return.documents": "documents to attach or keep: salary certificate, bank tax statement (eCH-0196), securities list",
+   "tax.withholding.refund": "Swiss withholding tax (impôt anticipé / Verrechnungssteuer): refund via the securities list, 35 %",
+   "tax.securities.value": "tax value of securities, gross revenue A/B, wealth declaration",
+   "tax.pillar3a": "pillar 3a deduction: who, ceilings, certificate",
+   "tax.assessment.objection": "objection (réclamation / Einsprache) against the tax assessment: deadline, form",
+   "tax.instalments": "provisional instalments, due dates, interest"
+  },
+  "lamal": {
+   "lamal.obligation": "compulsory health insurance: who, affiliation deadline (3 months), choice of insurer",
+   "lamal.change.deadline": "changing insurer or deductible: notice deadlines (30.11 / 31.12 / 30.06), notice of new premiums",
+   "lamal.deductible": "ordinary and optional deductibles, amounts, cost sharing",
+   "lamal.models": "alternative insurance models (family doctor, HMO, telmed)",
+   "lamal.premium_reduction": "individual premium reduction (subside / Prämienverbilligung): conditions, application, per canton",
+   "lamal.premium_notice": "premium notices, premium approval, priminfo"
+  },
+  "poursuites": {
+   "lp.payment_order": "payment order (commandement de payer / Zahlungsbefehl): what it is, content",
+   "lp.opposition": "opposition (Rechtsvorschlag): 10-day deadline, form, effect",
+   "lp.notification": "notification of the payment order, start of the deadline",
+   "lp.holidays": "debt-collection holidays and suspensions (féries / Betreibungsferien)",
+   "lp.lifting": "lifting the opposition (mainlevée / Rechtsöffnung)",
+   "lp.continuation": "continuation of the procedure, seizure (saisie / Pfändung)",
+   "lp.register_extract": "debt-collection register extract"
+  },
+  "logement": {
+   "housing.announce.deadline": "announcing arrival or departure to the commune (contrôle des habitants / Einwohnerkontrolle): deadline per canton",
+   "housing.announce.documents": "documents to present when registering (ID, family book, rental contract, insurance proof)",
+   "housing.intercantonal": "moving to another canton: what changes (tax domicile, LAMal premium region, vehicle)",
+   "household.fee.obligation": "household radio-TV fee (Serafe / redevance / Haushaltabgabe): who pays, amount",
+   "household.fee.exemption": "fee exemptions: EL/PC beneficiaries, deaf-blind, collective households",
+   "household.fee.invoice": "fee invoicing and payment, changes of household"
+  }
+ }}

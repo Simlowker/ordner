@@ -207,6 +207,30 @@ def main():
     check_decision(ctx)
     check_expert(ctx)
     check_rules_case(ctx, tmp)
+    # one knowledge base per expert: canton filter, language filter, scorer order, knowledge.search in expert context
+    from unittest import mock
+    from . import expert_kb
+    from .registry import call as _call
+    with tempfile.TemporaryDirectory() as tmp:
+        d = Path(tmp) / "lamal"
+        d.mkdir()
+        rows = [{"passage_id": "a", "topics": ["lamal.deductible"], "jurisdiction": "CH", "lang": "fr", "source_title": "LAMal",
+                 "url": "u1", "text": "franchise ordinaire 300 francs"},
+                {"passage_id": "b", "topics": ["lamal.premium_reduction"], "jurisdiction": "VD", "lang": "fr",
+                 "source_title": "VD", "url": "u2", "text": "subside vaudois"},
+                {"passage_id": "c", "topics": ["lamal.premium_reduction"], "jurisdiction": "ZH", "lang": "de",
+                 "source_title": "ZH", "url": "u3", "text": "Prämienverbilligung Zürich"}]
+        (d / "passages.jsonl").write_text("\n".join(json.dumps(r) for r in rows), encoding="utf-8")
+        fake = lambda q, ps: [float("subside" in p["text"]) for p in ps]  # noqa: E731
+        with mock.patch.object(expert_kb, "DATA", Path(tmp)), mock.patch.object(expert_kb, "WORK", Path(tmp) / "none"):
+            expert_kb.passages.cache_clear()
+            assert expert_kb.experts() == ["lamal"]
+            assert [h["passage_id"] for h in expert_kb.search("subside", "lamal", "VD", k=3, scorer=fake)] == ["b", "a"]
+            assert [h["passage_id"] for h in expert_kb.search("x", "lamal", "ZH", "de", k=3, scorer=fake)] == ["c"]
+            with mock.patch("ordner.explain.retrieve.scores", fake):
+                r = _call("knowledge.search", {"query": "subside", "canton": "VD"}, {"mode": "replay", "expert": "lamal"})
+                assert r["ok"] and r["data"]["passages"][0]["passage_id"] == "b", r
+        expert_kb.passages.cache_clear()
     print("tools self-check ok")
 
 

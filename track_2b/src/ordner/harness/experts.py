@@ -144,7 +144,7 @@ def env_for(db, subject, today, state_dir, mode="replay"):
     for e in EXPERTS.values():
         args = ["-m", "ordner.harness.mcp_server", "--db", str(db), "--subject", subject, "--goal",
                 f"conversation ({e.name})", "--out", str(Path(state_dir) / f"state-{e.id}.json"), "--mode", mode,
-                "--tools", ",".join(e.tools)]
+                "--tools", ",".join(e.tools)] + (["--expert", e.id] if e.id != "coordinateur" else [])
         env[_env("SYSTEM", e)] = system_prompt(e.id)
         env[_env("MCP_ARGS", e)] = json.dumps(args + (["--today", today] if today else []))
     return env
