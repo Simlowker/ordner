@@ -198,6 +198,9 @@ def _next_day(d):
 def backend(name, max_tokens=1024, extra=None, model=None):
     if name.startswith("mock"):
         return MockTeacher(name.split(":", 1)[1] if ":" in name else "good")
+    if name == "process":
+        from .process import ProcessTeacher
+        return ProcessTeacher()
     t = TEACHERS[name]
     key = os.environ.get(t["key"])
     if not key:
@@ -263,7 +266,7 @@ def main(argv=None):
     variants = variants[: a.limit]
     done = {r["variant_id"] for r in read_jsonl(out)} if os.path.exists(out) else set()
     llm = backend(a.teacher, a.max_tokens, a.extra, a.model)
-    model = getattr(llm, "model", a.teacher) if not a.teacher.startswith("mock") else a.teacher
+    model = getattr(llm, "model", a.teacher) if not a.teacher.startswith("mock") else a.teacher   # process: deterministic
     os.makedirs(os.path.dirname(out), exist_ok=True)
     new = []
     with open(out, "a", encoding="utf-8") as f:
