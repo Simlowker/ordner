@@ -244,6 +244,17 @@ def check_web_opening():
         st = Store(Path(tmp) / "o.db"); sid = demo_seed.seed(st); st.close()
         o = opening("Qu'est-ce qu'il me manque ?", str(Path(tmp) / "o.db"), sid, "2026-02-20")
         assert o.startswith("Goal: Qu'est-ce qu'il me manque ?") and "Procedure cards" in o and "Dossier snapshot" in o, o[:200]
+        from ordner.agent import backbone
+        st = Store(Path(tmp) / "o.db")
+        first = backbone.apply(st, sid, "2026-02-20", ("*",))
+        n = lambda: (len(st.cases(sid)), sum(len(c.actions) for c in st.cases(sid)),  # noqa: E731
+                     sum(len(st.deadlines(c.id)) for c in st.cases(sid)))
+        before = n(); st.close()
+        assert first["applicable"] or first["questions"], first
+        o2 = opening("Qu'est-ce qu'il me manque ?", str(Path(tmp) / "o.db"), sid, "2026-02-20", rules_first=True)
+        st = Store(Path(tmp) / "o.db"); after = n(); st.close()
+        assert after == before, (before, after)   # rules first is idempotent: no duplicate case, action or deadline
+        assert "open_cases" in o2
     call = {"function": {"name": "ask_user", "arguments": json.dumps({"question": "Êtes-vous imposé·e à la source ?"})}}
     assert asked_question([{"role": "assistant", "content": "", "tool_calls": [call]}]) == "Êtes-vous imposé·e à la source ?"
     assert asked_question([{"role": "user", "content": "x"}]) is None

@@ -259,15 +259,18 @@ def _mlx(L, path=None, adapter=None):
 
 
 class _ExpertByScenario:
-    """Scenario agent running the scenario's domain expert ("auto") or a fixed one, as the web UI does."""
+    """Scenario agent running the scenario's domain expert ("auto") or a fixed one, as the web UI does;
+    rules_first: the engine first on the expert's procedures (agents.hybrid with expert)."""
 
-    def __init__(self, resolve, model, max_steps, expert):
-        self.args = resolve, model, max_steps, expert
+    def __init__(self, resolve, model, max_steps, expert, rules_first=False, toolset="process"):
+        self.args = resolve, model, max_steps, expert, rules_first, toolset
 
     def __call__(self, s, store, sid, phase, goal, today):
         from ordner.distill.teacher import expert_for
-        resolve, model, max_steps, expert = self.args
+        resolve, model, max_steps, expert, rules_first, toolset = self.args
         e = expert_for(s) if expert == "auto" else expert
+        if rules_first:
+            return A.hybrid(resolve, model, max_steps, toolset, expert=e)(s, store, sid, phase, goal, today)
         return A.coordinator(resolve, model, max_steps, expert=e)(s, store, sid, phase, goal, today)
 
 
@@ -318,11 +321,12 @@ def main(argv=None):
             inner, model = model, type("WithAdapter", (), {"chat": lambda self, m, t=None: inner.chat(m, t, extra={"adapters": path})})()
         if a.expert:   # the web UI's expert: prompt, tools, domain opening, the expert's sources
             def make():
-                return _ExpertByScenario(resolve, model, a.max_steps, a.expert)
+                return _ExpertByScenario(resolve, model, a.max_steps, a.expert, rules_first=a.agent == "hybrid")
         else:
             make = lambda: runtime(resolve, model, a.max_steps, toolset)  # noqa: E731
     name = a.agent + (f"_{a.toolset}" if a.agent in ("coordinator", "hybrid", "harness") and a.toolset != "base" else "")
-    name = f"expert_{a.expert}" + ("_adapter" if a.adapter_from_expert else "") if a.expert else name
+    name = (f"expert_{a.expert}" + ("_rules_first" if a.agent == "hybrid" else "")
+            + ("_adapter" if a.adapter_from_expert else "")) if a.expert else name
     name += "".join(f"_{Path(p).name}" for p in (a.mlx_model, a.adapter) if p and a.llm == "mlx")
     name += "_mockllm" if a.agent in ("coordinator", "hybrid", "harness") and a.llm == "mock" else ""  # never overwrite a real run
     report = evaluate(scenarios, make, name, a.split)

@@ -125,11 +125,21 @@ def rules_only(resolve):
     return agent
 
 
-def hybrid(resolve, llm, max_steps=12, toolset="process"):
+def hybrid(resolve, llm, max_steps=12, toolset="process", expert=None):
     """Rules engine first on the dossier (deterministic backbone: cases, deadlines, actions from confirmed facts), then
     the Apertus coordinator on the same dossier for what rules cannot do (free text, documents, missing information).
-    Outputs are merged; the coordinator sees the rules' cases through case.load."""
-    rules_agent, coord_agent = rules_only(resolve), coordinator(resolve, llm, max_steps, toolset)
+    Outputs are merged; the coordinator sees the rules' cases through case.load. With `expert`: the product's expert
+    conversation, rules first on the expert's procedures (ordner.agent.backbone), then that expert."""
+    rules_agent, coord_agent = rules_only(resolve), coordinator(resolve, llm, max_steps, toolset, expert=expert)
+    if expert:
+        from ordner.agent import backbone
+        from ordner.harness.experts import EXPERTS
+
+        def rules_agent(s, store, sid, phase, goal, today):
+            events = [e for p in [s] + s.get("phases", [])[:max(phase, 0)] for e in p.get("events", [])]
+            notified = {resolve(e["procedure"]): e["date"] for e in events if e.get("known") and e.get("procedure")}
+            r = backbone.apply(store, sid, today, EXPERTS[expert].cards, s.get("period"), notified)
+            return {**empty(), **r}
 
     def agent(s, store, sid, phase, goal, today):
         r, c = rules_agent(s, store, sid, phase, goal, today), coord_agent(s, store, sid, phase, goal, today)
