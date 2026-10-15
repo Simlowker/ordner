@@ -8,43 +8,48 @@ what is missing, what to do and why, and prepares everything; it never sends, fi
 It keeps the person's dossier on their own machine, reads the papers they receive, works out which of 18 Swiss
 procedures apply (tax return, health insurance, debt collection, pension, unemployment, moving…), computes deadlines
 from official rules quoted word for word, and prepares letters, document requests and payments. The person validates
-and acts. Apertus 1.5 8B is its only general-purpose language model, in bf16 on one Apple Silicon Mac with 36 GB, offline.
+and acts. Apertus 1.5 8B (bf16) is its only general-purpose language model. Tested configuration: Apertus served on a
+Mac Studio M4 Max 36 GB, clients and UI on a second Mac (M4 Max 36 GB) over the local network; nothing leaves the LAN
+at run time.
 
 ## Two measured proofs
 
-1. **Reading documents without silent errors.** A Swiss e-tax statement (eCH-0196) carries its own data in PDF417
+1. **Reading documents and flagging most errors.** A Swiss e-tax statement (eCH-0196) carries its own data in PDF417
    barcodes: a free, exact answer key. Apertus extracts the fields from the human-readable page (LoRA fine-tune); a
    probe on its hidden states, the d1-3B judge and rule checks flag the values a person should re-check.
-2. **Tools and architecture make an 8B model useful as a coordinator.** Process tools (one per procedure) against
-   generic tools; a deterministic rules engine first and Apertus for what rules cannot do (the "hybrid"); distillation
-   from a larger teacher. All scored on the same scenario suite.
+2. **Process tools make Apertus 8B a usable component, not a replacement for rules.** Process tools (one per
+   procedure) against generic tools; a deterministic rules engine first and Apertus for what rules cannot do (the
+   "hybrid"); distillation from a larger teacher. All scored on the same scenario suite.
 
-## Results so far
+## Results (frozen test splits; details in the [technical report](technical_report.md))
 
-Scenario suite, **dev split** (43 scored scenarios, Apertus 1.5 8B bf16 served by `mlx_lm.server`). The test split
-(24 scenarios) is run once; its results go to the [technical report](technical_report.md).
+Documents (1,200 test pages, 9,600 fields, two of three layouts unseen in training): field exact match 66.9 % for
+OCR + rules/regex, 92.1 % for zero-shot Apertus, 98.0 % with LoRA (96.9 % on unseen layouts; H1 supported). Doubt on
+the zero-shot outputs (754 errors): first-token entropy AUROC 0.947 (re-reading 19.3 % of fields catches 90 % of
+errors), probe on hidden states 0.840 (H3 supported), combination 0.922 (H2 not supported).
 
-| System                                           | Pass (/43)    | Obligations (/39) | Missing info (/7) | Deadlines exact (/30) | Actions (/31) |
-| ------------------------------------------------ | ------------- | ----------------- | ----------------- | --------------------- | ------------- |
-| Rules engine only, no model                      | 46.5 %        | 76.9 %            | 0 %               | 50.0 %                | 77.4 %        |
-| Apertus coordinator, generic tools               | 14.0 %        | 33.3 %            | 42.9 %            | 10.0 %                | 9.7 %         |
-| Apertus coordinator, process tools (2 runs)      | 27.9 / 30.2 % | 59.0 / 56.4 %     | 71.4 / 42.9 %     | 30.0 / 33.3 %         | 29.0 / 32.3 % |
-| Same, through DeepSeek Harness                   | 23.3 %        | 59.0 %            | 71.4 %            | 36.7 %                | 29.0 %        |
-| **Hybrid: rules engine, then Apertus (process)** | **53.5 %**    | **79.5 %**        | **71.4 %**        | **53.3 %**            | **80.6 %**    |
+Scenario suite, test split (24 scenarios, one run per system, Apertus 1.5 8B bf16 served by `mlx_lm.server`; counts):
 
-- Apertus alone stays below the rules engine. Rules first, then Apertus on the same dossier keeps what the rules
-  prove and adds the questions only the model can ask (5 of 7, against 0); its gain over rules alone (+3 scenarios)
-  is within run-to-run noise. Neither triggers any of the 12 traps.
-- No configuration executed anything (0 real-world effects). In 2 scenarios (a bill received by e-mail and by post)
-  the hybrid ended with two prepared payments, the rules' generic step and the coordinator's concrete one; a
-  double-payment guard was added to the dossier since, and the hybrid is being re-measured.
-- Run-to-run noise: two identical runs at temperature 0 differ on 5 of 43 verdicts, so gaps under ~12 points are not
-  evidence. Metrics are recall-oriented (extra procedures and dates are only penalised on traps), which favours the
-  hybrid, a union of two outputs defined after seeing dev results: on test it is reported as exploratory.
-- Teacher (GLM-5.3) on 400 synthetic variants of dev scenarios: 58.5 % pass with process tools, 26.3 % with generic
-  tools; 113 trajectories kept after strict filtering; QLoRA distillation of Apertus under evaluation.
-- Documents, dev (60 pages, the layout the regex was written for): OCR + regex 0.992 field exact match, zero-shot
-  Apertus 0.938. Test (1,200 pages, two unseen layouts, pre-registered): see the report.
+| System                                           | Pass /24 | Obligations /22 | Missing info /4 | Deadlines /20 | Actions /14 | Forbidden / executed |
+| ------------------------------------------------ | -------- | --------------- | --------------- | ------------- | ----------- | -------------------- |
+| Rules engine only, no model                      | 13       | 17              | 0               | 13            | 10          | 0 / 0                |
+| Apertus coordinator, generic tools               | 3        | 6               | 3               | 1             | 2           | 0 / 0                |
+| **Apertus coordinator, process tools**           | **12**   | **15**          | **2**           | **12**        | **7**       | **0 / 0**            |
+| Same + distilled adapter                         | 10       | 16              | 4               | 11            | 6           | 0 / 0                |
+| Process tools, DeepSeek Harness runtime          | 9        | 15              | 3               | 10            | 7           | 0 / 0                |
+| Hybrid (post-hoc): rules, then Apertus (process) | 14       | 17              | 2               | 13            | 10          | 0 / 0                |
+
+- Process vs generic tools (H6, supported): deadlines 12 vs 1, obligations 15 vs 6; pass 12 vs 3 (McNemar 9–0,
+  p = 0.004). Apertus alone stays below the rules engine; the hybrid's one extra pass over rules is not significant
+  (McNemar 1–0, p = 1). Distillation (H7) is not supported (10 vs 12); the harness runtime (H8) is not adopted.
+- Run-to-run noise: two identical dev runs at temperature 0 differ on 5 of 43 verdicts. Metrics are recall-oriented,
+  which favours the hybrid, and cards and scenarios were written together, so rules-only is not an independent baseline.
+  Dev results (43 scenarios): technical report, Table 3.
+- No run executed an effect. On dev, the hybrid prepared a duplicated payment in two scenarios (a double-payment guard
+  was added since) and, in its re-run, an action carrying the IBAN of an injected phishing e-mail (`tax-be-03`).
+- Exploratory: d1-3B routes the conversation's first request to the coordinator or one of four experts, 78.1 % correct
+  vs 64.7 % for EmbeddingGemma 2 on 201 requests. Expert adapters are opt-in (`ORDNER_USE_ADAPTERS=1`):
+  `mlx_lm.server` 0.32 reloads the model on each adapter change (16 → 35 GB measured).
 - Knowledge search, top-3 hit on 2 × 36 everyday questions: EmbeddingGemma 2 80.6 % / 77.8 %, BM25 52.8 % / 38.9 %,
   RRF fusion 61.1 % / 50.0 % (`data/retrieval/`). The gain is cross-lingual (held-out cross-lingual: 70 % vs 5 %).
 
@@ -70,8 +75,8 @@ The container (no torch, no model weights):
 The conversation layer is built from the published npm package `@deepseek-ai/dsh@0.2.1-alpha.2` (network at build time
 only). If that step fails, the image is built without it and step 5 is skipped; the console works the same.
 
-Status 14.10.2026: the explanations in the « Relevé fiscal » view and the « Demander à Ordner » transcripts are not
-yet recorded Apertus outputs; both are labelled « Fixture » in the console until they are.
+The explanations in the « Relevé fiscal » view are recorded Apertus 1.5 8B outputs (quotes verified word for word).
+Without the conversation layer, « Demander à Ordner » shows hand-written transcripts labelled « Fixture ».
 
 ### Replay vs live
 
@@ -79,7 +84,7 @@ yet recorded Apertus outputs; both are labelled « Fixture » in the console unt
 | --------------------- | -------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
 | Documents             | recorded OCR, Apertus, d1-3B outputs and hidden-state features | batch pipeline: LightOnOCR-3 → Apertus (+ LoRA) → probe, d1-3B, checks                          |
 | Procedures            | rules engine on the dossier                                    | same, then the Apertus coordinator on the same dossier                                          |
-| « Demander à Ordner » | fixture transcripts                                            | Apertus coordinator through `LLM_BASE_URL` (e.g. `mlx_lm.server`); its tools use cached outputs |
+| « Demander à Ordner » | conversation with a scripted mock model; else fixture transcripts | Apertus coordinator through `LLM_BASE_URL` (e.g. `mlx_lm.server`); its tools use cached outputs |
 | Knowledge search      | BM25 (no weights in the image)                                 | EmbeddingGemma 2 (live tools or `ORDNER_EMBED=1`)                                               |
 
 ### Live commands (Apple Silicon, project venv; Docker cannot use the Mac GPU)
@@ -134,10 +139,10 @@ documents ─► READ: barcode first (eCH-0196, QR-bill: exact)
 DOSSIER      local SQLite, append-only event log: documents · facts · cases · deadlines · prepared actions
                │
    1. RULES ENGINE (no model)                    2. APERTUS COORDINATOR (same dossier, ≤ 12 steps)
-   18 procedure cards, 227 official sources      free text, missing information, questions to the
-   quoted verbatim: applicability, deadlines,    person, explanations in fr/de/it; process toolset
-   completeness, prepared steps, phishing and    (9 tools) + ask_user + prepare_action; knowledge
-   double-payment guards                         search with EmbeddingGemma 2
+   18 procedure cards, 227 verbatim quotes       free text, missing information, questions to the
+   from 73 official sources: applicability,      person, explanations in fr/de/it; process toolset
+   deadlines, completeness, prepared steps,      (9 tools) + ask_user + prepare_action; knowledge
+   phishing and double-payment guards            search with EmbeddingGemma 2
                └──────────────────┬─────────────────┘
                                   ▼
 COCKPIT      what concerns me · what is missing · next step · why (quoted sources) ─► the person validates and acts
@@ -149,11 +154,12 @@ COCKPIT      what concerns me · what is missing · next step · why (quoted sou
 | ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- | ------------------------------------------ |
 | **Apertus 1.5 8B** (text backbone), bf16 | extracts document fields (LoRA); hidden states feed the doubt probe; coordinator; explanations                                          | live mode                                            | Apache-2.0                                 |
 | LightOnOCR-3-1B                          | photo or scan → text                                                                                                                    | on demand                                            | Apache-2.0                                 |
-| d1-3B                                    | judge: P(the extracted value is right), one doubt signal                                                                                | on demand (fp32, 14.1 GB: not together with Apertus) | LFM Open License 1.0, **not OSI-approved** |
+| d1-3B                                    | judge: P(the extracted value is right), one doubt signal; routes the conversation's first request to an expert (bf16)                    | on demand (fp32, 14.1 GB: not together with Apertus) | LFM Open License 1.0, **not OSI-approved** |
 | EmbeddingGemma 2                         | knowledge search over official sources (BM25 only as fallback)                                                                          | on demand                                            | Apache-2.0                                 |
 | GLM-5.3                                  | **development time only**: distillation teacher, via OpenRouter, on fictional scenarios. Not part of the product; no personal data sent | never at runtime                                     | licence not verified here                  |
 
-Apertus (inference, LoRA and QLoRA training) and d1-3B ran on a Mac Studio M4 Max with 36 GB, one large model at a time.
+Apertus (inference, LoRA and QLoRA training) and d1-3B ran on a Mac Studio M4 Max 36 GB, one large model at a time.
+OCR batches ran on it and on the second Mac (a laptop, M4 Max 36 GB), which also ran the evaluation clients and the UI.
 
 ### Tools
 
@@ -174,11 +180,11 @@ sends, files, signs or pays.
 | Module                                                           | Role                                                                                                                                                         |
 | ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `case/`                                                          | Local dossier (`ORDNER_HOME`): facts with provenance and status, cases, actions (double-payment guard), deadlines, append-only events                        |
-| `procedures/`                                                    | 18 procedure cards (16 qualified, 2 draft), 227 sources whose quotes were checked verbatim                                                                   |
+| `procedures/`                                                    | 18 procedure cards (16 qualified, 2 draft), 227 verbatim quotes from 73 official sources, checked by code                                                     |
 | `rules/`                                                         | Applicability, deadlines (holidays, debt-collection holidays, reception-by, cantonal tables), reminders, `.ics`, completeness, consolidation, phishing guard |
 | `tools/`                                                         | The 16 tools above (JSON schema, argument checks, replay or live mode)                                                                                       |
 | `agent/`                                                         | Apertus coordinator: bounded loop, subject pinned, person-only operations hidden, prepared actions only, injection filter                                    |
-| `harness/`                                                       | DeepSeek Harness integration (MCP server, Apertus tool-call proxy, fail-closed tool allowlist); optional runtime, not the default                            |
+| `harness/`                                                       | DeepSeek Harness integration (MCP server, Apertus tool-call proxy, fail-closed tool allowlist), web presets (coordinator + four experts), d1-3B routing; optional |
 | `distill/`                                                       | Scenario variants, teacher runner, strict filter, training data in Apertus's tool-call syntax, QLoRA training                                                |
 | `connectors/`                                                    | Watched inbox, PDF share, eCH-0196, QR-bill, camt.053, OFSP premiums, e-mail drafts (`.eml`, never sent)                                                     |
 | `app/`                                                           | Stdlib HTTP server + vanilla JS cockpit, no build step, no CDN (CSP `default-src 'self'`)                                                                    |
@@ -195,7 +201,8 @@ pre-registration [`PREREG.md`](PREREG.md) (frozen in commit `f52d2c3`, deviation
   reject operations.
 - Tool outputs are data: instruction-like passages are removed.
 - Payment requests from an unseen IBAN or creditor, or urgent text with a link, are flagged « possible hameçonnage »;
-  a second pending payment of the same case and amount is not added.
+  a second pending payment of the same case and amount is not added. Flagged, not refused: on dev, a hybrid run still
+  prepared an action carrying a phishing IBAN (technical report, §5).
 - Dates in the coordinator's answer that no tool returned are flagged « à vérifier ».
 
 ## Limitations
@@ -204,8 +211,9 @@ pre-registration [`PREREG.md`](PREREG.md) (frozen in commit `f52d2c3`, deviation
   baseline. Small n (43 dev, 24 test) and run-to-run noise (5 of 43 verdicts).
 - 18 procedures; tax returns for VD, ZH, BE (qualified), GE and TI (draft). Elsewhere the coverage map says
   « non couverte ». Cantonal rules change yearly; each card carries its access date.
-- The console's « Demander à Ordner » shows the coordinator all 16 tools (on cached tool outputs), not the evaluated
-  process toolset.
+- The agentic web conversation (forked harness UI, experts, routing) demonstrates the evaluated loop but is not
+  separately evaluated; with Noa's long dossier the 8B model often asks instead of acting. Without that layer, the
+  console's live « Demander à Ordner » gives the coordinator all 16 tools, not the evaluated process toolset.
 - d1-3B's licence is not OSI-approved. All documents are synthetic. Not legal or tax advice: Ordner informs and cites,
   the person decides.
 
