@@ -21,9 +21,12 @@ PREFER = 2.0  # BM25 boost of the procedure in context
 PREFER_COS = 0.05  # ponytail: fixed cosine boost for the same; untuned (the retrieval eval has no dossier context)
 # ponytail: language from the canton (bilingual cantons: majority language); subject.attrs["lang"] wins
 CANTON_LANG = {"VD": "fr", "GE": "fr", "NE": "fr", "JU": "fr", "FR": "fr", "VS": "fr", "TI": "it"}
-STOP = {"fr": set("le la les des du de et est un une pour que qui dans au aux sur par pas doit être sont".split()),
-        "de": set("der die das und ist ein eine für nicht mit von zu den dem des sich auf im bei oder wird".split()),
-        "it": set("il lo gli dei del della di è un una per che non con nel alla sono deve".split())}
+STOP = {"fr": set("le la les des du de et est un une pour que qui dans au aux sur par pas doit être sont "
+                  "je j me mon ma mes vous votre nous ai suis avez quand comment quoi dois".split()),
+        "de": set("der die das und ist ein eine für nicht mit von zu den dem des sich auf im bei oder wird "
+                  "ich mich mir mein meine meinen habe hat haben bin sie ihr wir einen wie was wann kann muss bis".split()),
+        "it": set("il lo gli dei del della di è un una per che non con nel alla sono deve "
+                  "io mi mio mia ho lei suo cosa come quando posso devo entro ricevuto".split())}   # people's messages too
 
 
 def tokens(s):

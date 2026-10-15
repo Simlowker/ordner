@@ -214,6 +214,22 @@ def opening(question, db, subject_id, today=None, cards=None, rules_first=False)
             f"Answer the person in {name}, the language of their question, with the human labels (not the keys in [ ]).")
 
 
+LANG_NAME = {"fr": "French (français)", "de": "German (Deutsch)", "it": "Italian (italiano)"}
+
+
+def raw_user(msgs, users):
+    """The person's own words of the latest message (the opening wraps the first one as 'Goal: ...')."""
+    text = msgs[users[-1]]["content"]
+    goal = re.search(r"^Goal: (.+)$", text, re.M)
+    return goal.group(1) if goal else text
+
+
+def language_reminder(text):
+    from ordner.tools.knowledge import lang_of
+    return {"role": "system", "content": f"When you answer the person, write in {LANG_NAME[lang_of(text)]}, the "
+                                         "language of their message, never in English unless they wrote in English."}
+
+
 def asked_question(msgs):
     """The question of the last ask_user call (shown to the person when the turn ends on it)."""
     for m in reversed(msgs):
@@ -365,6 +381,8 @@ class Proxy(HTTPServer):
             if found:
                 msgs.insert(users[-1] + 1, sources_message(found))
                 entry["sources"] = [x["passage_id"] for x in found]
+        if users and msgs and msgs[-1]["role"] == "tool":   # the instruction in the opening is far once tools ran
+            msgs.append(language_reminder(raw_user(msgs, users)))
         return msgs, tools, r
 
     def record(self, entry):
