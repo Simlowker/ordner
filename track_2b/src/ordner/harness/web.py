@@ -67,7 +67,8 @@ def main(argv=None):
     state = home / "harness"
     (state / "workspace").mkdir(parents=True, exist_ok=True)
     proxy = Proxy(llm, max_steps=a.max_steps, order=order, allowed=allowed, experts=True,
-                  log_file=state / "proxy.log", canton=subject.canton)
+                  log_file=state / "proxy.log", canton=subject.canton,
+                  dossier=(str(store.path), subject.id, os.environ.get("ORDNER_TODAY")))
     presets = state / "experts.patch.yml"
     presets.write_text(E.presets_yaml(proxy.adapters_ok), encoding="utf-8")
     env = {**os.environ, "DSH_HOME": str(state / "dsh-home"), "ORDNER_LOCAL_KEY": "local", "ORDNER_PROXY_URL": proxy.url,

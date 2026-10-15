@@ -232,6 +232,24 @@ def check_web_patch():
     print("web patch: rows off, light/fr, composes with the 5 expert presets (dsh --dump-config exit 0): ok")
 
 
+def check_web_opening():
+    """Web experts start like the evaluated loop: Goal + procedure cards + dossier snapshot; a question ends the turn
+    with the question itself."""
+    import tempfile as _t
+    from pathlib import Path
+    from ordner.case import demo_seed
+    from ordner.case.store import Store
+    from .proxy import asked_question, opening
+    with _t.TemporaryDirectory() as tmp:
+        st = Store(Path(tmp) / "o.db"); sid = demo_seed.seed(st); st.close()
+        o = opening("Qu'est-ce qu'il me manque ?", str(Path(tmp) / "o.db"), sid, "2026-02-20")
+        assert o.startswith("Goal: Qu'est-ce qu'il me manque ?") and "Procedure cards" in o and "Dossier snapshot" in o, o[:200]
+    call = {"function": {"name": "ask_user", "arguments": json.dumps({"question": "Êtes-vous imposé·e à la source ?"})}}
+    assert asked_question([{"role": "assistant", "content": "", "tool_calls": [call]}]) == "Êtes-vous imposé·e à la source ?"
+    assert asked_question([{"role": "user", "content": "x"}]) is None
+    print("web opening and asked question: ok")
+
+
 def check_routing():
     import socket
     import tempfile
@@ -499,6 +517,7 @@ if __name__ == "__main__":
     units()
     check_experts()
     check_routing()
+    check_web_opening()
     check_general_routing()
     check_web_patch()
     end_to_end()
