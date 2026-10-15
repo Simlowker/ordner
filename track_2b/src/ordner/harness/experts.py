@@ -63,7 +63,8 @@ def marker(system_text):
 
 def system_prompt(expert_id):
     e = EXPERTS[expert_id]
-    return f"[ordner-expert: {e.id}]\n{C.SYSTEM}\n\nExpert scope: {e.domain}"
+    return (f"[ordner-expert: {e.id}]\n{C.SYSTEM}\n\nExpert scope: {e.domain}\n"
+            "Always answer in the language of the person's message (French, German or Italian).")
 
 
 def adapter_path(expert_id):
