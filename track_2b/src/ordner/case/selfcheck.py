@@ -201,7 +201,7 @@ def main():
         others = [d for d in st.documents(sid) if d.kind != "swiss_tax_statement_eCH0196"]
         assert others and all(d.path.startswith("placeholder:") for d in others)
         photo = st.facts(sid, key_prefix="tax.securities.zelfeld.total", status="proposed")
-        assert photo and photo[0].actor == "model" and photo[0].doubt
+        assert photo and photo[0].actor == "model" and photo[0].doubt is None  # never an invented doubt
         emp = st.facts(sid, key_prefix="work.employment.employer")
         assert [(f.value, f.status) for f in emp] == [("Alpinea Garage Sàrl", "superseded"), ("Logivia SA", "confirmed")]
         assert "Alice" not in json.dumps(noa)

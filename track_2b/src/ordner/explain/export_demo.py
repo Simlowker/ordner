@@ -219,8 +219,10 @@ if __name__ == "__main__":
     ap.add_argument("--out", default="data/demo")
     ap.add_argument("--system", default="auto", choices=["auto"] + SYSTEM_PREF)
     ap.add_argument("--generate", action="store_true", help="generate missing explanations with Apertus (MLX)")
+    ap.add_argument("--server", action="store_true",
+                    help="with --generate: through the OpenAI-compatible server (LLM_BASE_URL/LLM_NAME) instead of MLX")
     a = ap.parse_args()
-    demo, missing = build(a.data, a.work, a.out, a.system, a.generate)
+    demo, missing = build(a.data, a.work, a.out, a.system, explain.server_generate if a.generate and a.server else a.generate)
     print(f"{Path(a.out) / 'demo.json'}: {len(demo['documents'])} documents, fixture={demo.get('fixture', False)}")
     for m in missing:
         print("  missing:", m)

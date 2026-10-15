@@ -567,7 +567,8 @@ if __name__ == "__main__":
                     if f["key"] == "work.employment.rate"]
             assert rate == [(0.6, "rejected"), (1.0, "confirmed")], rate  # the misread comes with its correction
             from ordner.core.schema import Document
-            st.add_document(Document("doc_phish", sid, "placeholder:phish", "f" * 64, "email", 2026, "Helvia (?)", fields={
+            st.add_document(Document("doc_phish", sid, "placeholder:phish", "f" * 64, "email", 2026, "Helvia (?)",
+                                    received_at="2026-10-13T09:00:00+00:00", fields={  # fixed: the check views 14.10
                 "text": "URGENT : payez 89 CHF aujourd'hui sur https://helvia-pay.example, IBAN CH93 0076 2011 6238 5295 7"}))
             alerts = payment_alerts(*_visible(st, sid, date(2026, 10, 14)))
             assert [a["id"] for a in alerts] == ["doc_phish"] and alerts[0]["warning"]["fr"].startswith("possible hameçonnage"), alerts

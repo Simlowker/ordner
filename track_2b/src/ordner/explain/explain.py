@@ -199,6 +199,17 @@ def apertus_generate(msgs, max_tokens=600):
     return hf._tok.decode(out, skip_special_tokens=True).strip()
 
 
+def server_generate(msgs, max_tokens=600):
+    """Same generation through an OpenAI-compatible server (mlx_lm.server: LLM_BASE_URL, LLM_NAME), greedy, thinking
+    off: no second copy of Apertus in memory next to the server."""
+    import os
+
+    from ordner.agent.llm import OpenAICompat
+    llm = OpenAICompat(os.environ.get("LLM_BASE_URL", "http://127.0.0.1:8080/v1"), os.environ.get("LLM_NAME", "default"),
+                       os.environ.get("LLM_API_KEY"), max_tokens=max_tokens)
+    return (llm.chat(msgs)["content"] or "").strip()
+
+
 def mock_generate(msgs):
     """Test double for Apertus: quotes the first 10 words of the first passage of the prompt, plus an invented quote."""
     pid, words = re.search(r"\n\[([\w.\-]+-p\d+-\d+)\] \([^\n]*\)\n(\S+(?: \S+){9})", msgs[-1]["content"]).groups()

@@ -115,7 +115,14 @@ FACTS = [
 ]
 
 
+# No invented doubt: the demo documents read "by AI" were not read by a model here, so their doubt is unknown (None),
+# shown as "à confirmer"; measured doubt comes only from the pipeline (data/demo/demo.json, the statement tab).
+NO_MODEL_DOUBT = True
+
+
 def _document(rel, fields) -> Document:
+    if NO_MODEL_DOUBT and fields.get("read_path") == "ai":
+        fields = {**fields, "doubt": {}}
     if rel.startswith("placeholder:"):
         path, sha = rel, hashlib.sha256(rel.encode()).hexdigest()
     else:
@@ -136,6 +143,7 @@ def seed(store: Store | None = None, cases=()) -> str:
         docs = {name: store.add_document(_document(rel, fields), actor="user" if fields["channel"] == "scan"
                                          else "connector") for name, (rel, fields) in DOCS.items()}
         for key, value, period, unit, actor, doc, doubt, outcome in FACTS:
+            doubt = None if NO_MODEL_DOUBT and actor == "model" else doubt
             f = store.propose_fact(Fact(new_id("fact"), SUBJECT_ID, key, value, period=period, unit=unit, actor=actor,
                                         source_doc=docs[doc].id if doc else None, doubt=doubt))
             if outcome == "confirm":
