@@ -1,0 +1,392 @@
+[
+ {
+  "url": "https://www.fedlex.admin.ch/eli/cc/1995/1328_1328_1328/fr",
+  "title": "LAMal (RS 832.10)",
+  "publisher": "Confédération",
+  "jurisdiction": "CH",
+  "lang": "fr",
+  "licence": "official act (art. 5 LDA)",
+  "in_repo": true,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.fedlex.admin.ch/eli/cc/1995/1328_1328_1328/de",
+  "title": "KVG (RS 832.10)",
+  "publisher": "Confédération",
+  "jurisdiction": "CH",
+  "lang": "de",
+  "licence": "official act (art. 5 LDA)",
+  "in_repo": true,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.fedlex.admin.ch/eli/cc/1995/1328_1328_1328/it",
+  "title": "LAMal (RS 832.10)",
+  "publisher": "Confédération",
+  "jurisdiction": "CH",
+  "lang": "it",
+  "licence": "official act (art. 5 LDA)",
+  "in_repo": true,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.fedlex.admin.ch/eli/cc/2015/839/fr",
+  "title": "LSAMal (RS 832.12)",
+  "publisher": "Confédération",
+  "jurisdiction": "CH",
+  "lang": "fr",
+  "licence": "official act (art. 5 LDA)",
+  "in_repo": true,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.fedlex.admin.ch/eli/cc/2015/839/de",
+  "title": "KVAG (RS 832.12)",
+  "publisher": "Confédération",
+  "jurisdiction": "CH",
+  "lang": "de",
+  "licence": "official act (art. 5 LDA)",
+  "in_repo": true,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.fedlex.admin.ch/eli/cc/2015/839/it",
+  "title": "LVAMal (RS 832.12)",
+  "publisher": "Confédération",
+  "jurisdiction": "CH",
+  "lang": "it",
+  "licence": "official act (art. 5 LDA)",
+  "in_repo": true,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.fedlex.admin.ch/eli/cc/2015/840/fr",
+  "title": "OSAMal (RS 832.121)",
+  "publisher": "Confédération",
+  "jurisdiction": "CH",
+  "lang": "fr",
+  "licence": "official act (art. 5 LDA)",
+  "in_repo": true,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.fedlex.admin.ch/eli/cc/2015/840/de",
+  "title": "KVAV (RS 832.121)",
+  "publisher": "Confédération",
+  "jurisdiction": "CH",
+  "lang": "de",
+  "licence": "official act (art. 5 LDA)",
+  "in_repo": true,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.fedlex.admin.ch/eli/cc/2015/840/it",
+  "title": "OVAMal (RS 832.121)",
+  "publisher": "Confédération",
+  "jurisdiction": "CH",
+  "lang": "it",
+  "licence": "official act (art. 5 LDA)",
+  "in_repo": true,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.fedlex.admin.ch/eli/cc/1995/3867_3867_3867/fr",
+  "title": "OAMal (RS 832.102)",
+  "publisher": "Confédération",
+  "jurisdiction": "CH",
+  "lang": "fr",
+  "licence": "official act (art. 5 LDA)",
+  "in_repo": true,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.fedlex.admin.ch/eli/cc/1995/3867_3867_3867/de",
+  "title": "KVV (RS 832.102)",
+  "publisher": "Confédération",
+  "jurisdiction": "CH",
+  "lang": "de",
+  "licence": "official act (art. 5 LDA)",
+  "in_repo": true,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.fedlex.admin.ch/eli/cc/1995/3867_3867_3867/it",
+  "title": "OAMal (RS 832.102)",
+  "publisher": "Confédération",
+  "jurisdiction": "CH",
+  "lang": "it",
+  "licence": "official act (art. 5 LDA)",
+  "in_repo": true,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://silgeneve.ch/legis/data/rsg_j3_05.htm",
+  "title": "LaLAMal (rs/GE J 3 05)",
+  "publisher": "République et canton de Genève",
+  "jurisdiction": "GE",
+  "lang": "fr",
+  "licence": "official act (art. 5 LDA)",
+  "in_repo": true,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.belex.sites.be.ch/api/de/versions/3445/pdf_file",
+  "title": "EG KUMV (BSG 842.11)",
+  "publisher": "Kanton Bern",
+  "jurisdiction": "BE",
+  "lang": "de",
+  "licence": "official act (art. 5 LDA)",
+  "in_repo": true,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.belex.sites.be.ch/api/fr/versions/3445/pdf_file",
+  "title": "LiLAMAM (RSB 842.11)",
+  "publisher": "Canton de Berne",
+  "jurisdiction": "BE",
+  "lang": "fr",
+  "licence": "official act (art. 5 LDA)",
+  "in_repo": true,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://m3.ti.ch/CAN/RLeggi/public/index.php/raccolta-leggi/pdfatto/atto/371",
+  "title": "Regolamento LCAMal (RL 853.110)",
+  "publisher": "Repubblica e Cantone Ticino",
+  "jurisdiction": "TI",
+  "lang": "it",
+  "licence": "official act (art. 5 LDA)",
+  "in_repo": true,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.notes.zh.ch/appl/zhlex_r.nsf/WebView/523FF20124833D4DC1258E6400258FD3/$File/832.01_29.4.19_123.pdf",
+  "title": "EG KVG (LS 832.01)",
+  "publisher": "Kanton Zürich",
+  "jurisdiction": "ZH",
+  "lang": "de",
+  "licence": "official act (art. 5 LDA)",
+  "in_repo": true,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.lexfind.ch/tolv/251549/it",
+  "title": "LCAMal (RL 853.100)",
+  "publisher": "Repubblica e Cantone Ticino (testo via LexFind)",
+  "jurisdiction": "TI",
+  "lang": "it",
+  "licence": "official act (art. 5 LDA)",
+  "in_repo": true,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.belex.sites.be.ch/api/de/versions/3252/pdf_file",
+  "title": "KKVV (BSG 842.111.1)",
+  "publisher": "Kanton Bern",
+  "jurisdiction": "BE",
+  "lang": "de",
+  "licence": "official act (art. 5 LDA)",
+  "in_repo": true,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.bag.admin.ch/dam/fr/sd-web/92VbSMPCd--v/PG27-FB-Versichererwechsel_FR.pdf",
+  "title": "OFSP, fiche d'information « Changement de caisse-maladie : ce qu'un assuré doit savoir », 29.09.2026",
+  "publisher": "OFSP",
+  "jurisdiction": "CH",
+  "lang": "fr",
+  "licence": "authority publication (not redistributed)",
+  "in_repo": false,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.bag.admin.ch/dam/de/sd-web/92VbSMPCd--v/PG27-FB-Versichererwechsel_DE.pdf",
+  "title": "BAG, Faktenblatt «Wechsel der Krankenkasse – Information für Versicherte», 29.09.2026",
+  "publisher": "BAG",
+  "jurisdiction": "CH",
+  "lang": "de",
+  "licence": "authority publication (not redistributed)",
+  "in_repo": false,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.bag.admin.ch/dam/it/sd-web/92VbSMPCd--v/PG27-FB-Versichererwechsel_IT.pdf",
+  "title": "UFSP, scheda informativa «Cambiamento di cassa malati – Informazioni per gli assicurati», 29.09.2026",
+  "publisher": "UFSP",
+  "jurisdiction": "CH",
+  "lang": "it",
+  "licence": "authority publication (not redistributed)",
+  "in_repo": false,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.bag.admin.ch/dam/fr/sd-web/ZUZ4kwDN4gnu/Primes-conseil%202027.pdf",
+  "title": "OFSP, « Primes-Conseil », septembre 2026",
+  "publisher": "OFSP",
+  "jurisdiction": "CH",
+  "lang": "fr",
+  "licence": "authority publication (not redistributed)",
+  "in_repo": false,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.bag.admin.ch/dam/de/sd-web/ZUZ4kwDN4gnu/Pr%C3%A4mienberatung%202027.pdf",
+  "title": "BAG, «Prämienberatung», September 2026",
+  "publisher": "BAG",
+  "jurisdiction": "CH",
+  "lang": "de",
+  "licence": "authority publication (not redistributed)",
+  "in_repo": false,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.bag.admin.ch/dam/it/sd-web/ZUZ4kwDN4gnu/Consigli%20sui%20premi%202027.pdf",
+  "title": "UFSP, «Consigli sui premi», settembre 2026",
+  "publisher": "UFSP",
+  "jurisdiction": "CH",
+  "lang": "it",
+  "licence": "authority publication (not redistributed)",
+  "in_repo": false,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.bag.admin.ch/dam/fr/sd-web/eW3bxVwcU0qg/BAG_Ratgeber_Obligatorische_KV_f.pdf",
+  "title": "OFSP, guide « L'assurance-maladie obligatoire », 2026",
+  "publisher": "OFSP",
+  "jurisdiction": "CH",
+  "lang": "fr",
+  "licence": "authority publication (not redistributed)",
+  "in_repo": false,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.bag.admin.ch/dam/de/sd-web/eW3bxVwcU0qg/BAG_Ratgeber_Obligatorische_KV_d.pdf",
+  "title": "BAG, Ratgeber «Die obligatorische Krankenversicherung», 2026",
+  "publisher": "BAG",
+  "jurisdiction": "CH",
+  "lang": "de",
+  "licence": "authority publication (not redistributed)",
+  "in_repo": false,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.bag.admin.ch/dam/it/sd-web/eW3bxVwcU0qg/BAG_Ratgeber_Obligatorische_KV_i.pdf",
+  "title": "UFSP, guida «L'assicurazione malattie obbligatoria», 2026",
+  "publisher": "UFSP",
+  "jurisdiction": "CH",
+  "lang": "it",
+  "licence": "authority publication (not redistributed)",
+  "in_repo": false,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.priminfo.admin.ch/fr/zahlen-und-fakten/praemiengenehmigung",
+  "title": "Priminfo (OFSP), « Approbation des primes »",
+  "publisher": "OFSP",
+  "jurisdiction": "CH",
+  "lang": "fr",
+  "licence": "authority publication (not redistributed)",
+  "in_repo": false,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.priminfo.admin.ch/de/zahlen-und-fakten/praemiengenehmigung",
+  "title": "Priminfo (BAG), «Prämiengenehmigung»",
+  "publisher": "BAG",
+  "jurisdiction": "CH",
+  "lang": "de",
+  "licence": "authority publication (not redistributed)",
+  "in_repo": false,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.priminfo.admin.ch/it/zahlen-und-fakten/praemiengenehmigung",
+  "title": "Priminfo (UFSP), «Approvazione dei premi»",
+  "publisher": "UFSP",
+  "jurisdiction": "CH",
+  "lang": "it",
+  "licence": "authority publication (not redistributed)",
+  "in_repo": false,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www4.ti.ch/dss/ias/prestazioni-e-contributi/scheda/p/s/dettaglio/riduzione-dei-premi-dellassicurazione-malattia-ripam-1/riduzione-dei-premi-dellassicurazione-malattia-ripam",
+  "title": "IAS Ticino, « Riduzione dei premi dell’assicurazione malattia (RIPAM) »",
+  "publisher": "Istituto delle assicurazioni sociali (TI)",
+  "jurisdiction": "TI",
+  "lang": "it",
+  "licence": "authority publication (not redistributed)",
+  "in_repo": false,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.ge.ch/demander-subside-assurance-maladie-2026",
+  "title": "État de Genève, « Demander un subside d'assurance-maladie 2026 »",
+  "publisher": "République et canton de Genève",
+  "jurisdiction": "GE",
+  "lang": "fr",
+  "licence": "authority publication (not redistributed)",
+  "in_repo": false,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.asv.dij.be.ch/content/dam/asv_dij/dokumente/de/pr%C3%A4mienverbilligung--informationen/Faktenblatt%20Pr%C3%A4mienverbilligung%20im%20Kanton%20Bern_de.pdf",
+  "title": "ASV Bern, DIJ-Factsheet «Prämienverbilligung 2020» (Version November 2021)",
+  "publisher": "Kanton Bern, Amt für Sozialversicherungen",
+  "jurisdiction": "BE",
+  "lang": "de",
+  "licence": "authority publication (not redistributed)",
+  "in_repo": false,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.vd.ch/sante-soins-et-handicap/assurance-maladie/subside-a-lassurance-maladie",
+  "title": "État de Vaud, « Subside à l'assurance-maladie »",
+  "publisher": "État de Vaud",
+  "jurisdiction": "VD",
+  "lang": "fr",
+  "licence": "authority publication (not redistributed)",
+  "in_repo": false,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.vd.ch/ovam-conditions",
+  "title": "État de Vaud, « Conditions d'octroi et renouvellement du droit aux subsides »",
+  "publisher": "État de Vaud",
+  "jurisdiction": "VD",
+  "lang": "fr",
+  "licence": "authority publication (not redistributed)",
+  "in_repo": false,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.zh.ch/de/gesundheit/praemienverbilligung_krankenversicherung.html",
+  "title": "Kanton Zürich, «Prämienverbilligung Krankenversicherung»",
+  "publisher": "Kanton Zürich, Gesundheitsdirektion",
+  "jurisdiction": "ZH",
+  "lang": "de",
+  "licence": "authority publication (not redistributed)",
+  "in_repo": false,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.zh.ch/de-ls/gesundheit/praemienverbilligung_krankenversicherung.html",
+  "title": "Kanton Zürich, «Prämienverbilligung in Leichter Sprache»",
+  "publisher": "Kanton Zürich, Gesundheitsdirektion",
+  "jurisdiction": "ZH",
+  "lang": "de",
+  "licence": "authority publication (not redistributed)",
+  "in_repo": false,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.vd.ch/sante-soins-et-handicap/assurance-maladie/obligation-dassurance-maladie",
+  "title": "État de Vaud, « Obligation d'assurance maladie »",
+  "publisher": "État de Vaud",
+  "jurisdiction": "VD",
+  "lang": "fr",
+  "licence": "authority publication (not redistributed)",
+  "in_repo": false,
+  "accessed": "2026-10-15"
+ }
+]
