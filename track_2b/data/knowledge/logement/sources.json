@@ -1,0 +1,1502 @@
+{
+ "expert": "logement",
+ "built": "2026-10-15",
+ "note": "One entry per fetched page. Official acts: passages in data/knowledge/logement/passages.jsonl. Authority and Serafe pages: only URL and title here; passages rebuilt locally in work/knowledge/logement/passages_local.jsonl. Raw page text: work/knowledge/logement/raw/<raw_text_sha1>.txt (local).",
+ "sources": [
+  {
+   "url": "https://www.fedlex.admin.ch/eli/cc/2007/150/fr",
+   "title": "LRTV (RS 784.40)",
+   "publisher": "Confédération suisse",
+   "jurisdiction": "CH",
+   "lang": "fr",
+   "kind": "official act (in repo)",
+   "licence": "official act (art. 5 LDA)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "6e52a8814302996e974e5f28b53afa7c5204f5bf",
+   "passages": 5,
+   "topics": [
+    "household.fee.exemption",
+    "household.fee.invoice",
+    "household.fee.obligation"
+   ]
+  },
+  {
+   "url": "https://www.fedlex.admin.ch/eli/cc/2007/150/de",
+   "title": "RTVG (SR 784.40)",
+   "publisher": "Schweizerische Eidgenossenschaft",
+   "jurisdiction": "CH",
+   "lang": "de",
+   "kind": "official act (in repo)",
+   "licence": "official act (art. 5 LDA)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "53b1c32966dfb87317a092ad1238f0200c811911",
+   "passages": 5,
+   "topics": [
+    "household.fee.exemption",
+    "household.fee.invoice",
+    "household.fee.obligation"
+   ]
+  },
+  {
+   "url": "https://www.fedlex.admin.ch/eli/cc/2007/150/it",
+   "title": "LRTV (RS 784.40)",
+   "publisher": "Confederazione Svizzera",
+   "jurisdiction": "CH",
+   "lang": "it",
+   "kind": "official act (in repo)",
+   "licence": "official act (art. 5 LDA)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "c8b69ec1bf465ebe320a9028ff67ad923c54c29c",
+   "passages": 5,
+   "topics": [
+    "household.fee.exemption",
+    "household.fee.invoice",
+    "household.fee.obligation"
+   ]
+  },
+  {
+   "url": "https://www.fedlex.admin.ch/eli/cc/2007/151/fr",
+   "title": "ORTV (RS 784.401)",
+   "publisher": "Confédération suisse",
+   "jurisdiction": "CH",
+   "lang": "fr",
+   "kind": "official act (in repo)",
+   "licence": "official act (art. 5 LDA)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "07e55bbaa5ccf1b8d274cd9f2c525a23189631f6",
+   "passages": 4,
+   "topics": [
+    "household.fee.exemption",
+    "household.fee.invoice",
+    "household.fee.obligation"
+   ]
+  },
+  {
+   "url": "https://www.fedlex.admin.ch/eli/cc/2007/151/de",
+   "title": "RTVV (SR 784.401)",
+   "publisher": "Schweizerische Eidgenossenschaft",
+   "jurisdiction": "CH",
+   "lang": "de",
+   "kind": "official act (in repo)",
+   "licence": "official act (art. 5 LDA)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "9289f759aa91c74cc8ac349b25601b33c9026c33",
+   "passages": 4,
+   "topics": [
+    "household.fee.exemption",
+    "household.fee.invoice",
+    "household.fee.obligation"
+   ]
+  },
+  {
+   "url": "https://www.fedlex.admin.ch/eli/cc/2007/151/it",
+   "title": "ORTV (RS 784.401)",
+   "publisher": "Confederazione Svizzera",
+   "jurisdiction": "CH",
+   "lang": "it",
+   "kind": "official act (in repo)",
+   "licence": "official act (art. 5 LDA)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "2c98b76ffaaa65198eedadfbed47fc1c80b9cdc3",
+   "passages": 4,
+   "topics": [
+    "household.fee.exemption",
+    "household.fee.invoice",
+    "household.fee.obligation"
+   ]
+  },
+  {
+   "url": "https://www.fedlex.admin.ch/eli/cc/2006/619/fr",
+   "title": "LHR (RS 431.02)",
+   "publisher": "Confédération suisse",
+   "jurisdiction": "CH",
+   "lang": "fr",
+   "kind": "official act (in repo)",
+   "licence": "official act (art. 5 LDA)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "2f872249eb34b2f512b5c661d498d21c07a7f1f7",
+   "passages": 2,
+   "topics": [
+    "household.fee.obligation",
+    "housing.announce.deadline",
+    "housing.announce.documents"
+   ]
+  },
+  {
+   "url": "https://www.fedlex.admin.ch/eli/cc/2006/619/de",
+   "title": "RHG (SR 431.02)",
+   "publisher": "Schweizerische Eidgenossenschaft",
+   "jurisdiction": "CH",
+   "lang": "de",
+   "kind": "official act (in repo)",
+   "licence": "official act (art. 5 LDA)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "b35c1311d76cda475312cf0ec3b857f8d17446ee",
+   "passages": 2,
+   "topics": [
+    "household.fee.obligation",
+    "housing.announce.deadline",
+    "housing.announce.documents"
+   ]
+  },
+  {
+   "url": "https://www.fedlex.admin.ch/eli/cc/2006/619/it",
+   "title": "LArRa (RS 431.02)",
+   "publisher": "Confederazione Svizzera",
+   "jurisdiction": "CH",
+   "lang": "it",
+   "kind": "official act (in repo)",
+   "licence": "official act (art. 5 LDA)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "c530980cada518ce5d93d21229765a3550d27d0f",
+   "passages": 2,
+   "topics": [
+    "household.fee.obligation",
+    "housing.announce.deadline",
+    "housing.announce.documents"
+   ]
+  },
+  {
+   "url": "https://www.fedlex.admin.ch/eli/cc/2007/868/fr",
+   "title": "OHR (RS 431.021)",
+   "publisher": "Confédération suisse",
+   "jurisdiction": "CH",
+   "lang": "fr",
+   "kind": "official act (in repo)",
+   "licence": "official act (art. 5 LDA)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "fcb18d97888507a46f93c2509115a9a3a8791dd4",
+   "passages": 1,
+   "topics": [
+    "household.fee.exemption",
+    "household.fee.obligation"
+   ]
+  },
+  {
+   "url": "https://www.fedlex.admin.ch/eli/cc/2007/868/de",
+   "title": "RHV (SR 431.021)",
+   "publisher": "Schweizerische Eidgenossenschaft",
+   "jurisdiction": "CH",
+   "lang": "de",
+   "kind": "official act (in repo)",
+   "licence": "official act (art. 5 LDA)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "1095164103a992683956327d469a0ccfc14d9b15",
+   "passages": 1,
+   "topics": [
+    "household.fee.exemption",
+    "household.fee.obligation"
+   ]
+  },
+  {
+   "url": "https://www.fedlex.admin.ch/eli/cc/2007/868/it",
+   "title": "OArRa (RS 431.021)",
+   "publisher": "Confederazione Svizzera",
+   "jurisdiction": "CH",
+   "lang": "it",
+   "kind": "official act (in repo)",
+   "licence": "official act (art. 5 LDA)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "1220a2e312e07bb655827bc058cd2c71e089c4fe",
+   "passages": 1,
+   "topics": [
+    "household.fee.exemption",
+    "household.fee.obligation"
+   ]
+  },
+  {
+   "url": "https://www.fedlex.admin.ch/eli/cc/1991/1256_1256_1256/fr",
+   "title": "LHID (RS 642.14)",
+   "publisher": "Confédération suisse",
+   "jurisdiction": "CH",
+   "lang": "fr",
+   "kind": "official act (in repo)",
+   "licence": "official act (art. 5 LDA)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "3d3a140d05db48846c0b6e3f703efbb1c540e095",
+   "passages": 1,
+   "topics": [
+    "housing.intercantonal"
+   ]
+  },
+  {
+   "url": "https://www.fedlex.admin.ch/eli/cc/1991/1256_1256_1256/de",
+   "title": "StHG (SR 642.14)",
+   "publisher": "Schweizerische Eidgenossenschaft",
+   "jurisdiction": "CH",
+   "lang": "de",
+   "kind": "official act (in repo)",
+   "licence": "official act (art. 5 LDA)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "5aef8c31d6f6cfdaccd8e66013278bf6e4f26dcd",
+   "passages": 1,
+   "topics": [
+    "housing.intercantonal"
+   ]
+  },
+  {
+   "url": "https://www.fedlex.admin.ch/eli/cc/1991/1256_1256_1256/it",
+   "title": "LAID (RS 642.14)",
+   "publisher": "Confederazione Svizzera",
+   "jurisdiction": "CH",
+   "lang": "it",
+   "kind": "official act (in repo)",
+   "licence": "official act (art. 5 LDA)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "420300004fb95532ff506cc4b3dded793e49518d",
+   "passages": 1,
+   "topics": [
+    "housing.intercantonal"
+   ]
+  },
+  {
+   "url": "https://www.fedlex.admin.ch/eli/cc/1991/1184_1184_1184/fr",
+   "title": "LIFD (RS 642.11)",
+   "publisher": "Confédération suisse",
+   "jurisdiction": "CH",
+   "lang": "fr",
+   "kind": "official act (in repo)",
+   "licence": "official act (art. 5 LDA)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "c8e2b89fc5bb1ef84f731a51bca53cc975fe72ae",
+   "passages": 1,
+   "topics": [
+    "housing.intercantonal"
+   ]
+  },
+  {
+   "url": "https://www.fedlex.admin.ch/eli/cc/1991/1184_1184_1184/de",
+   "title": "DBG (SR 642.11)",
+   "publisher": "Schweizerische Eidgenossenschaft",
+   "jurisdiction": "CH",
+   "lang": "de",
+   "kind": "official act (in repo)",
+   "licence": "official act (art. 5 LDA)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "b2be4d73503dcfb9b5e004136dc01ae9ea127ed9",
+   "passages": 1,
+   "topics": [
+    "housing.intercantonal"
+   ]
+  },
+  {
+   "url": "https://www.fedlex.admin.ch/eli/cc/1991/1184_1184_1184/it",
+   "title": "LIFD (RS 642.11)",
+   "publisher": "Confederazione Svizzera",
+   "jurisdiction": "CH",
+   "lang": "it",
+   "kind": "official act (in repo)",
+   "licence": "official act (art. 5 LDA)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "8cc56c408e962b1939d9b4188e51249f578b5936",
+   "passages": 1,
+   "topics": [
+    "housing.intercantonal"
+   ]
+  },
+  {
+   "url": "https://www.fedlex.admin.ch/eli/cc/1995/1328_1328_1328/fr",
+   "title": "LAMal (RS 832.10)",
+   "publisher": "Confédération suisse",
+   "jurisdiction": "CH",
+   "lang": "fr",
+   "kind": "official act (in repo)",
+   "licence": "official act (art. 5 LDA)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "91ee8a650812c48007891da3528f2828dbbbf7a3",
+   "passages": 1,
+   "topics": [
+    "housing.intercantonal"
+   ]
+  },
+  {
+   "url": "https://www.fedlex.admin.ch/eli/cc/1995/1328_1328_1328/de",
+   "title": "KVG (SR 832.10)",
+   "publisher": "Schweizerische Eidgenossenschaft",
+   "jurisdiction": "CH",
+   "lang": "de",
+   "kind": "official act (in repo)",
+   "licence": "official act (art. 5 LDA)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "6f1a7858f6abe8c5759ad67bbf39dc2acdeca9ba",
+   "passages": 1,
+   "topics": [
+    "housing.intercantonal"
+   ]
+  },
+  {
+   "url": "https://www.fedlex.admin.ch/eli/cc/1995/1328_1328_1328/it",
+   "title": "LAMal (RS 832.10)",
+   "publisher": "Confederazione Svizzera",
+   "jurisdiction": "CH",
+   "lang": "it",
+   "kind": "official act (in repo)",
+   "licence": "official act (art. 5 LDA)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "9e59e808ab71a104b2620119cb742c15931a6bb6",
+   "passages": 1,
+   "topics": [
+    "housing.intercantonal"
+   ]
+  },
+  {
+   "url": "https://www.fedlex.admin.ch/eli/cc/1976/2423_2423_2423/fr",
+   "title": "OAC (RS 741.51)",
+   "publisher": "Confédération suisse",
+   "jurisdiction": "CH",
+   "lang": "fr",
+   "kind": "official act (in repo)",
+   "licence": "official act (art. 5 LDA)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "b635fbe0f81bfa8b229cbd20e9dc12cbca205843",
+   "passages": 3,
+   "topics": [
+    "housing.intercantonal"
+   ]
+  },
+  {
+   "url": "https://www.fedlex.admin.ch/eli/cc/1976/2423_2423_2423/de",
+   "title": "VZV (SR 741.51)",
+   "publisher": "Schweizerische Eidgenossenschaft",
+   "jurisdiction": "CH",
+   "lang": "de",
+   "kind": "official act (in repo)",
+   "licence": "official act (art. 5 LDA)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "44b13b17f9ef69f32abc28b2d4d8fd8e9b6103bc",
+   "passages": 2,
+   "topics": [
+    "housing.intercantonal"
+   ]
+  },
+  {
+   "url": "https://www.fedlex.admin.ch/eli/cc/1976/2423_2423_2423/it",
+   "title": "OAC (RS 741.51)",
+   "publisher": "Confederazione Svizzera",
+   "jurisdiction": "CH",
+   "lang": "it",
+   "kind": "official act (in repo)",
+   "licence": "official act (art. 5 LDA)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "49c75eb1f21ba419906096db0fc7ecf43358ce18",
+   "passages": 3,
+   "topics": [
+    "housing.intercantonal"
+   ]
+  },
+  {
+   "url": "https://www.notes.zh.ch/appl/zhlex_r.nsf/WebView/E6292D5287D17248C125825600453D0A/$File/142.1_11.5.15_100.pdf",
+   "title": "ZH, Gesetz über das Meldewesen und die Einwohnerregister (MERG, LS 142.1, Stand 1.4.2018)",
+   "publisher": "Kanton Zürich",
+   "jurisdiction": "ZH",
+   "lang": "de",
+   "kind": "official act (in repo)",
+   "licence": "official act (art. 5 LDA)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "3d4bbd47ca8877a4e9ccc6b59c25f7a69d5858cf",
+   "passages": 5,
+   "topics": [
+    "housing.announce.deadline",
+    "housing.announce.documents"
+   ]
+  },
+  {
+   "url": "https://www.lexfind.ch/tolv/117414/fr",
+   "title": "VD, Loi sur le contrôle des habitants (LCH, BLV 142.01)",
+   "publisher": "Canton de Vaud",
+   "jurisdiction": "VD",
+   "lang": "fr",
+   "kind": "official act (in repo)",
+   "licence": "official act (art. 5 LDA)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "a1573db536cbfa8c2a6d69b7bff62ec171128e39",
+   "passages": 7,
+   "topics": [
+    "housing.announce.deadline",
+    "housing.announce.documents"
+   ]
+  },
+  {
+   "url": "https://silgeneve.ch/legis/program/books/rsg/pdf/rsg_f2_25.pdf",
+   "title": "GE, Loi d'application de la loi fédérale sur l'harmonisation des registres des habitants et d'autres registres officiels de personnes (LaLHR, rs/GE F 2 25)",
+   "publisher": "République et canton de Genève",
+   "jurisdiction": "GE",
+   "lang": "fr",
+   "kind": "official act (in repo)",
+   "licence": "official act (art. 5 LDA)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "803c7f30e12a3c094aba3399b6fdf800527763ac",
+   "passages": 3,
+   "topics": [
+    "housing.announce.deadline",
+    "housing.intercantonal"
+   ]
+  },
+  {
+   "url": "https://silgeneve.ch/legis/program/books/rsg/pdf/rsg_f2_05.pdf",
+   "title": "GE, Loi sur le séjour et l'établissement des Confédérés (LSEC, rs/GE F 2 05)",
+   "publisher": "République et canton de Genève",
+   "jurisdiction": "GE",
+   "lang": "fr",
+   "kind": "official act (in repo)",
+   "licence": "official act (art. 5 LDA)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "080624ad15068b4935fd89ecc2b2c82bc1139318",
+   "passages": 6,
+   "topics": [
+    "housing.announce.deadline",
+    "housing.announce.documents",
+    "housing.intercantonal"
+   ]
+  },
+  {
+   "url": "https://silgeneve.ch/legis/program/books/rsg/pdf/rsg_f2_05p01.pdf",
+   "title": "GE, Règlement d'application de la loi sur le séjour et l'établissement des Confédérés (RSEC, rs/GE F 2 05.01)",
+   "publisher": "République et canton de Genève",
+   "jurisdiction": "GE",
+   "lang": "fr",
+   "kind": "official act (in repo)",
+   "licence": "official act (art. 5 LDA)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "2c651c2180988d5f90d89bbfad0c8342a3b4e1df",
+   "passages": 2,
+   "topics": [
+    "housing.announce.deadline",
+    "housing.announce.documents"
+   ]
+  },
+  {
+   "url": "https://be.lexwork.naz.ch/de/dta/122.11.pdf",
+   "title": "BE, Gesetz über Niederlassung und Aufenthalt der Schweizerinnen und Schweizer (NAG, BSG 122.11, Stand 01.09.2026)",
+   "publisher": "Kanton Bern",
+   "jurisdiction": "BE",
+   "lang": "de",
+   "kind": "official act (in repo)",
+   "licence": "official act (art. 5 LDA)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "5148b8ee8a77758ca594aa398850c0ca7e67d029",
+   "passages": 5,
+   "topics": [
+    "housing.announce.deadline",
+    "housing.announce.documents"
+   ]
+  },
+  {
+   "url": "https://be.lexwork.naz.ch/fr/dta/122.11.pdf",
+   "title": "BE, Loi sur l'établissement et le séjour des Suissesses et des Suisses (LES, RSB 122.11, état au 01.09.2026)",
+   "publisher": "Canton de Berne",
+   "jurisdiction": "BE",
+   "lang": "fr",
+   "kind": "official act (in repo)",
+   "licence": "official act (art. 5 LDA)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "4824d3bcdcf197c0d1d794e4c81ffaa5f60ec620",
+   "passages": 5,
+   "topics": [
+    "housing.announce.deadline",
+    "housing.announce.documents"
+   ]
+  },
+  {
+   "url": "https://m3.ti.ch/CAN/RLeggi/public/index.php/raccolta-leggi/pdfatto/atto/18",
+   "title": "TI, Regolamento della legge di applicazione della legge federale sull'armonizzazione dei registri e concernente il controllo degli abitanti e la banca dati movimento della popolazione (RL 144.110)",
+   "publisher": "Repubblica e Cantone Ticino",
+   "jurisdiction": "TI",
+   "lang": "it",
+   "kind": "official act (in repo)",
+   "licence": "official act (art. 5 LDA)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "42b8c0a3803731ea32fdfa748e7a9256c64effce",
+   "passages": 7,
+   "topics": [
+    "housing.announce.deadline",
+    "housing.announce.documents",
+    "housing.intercantonal"
+   ]
+  },
+  {
+   "url": "https://be.lexwork.naz.ch/de/dta/122.161.pdf",
+   "title": "BE, Verordnung über Niederlassung und Aufenthalt der Schweizerinnen und Schweizer (NAV, BSG 122.161, Stand 01.02.2024)",
+   "publisher": "Kanton Bern",
+   "jurisdiction": "BE",
+   "lang": "de",
+   "kind": "official act (in repo)",
+   "licence": "official act (art. 5 LDA)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "89af4058dbf7a9172cd2967596359dafaf9224fe",
+   "passages": 4,
+   "topics": [
+    "housing.announce.deadline",
+    "housing.announce.documents",
+    "housing.intercantonal"
+   ]
+  },
+  {
+   "url": "https://be.lexwork.naz.ch/fr/dta/122.161.pdf",
+   "title": "BE, Ordonnance sur l'établissement et le séjour des Suissesses et des Suisses (OES, RSB 122.161, état au 01.02.2024)",
+   "publisher": "Canton de Berne",
+   "jurisdiction": "BE",
+   "lang": "fr",
+   "kind": "official act (in repo)",
+   "licence": "official act (art. 5 LDA)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "96dc82f742e6c9593922297034a6a10c34a8b208",
+   "passages": 4,
+   "topics": [
+    "housing.announce.deadline",
+    "housing.announce.documents",
+    "housing.intercantonal"
+   ]
+  },
+  {
+   "url": "https://www.notes.zh.ch/appl/zhlex_r.nsf/WebView/8E4768A888A49ADAC125852F0041014B/$File/142.11_14.2.18_108.pdf",
+   "title": "ZH, Verordnung über das Meldewesen und die Einwohnerregister (MERV, LS 142.11, Stand 1.4.2020)",
+   "publisher": "Kanton Zürich",
+   "jurisdiction": "ZH",
+   "lang": "de",
+   "kind": "official act (in repo)",
+   "licence": "official act (art. 5 LDA)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "db03c3e0fff70afc6afa3192c877ddfea7b96eac",
+   "passages": 2,
+   "topics": [
+    "housing.announce.documents"
+   ]
+  },
+  {
+   "url": "https://www.locarno.ch/files/documenti/023-1%20OM%20notifica%20persone.pdf",
+   "title": "TI, Città di Locarno, Ordinanza municipale che regola la notifica delle persone residenti sul territorio del Comune di Locarno e la trasmissione dei dati personali (023.1)",
+   "publisher": "Città di Locarno",
+   "jurisdiction": "TI",
+   "lang": "it",
+   "kind": "official act (in repo)",
+   "licence": "official act (art. 5 LDA)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "56c1ada6100232eb16096cebaccfa629c6924cad",
+   "passages": 3,
+   "topics": [
+    "housing.announce.deadline",
+    "housing.announce.documents",
+    "housing.intercantonal"
+   ]
+  },
+  {
+   "url": "https://www.serafe.ch/fr/redevance/ensemble-de-la-redevance/",
+   "title": "Serafe, « Vue d'ensemble de la redevance » (serafe.ch)",
+   "publisher": "SERAFE AG (organe de perception de la redevance, mandaté par la Confédération)",
+   "jurisdiction": "CH",
+   "lang": "fr",
+   "kind": "authority page (local only)",
+   "licence": "authority page: URL, title and passage only, rebuilt locally (not redistributed)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "f40b3c516b7304c45d5b9ef0e99cf59e0756ce60",
+   "passages": 1,
+   "topics": [
+    "household.fee.invoice",
+    "household.fee.obligation"
+   ]
+  },
+  {
+   "url": "https://www.serafe.ch/fr/redevance/facturation/",
+   "title": "Serafe, « Facturation » (serafe.ch)",
+   "publisher": "SERAFE AG (organe de perception de la redevance, mandaté par la Confédération)",
+   "jurisdiction": "CH",
+   "lang": "fr",
+   "kind": "authority page (local only)",
+   "licence": "authority page: URL, title and passage only, rebuilt locally (not redistributed)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "361e5e2df0d914cbf28c2987b243f9914e1013ed",
+   "passages": 4,
+   "topics": [
+    "household.fee.invoice",
+    "household.fee.obligation"
+   ]
+  },
+  {
+   "url": "https://www.serafe.ch/fr/redevance/recouvrement/",
+   "title": "Serafe, « Recouvrement » (serafe.ch)",
+   "publisher": "SERAFE AG (organe de perception de la redevance, mandaté par la Confédération)",
+   "jurisdiction": "CH",
+   "lang": "fr",
+   "kind": "authority page (local only)",
+   "licence": "authority page: URL, title and passage only, rebuilt locally (not redistributed)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "a8331745e219d6681e926c94b77c53bdcc7e2713",
+   "passages": 1,
+   "topics": [
+    "household.fee.invoice",
+    "household.fee.obligation"
+   ]
+  },
+  {
+   "url": "https://www.serafe.ch/fr/exoneration/principe/",
+   "title": "Serafe, « Exonération : principe » (serafe.ch)",
+   "publisher": "SERAFE AG (organe de perception de la redevance, mandaté par la Confédération)",
+   "jurisdiction": "CH",
+   "lang": "fr",
+   "kind": "authority page (local only)",
+   "licence": "authority page: URL, title and passage only, rebuilt locally (not redistributed)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "b1900a4034e5453f2ff842393004fa9b04815aab",
+   "passages": 1,
+   "topics": [
+    "household.fee.exemption",
+    "household.fee.invoice",
+    "household.fee.obligation"
+   ]
+  },
+  {
+   "url": "https://www.serafe.ch/fr/exoneration/personnes-sourdes-aveugles/",
+   "title": "Serafe, « Exonération : personnes sourdes-aveugles » (serafe.ch)",
+   "publisher": "SERAFE AG (organe de perception de la redevance, mandaté par la Confédération)",
+   "jurisdiction": "CH",
+   "lang": "fr",
+   "kind": "authority page (local only)",
+   "licence": "authority page: URL, title and passage only, rebuilt locally (not redistributed)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "2e2824b75711d00bd9e5803f426072168850080f",
+   "passages": 2,
+   "topics": [
+    "household.fee.exemption",
+    "household.fee.invoice",
+    "household.fee.obligation"
+   ]
+  },
+  {
+   "url": "https://www.serafe.ch/fr/questions-et-reponses/faq/",
+   "title": "Serafe, « FAQ » (serafe.ch)",
+   "publisher": "SERAFE AG (organe de perception de la redevance, mandaté par la Confédération)",
+   "jurisdiction": "CH",
+   "lang": "fr",
+   "kind": "authority page (local only)",
+   "licence": "authority page: URL, title and passage only, rebuilt locally (not redistributed)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "07d7f1db98a6eef856028aa60868e5ad6233192e",
+   "passages": 5,
+   "topics": [
+    "household.fee.invoice",
+    "household.fee.obligation"
+   ]
+  },
+  {
+   "url": "https://www.serafe.ch/de/abgabe/abgabeuebersicht/",
+   "title": "Serafe, « Abgabeübersicht » (serafe.ch)",
+   "publisher": "SERAFE AG (organe de perception de la redevance, mandaté par la Confédération)",
+   "jurisdiction": "CH",
+   "lang": "de",
+   "kind": "authority page (local only)",
+   "licence": "authority page: URL, title and passage only, rebuilt locally (not redistributed)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "a92cc449fa3f099f0574756649f6df005c4c0a3b",
+   "passages": 1,
+   "topics": [
+    "household.fee.invoice",
+    "household.fee.obligation"
+   ]
+  },
+  {
+   "url": "https://www.serafe.ch/de/abgabe/rechnungsstellung/",
+   "title": "Serafe, « Rechnungsstellung » (serafe.ch)",
+   "publisher": "SERAFE AG (organe de perception de la redevance, mandaté par la Confédération)",
+   "jurisdiction": "CH",
+   "lang": "de",
+   "kind": "authority page (local only)",
+   "licence": "authority page: URL, title and passage only, rebuilt locally (not redistributed)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "1eef8e42905967c3b329ad6ae84e8996d9834a2b",
+   "passages": 3,
+   "topics": [
+    "household.fee.invoice",
+    "household.fee.obligation"
+   ]
+  },
+  {
+   "url": "https://www.serafe.ch/de/abgabe/inkasso/",
+   "title": "Serafe, « Inkasso » (serafe.ch)",
+   "publisher": "SERAFE AG (organe de perception de la redevance, mandaté par la Confédération)",
+   "jurisdiction": "CH",
+   "lang": "de",
+   "kind": "authority page (local only)",
+   "licence": "authority page: URL, title and passage only, rebuilt locally (not redistributed)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "b62589c44dc5234420b9e60f5e7c7eca1b810ccd",
+   "passages": 1,
+   "topics": [
+    "household.fee.invoice",
+    "household.fee.obligation"
+   ]
+  },
+  {
+   "url": "https://www.serafe.ch/de/abgabebefreiung/grundsatz/",
+   "title": "Serafe, « Abgabebefreiung: Grundsatz » (serafe.ch)",
+   "publisher": "SERAFE AG (organe de perception de la redevance, mandaté par la Confédération)",
+   "jurisdiction": "CH",
+   "lang": "de",
+   "kind": "authority page (local only)",
+   "licence": "authority page: URL, title and passage only, rebuilt locally (not redistributed)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "0712f2fb30391b727709d9f7c657f13518626215",
+   "passages": 1,
+   "topics": [
+    "household.fee.exemption",
+    "household.fee.invoice",
+    "household.fee.obligation"
+   ]
+  },
+  {
+   "url": "https://www.serafe.ch/de/abgabebefreiung/taubblindenhaushalte/",
+   "title": "Serafe, « Abgabebefreiung: Taubblindenhaushalte » (serafe.ch)",
+   "publisher": "SERAFE AG (organe de perception de la redevance, mandaté par la Confédération)",
+   "jurisdiction": "CH",
+   "lang": "de",
+   "kind": "authority page (local only)",
+   "licence": "authority page: URL, title and passage only, rebuilt locally (not redistributed)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "87d9dfce2f38994ecfc1523407b80b546daccda4",
+   "passages": 1,
+   "topics": [
+    "household.fee.exemption",
+    "household.fee.invoice",
+    "household.fee.obligation"
+   ]
+  },
+  {
+   "url": "https://www.serafe.ch/de/fragen-antworten/fragen-antworten/",
+   "title": "Serafe, « Fragen & Antworten » (serafe.ch)",
+   "publisher": "SERAFE AG (organe de perception de la redevance, mandaté par la Confédération)",
+   "jurisdiction": "CH",
+   "lang": "de",
+   "kind": "authority page (local only)",
+   "licence": "authority page: URL, title and passage only, rebuilt locally (not redistributed)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "5e34ebc063a957db39155ea0e9565eecb23f46a4",
+   "passages": 6,
+   "topics": [
+    "household.fee.invoice",
+    "household.fee.obligation"
+   ]
+  },
+  {
+   "url": "https://www.serafe.ch/it/il-canone/panoramica-del-canone/",
+   "title": "Serafe, « Panoramica del canone » (serafe.ch)",
+   "publisher": "SERAFE AG (organe de perception de la redevance, mandaté par la Confédération)",
+   "jurisdiction": "CH",
+   "lang": "it",
+   "kind": "authority page (local only)",
+   "licence": "authority page: URL, title and passage only, rebuilt locally (not redistributed)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "422eb8bb9c6f5eaa40a1e7d6c87f93e27d2269bc",
+   "passages": 1,
+   "topics": [
+    "household.fee.invoice",
+    "household.fee.obligation"
+   ]
+  },
+  {
+   "url": "https://www.serafe.ch/it/il-canone/fatturazione/",
+   "title": "Serafe, « Fatturazione » (serafe.ch)",
+   "publisher": "SERAFE AG (organe de perception de la redevance, mandaté par la Confédération)",
+   "jurisdiction": "CH",
+   "lang": "it",
+   "kind": "authority page (local only)",
+   "licence": "authority page: URL, title and passage only, rebuilt locally (not redistributed)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "bc3dc272c635e62d9b8de6b343dcdea9640d1e59",
+   "passages": 4,
+   "topics": [
+    "household.fee.invoice",
+    "household.fee.obligation"
+   ]
+  },
+  {
+   "url": "https://www.serafe.ch/it/il-canone/recupero-crediti/",
+   "title": "Serafe, « Recupero crediti » (serafe.ch)",
+   "publisher": "SERAFE AG (organe de perception de la redevance, mandaté par la Confédération)",
+   "jurisdiction": "CH",
+   "lang": "it",
+   "kind": "authority page (local only)",
+   "licence": "authority page: URL, title and passage only, rebuilt locally (not redistributed)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "b75d36b00bb6f181109fc40dba297186b0d1bce6",
+   "passages": 1,
+   "topics": [
+    "household.fee.invoice"
+   ]
+  },
+  {
+   "url": "https://www.serafe.ch/it/esenzione-dal-canone/principio/",
+   "title": "Serafe, « Esenzione: principio » (serafe.ch)",
+   "publisher": "SERAFE AG (organe de perception de la redevance, mandaté par la Confédération)",
+   "jurisdiction": "CH",
+   "lang": "it",
+   "kind": "authority page (local only)",
+   "licence": "authority page: URL, title and passage only, rebuilt locally (not redistributed)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "0b2cc7be220e26334dd8b7179d2805c349aabaeb",
+   "passages": 1,
+   "topics": [
+    "household.fee.exemption",
+    "household.fee.invoice",
+    "household.fee.obligation"
+   ]
+  },
+  {
+   "url": "https://www.serafe.ch/it/esenzione-dal-canone/economie-domestiche-di-sordociechi/",
+   "title": "Serafe, « Esenzione: economie domestiche di sordociechi » (serafe.ch)",
+   "publisher": "SERAFE AG (organe de perception de la redevance, mandaté par la Confédération)",
+   "jurisdiction": "CH",
+   "lang": "it",
+   "kind": "authority page (local only)",
+   "licence": "authority page: URL, title and passage only, rebuilt locally (not redistributed)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "f2cec925451413d1f5b14af36c4c56be25f69a7b",
+   "passages": 2,
+   "topics": [
+    "household.fee.exemption",
+    "household.fee.invoice",
+    "household.fee.obligation"
+   ]
+  },
+  {
+   "url": "https://www.serafe.ch/it/domande-e-risposte/faq/",
+   "title": "Serafe, « FAQ » (serafe.ch)",
+   "publisher": "SERAFE AG (organe de perception de la redevance, mandaté par la Confédération)",
+   "jurisdiction": "CH",
+   "lang": "it",
+   "kind": "authority page (local only)",
+   "licence": "authority page: URL, title and passage only, rebuilt locally (not redistributed)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "4cf70291a542011d36a03f74a097baefe7a582ed",
+   "passages": 8,
+   "topics": [
+    "household.fee.invoice",
+    "household.fee.obligation"
+   ]
+  },
+  {
+   "url": "https://www.serafe.ch/de/abgabebefreiung/personen-mit-ergaenzungsleistungen/",
+   "title": "Serafe, « Abgabebefreiung: Personen mit Ergänzungsleistungen » (serafe.ch)",
+   "publisher": "SERAFE AG (organe de perception de la redevance, mandaté par la Confédération)",
+   "jurisdiction": "CH",
+   "lang": "de",
+   "kind": "authority page (local only)",
+   "licence": "authority page: URL, title and passage only, rebuilt locally (not redistributed)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "8485d798424f7ceefd7dec71d933283d18d2eb60",
+   "passages": 1,
+   "topics": [
+    "household.fee.exemption",
+    "household.fee.obligation"
+   ]
+  },
+  {
+   "url": "https://www.ge.ch/annoncer-mon-arrivee-ocpm/annonce-arrivee-geneve-suisses",
+   "title": "ge.ch, Annonce d'arrivée à Genève pour les Suisses (OCPM): pour qui, quand",
+   "publisher": "République et canton de Genève",
+   "jurisdiction": "GE",
+   "lang": "fr",
+   "kind": "authority page (local only)",
+   "licence": "authority page: URL, title and passage only, rebuilt locally (not redistributed)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "7319cb39b3a1a1e72fe25e7d0c7ba111bd30dc9e",
+   "passages": 2,
+   "topics": [
+    "housing.announce.deadline",
+    "housing.announce.documents",
+    "housing.intercantonal"
+   ]
+  },
+  {
+   "url": "https://www.ge.ch/annoncer-mon-arrivee-ocpm/changement-canton-arrivee-provenance-autre-canton",
+   "title": "ge.ch, Changement de canton - Arrivée en provenance d'un autre canton (OCPM): pour qui, quand, conditions",
+   "publisher": "République et canton de Genève",
+   "jurisdiction": "GE",
+   "lang": "fr",
+   "kind": "authority page (local only)",
+   "licence": "authority page: URL, title and passage only, rebuilt locally (not redistributed)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "81c41a7c6445dc2fef22e8ff990a10559853c465",
+   "passages": 2,
+   "topics": [
+    "housing.announce.deadline",
+    "housing.announce.documents",
+    "housing.intercantonal"
+   ]
+  },
+  {
+   "url": "https://www.ge.ch/annoncer-changement-adresse-geneve/annoncer-changement-adresse",
+   "title": "ge.ch, Annoncer un changement d'adresse à Genève (OCPM): pour qui, quand, conditions",
+   "publisher": "République et canton de Genève",
+   "jurisdiction": "GE",
+   "lang": "fr",
+   "kind": "authority page (local only)",
+   "licence": "authority page: URL, title and passage only, rebuilt locally (not redistributed)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "71016e64bffe3442f1293dec41dd494dd37d534f",
+   "passages": 2,
+   "topics": [
+    "housing.announce.deadline",
+    "housing.announce.documents"
+   ]
+  },
+  {
+   "url": "https://www.ge.ch/annoncer-changement-adresse-ocv",
+   "title": "ge.ch, Annoncer un changement d'adresse à l'OCV (Office cantonal des véhicules)",
+   "publisher": "République et canton de Genève",
+   "jurisdiction": "GE",
+   "lang": "fr",
+   "kind": "authority page (local only)",
+   "licence": "authority page: URL, title and passage only, rebuilt locally (not redistributed)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "b1dfaae20075c563a492e7e4919a8403fb3c250c",
+   "passages": 1,
+   "topics": [
+    "housing.announce.deadline",
+    "housing.intercantonal"
+   ]
+  },
+  {
+   "url": "https://www.ge.ch/annoncer-mon-depart-ocpm",
+   "title": "ge.ch, Annoncer mon départ à l'OCPM: l'essentiel en bref",
+   "publisher": "République et canton de Genève",
+   "jurisdiction": "GE",
+   "lang": "fr",
+   "kind": "authority page (local only)",
+   "licence": "authority page: URL, title and passage only, rebuilt locally (not redistributed)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "d0b85592d320a8f26d09c09c7295bd434f55b526",
+   "passages": 1,
+   "topics": [
+    "housing.announce.deadline",
+    "housing.intercantonal"
+   ]
+  },
+  {
+   "url": "https://www.bern.ch/themen/umzug",
+   "title": "Stadt Bern, Zuzug, Umzug und Wegzug – Heimatschein: Änderungen per 1. Februar 2024",
+   "publisher": "Stadt Bern",
+   "jurisdiction": "BE",
+   "lang": "de",
+   "kind": "authority page (local only)",
+   "licence": "authority page: URL, title and passage only, rebuilt locally (not redistributed)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "dd82ed5247e57370b10c1f885426cfb7d77d30fd",
+   "passages": 4,
+   "topics": [
+    "housing.announce.deadline",
+    "housing.announce.documents",
+    "housing.intercantonal"
+   ]
+  },
+  {
+   "url": "https://www.zh.ch/de/mobilitaet/fahrzeuge-kontrollschilder/umzug-melden.html",
+   "title": "Kanton Zürich, Strassenverkehrsamt – Umzug innerhalb oder in den Kanton Zürich melden",
+   "publisher": "Kanton Zürich",
+   "jurisdiction": "ZH",
+   "lang": "de",
+   "kind": "authority page (local only)",
+   "licence": "authority page: URL, title and passage only, rebuilt locally (not redistributed)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "def7a60ade2123666e689abf853a9a9b1552a0db",
+   "passages": 1,
+   "topics": [
+    "housing.intercantonal"
+   ]
+  },
+  {
+   "url": "https://www.ch.ch/fr/logement/demenagement/annonce-de-depart-et-d-arrivee/",
+   "title": "ch.ch, « Annonce de départ et d'arrivée auprès de la commune de domicile »",
+   "publisher": "ch.ch (Chancellerie fédérale, cantons et communes)",
+   "jurisdiction": "CH",
+   "lang": "fr",
+   "kind": "authority page (local only)",
+   "licence": "authority page: URL, title and passage only, rebuilt locally (not redistributed)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "05ec6f3b1870479ff94cee69ca48fc83babeef01",
+   "passages": 2,
+   "topics": [
+    "housing.announce.deadline",
+    "housing.announce.documents",
+    "housing.intercantonal"
+   ]
+  },
+  {
+   "url": "https://www.ch.ch/de/wohnen/umzug/ab-und-anmelden-bei-der-wohngemeinde/",
+   "title": "ch.ch, « Abmelden und Anmelden bei der Wohngemeinde »",
+   "publisher": "ch.ch (Bundeskanzlei, Kantone und Gemeinden)",
+   "jurisdiction": "CH",
+   "lang": "de",
+   "kind": "authority page (local only)",
+   "licence": "authority page: URL, title and passage only, rebuilt locally (not redistributed)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "233a99531b7f221ce180bc8e59c309bc254aa3ab",
+   "passages": 1,
+   "topics": [
+    "housing.announce.deadline",
+    "housing.announce.documents",
+    "housing.intercantonal"
+   ]
+  },
+  {
+   "url": "https://www.ch.ch/it/abitazioni/trasloco/informare-il-comune-di-partenza-e-arrivo/",
+   "title": "ch.ch, « Informare il Comune di partenza e quello di arrivo »",
+   "publisher": "ch.ch (Cancelleria federale, Cantoni e Comuni)",
+   "jurisdiction": "CH",
+   "lang": "it",
+   "kind": "authority page (local only)",
+   "licence": "authority page: URL, title and passage only, rebuilt locally (not redistributed)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "572acf239079efe6ec6ad023ade9d7f99f959e78",
+   "passages": 2,
+   "topics": [
+    "housing.announce.deadline",
+    "housing.announce.documents",
+    "housing.intercantonal"
+   ]
+  },
+  {
+   "url": "https://www.ch.ch/fr/logement/demenagement/aide-memoire-pour-un-demenagement-reussi/",
+   "title": "ch.ch, « Aide-mémoire pour un déménagement réussi »",
+   "publisher": "ch.ch (Chancellerie fédérale, cantons et communes)",
+   "jurisdiction": "CH",
+   "lang": "fr",
+   "kind": "authority page (local only)",
+   "licence": "authority page: URL, title and passage only, rebuilt locally (not redistributed)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "2168ece0db61494f5ac1b887adef013840d5476c",
+   "passages": 3,
+   "topics": [
+    "housing.announce.deadline",
+    "housing.intercantonal"
+   ]
+  },
+  {
+   "url": "https://www.ch.ch/de/wohnen/umzug/checkliste-fur-den-umzug/",
+   "title": "ch.ch, « Checkliste für den Umzug »",
+   "publisher": "ch.ch (Bundeskanzlei, Kantone und Gemeinden)",
+   "jurisdiction": "CH",
+   "lang": "de",
+   "kind": "authority page (local only)",
+   "licence": "authority page: URL, title and passage only, rebuilt locally (not redistributed)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "95faddc33fb990af19922b2c555cabd6108f8de5",
+   "passages": 2,
+   "topics": [
+    "household.fee.invoice",
+    "housing.announce.deadline",
+    "housing.intercantonal"
+   ]
+  },
+  {
+   "url": "https://www.ch.ch/it/abitazioni/trasloco/lista-di-controllo-per-il-trasloco/",
+   "title": "ch.ch, « Lista di controllo per il trasloco »",
+   "publisher": "ch.ch (Cancelleria federale, Cantoni e Comuni)",
+   "jurisdiction": "CH",
+   "lang": "it",
+   "kind": "authority page (local only)",
+   "licence": "authority page: URL, title and passage only, rebuilt locally (not redistributed)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "4e5c2181163587ffd58cb96fae0f1ca8076c7956",
+   "passages": 2,
+   "topics": [
+    "housing.announce.deadline",
+    "housing.intercantonal"
+   ]
+  },
+  {
+   "url": "https://www.bakom.admin.ch/fr/redevance-des-menages-prives",
+   "title": "OFCOM/BAKOM/UFCOM, « Redevance des ménages privés » (bakom.admin.ch)",
+   "publisher": "Office fédéral de la communication OFCOM",
+   "jurisdiction": "CH",
+   "lang": "fr",
+   "kind": "authority page (local only)",
+   "licence": "authority page: URL, title and passage only, rebuilt locally (not redistributed)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "25b4382700bd1c6c9f584437da0217c018ceecdf",
+   "passages": 1,
+   "topics": [
+    "household.fee.invoice",
+    "household.fee.obligation"
+   ]
+  },
+  {
+   "url": "https://www.bakom.admin.ch/fr/montant-et-facturation",
+   "title": "OFCOM/BAKOM/UFCOM, « Montant et facturation » (bakom.admin.ch)",
+   "publisher": "Office fédéral de la communication OFCOM",
+   "jurisdiction": "CH",
+   "lang": "fr",
+   "kind": "authority page (local only)",
+   "licence": "authority page: URL, title and passage only, rebuilt locally (not redistributed)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "8bc7d54a254544d022144dc4d47d37b608fc8ca7",
+   "passages": 3,
+   "topics": [
+    "household.fee.invoice",
+    "household.fee.obligation"
+   ]
+  },
+  {
+   "url": "https://www.bakom.admin.ch/fr/questions-et-reponses-faq",
+   "title": "OFCOM/BAKOM/UFCOM, « Questions et réponses (FAQ) » (bakom.admin.ch)",
+   "publisher": "Office fédéral de la communication OFCOM",
+   "jurisdiction": "CH",
+   "lang": "fr",
+   "kind": "authority page (local only)",
+   "licence": "authority page: URL, title and passage only, rebuilt locally (not redistributed)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "e8ea761bd287140d90b389c2b034a314f481b2d8",
+   "passages": 12,
+   "topics": [
+    "household.fee.exemption",
+    "household.fee.invoice",
+    "household.fee.obligation"
+   ]
+  },
+  {
+   "url": "https://www.bakom.admin.ch/de/abgabe-fuer-privathaushalte",
+   "title": "OFCOM/BAKOM/UFCOM, « Abgabe für Privathaushalte » (bakom.admin.ch)",
+   "publisher": "Bundesamt für Kommunikation BAKOM",
+   "jurisdiction": "CH",
+   "lang": "de",
+   "kind": "authority page (local only)",
+   "licence": "authority page: URL, title and passage only, rebuilt locally (not redistributed)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "efef891ac76b9c147f5f90455363a92b04ed324a",
+   "passages": 1,
+   "topics": [
+    "household.fee.invoice",
+    "household.fee.obligation"
+   ]
+  },
+  {
+   "url": "https://www.bakom.admin.ch/de/hoehe-der-abgabe-und-rechnungsstellung",
+   "title": "OFCOM/BAKOM/UFCOM, « Höhe der Abgabe und Rechnungsstellung » (bakom.admin.ch)",
+   "publisher": "Bundesamt für Kommunikation BAKOM",
+   "jurisdiction": "CH",
+   "lang": "de",
+   "kind": "authority page (local only)",
+   "licence": "authority page: URL, title and passage only, rebuilt locally (not redistributed)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "d00e5b4cb159fb656128a5722bc56ac85f443400",
+   "passages": 3,
+   "topics": [
+    "household.fee.invoice",
+    "household.fee.obligation"
+   ]
+  },
+  {
+   "url": "https://www.bakom.admin.ch/de/fragen-und-antworten-faqs",
+   "title": "OFCOM/BAKOM/UFCOM, « Fragen und Antworten (FAQs) » (bakom.admin.ch)",
+   "publisher": "Bundesamt für Kommunikation BAKOM",
+   "jurisdiction": "CH",
+   "lang": "de",
+   "kind": "authority page (local only)",
+   "licence": "authority page: URL, title and passage only, rebuilt locally (not redistributed)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "536c1c17367d149e46ec3988a26d6d841da1e0b9",
+   "passages": 10,
+   "topics": [
+    "household.fee.exemption",
+    "household.fee.invoice",
+    "household.fee.obligation"
+   ]
+  },
+  {
+   "url": "https://www.bakom.admin.ch/it/importo-e-fatturazione",
+   "title": "OFCOM/BAKOM/UFCOM, « Importo e fatturazione » (bakom.admin.ch)",
+   "publisher": "Ufficio federale delle comunicazioni UFCOM",
+   "jurisdiction": "CH",
+   "lang": "it",
+   "kind": "authority page (local only)",
+   "licence": "authority page: URL, title and passage only, rebuilt locally (not redistributed)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "cfc3f5eddb877d96ba356f12cc20e39f1fc30fd1",
+   "passages": 3,
+   "topics": [
+    "household.fee.invoice",
+    "household.fee.obligation"
+   ]
+  },
+  {
+   "url": "https://www.bakom.admin.ch/it/domande-e-risposte-faq",
+   "title": "OFCOM/BAKOM/UFCOM, « Domande e risposte (FAQ) » (bakom.admin.ch)",
+   "publisher": "Ufficio federale delle comunicazioni UFCOM",
+   "jurisdiction": "CH",
+   "lang": "it",
+   "kind": "authority page (local only)",
+   "licence": "authority page: URL, title and passage only, rebuilt locally (not redistributed)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "53dc3466799c0e6cbd9256bd43b426913ed8c879",
+   "passages": 12,
+   "topics": [
+    "household.fee.exemption",
+    "household.fee.invoice",
+    "household.fee.obligation"
+   ]
+  },
+  {
+   "url": "https://www.sv.fin.be.ch/content/dam/sv_fin/dokumente/de/merkblaetter/einkommens_vermoegenssteuer/2021/mb01_ev_wohnsitzwechsel_2021_de.pdf",
+   "title": "Kanton Bern, Steuerverwaltung, Merkblatt 1 Wohnsitzwechsel, Natürliche Personen ab 2021, Ziff. 1.1",
+   "publisher": "Kanton Bern",
+   "jurisdiction": "BE",
+   "lang": "de",
+   "kind": "authority page (local only)",
+   "licence": "authority page: URL, title and passage only, rebuilt locally (not redistributed)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "b1e4eee9c0799a3c5d0f99fa96093465f9bc01db",
+   "passages": 2,
+   "topics": [
+    "housing.intercantonal"
+   ]
+  },
+  {
+   "url": "https://egov.lugano.ch/it/services/8/annuncio-arrivo",
+   "title": "Città di Lugano (eGov), Annuncio d'arrivo per domicilio/dimora: termine e documenti necessari",
+   "publisher": "Città di Lugano",
+   "jurisdiction": "TI",
+   "lang": "it",
+   "kind": "authority page (local only)",
+   "licence": "authority page: URL, title and passage only, rebuilt locally (not redistributed)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "1398c87f8be9a8056322316f159faee5005f9a8e",
+   "passages": 2,
+   "topics": [
+    "housing.announce.deadline",
+    "housing.announce.documents",
+    "housing.intercantonal"
+   ]
+  },
+  {
+   "url": "https://egov.lugano.ch/it/services/6/annuncio-cambio-indirizzo",
+   "title": "Città di Lugano (eGov), Annuncio cambio indirizzo",
+   "publisher": "Città di Lugano",
+   "jurisdiction": "TI",
+   "lang": "it",
+   "kind": "authority page (local only)",
+   "licence": "authority page: URL, title and passage only, rebuilt locally (not redistributed)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "f79cd4b4a7e559bba828de31320d69c9c180da7d",
+   "passages": 1,
+   "topics": [
+    "housing.announce.deadline",
+    "housing.announce.documents"
+   ]
+  },
+  {
+   "url": "https://egov.lugano.ch/it/services/38/annuncio-partenza",
+   "title": "Città di Lugano (eGov), Annuncio di partenza",
+   "publisher": "Città di Lugano",
+   "jurisdiction": "TI",
+   "lang": "it",
+   "kind": "authority page (local only)",
+   "licence": "authority page: URL, title and passage only, rebuilt locally (not redistributed)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "3cd1503d697e95fd1c3857a3f63f9ee3bfb8ff71",
+   "passages": 1,
+   "topics": [
+    "housing.announce.deadline",
+    "housing.intercantonal"
+   ]
+  },
+  {
+   "url": "https://www.sv.fin.be.ch/content/dam/sv_fin/dokumente/fr/merkblaetter/einkommens_vermoegenssteuer/2021/mb01_ev_wohnsitzwechsel_2021_fr.pdf",
+   "title": "Canton de Berne, Intendance des impôts, Notice 1 Changement de domicile, Personnes physiques dès 2021, ch. 1.1",
+   "publisher": "Canton de Berne",
+   "jurisdiction": "BE",
+   "lang": "fr",
+   "kind": "authority page (local only)",
+   "licence": "authority page: URL, title and passage only, rebuilt locally (not redistributed)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "b1b7e4522a76382126fa855f802345e4dec72f48",
+   "passages": 1,
+   "topics": [
+    "housing.intercantonal"
+   ]
+  },
+  {
+   "url": "https://www.vd.ch/population/controle-des-habitants/changement-dadresse",
+   "title": "État de Vaud, « Changement d'adresse » (vd.ch, contrôle des habitants)",
+   "publisher": "Canton de Vaud",
+   "jurisdiction": "VD",
+   "lang": "fr",
+   "kind": "authority page (local only)",
+   "licence": "authority page: URL, title and passage only, rebuilt locally (not redistributed)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "4ec427aa1427a15465295ecbe44b2dd862046d4e",
+   "passages": 1,
+   "topics": [
+    "housing.announce.deadline",
+    "housing.announce.documents"
+   ]
+  },
+  {
+   "url": "https://www.lausanne.ch/prestations/controle-des-habitants/arrivee-inscription-suisse.html",
+   "title": "Ville de Lausanne, « Inscription à Lausanne pour une personne de nationalité suisse » (lausanne.ch)",
+   "publisher": "Ville de Lausanne",
+   "jurisdiction": "VD",
+   "lang": "fr",
+   "kind": "authority page (local only)",
+   "licence": "authority page: URL, title and passage only, rebuilt locally (not redistributed)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "f58ce8221db2f627382b2946d30a5ac0dc921260",
+   "passages": 2,
+   "topics": [
+    "housing.announce.deadline",
+    "housing.announce.documents"
+   ]
+  },
+  {
+   "url": "https://www.vd.ch/etat-droit-finances/impots/impots-pour-les-individus/ma-situation-personnelle",
+   "title": "État de Vaud, « Ma situation personnelle » (vd.ch, impôts) — changement de canton",
+   "publisher": "Canton de Vaud",
+   "jurisdiction": "VD",
+   "lang": "fr",
+   "kind": "authority page (local only)",
+   "licence": "authority page: URL, title and passage only, rebuilt locally (not redistributed)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "55f67ccc2fd45517fe07b027c98342d45bc6ac1c",
+   "passages": 1,
+   "topics": [
+    "housing.intercantonal"
+   ]
+  },
+  {
+   "url": "https://www.stadt-zuerich.ch/de/lebenslagen/einwohner-services/umziehen-melden/Zuzug-Innerkantonal.html",
+   "title": "Stadt Zürich, Personenmeldeamt, Zuzug in die Stadt Zürich (innerhalb der Schweiz)",
+   "publisher": "Stadt Zürich",
+   "jurisdiction": "ZH",
+   "lang": "de",
+   "kind": "authority page (local only)",
+   "licence": "authority page: URL, title and passage only, rebuilt locally (not redistributed)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "21e09479358d4204088e29db9585768434db0e3f",
+   "passages": 2,
+   "topics": [
+    "housing.announce.deadline",
+    "housing.announce.documents"
+   ]
+  },
+  {
+   "url": "https://www.stadt-zuerich.ch/de/lebenslagen/einwohner-services/umziehen-melden/umzug.html",
+   "title": "Stadt Zürich, Personenmeldeamt, Wohnungswechsel innerhalb der Stadt Zürich",
+   "publisher": "Stadt Zürich",
+   "jurisdiction": "ZH",
+   "lang": "de",
+   "kind": "authority page (local only)",
+   "licence": "authority page: URL, title and passage only, rebuilt locally (not redistributed)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "e9867a74b5a7d7b7907b30818f1035ed48a6c06a",
+   "passages": 2,
+   "topics": [
+    "housing.announce.deadline",
+    "housing.announce.documents"
+   ]
+  },
+  {
+   "url": "https://www.stadt-zuerich.ch/de/lebenslagen/einwohner-services/umziehen-melden/wegzug.html",
+   "title": "Stadt Zürich, Personenmeldeamt, Wegzug aus der Stadt Zürich",
+   "publisher": "Stadt Zürich",
+   "jurisdiction": "ZH",
+   "lang": "de",
+   "kind": "authority page (local only)",
+   "licence": "authority page: URL, title and passage only, rebuilt locally (not redistributed)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "b62423010708f4dab6ec960d180209336a4f3d8b",
+   "passages": 2,
+   "topics": [
+    "housing.announce.deadline",
+    "housing.announce.documents"
+   ]
+  },
+  {
+   "url": "https://www.stadt-zuerich.ch/de/lebenslagen/einwohner-services/umziehen-melden/obligatorische-krankenversicherung-OKV.html",
+   "title": "Stadt Zürich, Personenmeldeamt, Beratung und Deklaration Obligatorische Krankenversicherung (OKV)",
+   "publisher": "Stadt Zürich",
+   "jurisdiction": "ZH",
+   "lang": "de",
+   "kind": "authority page (local only)",
+   "licence": "authority page: URL, title and passage only, rebuilt locally (not redistributed)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "38d2c74ab69b91452ce09db7a162f0a247818b9c",
+   "passages": 1,
+   "topics": [
+    "housing.announce.documents"
+   ]
+  },
+  {
+   "url": "https://www.zh.ch/de/mobilitaet/fuehrerausweis-fahren-lernen.html",
+   "title": "Kanton Zürich, Strassenverkehrsamt – Führerausweis & Fahren lernen: Wegzug aus dem Kanton Zürich",
+   "publisher": "Kanton Zürich",
+   "jurisdiction": "ZH",
+   "lang": "de",
+   "kind": "authority page (local only)",
+   "licence": "authority page: URL, title and passage only, rebuilt locally (not redistributed)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "6b5e5b81b660a9e2b5bef43d09c53c1ee5d884b8",
+   "passages": 2,
+   "topics": [
+    "housing.intercantonal"
+   ]
+  },
+  {
+   "url": "https://www.priminfo.admin.ch/fr/faq",
+   "title": "priminfo.admin.ch, FAQ",
+   "publisher": "Office fédéral de la santé publique OFSP (priminfo.admin.ch)",
+   "jurisdiction": "CH",
+   "lang": "fr",
+   "kind": "authority page (local only)",
+   "licence": "authority page: URL, title and passage only, rebuilt locally (not redistributed)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "52cc9b4f1f1136565456df05fb270c62b167cf4e",
+   "passages": 1,
+   "topics": [
+    "housing.intercantonal"
+   ]
+  },
+  {
+   "url": "https://www.priminfo.admin.ch/de/faq",
+   "title": "priminfo.admin.ch, FAQ",
+   "publisher": "Bundesamt für Gesundheit BAG (priminfo.admin.ch)",
+   "jurisdiction": "CH",
+   "lang": "de",
+   "kind": "authority page (local only)",
+   "licence": "authority page: URL, title and passage only, rebuilt locally (not redistributed)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "616ca0997e187435e888577468a19e9a95d49a49",
+   "passages": 1,
+   "topics": [
+    "housing.intercantonal"
+   ]
+  },
+  {
+   "url": "https://www.priminfo.admin.ch/it/faq",
+   "title": "priminfo.admin.ch, FAQ",
+   "publisher": "Ufficio federale della sanità pubblica UFSP (priminfo.admin.ch)",
+   "jurisdiction": "CH",
+   "lang": "it",
+   "kind": "authority page (local only)",
+   "licence": "authority page: URL, title and passage only, rebuilt locally (not redistributed)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "93cb971395a3e9d0000f3a40088397b29641e2b8",
+   "passages": 1,
+   "topics": [
+    "housing.intercantonal"
+   ]
+  },
+  {
+   "url": "https://www.vd.ch/fileadmin/user_upload/accueil/fichiers_pdf/2026_ao%C3%BBt_actus/Consultation_AP_LSH/Expos%C3%A9_des_motifs_-_Avant-projet_de_loi_sur_le_service_des_habitants__LSH_.pdf",
+   "title": "État de Vaud, exposé des motifs de l'avant-projet de loi sur le service des habitants (LSH), consultation août 2026, commentaire de l'art. 15 (projet, pas droit en vigueur)",
+   "publisher": "Canton de Vaud",
+   "jurisdiction": "VD",
+   "lang": "fr",
+   "kind": "authority page (local only)",
+   "licence": "authority page: URL, title and passage only, rebuilt locally (not redistributed)",
+   "accessed": "2026-10-15",
+   "raw_text_sha1": "890d408bbebac5eadfd8509944052fec7ef3cf77",
+   "passages": 1,
+   "topics": [
+    "housing.announce.deadline"
+   ]
+  }
+ ]
+}
