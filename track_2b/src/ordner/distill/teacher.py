@@ -60,7 +60,7 @@ class Teacher(OpenAICompat):
                 detail = e.read().decode(errors="replace")[:300]
                 if e.code not in (408, 429, 500, 502, 503, 504) or attempt == self.retries:
                     raise RuntimeError(f"teacher HTTP {e.code}: {detail}") from None
-            except (urllib.error.URLError, TimeoutError) as e:
+            except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as e:   # OpenRouter: blank keep-alive body
                 if attempt == self.retries:
                     raise RuntimeError(f"teacher unreachable: {e}") from None
             time.sleep(2 ** attempt * 3)

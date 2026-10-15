@@ -2,6 +2,7 @@
 Sanity check: python -m ordner.explain.retrieve"""
 import hashlib
 import json
+import os
 from functools import lru_cache
 from pathlib import Path
 
@@ -29,7 +30,9 @@ def _embed_docs(docs: tuple):
         return np.load(path)
     emb = embed.embed(list(docs))
     path.parent.mkdir(parents=True, exist_ok=True)
-    np.save(path, emb)
+    tmp = path.with_suffix(f".{os.getpid()}.npy")
+    np.save(tmp, emb)
+    os.replace(tmp, path)   # atomic: parallel processes never read a half-written cache
     return emb
 
 
