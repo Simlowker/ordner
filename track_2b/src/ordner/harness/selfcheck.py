@@ -14,6 +14,7 @@
 Part 2-3 and the composition are skipped when the harness build is missing (work/vendor/deepseek-harness).
 """
 import json
+import os
 import re
 import threading
 import time
@@ -258,6 +259,9 @@ def check_routing():
             (Path(tmp) / e.adapter).mkdir()
             (Path(tmp) / e.adapter / "adapters.safetensors").write_bytes(b"")
         d = Path(tmp) / E.EXPERTS["poursuites"].adapter
+        with mock.patch.dict(os.environ, {"ORDNER_USE_ADAPTERS": ""}):   # adapters are opt-in (mlx_lm.server reloads)
+            assert route([{"role": "system", "content": sp}], adapters_ok=True)["adapter"] is None
+        os.environ["ORDNER_USE_ADAPTERS"] = "1"
         assert route([{"role": "system", "content": sp}], adapters_ok=True)["adapter"] == str(d)
         assert route([{"role": "system", "content": sp}], adapters_ok=False)["adapter"] is None   # non-MLX backend
         assert route([{"role": "system", "content": E.system_prompt("lamal")}], adapters_ok=True)["adapter"] is None

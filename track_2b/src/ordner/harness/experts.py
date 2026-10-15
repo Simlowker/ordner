@@ -71,6 +71,10 @@ def adapter_path(expert_id):
     None (base model). ORDNER_ADAPTERS_SERVER: the same directory on a remote server (e.g. the Mac Studio behind an SSH
     tunnel)."""
     e = EXPERTS.get(expert_id)
+    # ponytail: off unless ORDNER_USE_ADAPTERS=1. mlx_lm.server 0.32 reloads the whole model on every change of the
+    # `adapters` field (16 -> 35 GB measured, swap, disk full); a multi-LoRA server (e.g. vLLM) would keep them resident.
+    if os.environ.get("ORDNER_USE_ADAPTERS") != "1":
+        return None
     p = ADAPTERS / e.adapter if e and e.adapter and e.use_adapter else None
     if not (p and (p / "adapters.safetensors").exists()):
         return None
