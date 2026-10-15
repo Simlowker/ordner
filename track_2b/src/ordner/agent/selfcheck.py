@@ -84,6 +84,9 @@ def check_parser():
     names = {"case_load", "ask_user"}
     c, calls = parse_tool_calls('Je regarde.<|tools_prefix|>[{"case_load": {"subject_id": "s1"}}]<|tools_suffix|>', names)
     assert c == "Je regarde." and calls[0]["name"] == "case_load" and calls[0]["arguments"] == {"subject_id": "s1"}
+    # bare object without the list opener (seen live): accepted only for a known tool name
+    assert parse_tool_calls('{"case_load": {"subject_id": "s1"}}]', names)[1][0]["name"] == "case_load"
+    assert parse_tool_calls('{"nope": {"a": 1}}', names)[1] == []
     _, calls = parse_tool_calls(TOOLS_PREFIX + '[{"name": "ask_user", "arguments": "{\\"question\\": \\"Q?\\"}"}]')
     assert calls[0]["name"] == "ask_user" and calls[0]["arguments"] == {"question": "Q?"}   # no suffix (stripped eos)
     _, calls = parse_tool_calls(TOOLS_PREFIX + '[{"case_load": {"subject_id": "s1"}}] trailing', names)

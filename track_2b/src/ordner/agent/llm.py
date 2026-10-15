@@ -54,7 +54,7 @@ def parse_tool_calls(text, names=None):
     i = text.find(TOOLS_PREFIX)
     if i >= 0:
         content, block = text[:i].strip(), text[i + len(TOOLS_PREFIX):].split(TOOLS_SUFFIX)[0].strip()
-    elif text.lstrip().startswith("[{") and names:
+    elif text.lstrip().startswith(("[{", '{"')) and names:   # also {"tool": {...}}] without the list opener (seen live)
         content, block = "", text.strip()
     else:
         return text.strip(), []
