@@ -5,6 +5,12 @@
 **Ordner is a local, sovereign assistant for Swiss paperwork: it knows which administrative procedures concern a person,
 what is missing, what to do and why, and prepares everything; it never sends, files, signs or pays.**
 
+**Ordner is a local mixture of domain experts on one open model, for Swiss federalism:** a small model (d1-3B) picks the
+expert; each expert is Apertus 1.5 8B with its domain's tools, its own knowledge base of official sources (federal + the
+person's canton), and its own LoRA adapter only where it measurably helps; the rules engine computes what is computable;
+nothing is sent. It routes by domain and filters by canton, read from the dossier: one expert per domain scales, one per
+canton would not.
+
 It keeps the person's dossier on their own machine, reads the papers they receive, works out which of 18 Swiss
 procedures apply (tax return, health insurance, debt collection, pension, unemployment, moving…), computes deadlines
 from official rules quoted word for word, and prepares letters, document requests and payments. The person validates
@@ -48,10 +54,40 @@ Scenario suite, test split (24 scenarios, one run per system, Apertus 1.5 8B bf1
 - No run executed an effect. On dev, the hybrid prepared a duplicated payment in two scenarios (a double-payment guard
   was added since) and, in its re-run, an action carrying the IBAN of an injected phishing e-mail (`tax-be-03`).
 - Exploratory: d1-3B routes the conversation's first request to the coordinator or one of four experts, 78.1 % correct
-  vs 64.7 % for EmbeddingGemma 2 on 201 requests. Expert adapters are opt-in (`ORDNER_USE_ADAPTERS=1`):
-  `mlx_lm.server` 0.32 reloads the model on each adapter change (16 → 35 GB measured).
-- Knowledge search, top-3 hit on 2 × 36 everyday questions: EmbeddingGemma 2 80.6 % / 77.8 %, BM25 52.8 % / 38.9 %,
-  RRF fusion 61.1 % / 50.0 % (`data/retrieval/`). The gain is cross-lingual (held-out cross-lingual: 70 % vs 5 %).
+  vs 64.7 % for EmbeddingGemma 2 on 201 requests. Expert adapters are kept only where they beat the base on dev
+  (Poursuites, Logement) and are opt-in (`ORDNER_USE_ADAPTERS=1`): `mlx_lm.server` 0.32 reloads the model on each
+  adapter change (16 → 35 GB measured).
+
+### Knowledge bases per expert (exploratory, added after the PREREG freeze)
+
+Each expert searches its own base (`data/knowledge/<expert>/`, `ordner.tools.expert_kb`): official passages for topics
+fixed before collection (`data/knowledge/topics.json`), federal + VD, ZH, BE, GE, TI, in fr/de/it, filtered at query
+time to federal + the dossier's canton. Every passage is a verbatim substring of the saved fetched text, after whitespace normalisation (re-checked: 0
+of 712 fail). Official acts are in the repository (not protected by copyright, art. 5 LDA); authority pages are kept
+locally (`work/knowledge/`), their URLs listed in each `sources.json`, so a clean clone has the acts only.
+
+Top-3 topic hit on 96 questions (`data/knowledge/questions.json`, 24 per expert, 8 fr / 8 de / 8 it, written blind
+before any retrieval run; see the git history of `data/knowledge/`), all with the federal + canton filter:
+
+| Expert                           | Passages (acts + pages) | Sources | Federal / cantonal | Expert base | One global base | BM25 on expert base |
+| -------------------------------- | ----------------------- | ------- | ------------------ | ----------- | --------------- | ------------------- |
+| Impôts                           | 135 (105 + 30)          | 46      | 79 / 56            | 87.5 %      | 66.7 %          | 79.2 %              |
+| Assurance maladie                | 168 (114 + 54)          | 39      | 126 / 42           | 95.8 %      | 95.8 %          | 83.3 %              |
+| Poursuites                       | 164 (111 + 53)          | 40      | 107 / 57           | 79.2 %      | 70.8 %          | 79.2 %              |
+| Logement et ménage               | 245 (106 + 139)         | 93      | 158 / 87           | 95.8 %      | 91.7 %          | 83.3 %              |
+| **All**                          | 712 (436 + 276)         | 218     | 470 / 242          | **89.6 %**  | 81.2 %          | 81.2 %              |
+| Official acts only (clean clone) | 436 (436 + 0)           | 92      | 323 / 113          | 90.6 %      | 81.2 %          | 75.0 %              |
+
+- Expert base vs one global base without routing: 8 questions won, 0 lost (McNemar exact p = 0.008); vs BM25: 11–3
+  (p = 0.057). 29.2 % of the global base's top-3 lists contain another expert's passages (30.2 % with acts only).
+- Limits: topics tagged by the collecting agents (Serafe and OFCOM FAQ chunks by URL and keyword rules), questions
+  written by an AI agent, 24 questions per expert, one embedding model, topic match rather than answer quality.
+- Known gaps (coverage notes): VD's residents' law says 8 days to register, a Lausanne page says 14 (unresolved); VD's
+  LAMal law could not be retrieved (premium reduction from vd.ch pages only); some cantonal texts may be outdated (ZH
+  residents' law as of 2018, VD's as of 2015 via LexFind); an Italian FOPH sheet gives the previous cycle's dates, kept
+  verbatim.
+- An earlier test on the procedure cards' sources (2 × 36 questions, `data/retrieval/`) chose EmbeddingGemma 2 over
+  BM25 (80.6 / 77.8 % vs 52.8 / 38.9 % top-3); BM25 stays only as the fallback without weights.
 
 ## Run it
 
@@ -80,12 +116,12 @@ Without the conversation layer, « Demander à Ordner » shows hand-written tran
 
 ### Replay vs live
 
-|                       | `make run` (replay, Docker)                                    | Live (Apple Silicon Mac, 36 GB, local weights)                                                  |
-| --------------------- | -------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| Documents             | recorded OCR, Apertus, d1-3B outputs and hidden-state features | batch pipeline: LightOnOCR-3 → Apertus (+ LoRA) → probe, d1-3B, checks                          |
-| Procedures            | rules engine on the dossier                                    | same, then the Apertus coordinator on the same dossier                                          |
+|                       | `make run` (replay, Docker)                                       | Live (Apple Silicon Mac, 36 GB, local weights)                                                  |
+| --------------------- | ----------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| Documents             | recorded OCR, Apertus, d1-3B outputs and hidden-state features    | batch pipeline: LightOnOCR-3 → Apertus (+ LoRA) → probe, d1-3B, checks                          |
+| Procedures            | rules engine on the dossier                                       | same, then the Apertus coordinator on the same dossier                                          |
 | « Demander à Ordner » | conversation with a scripted mock model; else fixture transcripts | Apertus coordinator through `LLM_BASE_URL` (e.g. `mlx_lm.server`); its tools use cached outputs |
-| Knowledge search      | BM25 (no weights in the image)                                 | EmbeddingGemma 2 (live tools or `ORDNER_EMBED=1`)                                               |
+| Knowledge search      | BM25 over the card corpus (no weights in the image); the experts' bases need EmbeddingGemma 2 | EmbeddingGemma 2 (live tools or `ORDNER_EMBED=1`): the expert's own base, else the card corpus |
 
 ### Live commands (Apple Silicon, project venv; Docker cannot use the Mac GPU)
 
@@ -122,7 +158,8 @@ PY=$PY src/ordner/distill/train.sh --model <4-bit base> --num-layers 16 --val-ba
 .venv/bin/mlx_lm.server --model <bf16 base> --adapter-path work/adapters/coordinator-distill-v1 --port 8080 &
 $PY -m ordner.eval.scenarios.run --agent coordinator --toolset process --split dev      # distilled coordinator
 
-# Knowledge search
+# Knowledge search: per-expert bases (data/knowledge/results.json; acts only: results_repo_only.json), then the card corpus
+$PY -m ordner.eval.knowledge_experts && ORDNER_KB_REPO_ONLY=1 $PY -m ordner.eval.knowledge_experts
 $PY -m ordner.eval.retrieval data/retrieval/queries.json && $PY -m ordner.eval.retrieval data/retrieval/queries_heldout.json
 ```
 
@@ -138,11 +175,11 @@ documents ─► READ: barcode first (eCH-0196, QR-bill: exact)
                ▼
 DOSSIER      local SQLite, append-only event log: documents · facts · cases · deadlines · prepared actions
                │
-   1. RULES ENGINE (no model)                    2. APERTUS COORDINATOR (same dossier, ≤ 12 steps)
-   18 procedure cards, 227 verbatim quotes       free text, missing information, questions to the
-   from 73 official sources: applicability,      person, explanations in fr/de/it; process toolset
-   deadlines, completeness, prepared steps,      (9 tools) + ask_user + prepare_action; knowledge
-   phishing and double-payment guards            search with EmbeddingGemma 2
+   1. RULES ENGINE (no model)                    2. APERTUS 1.5 8B (same dossier, ≤ 12 steps)
+   18 procedure cards, 227 verbatim quotes       ROUTER d1-3B picks the expert (78.1 % of 201 requests)
+   from 73 official sources: applicability,      EXPERT = Apertus + domain tools + its own knowledge base
+   deadlines, completeness, prepared steps,        (federal + dossier canton, EmbeddingGemma 2) + LoRA only
+   phishing and double-payment guards              if it beat the base on dev; coordinator = general expert
                └──────────────────┬─────────────────┘
                                   ▼
 COCKPIT      what concerns me · what is missing · next step · why (quoted sources) ─► the person validates and acts
@@ -154,8 +191,8 @@ COCKPIT      what concerns me · what is missing · next step · why (quoted sou
 | ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- | ------------------------------------------ |
 | **Apertus 1.5 8B** (text backbone), bf16 | extracts document fields (LoRA); hidden states feed the doubt probe; coordinator; explanations                                          | live mode                                            | Apache-2.0                                 |
 | LightOnOCR-3-1B                          | photo or scan → text                                                                                                                    | on demand                                            | Apache-2.0                                 |
-| d1-3B                                    | judge: P(the extracted value is right), one doubt signal; routes the conversation's first request to an expert (bf16)                    | on demand (fp32, 14.1 GB: not together with Apertus) | LFM Open License 1.0, **not OSI-approved** |
-| EmbeddingGemma 2                         | knowledge search over official sources (BM25 only as fallback)                                                                          | on demand                                            | Apache-2.0                                 |
+| d1-3B                                    | judge: P(the extracted value is right), one doubt signal; routes the conversation's first request to an expert (bf16)                   | on demand (fp32, 14.1 GB: not together with Apertus) | LFM Open License 1.0, **not OSI-approved** |
+| EmbeddingGemma 2                         | knowledge search over each expert's official sources (BM25 only as fallback); routing fallback                                          | on demand                                            | Apache-2.0                                 |
 | GLM-5.3                                  | **development time only**: distillation teacher, via OpenRouter, on fictional scenarios. Not part of the product; no personal data sent | never at runtime                                     | licence not verified here                  |
 
 Apertus (inference, LoRA and QLoRA training) and d1-3B ran on a Mac Studio M4 Max 36 GB, one large model at a time.
@@ -177,19 +214,19 @@ sends, files, signs or pays.
 
 ### Modules (`src/ordner/`)
 
-| Module                                                           | Role                                                                                                                                                         |
-| ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `case/`                                                          | Local dossier (`ORDNER_HOME`): facts with provenance and status, cases, actions (double-payment guard), deadlines, append-only events                        |
-| `procedures/`                                                    | 18 procedure cards (16 qualified, 2 draft), 227 verbatim quotes from 73 official sources, checked by code                                                     |
-| `rules/`                                                         | Applicability, deadlines (holidays, debt-collection holidays, reception-by, cantonal tables), reminders, `.ics`, completeness, consolidation, phishing guard |
-| `tools/`                                                         | The 16 tools above (JSON schema, argument checks, replay or live mode)                                                                                       |
-| `agent/`                                                         | Apertus coordinator: bounded loop, subject pinned, person-only operations hidden, prepared actions only, injection filter                                    |
+| Module                                                           | Role                                                                                                                                                              |
+| ---------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `case/`                                                          | Local dossier (`ORDNER_HOME`): facts with provenance and status, cases, actions (double-payment guard), deadlines, append-only events                             |
+| `procedures/`                                                    | 18 procedure cards (16 qualified, 2 draft), 227 verbatim quotes from 73 official sources, checked by code                                                         |
+| `rules/`                                                         | Applicability, deadlines (holidays, debt-collection holidays, reception-by, cantonal tables), reminders, `.ics`, completeness, consolidation, phishing guard      |
+| `tools/`                                                         | The 16 tools above (JSON schema, argument checks, replay or live mode); `expert_kb`: one knowledge base per expert, used by `knowledge.search`                    |
+| `agent/`                                                         | Apertus coordinator: bounded loop, subject pinned, person-only operations hidden, prepared actions only, injection filter                                         |
 | `harness/`                                                       | DeepSeek Harness integration (MCP server, Apertus tool-call proxy, fail-closed tool allowlist), web presets (coordinator + four experts), d1-3B routing; optional |
-| `distill/`                                                       | Scenario variants, teacher runner, strict filter, training data in Apertus's tool-call syntax, QLoRA training                                                |
-| `connectors/`                                                    | Watched inbox, PDF share, eCH-0196, QR-bill, camt.053, OFSP premiums, e-mail drafts (`.eml`, never sent)                                                     |
-| `app/`                                                           | Stdlib HTTP server + vanilla JS cockpit, no build step, no CDN (CSP `default-src 'self'`)                                                                    |
-| `gen/`, `models/`, `pipeline/`, `finetune/`, `eval/`, `explain/` | Proof 1: synthetic statements with barcode oracle, local model wrappers, batches, LoRA, replay, grounded explanations                                        |
-| `eval/scenarios/`                                                | 76 scenarios (67 scored: 43 dev, 24 test), runner, metrics; agents `rules_only`, `coordinator`, `hybrid`, `harness`                                          |
+| `distill/`                                                       | Scenario variants, teacher runner, strict filter, training data in Apertus's tool-call syntax, QLoRA training                                                     |
+| `connectors/`                                                    | Watched inbox, PDF share, eCH-0196, QR-bill, camt.053, OFSP premiums, e-mail drafts (`.eml`, never sent)                                                          |
+| `app/`                                                           | Stdlib HTTP server + vanilla JS cockpit, no build step, no CDN (CSP `default-src 'self'`)                                                                         |
+| `gen/`, `models/`, `pipeline/`, `finetune/`, `eval/`, `explain/` | Proof 1: synthetic statements with barcode oracle, local model wrappers, batches, LoRA, replay, grounded explanations                                             |
+| `eval/scenarios/`                                                | 76 scenarios (67 scored: 43 dev, 24 test), runner, metrics; agents `rules_only`, `coordinator`, `hybrid`, `harness`                                               |
 
 More: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md), [`docs/harness_integration.md`](docs/harness_integration.md),
 pre-registration [`PREREG.md`](PREREG.md) (frozen in commit `f52d2c3`, deviations in its Addendum 4).
@@ -214,6 +251,8 @@ pre-registration [`PREREG.md`](PREREG.md) (frozen in commit `f52d2c3`, deviation
 - The agentic web conversation (forked harness UI, experts, routing) demonstrates the evaluated loop but is not
   separately evaluated; with Noa's long dossier the 8B model often asks instead of acting. Without that layer, the
   console's live « Demander à Ordner » gives the coordinator all 16 tools, not the evaluated process toolset.
+- Knowledge bases: exploratory, scored on retrieval (topic match), not on the experts' answers; topics tagged by the
+  collecting agents, questions written by an AI agent; five cantons only, with the gaps listed above.
 - d1-3B's licence is not OSI-approved. All documents are synthetic. Not legal or tax advice: Ordner informs and cites,
   the person decides.
 

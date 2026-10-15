@@ -4,14 +4,26 @@ Product, results and how to run: `README.md` and `technical_report.md`. This fil
 workstream.
 Contracts: `src/ordner/core/schema.py` (do not change without the coordinator).
 
+**Shape: a local mixture of domain experts on one open model, for Swiss federalism.** A small model (d1-3B) picks the
+expert; each expert is Apertus 1.5 8B with its domain's tools, its own knowledge base of official sources (federal + the
+person's canton), and its own LoRA adapter only where it measurably helps; the rules engine computes what is computable;
+nothing is sent. Route by domain, filter by canton (read from the dossier, never guessed by a model).
+
+| Layer | Role | State (15.10, numbers recomputed from `data/`) |
+|---|---|---|
+| Router: d1-3B (`harness/router.py`), EmbeddingGemma 2 fallback | picks the expert from the first request; the coordinator when no expert is confident (p < 0.5) | 78.1 % correct on 201 scenario requests (EmbeddingGemma 2 alone: 64.7 %), `data/routing/results.json` |
+| Expert: Apertus 1.5 8B + domain tools + prompt (`harness/experts.py`) | Impôts, Assurance maladie, Poursuites, Logement et ménage; the coordinator is the general expert | LoRA adapter only where it beat the base on dev: Poursuites and Logement (opt-in, `ORDNER_USE_ADAPTERS=1`) |
+| Expert knowledge base (`tools/expert_kb.py`, `data/knowledge/`) | official passages of the expert's topics, federal + the dossier's canton, ranked by EmbeddingGemma 2 | 712 passages (Impôts 135, Assurance maladie 168, Poursuites 164, Logement 245), 436 from official acts in the repo; 89.6 % top-3 topic hit on 96 blind questions vs 81.2 % for one global base |
+| Rules engine and dossier (shared) | applicability, deadlines, completeness, guards; facts, cases, actions, events | unchanged; every expert reads and writes the same dossier |
+
 | Module | Owner | Responsibility |
 |---|---|---|
 | `ordner.case` | W1 | Durable local dossier (SQLite, `ORDNER_HOME`, default `~/.ordner`): subjects, documents, facts with provenance and status, cases (procedure instances) with states, actions, deadlines, append-only event log, resume |
 | `ordner.procedures` | W2 | Catalogue of `ProcedureCard`s as JSON in `procedures/cards/`, loader, validator; every source quote verified verbatim |
 | `ordner.rules` | W3 | Applicability evaluation (declarative conditions), deadline rules (cantonal tables, LP holidays, reception-by dates), reminders, `.ics` export |
-| `ordner.tools` | W4 | Tool registry (`ToolSpec` + implementation) wrapping the other modules: 16 tools, 11 generic (document.read/decode, knowledge.search, decision.score, expert.run, rules.evaluate, dossier.check, schedule.plan, case.load/record, receipt.verify) and 5 process tools (`tools/processes/`: piece.recevoir, impots.preparer_declaration, lamal.revoir_franchise, poursuite.repondre, demenagement.annoncer) |
+| `ordner.tools` | W4 | Tool registry (`ToolSpec` + implementation) wrapping the other modules: 16 tools, 11 generic (document.read/decode, knowledge.search, decision.score, expert.run, rules.evaluate, dossier.check, schedule.plan, case.load/record, receipt.verify) and 5 process tools (`tools/processes/`: piece.recevoir, impots.preparer_declaration, lamal.revoir_franchise, poursuite.repondre, demenagement.annoncer); `tools/expert_kb.py`: one knowledge base per expert |
 | `ordner.agent` | W5 | Apertus coordinator loop over the tool registry (Apertus tool-call syntax parsed exactly; local OpenAI-compatible server or in-process MLX) |
-| `ordner.harness` | W10 | DeepSeek Harness as an optional runtime for the same loop: MCP server over the coordinator's dispatch, Apertus tool-call proxy, fail-closed tool allowlist (`docs/harness_integration.md`) |
+| `ordner.harness` | W10 | DeepSeek Harness as an optional runtime for the same loop: MCP server over the coordinator's dispatch, Apertus tool-call proxy, fail-closed tool allowlist (`docs/harness_integration.md`); web presets for the coordinator and four experts (`harness/experts.py`), d1-3B routing (`harness/router.py`) |
 | `ordner.distill` | — | Distillation: dev-scenario variants, teacher runner (same loop), strict filter, training data in Apertus syntax, QLoRA training |
 | `ordner.connectors` | W6 | Local-first inputs/outputs: watched inbox, PDF share, eCH-0196, QR-bill, camt.053, OFSP premiums + LAMal comparator, email drafts (.eml, never sent) |
 | `ordner.app` | W7 | Cockpit UI (home: urgent, missing documents, next step; cases; timeline; coverage map) on top of the existing console |
@@ -142,7 +154,13 @@ Self-check: `python -m ordner.tools.selfcheck` (replay, no model, temporary doss
 documents per declared institution, wrong year, duplicates, missing facts) and `ordner.rules.consolidate` (tax cards or
 no card: totals per measure, `final`/`provisional`/`incomplete`).
 
-`knowledge.search` indexes the corpus plus the verified quotes of every procedure card; with a dossier in ctx it defaults to
+`knowledge.search` with an expert in ctx (`ctx["expert"]`: the harness MCP server's `--expert`) ranks that expert's own
+base (`ordner.tools.expert_kb`: `data/knowledge/<expert>/passages.jsonl`, official acts, plus
+`work/knowledge/<expert>/passages_local.jsonl`, authority pages kept locally) with EmbeddingGemma 2, federal + the
+canton from the args or the dossier; `ORDNER_KB_REPO_ONLY=1` keeps the acts only (what a clean clone has). The proxy
+injects the expert's top 3 passages after the question the same way (`harness/proxy.py: expert_sources`, with
+`ORDNER_EMBED=1`; without weights the expert answers without them). Evaluation: `python -m ordner.eval.knowledge_experts`
+(`data/knowledge/results.json`). Without an expert, `knowledge.search` indexes the corpus plus the verified quotes of every procedure card; with a dossier in ctx it defaults to
 the subject's canton (+ federal) and language, and boosts the cards of the open cases (or `card_id`).
 It ranks with EmbeddingGemma 2 in `live` mode or with `ORDNER_EMBED=1` (every scenario run since 14.10 17:00); BM25 is only the fallback when the weights are absent (Docker replay). On 2 × 36 everyday questions (`python -m ordner.eval.retrieval`, `data/retrieval/`) the right card's source is in the top 3 for 80.6 % / 77.8 % of questions with EmbeddingGemma 2, 52.8 % / 38.9 % with BM25 and 61.1 % / 50.0 % with their RRF fusion, which was therefore dropped: on cross-lingual questions BM25 ranks same-language distractors first (held-out cross-lingual: 70 % embedding, 5 % BM25, 15 % fusion).
 `ordner.rules.payment_check` (phishing guard) runs in the coordinator on every document read and every prepared payment.
