@@ -1,0 +1,477 @@
+[
+ {
+  "url": "https://www.fedlex.admin.ch/eli/cc/1991/1184_1184_1184/fr",
+  "fetched_from": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/1991/1184_1184_1184/20260902/fr/xml/fedlex-data-admin-ch-eli-cc-1991-1184_1184_1184-20260902-fr-xml-1.xml",
+  "title": "LIFD (RS 642.11)",
+  "publisher": "Confédération suisse (Fedlex)",
+  "jurisdiction": "CH",
+  "lang": "fr",
+  "licence": "official act (art. 5 LDA)",
+  "in_repo": true,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.fedlex.admin.ch/eli/cc/1991/1184_1184_1184/de",
+  "fetched_from": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/1991/1184_1184_1184/20260902/de/xml/fedlex-data-admin-ch-eli-cc-1991-1184_1184_1184-20260902-de-xml-1.xml",
+  "title": "DBG (RS 642.11)",
+  "publisher": "Confédération suisse (Fedlex)",
+  "jurisdiction": "CH",
+  "lang": "de",
+  "licence": "official act (art. 5 LDA)",
+  "in_repo": true,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.fedlex.admin.ch/eli/cc/1991/1184_1184_1184/it",
+  "fetched_from": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/1991/1184_1184_1184/20260902/it/xml/fedlex-data-admin-ch-eli-cc-1991-1184_1184_1184-20260902-it-xml-1.xml",
+  "title": "LIFD (RS 642.11)",
+  "publisher": "Confédération suisse (Fedlex)",
+  "jurisdiction": "CH",
+  "lang": "it",
+  "licence": "official act (art. 5 LDA)",
+  "in_repo": true,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.fedlex.admin.ch/eli/cc/1991/1256_1256_1256/fr",
+  "fetched_from": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/1991/1256_1256_1256/20250101/fr/xml/fedlex-data-admin-ch-eli-cc-1991-1256_1256_1256-20250101-fr-xml-11.xml",
+  "title": "LHID (RS 642.14)",
+  "publisher": "Confédération suisse (Fedlex)",
+  "jurisdiction": "CH",
+  "lang": "fr",
+  "licence": "official act (art. 5 LDA)",
+  "in_repo": true,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.fedlex.admin.ch/eli/cc/1991/1256_1256_1256/de",
+  "fetched_from": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/1991/1256_1256_1256/20250101/de/xml/fedlex-data-admin-ch-eli-cc-1991-1256_1256_1256-20250101-de-xml-11.xml",
+  "title": "StHG (RS 642.14)",
+  "publisher": "Confédération suisse (Fedlex)",
+  "jurisdiction": "CH",
+  "lang": "de",
+  "licence": "official act (art. 5 LDA)",
+  "in_repo": true,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.fedlex.admin.ch/eli/cc/1991/1256_1256_1256/it",
+  "fetched_from": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/1991/1256_1256_1256/20250101/it/xml/fedlex-data-admin-ch-eli-cc-1991-1256_1256_1256-20250101-it-xml-11.xml",
+  "title": "LAID (RS 642.14)",
+  "publisher": "Confédération suisse (Fedlex)",
+  "jurisdiction": "CH",
+  "lang": "it",
+  "licence": "official act (art. 5 LDA)",
+  "in_repo": true,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.fedlex.admin.ch/eli/cc/1966/371_385_384/fr",
+  "fetched_from": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/1966/371_385_384/20250101/fr/xml/fedlex-data-admin-ch-eli-cc-1966-371_385_384-20250101-fr-xml-11.xml",
+  "title": "LIA (RS 642.21)",
+  "publisher": "Confédération suisse (Fedlex)",
+  "jurisdiction": "CH",
+  "lang": "fr",
+  "licence": "official act (art. 5 LDA)",
+  "in_repo": true,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.fedlex.admin.ch/eli/cc/1966/371_385_384/de",
+  "fetched_from": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/1966/371_385_384/20250101/de/xml/fedlex-data-admin-ch-eli-cc-1966-371_385_384-20250101-de-xml-11.xml",
+  "title": "VStG (RS 642.21)",
+  "publisher": "Confédération suisse (Fedlex)",
+  "jurisdiction": "CH",
+  "lang": "de",
+  "licence": "official act (art. 5 LDA)",
+  "in_repo": true,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.fedlex.admin.ch/eli/cc/1966/371_385_384/it",
+  "fetched_from": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/1966/371_385_384/20250101/it/xml/fedlex-data-admin-ch-eli-cc-1966-371_385_384-20250101-it-xml-11.xml",
+  "title": "LIP (RS 642.21)",
+  "publisher": "Confédération suisse (Fedlex)",
+  "jurisdiction": "CH",
+  "lang": "it",
+  "licence": "official act (art. 5 LDA)",
+  "in_repo": true,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.fedlex.admin.ch/eli/cc/1985/1778_1778_1778/fr",
+  "fetched_from": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/1985/1778_1778_1778/20250101/fr/xml/fedlex-data-admin-ch-eli-cc-1985-1778_1778_1778-20250101-fr-xml-5.xml",
+  "title": "OPP 3 (RS 831.461.3)",
+  "publisher": "Confédération suisse (Fedlex)",
+  "jurisdiction": "CH",
+  "lang": "fr",
+  "licence": "official act (art. 5 LDA)",
+  "in_repo": true,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.fedlex.admin.ch/eli/cc/1985/1778_1778_1778/de",
+  "fetched_from": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/1985/1778_1778_1778/20250101/de/xml/fedlex-data-admin-ch-eli-cc-1985-1778_1778_1778-20250101-de-xml-5.xml",
+  "title": "BVV 3 (RS 831.461.3)",
+  "publisher": "Confédération suisse (Fedlex)",
+  "jurisdiction": "CH",
+  "lang": "de",
+  "licence": "official act (art. 5 LDA)",
+  "in_repo": true,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.fedlex.admin.ch/eli/cc/1985/1778_1778_1778/it",
+  "fetched_from": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/1985/1778_1778_1778/20250101/it/xml/fedlex-data-admin-ch-eli-cc-1985-1778_1778_1778-20250101-it-xml-5.xml",
+  "title": "OPP 3 (RS 831.461.3)",
+  "publisher": "Confédération suisse (Fedlex)",
+  "jurisdiction": "CH",
+  "lang": "it",
+  "licence": "official act (art. 5 LDA)",
+  "in_repo": true,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.fedlex.admin.ch/eli/cc/1993/717_717_717/fr",
+  "fetched_from": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/1993/717_717_717/20220101/fr/xml/fedlex-data-admin-ch-eli-cc-1993-717_717_717-20220101-fr-xml-5.xml",
+  "title": "Ordonnance du DFF sur l'échéance et les intérêts IFD (RS 642.124)",
+  "publisher": "Confédération suisse (Fedlex)",
+  "jurisdiction": "CH",
+  "lang": "fr",
+  "licence": "official act (art. 5 LDA)",
+  "in_repo": true,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.fedlex.admin.ch/eli/cc/1993/717_717_717/de",
+  "fetched_from": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/1993/717_717_717/20220101/de/xml/fedlex-data-admin-ch-eli-cc-1993-717_717_717-20220101-de-xml-5.xml",
+  "title": "Verordnung des EFD über Fälligkeit und Verzinsung DBG (RS 642.124)",
+  "publisher": "Confédération suisse (Fedlex)",
+  "jurisdiction": "CH",
+  "lang": "de",
+  "licence": "official act (art. 5 LDA)",
+  "in_repo": true,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.fedlex.admin.ch/eli/cc/1993/717_717_717/it",
+  "fetched_from": "https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/1993/717_717_717/20220101/it/xml/fedlex-data-admin-ch-eli-cc-1993-717_717_717-20220101-it-xml-5.xml",
+  "title": "Ordinanza del DFF su scadenza e interessi IFD (RS 642.124)",
+  "publisher": "Confédération suisse (Fedlex)",
+  "jurisdiction": "CH",
+  "lang": "it",
+  "licence": "official act (art. 5 LDA)",
+  "in_repo": true,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.lexfind.ch/tolv/249853/fr",
+  "title": "Loi sur les impôts directs cantonaux (LI, BLV 642.11)",
+  "publisher": "Canton de Vaud",
+  "jurisdiction": "VD",
+  "lang": "fr",
+  "licence": "official act (art. 5 LDA)",
+  "in_repo": true,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.notes.zh.ch/appl/zhlex_r.nsf/WebView/A1B72A220CD6E747C1258DC4002A921E/$File/631.1_8.6.97_132.pdf",
+  "title": "Steuergesetz (StG, LS 631.1)",
+  "publisher": "Kanton Zürich",
+  "jurisdiction": "ZH",
+  "lang": "de",
+  "licence": "official act (art. 5 LDA)",
+  "in_repo": true,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.belex.sites.be.ch/api/de/versions/3330/pdf_file_with_annexes",
+  "title": "Steuergesetz (StG, BSG 661.11)",
+  "publisher": "Kanton Bern",
+  "jurisdiction": "BE",
+  "lang": "de",
+  "licence": "official act (art. 5 LDA)",
+  "in_repo": true,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.belex.sites.be.ch/api/de/versions/3277/pdf_file_with_annexes",
+  "title": "Steuerbezugsverordnung (BELEX version 3277)",
+  "publisher": "Kanton Bern",
+  "jurisdiction": "BE",
+  "lang": "de",
+  "licence": "official act (art. 5 LDA)",
+  "in_repo": true,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://silgeneve.ch/legis/program/books/RSG/pdf/rsg_d3_17.pdf",
+  "title": "Loi de procédure fiscale (LPFisc, rsGE D 3 17)",
+  "publisher": "République et canton de Genève",
+  "jurisdiction": "GE",
+  "lang": "fr",
+  "licence": "official act (art. 5 LDA)",
+  "in_repo": true,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://silgeneve.ch/legis/program/books/RSG/pdf/rsg_d3_18.pdf",
+  "title": "Loi relative à la perception et aux garanties des impôts des personnes physiques et des personnes morales (LPGIP, rsGE D 3 18)",
+  "publisher": "République et canton de Genève",
+  "jurisdiction": "GE",
+  "lang": "fr",
+  "licence": "official act (art. 5 LDA)",
+  "in_repo": true,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://silgeneve.ch/legis/program/books/RSG/pdf/rsg_d3_19p03.pdf",
+  "title": "Règlement fixant le tarif des émoluments de l'administration fiscale cantonale (rsGE D 3 19.03)",
+  "publisher": "République et canton de Genève",
+  "jurisdiction": "GE",
+  "lang": "fr",
+  "licence": "official act (art. 5 LDA)",
+  "in_repo": true,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://silgeneve.ch/legis/program/books/RSG/pdf/rsg_d3_08.pdf",
+  "title": "Loi sur l'imposition des personnes physiques (LIPP, rsGE D 3 08)",
+  "publisher": "République et canton de Genève",
+  "jurisdiction": "GE",
+  "lang": "fr",
+  "licence": "official act (art. 5 LDA)",
+  "in_repo": true,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://m3.ti.ch/CAN/RLeggi/public/index.php/raccolta-leggi/pdfatto/atto/12885",
+  "title": "Legge tributaria (LT, RL 640.100)",
+  "publisher": "Repubblica e Cantone Ticino",
+  "jurisdiction": "TI",
+  "lang": "it",
+  "licence": "official act (art. 5 LDA)",
+  "in_repo": true,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.vd.ch/etat-droit-finances/impots/impots-pour-les-individus/remplir-ma-declaration-dimpot",
+  "title": "Remplir ma déclaration d'impôt",
+  "publisher": "Canton de Vaud, Administration cantonale des impôts",
+  "jurisdiction": "VD",
+  "lang": "fr",
+  "licence": "authority publication, not redistributed (URL + passage only)",
+  "in_repo": false,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.bsv.admin.ch/fr/votre-cotisation-au-3e-pilier",
+  "title": "Votre cotisation au 3e pilier",
+  "publisher": "Office fédéral des assurances sociales OFAS",
+  "jurisdiction": "CH",
+  "lang": "fr",
+  "licence": "authority publication, not redistributed (URL + passage only)",
+  "in_repo": false,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.ge.ch/declarer-revenus-capitaux-mobiliers/recuperer-impot-anticipe",
+  "title": "Récupérer l'impôt anticipé",
+  "publisher": "République et canton de Genève, AFC",
+  "jurisdiction": "GE",
+  "lang": "fr",
+  "licence": "authority publication, not redistributed (URL + passage only)",
+  "in_repo": false,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.vd.ch/etat-droit-finances/impots/impots-pour-les-individus/demander-un-delai-pour-deposer-ma-declaration-dimpot",
+  "title": "Demander un délai pour déposer ma déclaration d'impôt",
+  "publisher": "Canton de Vaud, Administration cantonale des impôts",
+  "jurisdiction": "VD",
+  "lang": "fr",
+  "licence": "authority publication, not redistributed (URL + passage only)",
+  "in_repo": false,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.vd.ch/etat-droit-finances/impots/impots-pour-les-individus/gerer-mes-acomptes",
+  "title": "Gérer mes acomptes",
+  "publisher": "Canton de Vaud, Administration cantonale des impôts",
+  "jurisdiction": "VD",
+  "lang": "fr",
+  "licence": "authority publication, not redistributed (URL + passage only)",
+  "in_repo": false,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.vd.ch/etat-droit-finances/impots/impots-pour-les-individus/les-pieces-justificatives",
+  "title": "Les pièces justificatives",
+  "publisher": "Canton de Vaud, Administration cantonale des impôts",
+  "jurisdiction": "VD",
+  "lang": "fr",
+  "licence": "authority publication, not redistributed (URL + passage only)",
+  "in_repo": false,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.vd.ch/etat-droit-finances/impots/impots-pour-les-individus/les-impots-les-differents-types-dimpots/impot-anticipe",
+  "title": "Impôt anticipé",
+  "publisher": "Canton de Vaud, Administration cantonale des impôts",
+  "jurisdiction": "VD",
+  "lang": "fr",
+  "licence": "authority publication, not redistributed (URL + passage only)",
+  "in_repo": false,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.vd.ch/fileadmin/user_upload/organisation/dfin/aci/fichiers_pdf/Directive_D%C3%A9lai_d%C3%A9p%C3%B4t_DI_PP_Demandes_unitaires.pdf",
+  "title": "Directive délai de dépôt DI PP, demandes unitaires",
+  "publisher": "Canton de Vaud, Administration cantonale des impôts",
+  "jurisdiction": "VD",
+  "lang": "fr",
+  "licence": "authority publication, not redistributed (URL + passage only)",
+  "in_repo": false,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.zh.ch/de/steuern-finanzen/steuern/treuhaender/steuerbuch/steuerbuch-definition/zstb-133-1.html",
+  "title": "Zürcher Steuerbuch Nr. 133/1",
+  "publisher": "Kanton Zürich, Kantonales Steueramt",
+  "jurisdiction": "ZH",
+  "lang": "de",
+  "licence": "authority publication, not redistributed (URL + passage only)",
+  "in_repo": false,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.zh.ch/de/steuern-finanzen/steuern/steuern-natuerliche-personen/steuererklaerung-natuerliche-personen.html",
+  "title": "Steuererklärung natürliche Personen",
+  "publisher": "Kanton Zürich, Kantonales Steueramt",
+  "jurisdiction": "ZH",
+  "lang": "de",
+  "licence": "authority publication, not redistributed (URL + passage only)",
+  "in_repo": false,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.zh.ch/de/news-uebersicht/medienmitteilungen/2025/06/zinsen-auf-bezahlte-steuern-leicht-reduziert.html",
+  "title": "Zinsen auf bezahlte Steuern leicht reduziert (Medienmitteilung 2025)",
+  "publisher": "Kanton Zürich, Finanzdirektion",
+  "jurisdiction": "ZH",
+  "lang": "de",
+  "licence": "authority publication, not redistributed (URL + passage only)",
+  "in_repo": false,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.zh.ch/de/steuern-finanzen/steuern/treuhaender/steuerbuch/steuerbuch-definition/zstb-172-1.html",
+  "title": "Zürcher Steuerbuch Nr. 172/1",
+  "publisher": "Kanton Zürich, Kantonales Steueramt",
+  "jurisdiction": "ZH",
+  "lang": "de",
+  "licence": "authority publication, not redistributed (URL + passage only)",
+  "in_repo": false,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.wegleitung.sv.fin.be.ch/de/start/np2025/allgemeine-informationen/fristen.html",
+  "title": "Wegleitung 2025: Fristen",
+  "publisher": "Kanton Bern, Steuerverwaltung",
+  "jurisdiction": "BE",
+  "lang": "de",
+  "licence": "authority publication, not redistributed (URL + passage only)",
+  "in_repo": false,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.sv.fin.be.ch/de/start/themen/steuern-bezahlen/einsprache-gegen-veranlagungsverfuegung-erheben.html",
+  "title": "Einsprache gegen Veranlagungsverfügung erheben",
+  "publisher": "Kanton Bern, Steuerverwaltung",
+  "jurisdiction": "BE",
+  "lang": "de",
+  "licence": "authority publication, not redistributed (URL + passage only)",
+  "in_repo": false,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.sv.fin.be.ch/content/dam/sv_fin/dokumente/de/info_10minuten/info-np_januar2026_de.pdf",
+  "title": "Info natürliche Personen, Januar 2026",
+  "publisher": "Kanton Bern, Steuerverwaltung",
+  "jurisdiction": "BE",
+  "lang": "de",
+  "licence": "authority publication, not redistributed (URL + passage only)",
+  "in_repo": false,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.wegleitung.sv.fin.be.ch/content/dam/sv_fin/dokumente/fr/wegleitungen/2025/wl_natuerliche-personen_2025_fr.pdf",
+  "title": "Guide 2025 pour remplir la déclaration d'impôt des personnes physiques",
+  "publisher": "Canton de Berne, Intendance des impôts",
+  "jurisdiction": "BE",
+  "lang": "fr",
+  "licence": "authority publication, not redistributed (URL + passage only)",
+  "in_repo": false,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.ge.ch/remplir-ma-declaration-impot-tant-que-particulier/demander-delai-ma-declaration-impot",
+  "title": "Demander un délai pour ma déclaration d'impôt",
+  "publisher": "République et canton de Genève, AFC",
+  "jurisdiction": "GE",
+  "lang": "fr",
+  "licence": "authority publication, not redistributed (URL + passage only)",
+  "in_repo": false,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.ge.ch/actualite/deposez-votre-declaration-impot-demandez-delai-18-06-2026",
+  "title": "Déposez votre déclaration d'impôt ou demandez un délai (actualité, 18.06.2026)",
+  "publisher": "République et canton de Genève, AFC",
+  "jurisdiction": "GE",
+  "lang": "fr",
+  "licence": "authority publication, not redistributed (URL + passage only)",
+  "in_repo": false,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.ge.ch/paiement-impots/acomptes-bordereaux-factures-impots",
+  "title": "Acomptes, bordereaux et factures d'impôts",
+  "publisher": "République et canton de Genève, AFC",
+  "jurisdiction": "GE",
+  "lang": "fr",
+  "licence": "authority publication, not redistributed (URL + passage only)",
+  "in_repo": false,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www4.ti.ch/tich/area-media/comunicati/dettaglio-comunicato?NEWS_ID=257983",
+  "title": "Comunicato stampa, Divisione delle contribuzioni",
+  "publisher": "Repubblica e Cantone Ticino",
+  "jurisdiction": "TI",
+  "lang": "it",
+  "licence": "authority publication, not redistributed (URL + passage only)",
+  "in_repo": false,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www4.ti.ch/fileadmin/DFE/DC/DOC-IPF/2025/Istruzioni/Istruzioni_PF_2025.pdf",
+  "title": "Istruzioni per la compilazione della dichiarazione d'imposta PF 2025",
+  "publisher": "Repubblica e Cantone Ticino, Divisione delle contribuzioni",
+  "jurisdiction": "TI",
+  "lang": "it",
+  "licence": "authority publication, not redistributed (URL + passage only)",
+  "in_repo": false,
+  "accessed": "2026-10-15"
+ },
+ {
+  "url": "https://www.estv.admin.ch/dam/fr/sd-web/vFK3ntWLQ4s4/2-215-D-2025-d.pdf",
+  "title": "ESTV Rundschreiben 2-215-D-2025: Verzugs- und Vergütungszinssätze",
+  "publisher": "Eidgenössische Steuerverwaltung ESTV",
+  "jurisdiction": "CH",
+  "lang": "fr",
+  "licence": "authority publication, not redistributed (URL + passage only)",
+  "in_repo": false,
+  "accessed": "2026-10-15"
+ }
+]
