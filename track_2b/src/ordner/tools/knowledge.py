@@ -89,12 +89,18 @@ def search(args, ctx):
         if expert_kb.passages(ctx["expert"]):
             subject, _ = _context(ctx)
             canton = args.get("canton") or (subject and subject.canton)
-            hits = expert_kb.search(args["query"], ctx["expert"], canton, args.get("lang"), min(args.get("k", 3), 8))
+            n, method, warn = min(args.get("k", 3), 8), "EmbeddingGemma 2", []
+            try:
+                hits = expert_kb.search(args["query"], ctx["expert"], canton, args.get("lang"), n)
+            except Exception as e:   # no embedding model (e.g. Docker replay without weights): lexical fallback
+                hits, method = expert_kb.search(args["query"], ctx["expert"], canton, args.get("lang"), n,
+                                                scorer=expert_kb.bm25), "bm25 (EmbeddingGemma unavailable)"
+                warn = [f"semantic search unavailable, lexical only ({type(e).__name__})"]
             return ({"passages": [{"passage_id": h["passage_id"], "title": h.get("source_title"), "url": h.get("url"),
                                    "page": None, "lang": h.get("lang"), "jurisdiction": h.get("jurisdiction"),
                                    "card_id": None, "score": h["score"], "text": h["text"]} for h in hits]},
-                    [] if hits else ["no passage in this expert's knowledge base"],
-                    {"corpus": f"data/knowledge/{ctx['expert']} (expert base)", "method": "EmbeddingGemma 2"})
+                    warn + ([] if hits else ["no passage in this expert's knowledge base"]),
+                    {"corpus": f"data/knowledge/{ctx['expert']} (expert base)", "method": method})
     path, ps, *_ = corpus()
     subject, open_cards = _context(ctx)
     canton = args.get("canton") or (subject and subject.canton)

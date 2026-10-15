@@ -27,6 +27,20 @@ def experts():
     return sorted(p.name for p in DATA.iterdir() if p.is_dir() and passages(p.name)) if DATA.exists() else []
 
 
+def bm25(query, ps, k1=1.5, b=0.75):
+    """Lexical fallback scorer (no model: Docker replay without the EmbeddingGemma weights)."""
+    import math
+    from collections import Counter
+    from .knowledge import tokens
+    docs = [Counter(tokens(f"{p['source_title']} {p['text']}")) for p in ps]
+    lens = [sum(d.values()) for d in docs]
+    avg, n, q = sum(lens) / max(len(lens), 1), len(docs), set(tokens(query))
+    df = Counter(t for d in docs for t in d)
+    idf = {t: math.log(1 + (n - df[t] + 0.5) / (df[t] + 0.5)) for t in q}
+    return [sum(idf[t] * d[t] * (k1 + 1) / (d[t] + k1 * (1 - b + b * dl / avg)) for t in q if t in d)
+            for d, dl in zip(docs, lens)]
+
+
 def search(query, expert, canton=None, lang=None, k=3, scorer=None):
     """Top-k passages of the expert's base for the query, federal + `canton` only; `lang` filters when it leaves any.
     scorer(query, passages) -> similarities (default: EmbeddingGemma 2, explain.retrieve.scores)."""

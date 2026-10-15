@@ -4,7 +4,6 @@ Compared, all with the federal + question-canton filter: the expert's own base r
 product), one global base with every expert's passages (no routing), BM25 on the expert's base.
 python -m ordner.eval.knowledge_experts  ->  data/knowledge/results.json"""
 import json
-import math
 import os
 from collections import Counter, defaultdict
 from pathlib import Path
@@ -14,16 +13,6 @@ from ordner.tools.knowledge import tokens
 
 QUESTIONS = Path("data/knowledge/questions.json")
 OUT = Path("data/knowledge/results_repo_only.json" if os.environ.get("ORDNER_KB_REPO_ONLY") == "1" else "data/knowledge/results.json")
-
-
-def bm25_scorer(query, ps, k1=1.5, b=0.75):
-    docs = [Counter(tokens(f"{p['source_title']} {p['text']}")) for p in ps]
-    lens = [sum(d.values()) for d in docs]
-    avg, n, q = sum(lens) / max(len(lens), 1), len(docs), set(tokens(query))
-    df = Counter(t for d in docs for t in d)
-    idf = {t: math.log(1 + (n - df[t] + 0.5) / (df[t] + 0.5)) for t in q}
-    return [sum(idf[t] * d[t] * (k1 + 1) / (d[t] + k1 * (1 - b + b * dl / avg)) for t in q if t in d)
-            for d, dl in zip(docs, lens)]
 
 
 def hit(hits, topic):
@@ -42,7 +31,7 @@ def main():
         glob = [p for p in everyone if not canton or p.get("jurisdiction") in ("CH", canton)]
         gs = retrieve.scores(q["q"], [{"source_title": p.get("source_title", ""), "text": p["text"]} for p in glob]) if glob else []
         top_glob = [glob[i] for i in sorted(range(len(glob)), key=lambda i: -float(gs[i]))[:3]]
-        bm = expert_kb.search(q["q"], e, canton, k=3, scorer=bm25_scorer) if e in experts else []
+        bm = expert_kb.search(q["q"], e, canton, k=3, scorer=expert_kb.bm25) if e in experts else []
         rows.append({**q, "hit": {"expert_base": hit(own, q["topic"]), "global_base": hit(top_glob, q["topic"]),
                                   "bm25_expert_base": hit(bm, q["topic"])},
                      "global_top_experts": [p["expert"] for p in top_glob],
