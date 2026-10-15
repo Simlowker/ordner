@@ -133,12 +133,14 @@ def brief(snap):
     """Prompt view of a case.load snapshot (W1 shape): ids, values and states; no event log."""
     facts = snap.get("facts") or {}
     facts = [f for st in ("confirmed", "proposed") for f in facts.get(st, [])] if isinstance(facts, dict) else facts
+    # cases, deadlines and actions first: a long dossier is clipped at MAX_SNAPSHOT_CHARS from the end, and the
+    # documents/facts lists are the long part (Noa's demo dossier lost its missing pieces before this order)
     return {"as_of": snap.get("as_of"), "subject": snap.get("subject"),
-            "documents": _pick(snap.get("documents"), "id", "kind", "year", "issuer", "fields", "doubt"),
-            "facts": _pick(facts, "id", "key", "value", "period", "unit", "status", "source_doc", "doubt"),
             "open_cases": _pick(snap.get("open_cases"), "id", "card_id", "period", "state", "missing"),
             "upcoming_deadlines": _pick(snap.get("upcoming_deadlines"), "case_id", "card_id", "due", "overdue"),
-            "pending_actions": _pick(snap.get("pending_actions"), "id", "case_id", "kind", "status", "payload")}
+            "pending_actions": _pick(snap.get("pending_actions"), "id", "case_id", "kind", "status", "payload"),
+            "documents": _pick(snap.get("documents"), "id", "kind", "year", "issuer", "fields", "doubt"),
+            "facts": _pick(facts, "id", "key", "value", "period", "unit", "status", "source_doc", "doubt")}
 
 
 _MONTHS = {m: i + 1 for names in (
