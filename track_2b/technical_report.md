@@ -5,7 +5,7 @@
 - **Track:** Track 2B — Own Project
 - **Event:** Online
 - **Team:** `Meotis` — Simeon Flueck (Meotis)
-- **Demo:** {{video_url}}
+- **Demo:** video (1 min 48), link given in the submission form
 - **Code:** https://github.com/Simlowker/ordner, commit `93b5578`; `PREREG.md` frozen in commit `f52d2c3` before any model was scored on the test split (deviations: its Addendum 4 and §6)
 
 ## 1. Summary
