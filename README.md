@@ -10,6 +10,29 @@ expert; each expert is Apertus 1.5 8B with its domain's tools, its own knowledge
 person's canton), and its own LoRA adapter only where it measurably helps; the rules engine computes what is computable;
 nothing is sent. It routes by domain and filters by canton, read from the dossier.
 
+## How it works
+
+```mermaid
+flowchart LR
+    Q["Your question<br/>fr · de · it"] --> D1{{"d1-3B decision model<br/>picks the expert (78.1 % of 201 requests)"}}
+    DOS[("Your dossier<br/>local, on your computer")] --> R["Rules engine first<br/>18 procedures: applicability, deadlines, documents<br/>with their legal source"]
+    D1 --> T["Taxes expert<br/>Apertus 1.5 8B + tax tools"]
+    D1 --> H["Health insurance expert<br/>Apertus 1.5 8B + LAMal tools"]
+    D1 --> P["Debt collection expert<br/>Apertus 1.5 8B + LP tools + LoRA"]
+    D1 --> L["Housing expert<br/>Apertus 1.5 8B + moving tools + LoRA"]
+    T --- KT[("EmbeddingGemma 2 base<br/>tax sources, federal + canton")]
+    H --- KH[("EmbeddingGemma 2 base<br/>KVG / LAMal sources")]
+    P --- KP[("EmbeddingGemma 2 base<br/>LP / SchKG, offices")]
+    L --- KL[("EmbeddingGemma 2 base<br/>moving, Serafe, cantons")]
+    R --> T & H & P & L
+    T & H & P & L --> A["Prepared letters, forms, payments<br/>never sent: you validate"]
+```
+
+LoRA adapters only where they beat the base on dev (Debt collection, Housing; optional). Each knowledge base holds
+135 to 245 verified passages; the canton comes from the dossier. Document reading (eCH-0196 barcode, LightOnOCR-3 +
+Apertus LoRA) and the decision model are tools loaded on demand. Next: d1-ultra (Liquid AI, 15.10.2026) as router
+candidate once its weights can run locally, evaluated on the same 201 requests.
+
 For example, a payment order and its notification date give the opposition deadline (debt-collection holidays
 included) and a prepared opposition letter; a tax return gets the list of documents still missing; a move or a
 health-insurance change, once its date and kind are known, gets its deadline and letters; every rule is shown with its
