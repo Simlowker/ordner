@@ -4,9 +4,9 @@
 
 - **Track:** Track 2B — Own Project
 - **Event:** Online
-- **Team:** `Meotis` — {{members}}
+- **Team:** `Meotis` — Simeon Flueck (Meotis)
 - **Demo:** {{video_url}}
-- **Code:** {{repo_url}}, commit `{{commit}}`; `PREREG.md` frozen in commit `f52d2c3` before any model was scored on the test split (deviations: its Addendum 4 and §6)
+- **Code:** https://github.com/Simlowker/ordner, commit `93b5578`; `PREREG.md` frozen in commit `f52d2c3` before any model was scored on the test split (deviations: its Addendum 4 and §6)
 
 ## 1. Summary
 
@@ -232,4 +232,4 @@ If `data/explain_eval.json` is produced, add the paragraph below at the end of �
 | `{{explain_seconds}}` | `data/explain_eval.json` | `mean_seconds` | seconds, 1 decimal |
 | `{{explain_verbatim_rate}}` | `data/explain_eval.json` | `citation_verbatim_rate` | % |
 
-**Filled by hand:** `{{members}}` (member names), `{{repo_url}}` (public repository URL), `{{video_url}}` (demo video URL), `{{commit}}` (commit hash of the submission).
+**Filled by hand:** `Simeon Flueck (Meotis)` (member names), `https://github.com/Simlowker/ordner` (public repository URL), `{{video_url}}` (demo video URL), `93b5578` (commit hash of the submission).
