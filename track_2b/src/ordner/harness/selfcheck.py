@@ -437,7 +437,8 @@ def check_general_routing():
             msgs, names = model_input(p)
             assert second["content"] == f"Expert : Poursuites — choisi par le routeur d’Ordner (d1-3B)\n\n{up.reply}"
             assert len(d1.bodies) == 1 and p.log[-1]["expert"] == "poursuites"
-            assert [m["content"] for m in msgs if m["role"] == "tool"] == [result]
+            tool_msgs = [m["content"] for m in msgs if m["role"] == "tool"]   # result + the language reminder
+            assert [t.split("\n\nWhen you answer")[0] for t in tool_msgs] == [result] and "write in" in tool_msgs[-1]
             # next turn: no banner again, the banner is out of the history the model sees, sources after the new message
             history += [{"role": "assistant", "content": second["content"]}, {"role": "user", "content": "Et après ?"}]
             up.reply = "Le créancier peut demander la mainlevée."
@@ -446,7 +447,8 @@ def check_general_routing():
             assert third["content"] == up.reply and len(d1.bodies) == 1 and p.log[-1]["expert"] == "poursuites"
             assert [m["content"] for m in msgs if m["role"] == "assistant"] == [first["content"],
                                                                                 "Vous avez 10 jours pour faire opposition."]
-            assert [m["content"] for m in msgs if m["role"] == "tool"] == [result]
+            tool_msgs = [m["content"] for m in msgs if m["role"] == "tool"]   # result + the language reminder
+            assert [t.split("\n\nWhen you answer")[0] for t in tool_msgs] == [result] and "write in" in tool_msgs[-1]
             assert [m["tool_calls"][0]["function"]["name"] for m in msgs if m.get("tool_calls")] == ["case_load"]
             assert msgs[-2]["content"] == "Et après ?" and msgs[-1]["content"].startswith(SOURCES_HEAD)
             assert sum(m["content"].startswith(SOURCES_HEAD) for m in msgs) == 1
