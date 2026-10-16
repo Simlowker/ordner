@@ -382,7 +382,8 @@ class Proxy(HTTPServer):
                 msgs.insert(users[-1] + 1, sources_message(found))
                 entry["sources"] = [x["passage_id"] for x in found]
         if users and msgs and msgs[-1]["role"] == "tool":   # the instruction in the opening is far once tools ran
-            msgs.append(language_reminder(raw_user(msgs, users)))
+            # appended to the last tool result: the Apertus template rejects a system message after the first one
+            msgs[-1] = {**msgs[-1], "content": f"{msgs[-1]['content']}\n\n{language_reminder(raw_user(msgs, users))['content']}"}
         return msgs, tools, r
 
     def record(self, entry):
